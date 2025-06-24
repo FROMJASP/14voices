@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 const Media: CollectionConfig = {
   slug: 'media',
@@ -13,6 +14,15 @@ const Media: CollectionConfig = {
     },
   ],
   upload: {
+    ...(process.env.VERCEL
+      ? vercelBlobStorage({
+          enabled: true,
+          collections: {
+            media: true,
+          },
+          token: process.env.BLOB_READ_WRITE_TOKEN || '',
+        })
+      : {}),
     staticDir: 'media',
     imageSizes: [
       {

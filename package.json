@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.0.0-beta.135",
+    "@payloadcms/email-resend": "^3.43.0",
     "@payloadcms/next": "^3.0.0-beta.135",
     "@payloadcms/richtext-lexical": "^3.0.0-beta.135",
+    "@payloadcms/storage-vercel-blob": "^3.43.0",
     "@vercel/postgres": "^0.10.0",
     "motion": "^12.19.1",
     "next": "15.3.4",
