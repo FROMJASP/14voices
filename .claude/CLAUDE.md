@@ -17,7 +17,7 @@
 Philosophy: Code>docs | Simple→complex | Security first
 Communication: Concise format | Symbols: →|&:» | Bullets>prose
 Workflow: TodoRead()→TodoWrite(3+)→Execute | Update immediate
-Stack: React|TS|Vite + Node|Express|PostgreSQL + Git|ESLint|Jest
+Stack: Next.js|React|TS + Payload CMS|PostgreSQL + Git|ESLint|Tailwind
 Commands: /user:<command> [flags] | /task:<action> | Ex: /user:build --init
 ```
 

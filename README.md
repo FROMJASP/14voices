@@ -6,10 +6,13 @@ A modern web application built with Next.js 15, Payload CMS 3.0, and PostgreSQL.
 
 - **Framework**: Next.js 15.3.4 (App Router)
 - **CMS**: Payload CMS 3.0 (beta)
-- **Database**: PostgreSQL (via Neon)
+- **Database**: PostgreSQL (via @payloadcms/db-postgres)
 - **Styling**: Tailwind CSS v4
 - **Authentication**: Built-in Payload auth
-- **Media Storage**: Local filesystem (configurable)
+- **Media Storage**: Local filesystem (Sharp for image processing)
+- **Animation**: Motion (Framer Motion v12)
+- **Email**: Resend API
+- **TypeScript**: v5 with strict mode
 
 ## Features
 
@@ -27,7 +30,7 @@ A modern web application built with Next.js 15, Payload CMS 3.0, and PostgreSQL.
 
 - Node.js 18+ 
 - PostgreSQL database (local or cloud)
-- pnpm (recommended) or npm
+- bun (recommended) or npm
 
 ### Installation
 
@@ -39,7 +42,7 @@ cd 14voices
 
 2. Install dependencies:
 ```bash
-pnpm install
+bun install
 ```
 
 3. Set up environment variables:
@@ -51,7 +54,7 @@ cp .env.example .env.local
 
 5. Run the development server:
 ```bash
-pnpm dev
+bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see the application.
@@ -83,16 +86,16 @@ Required environment variables:
 
 ```bash
 # Run development server
-pnpm dev
+bun dev
 
 # Build for production
-pnpm build
+bun run build
 
 # Start production server
-pnpm start
+bun start
 
 # Run linting
-pnpm lint
+bun run lint
 ```
 
 ## Deployment
