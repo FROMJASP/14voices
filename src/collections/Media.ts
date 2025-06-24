@@ -14,15 +14,6 @@ const Media: CollectionConfig = {
     },
   ],
   upload: {
-    ...(process.env.VERCEL
-      ? vercelBlobStorage({
-          enabled: true,
-          collections: {
-            media: true,
-          },
-          token: process.env.BLOB_READ_WRITE_TOKEN || '',
-        })
-      : {}),
     staticDir: 'media',
     imageSizes: [
       {
