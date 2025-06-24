@@ -1,4 +1,4 @@
-/* Custom styles for Payload CMS */
+/* Import Payload CMS styles directly */
 @import '@payloadcms/next/css';
 
 /* Add any custom styles here */
