@@ -84,7 +84,7 @@ const VoiceoverPhotos: CollectionConfig = {
       },
     ],
     adminThumbnail: 'thumbnail',
-    mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif'],
     formatOptions: {
       format: 'webp',
       options: {

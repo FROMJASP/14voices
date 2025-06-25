@@ -105,7 +105,7 @@ const UserAvatars: CollectionConfig = {
       },
     ],
     adminThumbnail: 'thumbnail',
-    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'],
     formatOptions: {
       format: 'webp',
       options: {
