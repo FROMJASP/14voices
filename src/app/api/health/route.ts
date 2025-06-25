@@ -13,11 +13,13 @@ export async function GET() {
 
   // Try database connection
   let dbStatus = 'unknown'
-  if (process.env.POSTGRES_URL || process.env.DATABASE_URL) {
+  const dbUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL
+  
+  if (dbUrl) {
     try {
       const { Pool } = await import('pg')
       const pool = new Pool({
-        connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
+        connectionString: dbUrl,
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
       })
       

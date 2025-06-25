@@ -25,7 +25,7 @@ export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
+      connectionString: process.env.POSTGRES_URL!,
     },
   }),
   email: resendAdapter({
