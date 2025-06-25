@@ -5,9 +5,9 @@ import { resendAdapter } from '@payloadcms/email-resend'
 // import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import sharp from 'sharp'
-import Users from './collections/Users.js'
-import Media from './collections/Media.js'
-import Voiceovers from './collections/Voiceovers.js'
+import Users from './collections/Users'
+import Media from './collections/Media'
+import Voiceovers from './collections/Voiceovers'
 
 export default buildConfig({
   admin: {

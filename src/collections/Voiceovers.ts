@@ -40,7 +40,7 @@ const Voiceovers: CollectionConfig = {
           contains: 'image',
         },
       },
-      validate: (value: any, { data }: any) => {
+      validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
         if (data?.status === 'active' && !value) {
           return 'Image is required for active voiceovers'
         }
@@ -108,8 +108,8 @@ const Voiceovers: CollectionConfig = {
           },
         },
       ],
-      validate: (value: any, { data }: any) => {
-        if (data?.status === 'active' && (!value || value.length === 0)) {
+      validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
+        if (data?.status === 'active' && (!value || !Array.isArray(value) || value.length === 0)) {
           return 'At least one demo is required for active voiceovers'
         }
         return true

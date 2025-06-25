@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbo": "next dev --turbopack",
-    "build": "payload migrate && next build",
+    "build": "next build",
+    "build:with-migrate": "payload migrate && next build",
     "start": "next start",
     "lint": "next lint",
     "payload": "payload",
