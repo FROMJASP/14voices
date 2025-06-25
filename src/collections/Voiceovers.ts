@@ -88,18 +88,26 @@ const Voiceovers: CollectionConfig = {
       ],
     },
     {
-      name: 'audioDemos',
+      name: 'primaryDemo',
+      type: 'upload',
+      relationTo: 'voiceover-demos',
+      admin: {
+        description: 'Primary audio demo (will show file info)',
+      },
+      validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
+        if (data?.status === 'active' && !value) {
+          return 'At least one audio demo is required for active voiceovers'
+        }
+        return true
+      },
+    },
+    {
+      name: 'additionalDemos',
       type: 'relationship',
       relationTo: 'voiceover-demos',
       hasMany: true,
       admin: {
-        description: 'Audio demo samples for this voiceover artist',
-      },
-      validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
-        if (data?.status === 'active' && (!value || !Array.isArray(value) || value.length === 0)) {
-          return 'At least one audio demo is required for active voiceovers'
-        }
-        return true
+        description: 'Additional audio demos',
       },
     },
     {
