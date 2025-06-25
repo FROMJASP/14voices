@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import AutoFillDemoTitle from '../components/admin/AutoFillDemoTitle'
 
 const VoiceoverDemos: CollectionConfig = {
   slug: 'voiceover-demos',
@@ -50,9 +49,6 @@ const VoiceoverDemos: CollectionConfig = {
       label: 'Demo Title',
       admin: {
         description: 'Descriptive title (auto-filled based on demo type)',
-        components: {
-          Field: AutoFillDemoTitle,
-        },
       },
     },
     {
@@ -133,7 +129,7 @@ const VoiceoverDemos: CollectionConfig = {
   },
   hooks: {
     beforeOperation: [
-      async ({ args, operation }) => {
+      async ({ args, operation, req }) => {
         if (operation === 'create' && args.req?.file) {
           const file = args.req.file
           
@@ -143,6 +139,46 @@ const VoiceoverDemos: CollectionConfig = {
           }
           
           // Could add duration extraction here using ffprobe or similar
+        }
+        
+        // Auto-fill title on create if not provided
+        if (operation === 'create' && args.data) {
+          const { voiceoverArtist, demoType, title } = args.data
+          
+          // Only auto-fill if title is empty and we have the required fields
+          if (!title && voiceoverArtist && demoType) {
+            try {
+              // Fetch the voiceover name
+              const voiceover = await req.payload.findByID({
+                collection: 'voiceovers',
+                id: voiceoverArtist,
+                depth: 0,
+              })
+              
+              if (voiceover?.name) {
+                const currentYear = new Date().getFullYear()
+                let autoTitle = ''
+                
+                switch (demoType) {
+                  case 'reel':
+                    autoTitle = `${voiceover.name} Demo Reel ${currentYear}`
+                    break
+                  case 'commercials':
+                    autoTitle = `${voiceover.name} Demo Commercials ${currentYear}`
+                    break
+                  case 'narrations':
+                    autoTitle = `${voiceover.name} Demo Narratief ${currentYear}`
+                    break
+                }
+                
+                if (autoTitle) {
+                  args.data.title = autoTitle
+                }
+              }
+            } catch (error) {
+              console.error('Error fetching voiceover for auto-title:', error)
+            }
+          }
         }
         
         return args
