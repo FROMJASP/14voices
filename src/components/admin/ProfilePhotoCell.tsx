@@ -2,13 +2,10 @@
 
 import React from 'react'
 
-export const ProfilePhotoCell: React.FC<{ data: any }> = ({ data }) => {
+export const ProfilePhotoCell: React.FC<{ data: unknown }> = ({ data }) => {
   if (!data || !Array.isArray(data) || data.length === 0) {
     return <span style={{ color: '#999' }}>No photo</span>
   }
-  
-  // Get the first photo if it exists
-  const firstPhotoId = data[0]
   
   // For now, just show count - in a full implementation you'd fetch the actual image
   return (

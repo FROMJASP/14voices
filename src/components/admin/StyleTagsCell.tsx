@@ -12,10 +12,15 @@ const tagColors: Record<string, string> = {
   'custom': '#EC4899',
 }
 
-export const StyleTagsCell: React.FC<{ data: any }> = ({ data }) => {
+type StyleTag = {
+  tag: string
+  customTag?: string
+}
+
+export const StyleTagsCell: React.FC<{ data: unknown }> = ({ data }) => {
   if (!data || !Array.isArray(data)) return null
   
-  const tags = data.map((item: any) => ({
+  const tags = (data as StyleTag[]).map((item) => ({
     value: item.tag === 'custom' ? item.customTag : item.tag,
     type: item.tag,
   })).filter(item => item.value)
