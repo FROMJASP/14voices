@@ -2,125 +2,89 @@
 
 ## Database Migrations
 
-### When to Run Migrations
-Run migrations whenever:
-- Adding new collections (like Voiceovers)
-- Modifying collection fields
-- Changing field types or constraints
-- Adding/removing indexes or enums
+### Quick Migration Process for New Collections
 
-### Production Migration Steps
+When adding new collections or modifying existing ones:
 
-#### Option 1: Local Migration to Production DB
-```bash
-# Set production database URL temporarily
-export DATABASE_URL="your-production-database-url"
+1. **Develop locally** with your local database
+2. **Test thoroughly** to ensure the schema is correct
+3. **Deploy code** to production (push to main)
+4. **Run migration** on production database using Neon SQL Editor
 
-# Generate migration
-npx payload migrate:create describe_your_changes
+### Step-by-Step for New Collections
 
-# Review generated migration in src/migrations/
+1. **Create collection locally**:
+   ```bash
+   # Create your collection file in src/collections/
+   # Add it to payload.config.ts
+   # Test locally with npm run dev
+   ```
 
-# Run migration on production
-npx payload migrate
+2. **Generate migration SQL**:
+   ```bash
+   # After confirming it works locally, check the database schema
+   # You can use Payload's generated types or inspect your local DB
+   ```
 
-# Unset the env var
-unset DATABASE_URL
-```
+3. **Deploy and migrate**:
+   - Push code to main branch
+   - Wait for Vercel deployment to complete
+   - Go to Neon Console > SQL Editor
+   - Run the migration SQL
 
-#### Option 2: Direct Migration via Payload Admin
-1. Deploy code first (without migrations in build)
-2. Access /admin on production
-3. Payload will prompt for migrations
-4. Review and apply through UI
+### Known Issues & Solutions
 
-#### Option 3: Vercel Postgres Console
-1. Go to Vercel Dashboard > Storage > Your Database
-2. Click "Query" tab
-3. Run the migration SQL directly
+**Issue**: `payload migrate` command fails with ERR_MODULE_NOT_FOUND
+**Solution**: Run migrations manually via Neon SQL Editor
 
-### Current Migration Status
-- Users collection: ✅ Migrated
-- Media collection: ✅ Migrated (supports images + audio)
-- Voiceovers collection: ⚠️ Needs migration on production
+**Issue**: Migrations can't run during Vercel build
+**Solution**: Run migrations after deployment, not during build
 
-### Pending Production Migration
-Run this SQL on production database:
+### Migration Template
+
+For new collections, use this template:
 ```sql
--- Create enum for voiceover style tags
-CREATE TYPE "enum_voiceovers_style_tags_tag" AS ENUM (
-  'autoriteit',
-  'jeugdig-fris',
-  'kwaliteit',
-  'stoer',
-  'warm-donker',
-  'zakelijk',
-  'custom'
-);
+-- Create enums (if needed)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'enum_[collection]_[field]') THEN
+        CREATE TYPE "enum_[collection]_[field]" AS ENUM ('value1', 'value2');
+    END IF;
+END$$;
 
--- Create enum for voiceover status
-CREATE TYPE "enum_voiceovers_status" AS ENUM (
-  'active',
-  'draft',
-  'more-voices',
-  'archived'
-);
-
--- Create voiceovers table
-CREATE TABLE IF NOT EXISTS "voiceovers" (
+-- Create main table
+CREATE TABLE IF NOT EXISTS "[collection]" (
   "id" serial PRIMARY KEY,
-  "name" varchar NOT NULL,
-  "description" varchar,
-  "image_id" integer,
-  "status" "enum_voiceovers_status" DEFAULT 'draft' NOT NULL,
-  "availability_is_available" boolean DEFAULT true,
-  "availability_unavailable_from" timestamp(3) with time zone,
-  "availability_unavailable_until" timestamp(3) with time zone,
+  -- your fields here
   "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
 );
 
--- Create style tags relation table
-CREATE TABLE IF NOT EXISTS "voiceovers_style_tags" (
+-- Create relation tables (if needed)
+CREATE TABLE IF NOT EXISTS "[collection]_[relation]" (
   "id" serial PRIMARY KEY,
   "_order" integer NOT NULL,
   "_parent_id" integer NOT NULL,
-  "tag" "enum_voiceovers_style_tags_tag" NOT NULL,
-  "custom_tag" varchar
+  -- relation fields
 );
 
--- Create demos relation table
-CREATE TABLE IF NOT EXISTS "voiceovers_demos" (
-  "id" serial PRIMARY KEY,
-  "_order" integer NOT NULL,
-  "_parent_id" integer NOT NULL,
-  "demo_file_id" integer NOT NULL,
-  "title" varchar
-);
-
--- Add foreign key constraints
-ALTER TABLE "voiceovers" ADD CONSTRAINT "voiceovers_image_id_media_id_fk" 
-  FOREIGN KEY ("image_id") REFERENCES "media"("id") ON DELETE SET NULL;
-
-ALTER TABLE "voiceovers_style_tags" ADD CONSTRAINT "voiceovers_style_tags_parent_id_fk" 
-  FOREIGN KEY ("_parent_id") REFERENCES "voiceovers"("id") ON DELETE CASCADE;
-
-ALTER TABLE "voiceovers_demos" ADD CONSTRAINT "voiceovers_demos_parent_id_fk" 
-  FOREIGN KEY ("_parent_id") REFERENCES "voiceovers"("id") ON DELETE CASCADE;
-
-ALTER TABLE "voiceovers_demos" ADD CONSTRAINT "voiceovers_demos_demo_file_id_media_id_fk" 
-  FOREIGN KEY ("demo_file_id") REFERENCES "media"("id") ON DELETE SET NULL;
+-- Add constraints
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '[constraint_name]') THEN
+        ALTER TABLE "[table]" ADD CONSTRAINT "[constraint_name]" 
+        FOREIGN KEY ("[field]") REFERENCES "[ref_table]"("id") ON DELETE CASCADE;
+    END IF;
+END$$;
 
 -- Create indexes
-CREATE INDEX "voiceovers_image_idx" ON "voiceovers" ("image_id");
-CREATE INDEX "voiceovers_status_idx" ON "voiceovers" ("status");
-CREATE INDEX "voiceovers_created_at_idx" ON "voiceovers" ("created_at");
-CREATE INDEX "voiceovers_style_tags_order_idx" ON "voiceovers_style_tags" ("_order");
-CREATE INDEX "voiceovers_style_tags_parent_id_idx" ON "voiceovers_style_tags" ("_parent_id");
-CREATE INDEX "voiceovers_demos_order_idx" ON "voiceovers_demos" ("_order");
-CREATE INDEX "voiceovers_demos_parent_id_idx" ON "voiceovers_demos" ("_parent_id");
-CREATE INDEX "voiceovers_demos_demo_file_idx" ON "voiceovers_demos" ("demo_file_id");
+CREATE INDEX IF NOT EXISTS "[index_name]" ON "[table]" ("[field]");
 ```
+
+### Current Migration Status
+- Users collection: ✅ Migrated
+- Media collection: ✅ Migrated (supports images + audio)
+- Voiceovers collection: ✅ Migrated
 
 ## Build Configuration
 
