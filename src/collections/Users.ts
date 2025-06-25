@@ -9,7 +9,12 @@ const Users: CollectionConfig = {
   access: {
     read: () => true,
     create: ({ req: { user } }) => user?.role === 'admin',
-    update: ({ req: { user } }) => user?.role === 'admin',
+    update: ({ req: { user }, id }) => {
+      // Allow users to update their own profile
+      if (user?.id === id) return true
+      // Allow admins to update any user
+      return user?.role === 'admin'
+    },
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
   fields: [
