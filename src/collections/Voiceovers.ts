@@ -4,7 +4,7 @@ const Voiceovers: CollectionConfig = {
   slug: 'voiceovers',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'profilePhotos', 'status', 'styleTags', 'availability'],
+    defaultColumns: ['name', 'profilePhoto', 'status', 'styleTags', 'availability'],
     listSearchableFields: ['name', 'description'],
     group: 'Content',
   },
@@ -31,18 +31,26 @@ const Voiceovers: CollectionConfig = {
       },
     },
     {
-      name: 'profilePhotos',
+      name: 'profilePhoto',
+      type: 'upload',
+      relationTo: 'voiceover-photos',
+      admin: {
+        description: 'Primary profile photo for this voiceover artist',
+      },
+      validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
+        if (data?.status === 'active' && !value) {
+          return 'A profile photo is required for active voiceovers'
+        }
+        return true
+      },
+    },
+    {
+      name: 'additionalPhotos',
       type: 'relationship',
       relationTo: 'voiceover-photos',
       hasMany: true,
       admin: {
-        description: 'Profile photos for this voiceover artist',
-      },
-      validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
-        if (data?.status === 'active' && (!value || !Array.isArray(value) || value.length === 0)) {
-          return 'At least one profile photo is required for active voiceovers'
-        }
-        return true
+        description: 'Additional profile photos',
       },
     },
     {

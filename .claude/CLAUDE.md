@@ -1,4 +1,4 @@
-# CLAUDE.md - SuperClaude Cfg
+# CLAUDE.md - SuperClaude Cfg + 14voices Project
 
 ## Legend
 | Symbol | Meaning | | Abbrev | Meaning |
@@ -17,8 +17,31 @@
 Philosophy: Code>docs | Simple→complex | Security first
 Communication: Concise format | Symbols: →|&:» | Bullets>prose
 Workflow: TodoRead()→TodoWrite(3+)→Execute | Update immediate
-Stack: Next.js|React|TS + Payload CMS|PostgreSQL + Git|ESLint|Tailwind
+Stack: Next.js 15.3.4|React 19|TS + Payload CMS v3 beta|PostgreSQL + Git|ESLint|Tailwind
 Commands: /user:<command> [flags] | /task:<action> | Ex: /user:build --init
+Runtime: Bun (dev) | Node.js (prod) | Vercel deployment
+```
+
+## 14voices Project Specific
+
+### BUILD BEFORE PUSH [C:10]
+```yaml
+Required: npm run build → Success → git push
+Why: TypeScript errors | ESLint issues | Build failures → Production breaks
+```
+
+### Media Architecture
+```yaml
+Collections: VoiceoverPhotos|VoiceoverDemos|Scripts|Invoices|UserAvatars|Media(legacy)
+Auto-fill: Demos → "[Name] Demo [Type] [Year]" | Narratief (Dutch)
+Support: AVIF images | PDF/DOC/Pages scripts | Secure invoices
+```
+
+### Payload v3 Beta Issues
+```yaml
+Components: 'use client' required | Server hooks > client components
+Imports: Check v3 paths | Component issues common
+Access: Type assertions needed | (fn as Access)
 ```
 
 ## Thinking Modes
