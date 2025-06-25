@@ -10,6 +10,8 @@ const VoiceoverDemos: CollectionConfig = {
     useAsTitle: 'title',
     group: 'Media',
     description: 'Audio demo samples from voiceover artists',
+    defaultColumns: ['title', 'voiceoverArtist', 'demoType', 'audioPreview'],
+    listSearchableFields: ['title'],
   },
   access: {
     read: () => true, // Public access for demos
@@ -118,6 +120,25 @@ const VoiceoverDemos: CollectionConfig = {
       defaultValue: 0,
       admin: {
         description: 'Order in which demos appear (lower numbers first)',
+      },
+    },
+    {
+      name: 'audioPlayer',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: {
+          Field: '/components/admin/AudioPlayerField',
+        },
+      },
+    },
+    {
+      name: 'audioPreview',
+      type: 'ui',
+      admin: {
+        components: {
+          Cell: '/components/admin/AudioCell',
+        },
       },
     },
   ],
