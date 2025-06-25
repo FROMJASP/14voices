@@ -8,6 +8,11 @@ import sharp from 'sharp'
 import Users from './collections/Users'
 import Media from './collections/Media'
 import Voiceovers from './collections/Voiceovers'
+import VoiceoverPhotos from './collections/VoiceoverPhotos'
+import VoiceoverDemos from './collections/VoiceoverDemos'
+import UserAvatars from './collections/UserAvatars'
+import Scripts from './collections/Scripts'
+import Invoices from './collections/Invoices'
 
 export default buildConfig({
   admin: {
@@ -16,7 +21,16 @@ export default buildConfig({
       baseDir: process.cwd(),
     },
   },
-  collections: [Users, Media, Voiceovers],
+  collections: [
+    Users,
+    Media, // Keep for backward compatibility
+    Voiceovers,
+    VoiceoverPhotos,
+    VoiceoverDemos,
+    UserAvatars,
+    Scripts,
+    Invoices,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -40,6 +54,11 @@ export default buildConfig({
           vercelBlobStorage({
             collections: {
               media: true,
+              'voiceover-photos': true,
+              'voiceover-demos': true,
+              'user-avatars': true,
+              scripts: true,
+              invoices: true,
             },
             token: process.env.BLOB_READ_WRITE_TOKEN,
           }),

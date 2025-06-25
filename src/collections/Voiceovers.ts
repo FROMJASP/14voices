@@ -29,20 +29,16 @@ const Voiceovers: CollectionConfig = {
       },
     },
     {
-      name: 'image',
-      type: 'upload',
-      relationTo: 'media',
+      name: 'profilePhotos',
+      type: 'relationship',
+      relationTo: 'voiceover-photos',
+      hasMany: true,
       admin: {
-        description: 'Profile image (required for active voiceovers)',
-      },
-      filterOptions: {
-        mimeType: {
-          contains: 'image',
-        },
+        description: 'Profile photos for this voiceover artist',
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
-        if (data?.status === 'active' && !value) {
-          return 'Image is required for active voiceovers'
+        if (data?.status === 'active' && (!value || !Array.isArray(value) || value.length === 0)) {
+          return 'At least one profile photo is required for active voiceovers'
         }
         return true
       },
@@ -82,35 +78,16 @@ const Voiceovers: CollectionConfig = {
       ],
     },
     {
-      name: 'demos',
-      type: 'array',
-      maxRows: 5,
+      name: 'audioDemos',
+      type: 'relationship',
+      relationTo: 'voiceover-demos',
+      hasMany: true,
       admin: {
-        description: 'Upload demo files (max 5 files, 5MB each)',
+        description: 'Audio demo samples for this voiceover artist',
       },
-      fields: [
-        {
-          name: 'demoFile',
-          type: 'upload',
-          relationTo: 'media',
-          required: true,
-          filterOptions: {
-            mimeType: {
-              contains: 'audio',
-            },
-          },
-        },
-        {
-          name: 'title',
-          type: 'text',
-          admin: {
-            description: 'Optional title for this demo',
-          },
-        },
-      ],
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
         if (data?.status === 'active' && (!value || !Array.isArray(value) || value.length === 0)) {
-          return 'At least one demo is required for active voiceovers'
+          return 'At least one audio demo is required for active voiceovers'
         }
         return true
       },
