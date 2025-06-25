@@ -1,10 +1,14 @@
 import type { CollectionConfig } from 'payload'
+import ProfilePhotoCell from '../components/admin/ProfilePhotoCell'
+import StyleTagsCell from '../components/admin/StyleTagsCell'
 
 const Voiceovers: CollectionConfig = {
   slug: 'voiceovers',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'status', 'styleTags'],
+    defaultColumns: ['name', 'profilePhotos', 'status', 'styleTags', 'availability'],
+    listSearchableFields: ['name', 'description'],
+    group: 'Content',
   },
   access: {
     read: () => true,
@@ -35,6 +39,9 @@ const Voiceovers: CollectionConfig = {
       hasMany: true,
       admin: {
         description: 'Profile photos for this voiceover artist',
+        components: {
+          Cell: ProfilePhotoCell,
+        },
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
         if (data?.status === 'active' && (!value || !Array.isArray(value) || value.length === 0)) {
@@ -50,6 +57,9 @@ const Voiceovers: CollectionConfig = {
       minRows: 3,
       admin: {
         description: 'Select at least 3 style tags',
+        components: {
+          Cell: StyleTagsCell,
+        },
       },
       fields: [
         {
@@ -111,6 +121,14 @@ const Voiceovers: CollectionConfig = {
       type: 'group',
       name: 'availability',
       label: 'Availability Settings',
+      admin: {
+        components: {
+          Cell: ({ data }) => {
+            if (!data) return 'Available'
+            return data.isAvailable ? '✅ Available' : '❌ Unavailable'
+          },
+        },
+      },
       fields: [
         {
           name: 'isAvailable',
