@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import AutoFillDemoTitle from '../components/admin/AutoFillDemoTitle'
 
 const VoiceoverDemos: CollectionConfig = {
   slug: 'voiceover-demos',
@@ -19,20 +20,12 @@ const VoiceoverDemos: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
-      required: true,
-      label: 'Demo Title',
-      admin: {
-        description: 'Descriptive title (e.g., "Commercial Demo Reel 2024")',
-      },
-    },
-    {
       name: 'voiceoverArtist',
       type: 'relationship',
       relationTo: 'voiceovers',
       required: true,
       hasMany: false,
+      label: 'Voiceover',
       admin: {
         description: 'The voiceover artist this demo belongs to',
       },
@@ -48,6 +41,18 @@ const VoiceoverDemos: CollectionConfig = {
       ],
       admin: {
         description: 'Category of voice work demonstrated',
+      },
+    },
+    {
+      name: 'title',
+      type: 'text',
+      required: true,
+      label: 'Demo Title',
+      admin: {
+        description: 'Descriptive title (auto-filled based on demo type)',
+        components: {
+          Field: AutoFillDemoTitle,
+        },
       },
     },
     {
