@@ -13,10 +13,10 @@
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.0.0-beta.135",
-    "@payloadcms/email-resend": "^3.43.0",
+    "@payloadcms/email-resend": "^3.0.0-beta.135",
     "@payloadcms/next": "^3.0.0-beta.135",
     "@payloadcms/richtext-lexical": "^3.0.0-beta.135",
-    "@payloadcms/storage-vercel-blob": "^3.43.0",
+    "@payloadcms/storage-vercel-blob": "^3.0.0-beta.135",
     "@types/pg": "^8.15.4",
     "@vercel/postgres": "^0.10.0",
     "motion": "^12.19.1",
