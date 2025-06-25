@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Access } from 'payload'
 
 const Scripts: CollectionConfig = {
   slug: 'scripts',
@@ -12,7 +12,7 @@ const Scripts: CollectionConfig = {
     description: 'Scripts uploaded by clients for voiceover work',
   },
   access: {
-    read: ({ req: { user } }) => {
+    read: (({ req: { user } }) => {
       if (!user) return false
       
       // Admins can read all scripts
@@ -25,15 +25,15 @@ const Scripts: CollectionConfig = {
           { assignedVoiceover: { equals: user.id } },
         ],
       }
-    },
+    }) as Access,
     create: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => {
+    update: (({ req: { user } }) => {
       if (!user) return false
       if (user.role === 'admin') return true
       
       // Only owner can update their scripts
       return { uploadedBy: { equals: user.id } }
-    },
+    }) as Access,
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
   fields: [
@@ -211,27 +211,6 @@ const Scripts: CollectionConfig = {
         }
         
         return args
-      },
-    ],
-    afterRead: [
-      async ({ doc, req }) => {
-        // Log script access for audit trail
-        if (req.user && doc.id) {
-          const accessLog = doc.accessLog || []
-          accessLog.push({
-            accessedBy: req.user.id,
-            accessedAt: new Date().toISOString(),
-            action: 'viewed',
-          })
-          
-          // Update without triggering hooks to avoid infinite loop
-          await req.payload.db.collections.scripts.updateOne(
-            { _id: doc.id },
-            { $set: { accessLog } }
-          )
-        }
-        
-        return doc
       },
     ],
   },

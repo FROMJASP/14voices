@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Access } from 'payload'
 
 const Invoices: CollectionConfig = {
   slug: 'invoices',
@@ -12,7 +12,7 @@ const Invoices: CollectionConfig = {
     description: 'Invoice documents with restricted access',
   },
   access: {
-    read: ({ req: { user } }) => {
+    read: (({ req: { user } }) => {
       if (!user) return false
       
       // Admins can read all invoices
@@ -25,7 +25,7 @@ const Invoices: CollectionConfig = {
           { provider: { equals: user.id } },
         ],
       }
-    },
+    }) as Access,
     create: ({ req: { user } }) => user?.role === 'admin',
     update: ({ req: { user } }) => user?.role === 'admin',
     delete: ({ req: { user } }) => user?.role === 'admin',
@@ -154,10 +154,6 @@ const Invoices: CollectionConfig = {
           required: true,
         },
         {
-          name: 'ipAddress',
-          type: 'text',
-        },
-        {
           name: 'action',
           type: 'select',
           options: [
@@ -211,31 +207,14 @@ const Invoices: CollectionConfig = {
       },
     ],
     afterRead: [
-      async ({ req }) => {
-        // Log invoice access for compliance
-        if (req.user && doc.id && req.user.role !== 'admin') {
-          const accessLog = doc.accessLog || []
-          accessLog.push({
-            accessedBy: req.user.id,
-            accessedAt: new Date().toISOString(),
-            ipAddress: req.ip,
-            action: 'viewed',
+      async ({ doc, req }) => {
+        // Update status to 'viewed' if it was 'sent' and not admin
+        if (req.user && doc.id && req.user.role !== 'admin' && doc.status === 'sent') {
+          await req.payload.update({
+            collection: 'invoices',
+            id: doc.id,
+            data: { status: 'viewed' },
           })
-          
-          // Update without triggering hooks
-          await req.payload.db.collections.invoices.updateOne(
-            { _id: doc.id },
-            { $set: { accessLog } }
-          )
-          
-          // Update status to 'viewed' if it was 'sent'
-          if (doc.status === 'sent') {
-            await req.payload.update({
-              collection: 'invoices',
-              id: doc.id,
-              data: { status: 'viewed' },
-            })
-          }
         }
         
         return doc

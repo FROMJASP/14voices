@@ -117,7 +117,7 @@ const UserAvatars: CollectionConfig = {
     beforeOperation: [
       async ({ args, operation, req }) => {
         // Ensure users can only create/update their own avatar
-        if ((operation === 'create' || operation === 'update') && req.user?.role !== 'admin') {
+        if ((operation === 'create' || operation === 'update') && req.user?.role !== 'admin' && req.user) {
           args.data = {
             ...args.data,
             user: req.user.id,
