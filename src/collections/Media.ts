@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 const Media: CollectionConfig = {
   slug: 'media',
