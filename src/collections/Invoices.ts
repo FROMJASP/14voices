@@ -179,7 +179,7 @@ const Invoices: CollectionConfig = {
     filesRequiredOnCreate: false,
     mimeTypes: ['application/pdf'],
     disableLocalStorage: true, // Force blob storage for security
-    adminThumbnail: ({ doc }) => `/admin/assets/pdf-icon.svg`,
+    adminThumbnail: () => `/admin/assets/pdf-icon.svg`,
   },
   hooks: {
     beforeOperation: [
