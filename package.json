@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "next lint",
     "payload": "payload",
-    "seed": "tsx src/seed/index.ts"
+    "seed": "tsx src/seed/index.ts",
+    "postinstall": "node scripts/postinstall.js"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.0.0-beta.135",
