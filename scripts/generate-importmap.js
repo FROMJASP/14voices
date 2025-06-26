@@ -5,12 +5,8 @@
  * when database is not available during build time
  */
 
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const fs = require('fs')
+const path = require('path')
 
 const importMapPath = path.join(__dirname, '../src/app/(payload)/admin/importMap.js')
 
