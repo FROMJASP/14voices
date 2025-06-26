@@ -322,6 +322,10 @@ export class ResendMarketingService {
     try {
       const contacts = await this.listContacts(audienceId)
       
+      if (!contacts || !contacts.data) {
+        throw new Error('No contacts data available')
+      }
+      
       const csvData = [
         ['Email', 'First Name', 'Last Name', 'Subscribed', 'Created At'].join(','),
         ...contacts.data.map(contact => 
