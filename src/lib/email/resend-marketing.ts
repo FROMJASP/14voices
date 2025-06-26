@@ -302,7 +302,11 @@ export class ResendMarketingService {
           ...contact,
           audienceId,
         })
-        results.success.push(result)
+        if (result && result.id) {
+          results.success.push(result)
+        } else {
+          throw new Error('No contact ID returned')
+        }
       } catch (error) {
         results.failed.push({
           email: contact.email,
