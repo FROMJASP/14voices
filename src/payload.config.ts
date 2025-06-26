@@ -19,6 +19,10 @@ import EmailTemplates from './collections/EmailTemplates'
 import EmailSequences from './collections/EmailSequences'
 import EmailLogs from './collections/EmailLogs'
 import EmailJobs from './collections/EmailJobs'
+import EmailCampaigns from './collections/EmailCampaigns'
+import EmailAudiences from './collections/EmailAudiences'
+import EmailContacts from './collections/EmailContacts'
+import BlogPosts from './collections/BlogPosts'
 import { EmailSettings } from './globals/EmailSettings'
 import path from 'path'
 
@@ -39,11 +43,15 @@ export default buildConfig({
     Bookings,
     Scripts,
     Invoices,
+    BlogPosts,
     EmailComponents,
     EmailTemplates,
     EmailSequences,
     EmailLogs,
     EmailJobs,
+    EmailCampaigns,
+    EmailAudiences,
+    EmailContacts,
   ],
   globals: [
     EmailSettings,
