@@ -204,21 +204,33 @@ export class ResendMarketingService {
 
   async sendBroadcast(options: SendBroadcastOptions) {
     try {
-      const response = await this.resend.broadcasts.send({
+      // First create the broadcast
+      const createResponse = await this.resend.broadcasts.create({
         audience_id: options.audienceId,
         from: options.from,
         subject: options.subject,
         html: options.html,
         text: options.text,
         ...(options.replyTo && { reply_to: options.replyTo }),
-        ...(options.scheduledAt && { scheduled_at: options.scheduledAt }),
       })
 
-      if (response.error) {
-        throw new Error(response.error.message)
+      if (createResponse.error) {
+        throw new Error(createResponse.error.message)
       }
 
-      return response.data
+      if (!createResponse.data?.id) {
+        throw new Error('No broadcast ID returned')
+      }
+
+      // Then send it
+      const sendOptions = options.scheduledAt ? { scheduled_at: options.scheduledAt } : undefined
+      const sendResponse = await this.resend.broadcasts.send(createResponse.data.id, sendOptions)
+
+      if (sendResponse.error) {
+        throw new Error(sendResponse.error.message)
+      }
+
+      return sendResponse.data
     } catch (error) {
       console.error('Failed to send broadcast:', error)
       throw error
