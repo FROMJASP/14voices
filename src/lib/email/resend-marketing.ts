@@ -206,12 +206,12 @@ export class ResendMarketingService {
     try {
       // First create the broadcast
       const createResponse = await this.resend.broadcasts.create({
-        audience_id: options.audienceId,
+        audienceId: options.audienceId,
         from: options.from,
         subject: options.subject,
         html: options.html,
         text: options.text,
-        ...(options.replyTo && { reply_to: options.replyTo }),
+        ...(options.replyTo && { replyTo: options.replyTo }),
       })
 
       if (createResponse.error) {
@@ -223,7 +223,7 @@ export class ResendMarketingService {
       }
 
       // Then send it
-      const sendOptions = options.scheduledAt ? { scheduled_at: options.scheduledAt } : undefined
+      const sendOptions = options.scheduledAt ? { scheduledAt: options.scheduledAt } : undefined
       const sendResponse = await this.resend.broadcasts.send(createResponse.data.id, sendOptions)
 
       if (sendResponse.error) {
