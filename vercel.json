@@ -1,8 +1,5 @@
 {
-  "installCommand": "npm install --include=optional --force",
+  "installCommand": "npm install --force",
   "buildCommand": "npm run build:vercel",
-  "framework": "nextjs",
-  "env": {
-    "VERCEL_BUILD": "1"
-  }
+  "framework": "nextjs"
 }
