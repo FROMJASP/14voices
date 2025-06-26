@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Where } from 'payload'
 import { formatSlug } from '../utilities/formatSlug'
 import { blogEditorConfig } from '../fields/lexical/blogEditorConfig'
 
@@ -19,26 +19,38 @@ const BlogPosts: CollectionConfig = {
   access: {
     read: ({ req: { user } }) => {
       if (user?.role === 'admin') return true
+      
+      // If user is logged in, show their posts and published posts
+      if (user) {
+        const query: Where = {
+          or: [
+            {
+              status: {
+                equals: 'published',
+              },
+            },
+            {
+              author: {
+                equals: user.id,
+              },
+            },
+          ],
+        }
+        return query
+      }
+      
+      // If no user, only show published posts
       return {
-        _or: [
-          {
-            status: {
-              equals: 'published',
-            },
-          },
-          {
-            'author.id': {
-              equals: user?.id,
-            },
-          },
-        ],
+        status: {
+          equals: 'published',
+        },
       }
     },
     create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
     update: ({ req: { user } }) => {
       if (user?.role === 'admin') return true
       return {
-        'author.id': {
+        author: {
           equals: user?.id,
         },
       }
@@ -352,10 +364,11 @@ const BlogPosts: CollectionConfig = {
     {
       path: '/increment-views',
       method: 'post',
-      handler: async (req, res) => {
-        const { id } = req.body
+      handler: async (req) => {
+        const body = req.json ? await req.json() : {}
+        const { id } = body
         if (!id) {
-          return res.status(400).json({ error: 'Post ID required' })
+          return Response.json({ error: 'Post ID required' }, { status: 400 })
         }
         try {
           const post = await req.payload.findByID({
@@ -363,7 +376,7 @@ const BlogPosts: CollectionConfig = {
             id,
           })
           if (!post) {
-            return res.status(404).json({ error: 'Post not found' })
+            return Response.json({ error: 'Post not found' }, { status: 404 })
           }
           await req.payload.update({
             collection: 'blog-posts',
@@ -372,9 +385,9 @@ const BlogPosts: CollectionConfig = {
               views: (post.views || 0) + 1,
             },
           })
-          return res.json({ success: true })
+          return Response.json({ success: true })
         } catch {
-          return res.status(500).json({ error: 'Failed to increment views' })
+          return Response.json({ error: 'Failed to increment views' }, { status: 500 })
         }
       },
     },

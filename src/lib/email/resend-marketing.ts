@@ -14,6 +14,7 @@ export interface CreateContactOptions {
 
 export interface UpdateContactOptions {
   id: string
+  audienceId: string
   firstName?: string
   lastName?: string
   unsubscribed?: boolean
@@ -134,6 +135,7 @@ export class ResendMarketingService {
     try {
       const response = await this.resend.contacts.update({
         id: options.id,
+        audienceId: options.audienceId,
         firstName: options.firstName,
         lastName: options.lastName,
         unsubscribed: options.unsubscribed,
@@ -167,9 +169,9 @@ export class ResendMarketingService {
     }
   }
 
-  async getContact(contactId: string) {
+  async getContact(contactId: string, audienceId: string) {
     try {
-      const response = await this.resend.contacts.get(contactId)
+      const response = await this.resend.contacts.get({ id: contactId, audienceId })
 
       if (response.error) {
         throw new Error(response.error.message)

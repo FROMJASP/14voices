@@ -108,6 +108,7 @@ export async function POST(req: NextRequest) {
         } else {
           await resendMarketing.updateContact({
             id: contact.resendContactId,
+            audienceId: resendAudienceId,
             firstName: contact.firstName,
             lastName: contact.lastName,
             unsubscribed: !contact.subscribed,
