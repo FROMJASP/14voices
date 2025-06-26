@@ -11,7 +11,7 @@ import Voiceovers from './collections/Voiceovers'
 import VoiceoverPhotos from './collections/VoiceoverPhotos'
 import VoiceoverDemos from './collections/VoiceoverDemos'
 import UserAvatars from './collections/UserAvatars'
-import { Scripts } from './payload/collections/Scripts'
+import Scripts from './collections/Scripts'
 import { Bookings } from './payload/collections/Bookings'
 import Invoices from './collections/Invoices'
 import EmailComponents from './collections/EmailComponents'
@@ -23,7 +23,18 @@ import EmailCampaigns from './collections/EmailCampaigns'
 import EmailAudiences from './collections/EmailAudiences'
 import EmailContacts from './collections/EmailContacts'
 import BlogPosts from './collections/BlogPosts'
+import Pages from './collections/Pages'
+import Blocks from './collections/Blocks'
+import Layouts from './collections/Layouts'
+import Sections from './collections/Sections'
+import Forms from './collections/Forms'
+import FormSubmissions from './collections/FormSubmissions'
+import Testimonials from './collections/Testimonials'
+import Team from './collections/Team'
+import Portfolio from './collections/Portfolio'
 import { EmailSettings } from './globals/EmailSettings'
+import { Navigation } from './globals/Navigation'
+import { SiteSettings } from './globals/SiteSettings'
 import path from 'path'
 
 export default buildConfig({
@@ -44,6 +55,15 @@ export default buildConfig({
     Scripts,
     Invoices,
     BlogPosts,
+    Pages,
+    Blocks,
+    Layouts,
+    Sections,
+    Forms,
+    FormSubmissions,
+    Testimonials,
+    Team,
+    Portfolio,
     EmailComponents,
     EmailTemplates,
     EmailSequences,
@@ -55,6 +75,8 @@ export default buildConfig({
   ],
   globals: [
     EmailSettings,
+    Navigation,
+    SiteSettings,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

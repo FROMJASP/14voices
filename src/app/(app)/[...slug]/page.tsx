@@ -1,17 +1,43 @@
-import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import configPromise from '@payload-config'
 import { PageRenderer } from '@/components/PageRenderer'
 import type { Page } from '@/payload-types'
 
-export async function generateMetadata() {
+interface PageProps {
+  params: Promise<{
+    slug: string[]
+  }>
+}
+
+export async function generateStaticParams() {
+  const payload = await getPayloadHMR({ config: configPromise })
+  
+  const pages = await payload.find({
+    collection: 'pages',
+    where: {
+      status: {
+        equals: 'published',
+      },
+    },
+    limit: 100,
+  })
+
+  return pages.docs.map((page) => ({
+    slug: (page as Page).slug === 'home' ? [] : (page as Page).slug.split('/'),
+  }))
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug: slugArray } = await params
+  const slug = slugArray?.join('/') || 'home'
   const payload = await getPayloadHMR({ config: configPromise })
   
   const pages = await payload.find({
     collection: 'pages',
     where: {
       slug: {
-        equals: 'home',
+        equals: slug,
       },
       status: {
         equals: 'published',
@@ -23,10 +49,7 @@ export async function generateMetadata() {
   const page = pages.docs[0] as Page | undefined
 
   if (!page) {
-    return {
-      title: '14voices',
-      description: 'Professional voice-over services',
-    }
+    return {}
   }
 
   const title = page.meta?.title || page.title
@@ -53,14 +76,16 @@ export async function generateMetadata() {
   }
 }
 
-export default async function HomePage() {
+export default async function Page({ params }: PageProps) {
+  const { slug: slugArray } = await params
+  const slug = slugArray?.join('/') || 'home'
   const payload = await getPayloadHMR({ config: configPromise })
   
   const pages = await payload.find({
     collection: 'pages',
     where: {
       slug: {
-        equals: 'home',
+        equals: slug,
       },
       status: {
         equals: 'published',
@@ -72,22 +97,8 @@ export default async function HomePage() {
 
   const page = pages.docs[0] as Page | undefined
 
-  // If no home page exists, show a temporary landing page
   if (!page) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Welcome to 14voices</h1>
-          <p className="text-gray-600 mb-8">Site under construction. Please create a home page in the admin panel.</p>
-          <Link
-            href="/admin"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Go to Admin
-          </Link>
-        </div>
-      </div>
-    )
+    notFound()
   }
 
   return <PageRenderer page={page} />
