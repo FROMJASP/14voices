@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { afterUserCreate } from '@/hooks/email-triggers'
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -35,7 +36,48 @@ const Users: CollectionConfig = {
         update: ({ req: { user } }) => user?.role === 'admin',
       },
     },
+    {
+      name: 'emailPreferences',
+      type: 'group',
+      fields: [
+        {
+          name: 'unsubscribed',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'User has unsubscribed from all emails',
+          },
+        },
+        {
+          name: 'marketing',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'Receive marketing emails',
+          },
+        },
+        {
+          name: 'transactional',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'Receive transactional emails (bookings, invoices)',
+          },
+        },
+        {
+          name: 'updates',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'Receive product updates and announcements',
+          },
+        },
+      ],
+    },
   ],
+  hooks: {
+    afterCreate: [afterUserCreate],
+  },
 }
 
 export default Users

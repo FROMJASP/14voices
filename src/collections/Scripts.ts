@@ -1,5 +1,4 @@
 import type { CollectionConfig, Access } from 'payload'
-import { beforeUploadHook } from '../hooks/secureFilename'
 
 const Scripts: CollectionConfig = {
   slug: 'scripts',
@@ -208,7 +207,6 @@ const Scripts: CollectionConfig = {
   },
   hooks: {
     beforeOperation: [
-      beforeUploadHook,
       async ({ args, operation }) => {
         if (operation === 'create' && args.req?.file) {
           const file = args.req.file

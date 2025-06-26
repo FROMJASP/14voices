@@ -10,18 +10,48 @@ export const generateSecureFilename = (originalFilename: string, userId: string)
   return `${hash}.${ext}`
 }
 
-export const beforeUploadHook = async ({ req, data, operation }: any) => {
-  if (operation === 'create' && req.file) {
-    const userId = req.user?.id || 'anonymous'
-    const secureFilename = generateSecureFilename(req.file.name, userId)
+export const beforeUploadHook = async ({ args, req, operation }: {
+  args?: {
+    data?: Record<string, unknown>
+    req?: {
+      file?: {
+        name: string
+        filename?: string
+      }
+      user?: {
+        id: string
+      }
+    }
+  }
+  req: {
+    file?: {
+      name: string
+      filename?: string
+    }
+    user?: {
+      id: string
+    }
+  }
+  operation: string
+  collection?: unknown
+  context?: unknown
+}) => {
+  const data = args?.data || {}
+  const file = args?.req?.file || req?.file
+  
+  if (operation === 'create' && file) {
+    const userId = args?.req?.user?.id || req?.user?.id || 'anonymous'
+    const secureFilename = generateSecureFilename(file.name, userId)
     
     // Store original filename in data for reference
-    data.originalFilename = req.file.name
+    data.originalFilename = file.name
     
     // Update the file object with secure filename
-    req.file.name = secureFilename
-    req.file.filename = secureFilename
+    file.name = secureFilename
+    if (file.filename !== undefined) {
+      file.filename = secureFilename
+    }
   }
   
-  return data
+  return args || { data }
 }

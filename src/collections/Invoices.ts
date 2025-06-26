@@ -1,5 +1,4 @@
 import type { CollectionConfig, Access } from 'payload'
-import { beforeUploadHook } from '../hooks/secureFilename'
 
 const Invoices: CollectionConfig = {
   slug: 'invoices',
@@ -188,7 +187,6 @@ const Invoices: CollectionConfig = {
   },
   hooks: {
     beforeOperation: [
-      beforeUploadHook,
       async ({ args, operation }) => {
         if (operation === 'create' && args.req?.file) {
           const file = args.req.file

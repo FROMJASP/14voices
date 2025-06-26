@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { beforeUploadHook } from '../hooks/secureFilename'
 
 const UserAvatars: CollectionConfig = {
   slug: 'user-avatars',
@@ -124,7 +123,6 @@ const UserAvatars: CollectionConfig = {
   },
   hooks: {
     beforeOperation: [
-      beforeUploadHook,
       async ({ args, operation, req }) => {
         // Ensure users can only create/update their own avatar
         if ((operation === 'create' || operation === 'update') && req.user?.role !== 'admin' && req.user) {

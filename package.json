@@ -19,6 +19,7 @@
     "@payloadcms/richtext-lexical": "^3.0.0-beta.135",
     "@payloadcms/storage-vercel-blob": "^3.0.0-beta.135",
     "@types/pg": "^8.15.4",
+    "@uploadthing/react": "^7.3.2",
     "@vercel/postgres": "^0.10.0",
     "lucide-react": "^0.523.0",
     "motion": "^12.19.1",
@@ -28,7 +29,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^4.6.0",
-    "sharp": "^0.34.2"
+    "sharp": "^0.34.2",
+    "uploadthing": "^7.7.3",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -11,14 +11,22 @@ import Voiceovers from './collections/Voiceovers'
 import VoiceoverPhotos from './collections/VoiceoverPhotos'
 import VoiceoverDemos from './collections/VoiceoverDemos'
 import UserAvatars from './collections/UserAvatars'
-import Scripts from './collections/Scripts'
+import { Scripts } from './payload/collections/Scripts'
+import { Bookings } from './payload/collections/Bookings'
 import Invoices from './collections/Invoices'
+import EmailComponents from './collections/EmailComponents'
+import EmailTemplates from './collections/EmailTemplates'
+import EmailSequences from './collections/EmailSequences'
+import EmailLogs from './collections/EmailLogs'
+import EmailJobs from './collections/EmailJobs'
+import { EmailSettings } from './globals/EmailSettings'
+import path from 'path'
 
 export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: {
-      baseDir: process.cwd(),
+      baseDir: path.resolve(process.cwd(), 'src'),
     },
   },
   collections: [
@@ -28,8 +36,17 @@ export default buildConfig({
     VoiceoverPhotos,
     VoiceoverDemos,
     UserAvatars,
+    Bookings,
     Scripts,
     Invoices,
+    EmailComponents,
+    EmailTemplates,
+    EmailSequences,
+    EmailLogs,
+    EmailJobs,
+  ],
+  globals: [
+    EmailSettings,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -56,9 +73,6 @@ export default buildConfig({
               media: true,
               'voiceover-photos': true,
               'voiceover-demos': true,
-              'user-avatars': true,
-              scripts: true,
-              invoices: true,
             },
             token: process.env.BLOB_READ_WRITE_TOKEN,
           }),
