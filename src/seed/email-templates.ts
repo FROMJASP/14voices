@@ -272,15 +272,18 @@ export async function seedEmailTemplates(payload: Payload) {
 }
 
 // Run this script with: tsx src/seed/email-templates.ts
-if (require.main === module) {
-  const { getPayload } = require('../utilities/payload')
-  
+import { fileURLToPath } from 'url'
+import { getPayload } from '../utilities/payload.js'
+
+const __filename = fileURLToPath(import.meta.url)
+
+if (process.argv[1] === __filename) {
   getPayload()
-    .then(async (payload) => {
+    .then(async (payload: Payload) => {
       await seedEmailTemplates(payload)
       process.exit(0)
     })
-    .catch((error) => {
+    .catch((error: unknown) => {
       console.error('Seed error:', error)
       process.exit(1)
     })

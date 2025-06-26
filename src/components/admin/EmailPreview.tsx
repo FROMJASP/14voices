@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useField } from '@payloadcms/ui'
 import { Button } from '@payloadcms/ui'
 
@@ -28,7 +28,7 @@ export const EmailPreview: React.FC = () => {
           subject,
           header,
           footer,
-          testData: testData ? JSON.parse(testData) : {},
+          testData: testData && typeof testData === 'string' ? JSON.parse(testData) : {},
         }),
       })
       
@@ -55,7 +55,7 @@ export const EmailPreview: React.FC = () => {
           subject,
           header,
           footer,
-          testData: testData ? JSON.parse(testData) : {},
+          testData: testData && typeof testData === 'string' ? JSON.parse(testData) : {},
         }),
       })
       
@@ -107,7 +107,7 @@ export const EmailPreview: React.FC = () => {
             backgroundColor: '#f5f5f5',
             marginBottom: '10px'
           }}>
-            <strong>Subject:</strong> {subject}
+            <strong>Subject:</strong> {subject as string || 'No subject'}
           </div>
           
           <div style={{

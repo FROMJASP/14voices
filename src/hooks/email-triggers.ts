@@ -1,7 +1,7 @@
-import { CollectionAfterChangeHook, CollectionAfterCreateHook } from 'payload'
+import { CollectionAfterChangeHook } from 'payload'
 import { triggerEmailSequence } from '@/lib/email/sequences'
 
-export const afterUserCreate: CollectionAfterCreateHook = async ({
+export const afterUserCreate: CollectionAfterChangeHook = async ({
   doc,
   req,
   operation,
@@ -23,7 +23,7 @@ export const afterUserCreate: CollectionAfterCreateHook = async ({
   }
 }
 
-export const afterBookingCreate: CollectionAfterCreateHook = async ({
+export const afterBookingCreate: CollectionAfterChangeHook = async ({
   doc,
   req,
   operation,
@@ -41,7 +41,6 @@ export const afterBookingCreate: CollectionAfterCreateHook = async ({
         await sendEmail({
           templateKey: 'booking-confirmation',
           recipient: {
-            id: user.id,
             email: user.email,
             name: user.name,
           },
@@ -79,7 +78,6 @@ export const afterScriptUpload: CollectionAfterChangeHook = async ({
         await sendEmail({
           templateKey: 'script-received',
           recipient: {
-            id: booking.user.id,
             email: booking.user.email,
             name: booking.user.name,
           },

@@ -3,7 +3,7 @@ import { Payload } from 'payload'
 interface TriggerSequenceOptions {
   sequenceKey: string
   userId: string
-  variables?: Record<string, any>
+  variables?: Record<string, string | number | boolean>
   payload: Payload
 }
 
@@ -27,7 +27,7 @@ function calculateScheduleDate(delayValue: number, delayUnit: string): Date {
 export async function triggerEmailSequence(options: TriggerSequenceOptions): Promise<void> {
   const { sequenceKey, userId, variables = {}, payload } = options
   
-  const sequence = await payload.findOne({
+  const sequences = await payload.find({
     collection: 'email-sequences',
     where: {
       key: {
@@ -39,6 +39,8 @@ export async function triggerEmailSequence(options: TriggerSequenceOptions): Pro
     },
     depth: 2,
   })
+  
+  const sequence = sequences.docs[0]
   
   if (!sequence) {
     throw new Error(`Email sequence with key "${sequenceKey}" not found`)
@@ -170,7 +172,6 @@ export async function processScheduledEmails(payload: Payload): Promise<void> {
         recipient: {
           email: job.recipient.email,
           name: job.recipient.name,
-          id: job.recipient.id,
         },
         tags: job.sequence ? [`sequence:${job.sequence.key}`] : [],
         payload,
@@ -202,7 +203,7 @@ export async function processScheduledEmails(payload: Payload): Promise<void> {
           status: 'failed',
           attempts: (job.attempts || 0) + 1,
           lastAttempt: now,
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
         },
       })
     }

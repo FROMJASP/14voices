@@ -65,7 +65,14 @@ export async function GET(req: NextRequest) {
     const bounceRate = totalSent > 0 ? (totalBounced / totalSent) * 100 : 0
     
     // Calculate stats by template
-    const templateMap = new Map<string, any>()
+    interface TemplateStats {
+      templateName: string
+      sent: number
+      delivered: number
+      opened: number
+      clicked: number
+    }
+    const templateMap = new Map<string, TemplateStats>()
     
     emailLogs.docs.forEach(log => {
       const templateId = log.template?.id || 'unknown'
@@ -82,16 +89,18 @@ export async function GET(req: NextRequest) {
       }
       
       const stats = templateMap.get(templateId)
-      stats.sent++
-      
-      if (['delivered', 'opened', 'clicked'].includes(log.status)) {
-        stats.delivered++
-      }
-      if (['opened', 'clicked'].includes(log.status)) {
-        stats.opened++
-      }
-      if (log.status === 'clicked') {
-        stats.clicked++
+      if (stats) {
+        stats.sent++
+        
+        if (['delivered', 'opened', 'clicked'].includes(log.status)) {
+          stats.delivered++
+        }
+        if (['opened', 'clicked'].includes(log.status)) {
+          stats.opened++
+        }
+        if (log.status === 'clicked') {
+          stats.clicked++
+        }
       }
     })
     

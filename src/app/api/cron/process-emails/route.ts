@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { getPayload } from '@/utilities/payload'
 import { processScheduledEmails } from '@/lib/email/sequences'
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const headersList = await headers()
     const authHeader = headersList.get('authorization')

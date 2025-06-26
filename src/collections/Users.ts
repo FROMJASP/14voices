@@ -76,7 +76,7 @@ const Users: CollectionConfig = {
     },
   ],
   hooks: {
-    afterCreate: [afterUserCreate],
+    afterChange: [afterUserCreate],
   },
 }
 

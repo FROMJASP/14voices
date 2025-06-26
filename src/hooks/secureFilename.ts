@@ -10,7 +10,7 @@ export const generateSecureFilename = (originalFilename: string, userId: string)
   return `${hash}.${ext}`
 }
 
-export const beforeUploadHook = async ({ args, req, operation }: {
+interface BeforeUploadHookParams {
   args?: {
     data?: Record<string, unknown>
     req?: {
@@ -35,7 +35,9 @@ export const beforeUploadHook = async ({ args, req, operation }: {
   operation: string
   collection?: unknown
   context?: unknown
-}) => {
+}
+
+export const beforeUploadHook = async ({ args, req, operation }: BeforeUploadHookParams): Promise<BeforeUploadHookParams['args'] | { data: Record<string, unknown> }> => {
   const data = args?.data || {}
   const file = args?.req?.file || req?.file
   

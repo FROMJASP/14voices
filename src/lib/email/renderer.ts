@@ -3,14 +3,10 @@ import { Payload } from 'payload'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-interface EmailVariable {
-  key: string
-  value: any
-}
 
 interface RenderTemplateOptions {
   templateKey: string
-  variables?: Record<string, any>
+  variables?: Record<string, string | number | boolean>
   recipient: {
     email: string
     name?: string
@@ -18,7 +14,7 @@ interface RenderTemplateOptions {
   payload: Payload
 }
 
-function replaceVariables(content: string, variables: Record<string, any>): string {
+function replaceVariables(content: string, variables: Record<string, string | number | boolean>): string {
   let result = content
   
   Object.entries(variables).forEach(([key, value]) => {
@@ -29,12 +25,23 @@ function replaceVariables(content: string, variables: Record<string, any>): stri
   return result
 }
 
-async function renderRichText(richTextData: any, variables: Record<string, any>): Promise<string> {
+interface RichTextNode {
+  type: string
+  children?: Array<{ text?: string }>
+}
+
+interface RichTextData {
+  root?: {
+    children?: RichTextNode[]
+  }
+}
+
+async function renderRichText(richTextData: RichTextData, variables: Record<string, string | number | boolean>): Promise<string> {
   // TODO: Implement proper rich text to HTML conversion
   // For now, assuming richTextData has an HTML representation
-  const html = richTextData?.root?.children?.reduce((acc: string, node: any) => {
+  const html = richTextData?.root?.children?.reduce((acc: string, node) => {
     if (node.type === 'paragraph') {
-      const text = node.children?.map((child: any) => child.text || '').join('')
+      const text = node.children?.map((child) => child.text || '').join('')
       return acc + `<p>${text}</p>`
     }
     return acc
@@ -53,7 +60,7 @@ export async function renderEmailTemplate(options: RenderTemplateOptions): Promi
 }> {
   const { templateKey, variables = {}, recipient, payload } = options
   
-  const template = await payload.findOne({
+  const templates = await payload.find({
     collection: 'email-templates',
     where: {
       key: {
@@ -65,6 +72,8 @@ export async function renderEmailTemplate(options: RenderTemplateOptions): Promi
     },
     depth: 2,
   })
+  
+  const template = templates.docs[0]
   
   if (!template) {
     throw new Error(`Email template with key "${templateKey}" not found`)
@@ -112,17 +121,26 @@ export async function sendEmail(options: RenderTemplateOptions & {
   const emailData = {
     from: rendered.fromEmail 
       ? `${rendered.fromName || '14voices'} <${rendered.fromEmail}>`
-      : undefined,
+      : `14voices <noreply@14voices.com>`,
     to: recipient.email,
     subject: rendered.subject,
     html: rendered.html,
     text: rendered.text,
     replyTo: rendered.replyTo,
-    tags,
+    tags: tags.map(tag => ({ name: tag, value: tag })),
     scheduledAt: scheduleAt?.toISOString(),
   }
   
-  const result = await resend.emails.send(emailData)
+  const result = await resend.emails.send({
+    from: emailData.from,
+    to: emailData.to,
+    subject: emailData.subject,
+    html: emailData.html,
+    text: emailData.text,
+    ...(emailData.replyTo && { replyTo: emailData.replyTo }),
+    ...(emailData.tags.length > 0 && { tags: emailData.tags }),
+    ...(emailData.scheduledAt && { scheduledAt: emailData.scheduledAt }),
+  })
   
   if (result.error) {
     throw new Error(result.error.message)
@@ -131,7 +149,7 @@ export async function sendEmail(options: RenderTemplateOptions & {
   await payload.create({
     collection: 'email-logs',
     data: {
-      recipient: recipient.id || recipient.email,
+      recipient: recipient.email,
       recipientEmail: recipient.email,
       template: options.templateKey,
       subject: rendered.subject,

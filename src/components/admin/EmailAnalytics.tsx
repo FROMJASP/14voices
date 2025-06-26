@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { usePayload } from '@payloadcms/ui'
+import React, { useState, useEffect, useCallback } from 'react'
+// Remove usePayload as it doesn't exist in Payload v3
 
 interface EmailStats {
   totalSent: number
@@ -25,17 +25,13 @@ interface TemplateStats {
 }
 
 export const EmailAnalytics: React.FC = () => {
-  const payload = usePayload()
+  // usePayload hook doesn't exist in Payload v3
   const [stats, setStats] = useState<EmailStats | null>(null)
   const [templateStats, setTemplateStats] = useState<TemplateStats[]>([])
   const [loading, setLoading] = useState(true)
   const [dateRange, setDateRange] = useState('7d')
   
-  useEffect(() => {
-    fetchStats()
-  }, [dateRange])
-  
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     setLoading(true)
     try {
       const response = await fetch(`/api/email/analytics?range=${dateRange}`)
@@ -47,7 +43,11 @@ export const EmailAnalytics: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [dateRange])
+  
+  useEffect(() => {
+    fetchStats()
+  }, [fetchStats])
   
   if (loading) {
     return <div>Loading analytics...</div>

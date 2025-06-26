@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
 
-function replaceVariables(content: string, variables: Record<string, any>): string {
+interface ContentNode {
+  type: string
+  children?: Array<{ text?: string }>
+}
+
+function replaceVariables(content: string, variables: Record<string, string | number | boolean>): string {
   let result = content
   
   Object.entries(variables).forEach(([key, value]) => {
@@ -14,7 +19,7 @@ function replaceVariables(content: string, variables: Record<string, any>): stri
 
 export async function POST(req: NextRequest) {
   try {
-    const { content, subject, header, footer, testData } = await req.json()
+    const { content, header, footer, testData } = await req.json()
     const payload = await getPayload()
     
     let html = '<html><body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5;">'
@@ -28,9 +33,9 @@ export async function POST(req: NextRequest) {
       })
       
       if (headerComponent) {
-        const headerContent = headerComponent.content?.root?.children?.reduce((acc: string, node: any) => {
+        const headerContent = headerComponent.content?.root?.children?.reduce((acc: string, node: ContentNode) => {
           if (node.type === 'paragraph') {
-            const text = node.children?.map((child: any) => child.text || '').join('')
+            const text = node.children?.map((child) => child.text || '').join('')
             return acc + `<p>${text}</p>`
           }
           return acc
@@ -42,9 +47,9 @@ export async function POST(req: NextRequest) {
     }
     
     // Add main content
-    const mainContent = content?.root?.children?.reduce((acc: string, node: any) => {
+    const mainContent = content?.root?.children?.reduce((acc: string, node: ContentNode) => {
       if (node.type === 'paragraph') {
-        const text = node.children?.map((child: any) => child.text || '').join('')
+        const text = node.children?.map((child) => child.text || '').join('')
         return acc + `<p>${text}</p>`
       }
       return acc
@@ -62,9 +67,9 @@ export async function POST(req: NextRequest) {
       if (footerComponent) {
         html += '<hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">'
         
-        const footerContent = footerComponent.content?.root?.children?.reduce((acc: string, node: any) => {
+        const footerContent = footerComponent.content?.root?.children?.reduce((acc: string, node: ContentNode) => {
           if (node.type === 'paragraph') {
-            const text = node.children?.map((child: any) => child.text || '').join('')
+            const text = node.children?.map((child) => child.text || '').join('')
             return acc + `<p style="font-size: 12px; color: #666;">${text}</p>`
           }
           return acc

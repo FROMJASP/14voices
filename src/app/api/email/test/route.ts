@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from '@/utilities/payload'
 import { getServerSideUser } from '@/utilities/payload'
 import { Resend } from 'resend'
 
@@ -14,7 +13,6 @@ export async function POST(req: NextRequest) {
     }
     
     const { content, subject, header, footer, testData } = await req.json()
-    const payload = await getPayload()
     
     // Use the same preview generation logic
     const previewResponse = await fetch(new URL('/api/email/preview', req.url).toString(), {
@@ -28,13 +26,17 @@ export async function POST(req: NextRequest) {
     const { html } = await previewResponse.json()
     
     // Send test email to the admin user
+    if (!user.email) {
+      return NextResponse.json({ error: 'User email not found' }, { status: 400 })
+    }
+    
     const result = await resend.emails.send({
       from: `Test Email <noreply@14voices.com>`,
       to: user.email,
       subject: `[TEST] ${subject || 'Email Preview'}`,
       html,
       text: 'This is a test email from the email template editor.',
-      tags: ['test', 'preview'],
+      tags: [{ name: 'test', value: 'test' }, { name: 'preview', value: 'preview' }],
     })
     
     if (result.error) {

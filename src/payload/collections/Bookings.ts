@@ -116,6 +116,6 @@ export const Bookings: CollectionConfig = {
   ],
   timestamps: true,
   hooks: {
-    afterCreate: [afterBookingCreate],
+    afterChange: [afterBookingCreate],
   },
 }
