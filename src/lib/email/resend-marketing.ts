@@ -229,7 +229,8 @@ export class ResendMarketingService {
         createPayload.replyTo = options.replyTo
       }
 
-      const createResponse = await this.resend.broadcasts.create(createPayload)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const createResponse = await this.resend.broadcasts.create(createPayload as any)
 
       if (createResponse.error) {
         throw new Error(createResponse.error.message)
