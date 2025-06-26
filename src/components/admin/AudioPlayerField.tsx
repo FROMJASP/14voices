@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { useFormFields, useDocumentInfo } from '@payloadcms/ui'
-import { UIFieldProps } from 'payload'
+import { useDocumentInfo } from '@payloadcms/ui'
 
-export const AudioPlayerField: React.FC<UIFieldProps> = () => {
+export const AudioPlayerField: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -14,7 +13,7 @@ export const AudioPlayerField: React.FC<UIFieldProps> = () => {
   const progressBarRef = useRef<HTMLDivElement>(null)
   
   // Get document info to access the saved data
-  const { id, initialData } = useDocumentInfo()
+  const { initialData } = useDocumentInfo()
   
   // For upload collections, the URL and filename are at the root level
   const audioUrl = initialData?.url || ''

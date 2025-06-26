@@ -1,9 +1,13 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { CellComponentProps } from 'payload'
 
-export const AudioCell: React.FC<CellComponentProps> = ({ rowData }) => {
+interface AudioCellData {
+  url?: string
+  filename?: string
+}
+
+export const AudioCell: React.FC<{ rowData: AudioCellData }> = ({ rowData }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)

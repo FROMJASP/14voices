@@ -26,7 +26,7 @@ Runtime: Bun (dev) | Node.js (prod) | Vercel deployment
 
 ### BUILD BEFORE PUSH [C:10]
 ```yaml
-Required: npm run build → Success → git push
+Required: bun run build → Success → git push
 Why: TypeScript errors | ESLint issues | Build failures → Production breaks
 ```
 
