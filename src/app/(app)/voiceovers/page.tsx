@@ -1,6 +1,8 @@
 import { getVoiceovers } from '@/lib/api'
 import { VoiceoverCard } from '@/components/VoiceoverCard'
 
+export const dynamic = 'force-dynamic'
+
 export default async function VoiceoversPage() {
   const voiceovers = await getVoiceovers()
 

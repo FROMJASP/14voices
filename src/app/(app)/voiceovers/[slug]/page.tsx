@@ -4,12 +4,7 @@ import { getVoiceoverBySlug } from '@/lib/api'
 import { AudioPlayer } from '@/components/AudioPlayer'
 import { DemoPlayer } from '@/components/DemoPlayer'
 
-// export async function generateStaticParams() {
-//   const voiceovers = await getVoiceovers()
-//   return voiceovers.map((voiceover) => ({
-//     slug: voiceover.slug,
-//   }))
-// }
+export const dynamic = 'force-dynamic'
 
 export default async function VoiceoverPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

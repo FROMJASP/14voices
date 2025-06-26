@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
 export interface VoiceoverDemo {
   id: string
@@ -33,40 +33,58 @@ export interface Voiceover {
 }
 
 export async function getVoiceovers(): Promise<Voiceover[]> {
-  const res = await fetch(`${API_URL}/api/voiceovers?depth=2`, {
-    next: { revalidate: 60 }
-  })
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch voiceovers')
+  try {
+    const res = await fetch(`${API_URL}/api/voiceovers?depth=2`, {
+      next: { revalidate: 60 }
+    })
+    
+    if (!res.ok) {
+      console.error('Failed to fetch voiceovers:', res.status)
+      return []
+    }
+    
+    const data = await res.json()
+    return data.docs || []
+  } catch (error) {
+    console.error('Error fetching voiceovers:', error)
+    return []
   }
-  
-  const data = await res.json()
-  return data.docs
 }
 
 export async function getVoiceoverBySlug(slug: string): Promise<Voiceover | null> {
-  const res = await fetch(`${API_URL}/api/voiceovers?where[slug][equals]=${slug}&depth=2`, {
-    next: { revalidate: 60 }
-  })
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch voiceover')
+  try {
+    const res = await fetch(`${API_URL}/api/voiceovers?where[slug][equals]=${slug}&depth=2`, {
+      next: { revalidate: 60 }
+    })
+    
+    if (!res.ok) {
+      console.error('Failed to fetch voiceover:', res.status)
+      return null
+    }
+    
+    const data = await res.json()
+    return data.docs?.[0] || null
+  } catch (error) {
+    console.error('Error fetching voiceover by slug:', error)
+    return null
   }
-  
-  const data = await res.json()
-  return data.docs[0] || null
 }
 
 export async function getVoiceoverDemos(): Promise<VoiceoverDemo[]> {
-  const res = await fetch(`${API_URL}/api/voiceover-demos?depth=1`, {
-    next: { revalidate: 60 }
-  })
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch demos')
+  try {
+    const res = await fetch(`${API_URL}/api/voiceover-demos?depth=1`, {
+      next: { revalidate: 60 }
+    })
+    
+    if (!res.ok) {
+      console.error('Failed to fetch demos:', res.status)
+      return []
+    }
+    
+    const data = await res.json()
+    return data.docs || []
+  } catch (error) {
+    console.error('Error fetching demos:', error)
+    return []
   }
-  
-  const data = await res.json()
-  return data.docs
 }
