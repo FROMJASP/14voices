@@ -204,15 +204,25 @@ export class ResendMarketingService {
 
   async sendBroadcast(options: SendBroadcastOptions) {
     try {
-      // First create the broadcast
-      const createResponse = await this.resend.broadcasts.create({
+      // First create the broadcast - build the payload conditionally
+      const createPayload: any = {
         audienceId: options.audienceId,
         from: options.from,
         subject: options.subject,
-        html: options.html,
-        text: options.text,
-        ...(options.replyTo && { replyTo: options.replyTo }),
-      })
+      }
+
+      // Add content - at least one is required
+      if (options.html) {
+        createPayload.html = options.html
+      }
+      if (options.text) {
+        createPayload.text = options.text
+      }
+      if (options.replyTo) {
+        createPayload.replyTo = options.replyTo
+      }
+
+      const createResponse = await this.resend.broadcasts.create(createPayload)
 
       if (createResponse.error) {
         throw new Error(createResponse.error.message)
