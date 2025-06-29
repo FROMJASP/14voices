@@ -1,9 +1,8 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
-import Link from 'next/link'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './BackgroundBeams'
 import { SplitTextLogo } from './SplitTextLogo'
@@ -11,7 +10,6 @@ import { StarBorderButton } from './StarBorderButton'
 import { FloatingLabelInput } from './FloatingLabelInput'
 
 export default function ResetPassword() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
   
@@ -64,7 +62,7 @@ export default function ResetPassword() {
       if (response.ok) {
         toast.success('Password reset successful! Redirecting to login...')
         setTimeout(() => {
-          router.push('/admin')
+          window.location.href = '/admin'
         }, 2000)
       } else {
         setError(data.errors?.[0]?.message || 'Unable to reset password. The link may have expired.')
@@ -76,7 +74,7 @@ export default function ResetPassword() {
     } finally {
       setIsLoading(false)
     }
-  }, [password, confirmPassword, token, router])
+  }, [password, confirmPassword, token])
 
   return (
     <div style={{
@@ -207,20 +205,28 @@ export default function ResetPassword() {
                 marginTop: '1.5rem'
               }}
             >
-              <Link 
-                href="/admin"
-                replace
+              <button
+                type="button"
+                onClick={() => {
+                  // Use window.location for more reliable navigation
+                  window.location.href = '/admin'
+                }}
                 style={{
                   fontSize: '0.875rem',
                   color: 'rgba(255, 255, 255, 0.6)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  font: 'inherit',
+                  cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
                 onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
               >
                 Back to login
-              </Link>
+              </button>
             </motion.div>
           </form>
         </div>

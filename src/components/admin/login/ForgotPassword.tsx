@@ -2,8 +2,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './BackgroundBeams'
 import { SplitTextLogo } from './SplitTextLogo'
@@ -206,7 +204,6 @@ export default function ForgotPassword() {
       document.head.removeChild(style)
     }
   }, [])
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -379,7 +376,10 @@ export default function ForgotPassword() {
               >
                 <button
                   type="button"
-                  onClick={() => router.push('/admin')}
+                  onClick={() => {
+                    // Use window.location for more reliable navigation
+                    window.location.href = '/admin'
+                  }}
                   style={{
                     fontSize: '0.875rem',
                     color: 'rgba(255, 255, 255, 0.6)',
@@ -474,8 +474,12 @@ export default function ForgotPassword() {
                     zIndex: 10
                   }}
                 >
-                  <Link 
-                    href="/admin"
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Use window.location for more reliable navigation
+                      window.location.href = '/admin'
+                    }}
                     style={{
                       fontSize: '0.875rem',
                       color: 'rgba(255, 255, 255, 0.6)',
@@ -484,13 +488,17 @@ export default function ForgotPassword() {
                       display: 'inline-block',
                       position: 'relative',
                       pointerEvents: 'auto',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      font: 'inherit'
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
                     onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
                   >
                     Back to login
-                  </Link>
+                  </button>
                 </motion.div>
               </motion.div>
             )}
