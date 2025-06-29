@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './login/BackgroundBeams'
 import { SplitTextLogo } from './login/SplitTextLogo'
@@ -10,6 +11,7 @@ import { StarBorderButton } from './login/StarBorderButton'
 import { FloatingLabelInput } from './login/FloatingLabelInput'
 
 export default function BeforeLogin() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -428,20 +430,25 @@ export default function BeforeLogin() {
                   marginTop: '-0.5rem'
                 }}
               >
-                <Link 
-                  href="/admin/forgot-password" 
-                  replace
+                <button
+                  type="button"
+                  onClick={() => router.push('/admin/forgot-password')}
                   style={{
                     fontSize: '0.875rem',
                     color: 'rgba(255, 255, 255, 0.6)',
                     textDecoration: 'none',
                     transition: 'color 0.2s ease',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    font: 'inherit',
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
                   onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
                 >
                   Forgot password?
-                </Link>
+                </button>
               </motion.div>
               
               <motion.div
