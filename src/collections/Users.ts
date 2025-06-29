@@ -6,7 +6,7 @@ const Users: CollectionConfig = {
   auth: {
     forgotPassword: {
       generateEmailHTML: (args) => {
-        const { req, token, user } = args || {}
+        const { token, user } = args || {}
         // Construct the reset URL pointing to our custom reset page
         const resetPasswordURL = `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/reset-password?token=${token}`
         
