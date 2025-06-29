@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './login/BackgroundBeams'
 import { SplitTextLogo } from './login/SplitTextLogo'
@@ -427,7 +428,7 @@ export default function BeforeLogin() {
                   marginTop: '-0.5rem'
                 }}
               >
-                <a 
+                <Link 
                   href="/admin/forgot-password" 
                   style={{
                     fontSize: '0.875rem',
@@ -439,7 +440,7 @@ export default function BeforeLogin() {
                   onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
                 >
                   Forgot password?
-                </a>
+                </Link>
               </motion.div>
               
               <motion.div

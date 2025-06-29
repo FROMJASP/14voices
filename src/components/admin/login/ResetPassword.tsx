@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './BackgroundBeams'
 import { SplitTextLogo } from './SplitTextLogo'
@@ -206,7 +207,7 @@ export default function ResetPassword() {
                 marginTop: '1.5rem'
               }}
             >
-              <a 
+              <Link 
                 href="/admin"
                 style={{
                   fontSize: '0.875rem',
@@ -218,7 +219,7 @@ export default function ResetPassword() {
                 onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
               >
                 Back to login
-              </a>
+              </Link>
             </motion.div>
           </form>
         </div>
