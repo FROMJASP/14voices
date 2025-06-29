@@ -430,6 +430,7 @@ export default function BeforeLogin() {
               >
                 <Link 
                   href="/admin/forgot-password" 
+                  replace
                   style={{
                     fontSize: '0.875rem',
                     color: 'rgba(255, 255, 255, 0.6)',

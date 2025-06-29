@@ -377,6 +377,7 @@ export default function ForgotPassword() {
               >
                 <Link 
                   href="/admin"
+                  replace
                   style={{
                     fontSize: '0.875rem',
                     color: 'rgba(255, 255, 255, 0.6)',
