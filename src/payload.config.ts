@@ -48,7 +48,12 @@ export default buildConfig({
     },
     meta: {
       titleSuffix: ' - Fourteen Voices',
-      ogImage: '/og-image.jpg',
+      openGraph: {
+        images: ['/og-image.jpg'],
+      },
+      icons: {
+        icon: '/favicon.ico',
+      },
     },
   },
   collections: [
