@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './login/BackgroundBeams'
@@ -10,7 +9,6 @@ import { StarBorderButton } from './login/StarBorderButton'
 import { FloatingLabelInput } from './login/FloatingLabelInput'
 
 export default function BeforeLogin() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)

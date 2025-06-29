@@ -1,9 +1,9 @@
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload as getPayloadInstance } from 'payload'
 import config from '@/payload.config'
 import { headers } from 'next/headers'
 
 export const getPayload = async () => {
-  return getPayloadHMR({ config })
+  return getPayloadInstance({ config })
 }
 
 export const getServerSideUser = async () => {

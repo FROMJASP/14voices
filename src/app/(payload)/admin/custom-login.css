@@ -1,7 +1,13 @@
-/* Import Payload CMS styles directly */
-@import '@payloadcms/next/css';
-
-/* Add any custom styles here */
+/* Custom login overlay */
+.custom-login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: white;
+}
 
 /* Animated blob backgrounds for login */
 @keyframes blob {

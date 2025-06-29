@@ -20,7 +20,6 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   label,
   value,
   onChange,
-  placeholder,
   required,
   autoComplete,
   id,
@@ -51,7 +50,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
             setHasValue(true)
             setIsAutofilled(true)
           }
-        } catch (e) {
+        } catch {
           // Fallback for browsers that don't support :autofill selector
           if (!hasValue && inputRef.current.value) {
             setHasValue(true)
@@ -78,13 +77,14 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
       }
     }
 
-    inputRef.current?.addEventListener('animationstart', handleAnimationStart)
+    const currentInput = inputRef.current
+    currentInput?.addEventListener('animationstart', handleAnimationStart)
 
     return () => {
       timeouts.forEach(clearTimeout)
-      inputRef.current?.removeEventListener('animationstart', handleAnimationStart)
+      currentInput?.removeEventListener('animationstart', handleAnimationStart)
     }
-  }, [])
+  }, [hasValue])
 
   const type = showPassword ? 'text' : initialType
 
