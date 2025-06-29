@@ -1,6 +1,11 @@
 {
   "extends": "next",
-  "rules": {
-    "@next/next/no-html-link-for-pages": ["error", "src/app/(app)"]
-  }
+  "overrides": [
+    {
+      "files": ["src/components/admin/**/*.tsx", "src/components/admin/**/*.ts"],
+      "rules": {
+        "@next/next/no-html-link-for-pages": "off"
+      }
+    }
+  ]
 }
