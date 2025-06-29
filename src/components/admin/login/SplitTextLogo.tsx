@@ -26,7 +26,7 @@ export const SplitTextLogo: React.FC<SplitTextLogoProps> = ({ text, className })
       scale: 1,
       filter: 'blur(0px)',
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 12,
         stiffness: 100,
       },
@@ -37,7 +37,7 @@ export const SplitTextLogo: React.FC<SplitTextLogoProps> = ({ text, className })
       scale: 0.9,
       filter: 'blur(4px)',
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 12,
         stiffness: 100,
       },
