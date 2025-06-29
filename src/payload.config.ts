@@ -43,6 +43,14 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(process.cwd(), 'src'),
     },
+    components: {
+      beforeLogin: ['./components/admin/BeforeLogin#default'],
+    },
+    meta: {
+      titleSuffix: ' - Fourteen Voices',
+      favicon: '/favicon.ico',
+      ogImage: '/og-image.jpg',
+    },
   },
   collections: [
     Users,
