@@ -65,7 +65,7 @@ export function Footer({ config }: FooterProps) {
   // Get active social links
   const socialLinks = siteSettings?.socialLinks ? 
     Object.entries(siteSettings.socialLinks)
-      .filter(([_, url]) => url)
+      .filter(([, url]) => url)
       .map(([platform, url]) => ({ platform, url })) : []
 
   // Render different footer styles

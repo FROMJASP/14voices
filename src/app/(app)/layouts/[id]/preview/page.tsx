@@ -28,7 +28,7 @@ export default async function LayoutPreviewPage({ params }: PageProps) {
       <div className="prose prose-lg max-w-none">
         <h1>Layout Preview: {layout.name}</h1>
         <p className="lead">
-          This is a preview of the "{layout.name}" layout. The header and footer shown here reflect your current configuration.
+          This is a preview of the &quot;{layout.name}&quot; layout. The header and footer shown here reflect your current configuration.
         </p>
         
         <h2>Sample Content Section</h2>
@@ -53,7 +53,7 @@ export default async function LayoutPreviewPage({ params }: PageProps) {
         </p>
         
         <blockquote>
-          "This preview helps you visualize how your content will appear with the current layout settings."
+          &quot;This preview helps you visualize how your content will appear with the current layout settings.&quot;
         </blockquote>
         
         <p>

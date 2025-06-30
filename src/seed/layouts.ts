@@ -185,7 +185,7 @@ export async function seedLayouts(payload: Payload) {
     console.log('✅ Default layout created successfully')
 
     // Create a minimal layout option as well
-    const minimalLayout = await payload.create({
+    await payload.create({
       collection: 'layouts',
       data: {
         name: 'Minimal Layout',

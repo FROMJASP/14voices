@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import configPromise from '@payload-config'
 import { PageRenderer } from '@/components/PageRenderer'

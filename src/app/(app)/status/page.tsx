@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function StatusPage() {
   return (
     <div className="min-h-screen p-8 bg-gray-50">
@@ -42,15 +44,15 @@ export default function StatusPage() {
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-4">🔗 Quick Links</h2>
             <div className="space-y-2">
-              <a href="/" className="block text-blue-600 hover:underline">
+              <Link href="/" className="block text-blue-600 hover:underline">
                 → Homepage (Dutch Landing Page)
-              </a>
-              <a href="/admin" className="block text-blue-600 hover:underline">
+              </Link>
+              <Link href="/admin" className="block text-blue-600 hover:underline">
                 → Admin Panel (with Tours)
-              </a>
-              <a href="/api/voiceovers" className="block text-blue-600 hover:underline">
+              </Link>
+              <Link href="/api/voiceovers" className="block text-blue-600 hover:underline">
                 → Voiceovers API
-              </a>
+              </Link>
             </div>
           </div>
 

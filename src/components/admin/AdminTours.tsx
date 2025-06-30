@@ -5,11 +5,20 @@ import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import './driver-theme.css'
 
+interface TourStep {
+  element: string
+  popover: {
+    title: string
+    description: string
+    position: 'top' | 'right' | 'bottom' | 'left'
+  }
+}
+
 interface TourConfig {
   id: string
   title: string
   description: string
-  steps: any[]
+  steps: TourStep[]
 }
 
 const tours: Record<string, TourConfig> = {

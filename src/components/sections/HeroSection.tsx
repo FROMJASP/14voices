@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { ShimmerButton } from '@/components/magicui/shimmer-button'
 import { BlurFade } from '@/components/magicui/blur-fade'
 import { AnimatedGradientText } from '@/components/magicui/animated-gradient-text'
-import { cn } from '@/lib/utils'
 
 export function HeroSection() {
   return (
