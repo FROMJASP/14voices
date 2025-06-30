@@ -19,6 +19,7 @@ const Voiceovers: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+      localized: true,
       admin: {
         description: 'The name of the voiceover artist',
       },
@@ -26,6 +27,7 @@ const Voiceovers: CollectionConfig = {
     {
       name: 'description',
       type: 'textarea',
+      localized: true,
       admin: {
         description: 'Optional description or bio',
       },

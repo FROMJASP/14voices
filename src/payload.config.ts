@@ -36,8 +36,10 @@ import { EmailSettings } from './globals/EmailSettings'
 import { Navigation } from './globals/Navigation'
 import { SiteSettings } from './globals/SiteSettings'
 import path from 'path'
+import { i18n } from './i18n'
 
 export default buildConfig({
+  i18n: i18n.supportedLanguages,
   admin: {
     user: Users.slug,
     importMap: {
@@ -45,6 +47,8 @@ export default buildConfig({
     },
     components: {
       beforeLogin: ['./components/admin/BeforeLogin#default'],
+      afterDashboard: ['./components/admin/AdminEnhancements#default'],
+      actions: ['./components/admin/AdminActions#default'],
     },
     meta: {
       titleSuffix: ' - Fourteen Voices',
@@ -55,6 +59,20 @@ export default buildConfig({
         icon: '/favicon.ico',
       },
     },
+  },
+  localization: {
+    locales: [
+      {
+        label: 'Nederlands',
+        code: 'nl',
+      },
+      {
+        label: 'English',
+        code: 'en',
+      },
+    ],
+    defaultLocale: 'nl',
+    fallback: true,
   },
   collections: [
     Users,

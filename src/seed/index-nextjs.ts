@@ -1,41 +1,27 @@
-import dotenv from 'dotenv'
-import path from 'path'
-
-// Load environment variables BEFORE importing anything else
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
-dotenv.config({ path: path.resolve(process.cwd(), '.env') })
-
-// Now import everything else after env vars are loaded
+// Alternative seed script using Next.js environment loading
+import '@/lib/env'
 import { getPayload } from 'payload'
 import config from '../payload.config'
 import { seedSiteSettings } from './site-settings'
 import { seedLayouts } from './layouts'
 import { seedPages } from './pages'
-import { seedVoiceovers } from './voiceovers'
-
-// Debug: Check if env vars are loaded
-console.log('🔍 Checking environment variables...')
-console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing')
-console.log('   DATABASE_URL:', process.env.DATABASE_URL ? '✓ Set' : '✗ Missing')
-console.log('   POSTGRES_URL:', process.env.POSTGRES_URL ? '✓ Set' : '✗ Missing')
-console.log('')
-
-// Validate required environment variables
-if (!process.env.PAYLOAD_SECRET) {
-  console.error('❌ Missing required environment variable: PAYLOAD_SECRET')
-  console.error('\n💡 Make sure you have a .env.local file with this variable.')
-  console.error('   See .env.example for reference.')
-  process.exit(1)
-}
-
-if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
-  console.error('❌ Missing required database connection string.')
-  console.error('   Please set either DATABASE_URL or POSTGRES_URL in your .env.local file.')
-  console.error('\n💡 See .env.example for reference.')
-  process.exit(1)
-}
 
 async function seed() {
+  console.log('🔍 Environment check:')
+  console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing')
+  console.log('   POSTGRES_URL:', process.env.POSTGRES_URL ? '✓ Set' : '✗ Missing')
+  console.log('')
+
+  if (!process.env.PAYLOAD_SECRET) {
+    console.error('❌ PAYLOAD_SECRET is required')
+    process.exit(1)
+  }
+
+  if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
+    console.error('❌ Database connection string is required')
+    process.exit(1)
+  }
+
   const payload = await getPayload({ config })
 
   try {
@@ -77,11 +63,6 @@ async function seed() {
     // 4. Create sample pages
     console.log('📄 Creating sample pages...')
     await seedPages(payload)
-    console.log('')
-
-    // 5. Create voiceovers
-    console.log('🎤 Creating voiceovers...')
-    await seedVoiceovers(payload)
     console.log('')
 
     console.log('✨ Database seed completed successfully!')

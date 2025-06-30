@@ -1,0 +1,47 @@
+{
+  "hero": {
+    "title": "Professionele Voice-overs voor elk project",
+    "subtitle": "Van commercials tot bedrijfsfilms, wij hebben de perfecte stem voor uw productie",
+    "cta": {
+      "primary": "Ontdek onze stemmen",
+      "secondary": "Contact opnemen"
+    }
+  },
+  "voiceovers": {
+    "title": "Onze Stemtalenten",
+    "subtitle": "Ontdek de perfecte stem voor uw project",
+    "filterBy": "Filter op stijl",
+    "allStyles": "Alle stijlen",
+    "noResults": "Geen stemmen gevonden",
+    "listenDemo": "Beluister demo",
+    "viewProfile": "Bekijk profiel",
+    "moreVoices": "Meer stemmen",
+    "styles": {
+      "autoriteit": "Autoriteit",
+      "jeugdig-fris": "Jeugdig & Fris",
+      "kwaliteit": "Kwaliteit", 
+      "stoer": "Stoer",
+      "warm-donker": "Warm & Donker",
+      "zakelijk": "Zakelijk"
+    }
+  },
+  "features": {
+    "title": "Waarom 14voices?",
+    "quality": {
+      "title": "Topkwaliteit",
+      "description": "Professionele studio-opnames met de beste apparatuur"
+    },
+    "fast": {
+      "title": "Snelle levering",
+      "description": "Meestal binnen 24 uur geleverd"
+    },
+    "variety": {
+      "title": "Ruime keuze",
+      "description": "Diverse stemmen voor elk type productie"
+    },
+    "experience": {
+      "title": "Ervaring",
+      "description": "Jarenlange ervaring in voice-over producties"
+    }
+  }
+}

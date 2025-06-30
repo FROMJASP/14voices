@@ -1,0 +1,15 @@
+/* Hide the locale selector in the admin panel */
+.localizer {
+  display: none !important;
+}
+
+/* Alternative selector if the above doesn't work */
+[class*="localizer"] {
+  display: none !important;
+}
+
+/* Hide locale dropdown button */
+button[aria-label*="Locale"],
+button[aria-label*="Language"] {
+  display: none !important;
+}

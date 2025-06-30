@@ -1,0 +1,158 @@
+{
+  "general": {
+    "dashboard": "Dashboard",
+    "create": "Create",
+    "save": "Save",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "edit": "Edit",
+    "view": "View",
+    "upload": "Upload",
+    "download": "Download",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "collections": {
+    "users": {
+      "singular": "User",
+      "plural": "Users"
+    },
+    "voiceovers": {
+      "singular": "Voiceover",
+      "plural": "Voiceovers"
+    },
+    "pages": {
+      "singular": "Page",
+      "plural": "Pages"
+    },
+    "layouts": {
+      "singular": "Layout",
+      "plural": "Layouts"
+    },
+    "blocks": {
+      "singular": "Block",
+      "plural": "Blocks"
+    },
+    "sections": {
+      "singular": "Section",
+      "plural": "Sections"
+    },
+    "forms": {
+      "singular": "Form",
+      "plural": "Forms"
+    },
+    "form-submissions": {
+      "singular": "Form Submission",
+      "plural": "Form Submissions"
+    },
+    "testimonials": {
+      "singular": "Testimonial",
+      "plural": "Testimonials"
+    },
+    "team": {
+      "singular": "Team Member",
+      "plural": "Team"
+    },
+    "portfolio": {
+      "singular": "Portfolio Item",
+      "plural": "Portfolio"
+    },
+    "blog-posts": {
+      "singular": "Blog Post",
+      "plural": "Blog Posts"
+    }
+  },
+  "fields": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "status": "Status",
+    "title": "Title",
+    "slug": "URL Slug",
+    "description": "Description",
+    "content": "Content",
+    "image": "Image",
+    "date": "Date",
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "publishedDate": "Published Date",
+    "author": "Author",
+    "category": "Category",
+    "tags": "Tags",
+    "featured": "Featured",
+    "active": "Active",
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived"
+  },
+  "groups": {
+    "content": "Content",
+    "siteBuilder": "Site Builder",
+    "media": "Media",
+    "settings": "Settings",
+    "email": "Email",
+    "bookings": "Bookings"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "rememberMe": "Remember Me",
+    "backToLogin": "Back to Login"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "minLength": "Minimum {{min}} characters required",
+    "maxLength": "Maximum {{max}} characters allowed",
+    "passwordMatch": "Passwords do not match",
+    "unique": "This value already exists"
+  },
+  "voiceovers": {
+    "fields": {
+      "name": "Name",
+      "description": "Description / Bio",
+      "profilePhoto": "Profile Photo",
+      "additionalPhotos": "Additional Photos",
+      "styleTags": "Style Tags",
+      "primaryDemo": "Primary Demo",
+      "additionalDemos": "Additional Demos",
+      "status": "Status",
+      "availability": "Availability",
+      "isAvailable": "Available for bookings",
+      "unavailableFrom": "Unavailable from",
+      "unavailableUntil": "Unavailable until"
+    },
+    "styleTags": {
+      "autoriteit": "Authority",
+      "jeugdig-fris": "Youthful & Fresh",
+      "kwaliteit": "Quality",
+      "stoer": "Bold",
+      "warm-donker": "Warm & Dark",
+      "zakelijk": "Professional",
+      "custom": "Custom"
+    },
+    "status": {
+      "active": "Active (Main Page)",
+      "draft": "Draft (Not Ready)",
+      "more-voices": "More Voices",
+      "archived": "Archived"
+    }
+  }
+}

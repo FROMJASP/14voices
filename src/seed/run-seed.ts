@@ -1,41 +1,28 @@
 import dotenv from 'dotenv'
 import path from 'path'
+import { getPayload } from 'payload'
+import type { Config } from 'payload'
 
-// Load environment variables BEFORE importing anything else
+// Load environment variables first
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
 dotenv.config({ path: path.resolve(process.cwd(), '.env') })
 
-// Now import everything else after env vars are loaded
-import { getPayload } from 'payload'
-import config from '../payload.config'
-import { seedSiteSettings } from './site-settings'
-import { seedLayouts } from './layouts'
-import { seedPages } from './pages'
-import { seedVoiceovers } from './voiceovers'
-
-// Debug: Check if env vars are loaded
-console.log('🔍 Checking environment variables...')
+console.log('🔍 Environment check:')
 console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing')
-console.log('   DATABASE_URL:', process.env.DATABASE_URL ? '✓ Set' : '✗ Missing')
 console.log('   POSTGRES_URL:', process.env.POSTGRES_URL ? '✓ Set' : '✗ Missing')
 console.log('')
 
-// Validate required environment variables
-if (!process.env.PAYLOAD_SECRET) {
-  console.error('❌ Missing required environment variable: PAYLOAD_SECRET')
-  console.error('\n💡 Make sure you have a .env.local file with this variable.')
-  console.error('   See .env.example for reference.')
-  process.exit(1)
-}
+async function runSeed() {
+  // Dynamically import the config AFTER env vars are loaded
+  const configModule = await import('../payload.config')
+  const config = configModule.default as Config
 
-if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
-  console.error('❌ Missing required database connection string.')
-  console.error('   Please set either DATABASE_URL or POSTGRES_URL in your .env.local file.')
-  console.error('\n💡 See .env.example for reference.')
-  process.exit(1)
-}
+  // Import seed functions
+  const { seedSiteSettings } = await import('./site-settings')
+  const { seedLayouts } = await import('./layouts')
+  const { seedPages } = await import('./pages')
+  const { seedVoiceovers } = await import('./voiceovers')
 
-async function seed() {
   const payload = await getPayload({ config })
 
   try {
@@ -98,4 +85,4 @@ async function seed() {
   }
 }
 
-seed()
+runSeed()

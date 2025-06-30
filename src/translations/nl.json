@@ -1,0 +1,158 @@
+{
+  "general": {
+    "dashboard": "Dashboard",
+    "create": "Aanmaken",
+    "save": "Opslaan",
+    "delete": "Verwijderen",
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen",
+    "back": "Terug",
+    "next": "Volgende",
+    "previous": "Vorige",
+    "search": "Zoeken",
+    "filter": "Filteren",
+    "edit": "Bewerken",
+    "view": "Bekijken",
+    "upload": "Uploaden",
+    "download": "Downloaden",
+    "yes": "Ja",
+    "no": "Nee",
+    "loading": "Laden...",
+    "error": "Fout",
+    "success": "Succes",
+    "warning": "Waarschuwing",
+    "info": "Info"
+  },
+  "collections": {
+    "users": {
+      "singular": "Gebruiker",
+      "plural": "Gebruikers"
+    },
+    "voiceovers": {
+      "singular": "Voice-over",
+      "plural": "Voice-overs"
+    },
+    "pages": {
+      "singular": "Pagina",
+      "plural": "Pagina's"
+    },
+    "layouts": {
+      "singular": "Layout",
+      "plural": "Layouts"
+    },
+    "blocks": {
+      "singular": "Blok",
+      "plural": "Blokken"
+    },
+    "sections": {
+      "singular": "Sectie",
+      "plural": "Secties"
+    },
+    "forms": {
+      "singular": "Formulier",
+      "plural": "Formulieren"
+    },
+    "form-submissions": {
+      "singular": "Formulier Inzending",
+      "plural": "Formulier Inzendingen"
+    },
+    "testimonials": {
+      "singular": "Testimonial",
+      "plural": "Testimonials"
+    },
+    "team": {
+      "singular": "Teamlid",
+      "plural": "Team"
+    },
+    "portfolio": {
+      "singular": "Portfolio Item",
+      "plural": "Portfolio"
+    },
+    "blog-posts": {
+      "singular": "Blog Artikel",
+      "plural": "Blog Artikelen"
+    }
+  },
+  "fields": {
+    "name": "Naam",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "role": "Rol",
+    "status": "Status",
+    "title": "Titel",
+    "slug": "URL Slug",
+    "description": "Beschrijving",
+    "content": "Inhoud",
+    "image": "Afbeelding",
+    "date": "Datum",
+    "createdAt": "Aangemaakt op",
+    "updatedAt": "Bijgewerkt op",
+    "publishedDate": "Publicatiedatum",
+    "author": "Auteur",
+    "category": "Categorie",
+    "tags": "Tags",
+    "featured": "Uitgelicht",
+    "active": "Actief",
+    "draft": "Concept",
+    "published": "Gepubliceerd",
+    "archived": "Gearchiveerd"
+  },
+  "groups": {
+    "content": "Inhoud",
+    "siteBuilder": "Site Builder",
+    "media": "Media",
+    "settings": "Instellingen",
+    "email": "E-mail",
+    "bookings": "Boekingen"
+  },
+  "auth": {
+    "login": "Inloggen",
+    "logout": "Uitloggen",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "resetPassword": "Wachtwoord resetten",
+    "emailAddress": "E-mailadres",
+    "password": "Wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "rememberMe": "Onthoud mij",
+    "backToLogin": "Terug naar inloggen"
+  },
+  "validation": {
+    "required": "Dit veld is verplicht",
+    "email": "Voer een geldig e-mailadres in",
+    "minLength": "Minimaal {{min}} karakters vereist",
+    "maxLength": "Maximaal {{max}} karakters toegestaan",
+    "passwordMatch": "Wachtwoorden komen niet overeen",
+    "unique": "Deze waarde bestaat al"
+  },
+  "voiceovers": {
+    "fields": {
+      "name": "Naam",
+      "description": "Beschrijving / Bio",
+      "profilePhoto": "Profielfoto",
+      "additionalPhotos": "Extra foto's",
+      "styleTags": "Stijl Tags",
+      "primaryDemo": "Primaire Demo",
+      "additionalDemos": "Extra Demo's",
+      "status": "Status",
+      "availability": "Beschikbaarheid",
+      "isAvailable": "Beschikbaar voor boekingen",
+      "unavailableFrom": "Niet beschikbaar vanaf",
+      "unavailableUntil": "Niet beschikbaar tot"
+    },
+    "styleTags": {
+      "autoriteit": "Autoriteit",
+      "jeugdig-fris": "Jeugdig & Fris",
+      "kwaliteit": "Kwaliteit",
+      "stoer": "Stoer",
+      "warm-donker": "Warm & Donker",
+      "zakelijk": "Zakelijk",
+      "custom": "Aangepast"
+    },
+    "status": {
+      "active": "Actief (Hoofdpagina)",
+      "draft": "Concept (Niet Klaar)",
+      "more-voices": "Meer Stemmen",
+      "archived": "Gearchiveerd"
+    }
+  }
+}

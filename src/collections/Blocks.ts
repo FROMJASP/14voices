@@ -40,6 +40,7 @@ const Blocks: CollectionConfig = {
         { label: 'Media', value: 'media' },
         { label: 'Forms', value: 'forms' },
         { label: 'Navigation', value: 'navigation' },
+        { label: 'Footer', value: 'footer' },
       ],
       admin: {
         position: 'sidebar',

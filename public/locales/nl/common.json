@@ -1,0 +1,33 @@
+{
+  "navigation": {
+    "home": "Home",
+    "voiceovers": "Onze Stemmen",
+    "about": "Over Ons",
+    "contact": "Contact",
+    "blog": "Blog",
+    "services": "Diensten"
+  },
+  "footer": {
+    "description": "Professionele voice-overs voor elk project",
+    "services": "Diensten",
+    "company": "Bedrijf",
+    "resources": "Bronnen",
+    "newsletter": {
+      "title": "Blijf op de hoogte",
+      "description": "Ontvang updates over nieuwe stemmen en projecten",
+      "placeholder": "Uw e-mailadres",
+      "button": "Inschrijven"
+    },
+    "copyright": "© {year} {siteName}. Alle rechten voorbehouden."
+  },
+  "common": {
+    "readMore": "Lees meer",
+    "learnMore": "Meer informatie",
+    "getStarted": "Aan de slag",
+    "contactUs": "Neem contact op",
+    "available": "Beschikbaar",
+    "unavailable": "Niet beschikbaar",
+    "loading": "Laden...",
+    "error": "Er is iets misgegaan"
+  }
+}

@@ -152,6 +152,20 @@ const Users: CollectionConfig = {
       },
     },
     {
+      name: 'preferredLanguage',
+      type: 'select',
+      defaultValue: 'nl',
+      label: 'Preferred Language',
+      options: [
+        { label: 'Nederlands', value: 'nl' },
+        { label: 'English', value: 'en' },
+      ],
+      admin: {
+        description: 'Your preferred language for the admin interface',
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'emailPreferences',
       type: 'group',
       fields: [

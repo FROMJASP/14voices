@@ -3,6 +3,8 @@ import { getPayloadHMR } from '@payloadcms/next/utilities'
 import configPromise from '@payload-config'
 import { PageRenderer } from '@/components/PageRenderer'
 import type { Page } from '@/payload-types'
+import { NavigationBar, HeroSection, VoiceoverShowcase } from '@/components/sections'
+import DefaultFooter from '@/components/layout/DefaultFooter'
 
 export async function generateMetadata() {
   const payload = await getPayloadHMR({ config: configPromise })
@@ -72,21 +74,15 @@ export default async function HomePage() {
 
   const page = pages.docs[0] as Page | undefined
 
-  // If no home page exists, show a temporary landing page
+  // If no home page exists, show our beautiful landing page
   if (!page) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Welcome to 14voices</h1>
-          <p className="text-gray-600 mb-8">Site under construction. Please create a home page in the admin panel.</p>
-          <Link
-            href="/admin"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Go to Admin
-          </Link>
-        </div>
-      </div>
+      <>
+        <NavigationBar />
+        <HeroSection />
+        <VoiceoverShowcase />
+        <DefaultFooter />
+      </>
     )
   }
 

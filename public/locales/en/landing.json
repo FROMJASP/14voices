@@ -1,0 +1,47 @@
+{
+  "hero": {
+    "title": "Professional Voice-overs for Every Project",
+    "subtitle": "From commercials to corporate films, we have the perfect voice for your production",
+    "cta": {
+      "primary": "Discover our voices",
+      "secondary": "Get in touch"
+    }
+  },
+  "voiceovers": {
+    "title": "Our Voice Talents",
+    "subtitle": "Discover the perfect voice for your project",
+    "filterBy": "Filter by style",
+    "allStyles": "All styles",
+    "noResults": "No voices found",
+    "listenDemo": "Listen to demo",
+    "viewProfile": "View profile",
+    "moreVoices": "More voices",
+    "styles": {
+      "autoriteit": "Authority",
+      "jeugdig-fris": "Youthful & Fresh",
+      "kwaliteit": "Quality",
+      "stoer": "Bold",
+      "warm-donker": "Warm & Dark",
+      "zakelijk": "Professional"
+    }
+  },
+  "features": {
+    "title": "Why 14voices?",
+    "quality": {
+      "title": "Top Quality",
+      "description": "Professional studio recordings with the best equipment"
+    },
+    "fast": {
+      "title": "Fast Delivery", 
+      "description": "Usually delivered within 24 hours"
+    },
+    "variety": {
+      "title": "Wide Selection",
+      "description": "Diverse voices for every type of production"
+    },
+    "experience": {
+      "title": "Experience",
+      "description": "Years of experience in voice-over productions"
+    }
+  }
+}

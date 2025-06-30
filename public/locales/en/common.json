@@ -1,0 +1,33 @@
+{
+  "navigation": {
+    "home": "Home",
+    "voiceovers": "Our Voices",
+    "about": "About Us",
+    "contact": "Contact",
+    "blog": "Blog",
+    "services": "Services"
+  },
+  "footer": {
+    "description": "Professional voice-overs for every project",
+    "services": "Services",
+    "company": "Company",
+    "resources": "Resources",
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get updates about new voices and projects",
+      "placeholder": "Your email address",
+      "button": "Subscribe"
+    },
+    "copyright": "© {year} {siteName}. All rights reserved."
+  },
+  "common": {
+    "readMore": "Read more",
+    "learnMore": "Learn more",
+    "getStarted": "Get Started",
+    "contactUs": "Contact Us",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  }
+}
