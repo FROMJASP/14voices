@@ -4,18 +4,19 @@ import { LayoutWrapper } from '@/components/LayoutWrapper'
 import { notFound } from 'next/navigation'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function LayoutPreviewPage({ params }: PageProps) {
+  const { id } = await params
   const payload = await getPayloadHMR({ config: configPromise })
   
   try {
     const layout = await payload.findByID({
       collection: 'layouts',
-      id: params.id,
+      id: id,
       depth: 2,
     })
 
