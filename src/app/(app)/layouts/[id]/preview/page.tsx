@@ -43,9 +43,9 @@ export default async function LayoutPreviewPage({ params }: PageProps) {
         <ul>
           <li>Layout Type: {layout.type}</li>
           <li>Container Width: {layout.containerWidth || 'standard'}</li>
-          <li>Header Style: {layout.header?.style || 'default'}</li>
-          <li>Footer Style: {layout.footer?.style || 'default'}</li>
-          <li>Sidebar: {layout.sidebar?.enabled ? `Enabled (${layout.sidebar.position})` : 'Disabled'}</li>
+          <li>Header Style: {(typeof layout.header === 'object' && layout.header?.style) || 'default'}</li>
+          <li>Footer Style: {(typeof layout.footer === 'object' && layout.footer?.style) || 'default'}</li>
+          <li>Sidebar: {(typeof layout.sidebar === 'object' && layout.sidebar?.enabled) ? `Enabled (${layout.sidebar.position})` : 'Disabled'}</li>
         </ul>
         
         <h3>Content Area</h3>
