@@ -1,209 +1,12 @@
 'use client'
 
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './BackgroundBeams'
-import { SplitTextLogo } from './SplitTextLogo'
-import { StarBorderButton } from './StarBorderButton'
 import { FloatingLabelInput } from './FloatingLabelInput'
 
 export default function ForgotPassword() {
-  // Add the CSS styles
-  useEffect(() => {
-    const style = document.createElement('style')
-    style.innerHTML = `
-      .split-text-logo {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #ffffff;
-        text-align: center;
-        margin-bottom: 0.5rem;
-        position: relative;
-        z-index: 1;
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-        display: block;
-        overflow: visible;
-      }
-
-      .login-glassmorphism {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 
-          0 8px 32px 0 rgba(0, 0, 0, 0.3),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        padding: 3rem;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .login-subtitle {
-        font-size: 0.875rem;
-        color: rgba(255, 255, 255, 0.5);
-        text-align: center;
-        margin-bottom: 2rem;
-      }
-
-      .error-message {
-        background: rgba(239, 68, 68, 0.08);
-        border: 1px solid rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-        padding: 0.75rem 1rem;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        margin-bottom: 1.5rem;
-        animation: slide-in-top 0.3s ease-out;
-      }
-
-      @keyframes slide-in-top {
-        from {
-          transform: translateY(-10px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-
-      .loading-spinner {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        border-top-color: white;
-        animation: spin 0.8s linear infinite;
-      }
-
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-
-      /* Floating Label Input Styles */
-      .floating-label-container {
-        margin-bottom: 1.5rem;
-      }
-
-      .floating-label-wrapper {
-        position: relative;
-      }
-
-      .floating-label-input {
-        width: 100%;
-        padding: 1rem;
-        padding-top: 1.5rem;
-        font-size: 1rem;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 0.375rem;
-        color: #ffffff;
-        outline: none;
-        transition: all 0.2s ease;
-      }
-
-      .floating-label-input:focus {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.2);
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
-      }
-
-      .floating-label {
-        position: absolute;
-        left: 1rem;
-        top: 1.25rem;
-        font-size: 0.875rem;
-        color: rgba(255, 255, 255, 0.5);
-        pointer-events: none;
-        transform-origin: left center;
-        transition: all 0.2s ease;
-      }
-
-      .floating-label-input:focus ~ .floating-label,
-      .floating-label-input:not(:placeholder-shown) ~ .floating-label {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.75rem;
-        font-weight: 400;
-        transform: translateY(-1.5rem);
-      }
-
-      /* Star Border Button Styles */
-      .star-border-button {
-        position: relative;
-        width: 100%;
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #000000;
-        background: #ffffff;
-        cursor: pointer;
-        overflow: hidden;
-        transition: all 0.2s ease;
-      }
-
-      .star-border-button:hover:not(:disabled) {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-      }
-
-      .star-border-button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      .star-border-container {
-        position: absolute;
-        inset: -2px;
-        pointer-events: none;
-      }
-
-      .star-border-svg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      .star-particle {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-      }
-
-      .star-border-content {
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Background Beams */
-      .background-beams-container {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-        pointer-events: none;
-      }
-
-      .background-beams-svg {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-      }
-    `
-    document.head.appendChild(style)
-    
-    return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -258,7 +61,7 @@ export default function ForgotPassword() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#000000',
+      background: 'radial-gradient(ellipse at top left, #0a0a0a 0%, #000000 50%), radial-gradient(ellipse at bottom right, #111111 0%, #000000 50%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -277,7 +80,7 @@ export default function ForgotPassword() {
             transition={{ delay: 0.2, duration: 0.6 }}
             style={{ textAlign: 'center', marginBottom: '2rem' }}
           >
-            <SplitTextLogo text="Fourteen Voices" className="split-text-logo" />
+            <h1 className="split-text-logo">Fourteen Voices</h1>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -346,9 +149,10 @@ export default function ForgotPassword() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <StarBorderButton
+                  <button
                     type="submit"
                     disabled={isLoading}
+                    className="star-border-button"
                   >
                     {isLoading ? (
                       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
@@ -358,7 +162,7 @@ export default function ForgotPassword() {
                     ) : (
                       'Send Reset Email'
                     )}
-                  </StarBorderButton>
+                  </button>
                 </motion.div>
 
               </motion.form>

@@ -4,13 +4,15 @@
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  z-index: 1;
 }
 
 .background-beams-svg {
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
+  opacity: 1;
 }
 
 .background-radial-gradient {
@@ -18,10 +20,11 @@
   inset: 0;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.02) 0%,
-    rgba(255, 255, 255, 0.01) 40%,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
     transparent 70%
   );
+  z-index: 2;
 }
 
 /* Glassmorphism Login Container */

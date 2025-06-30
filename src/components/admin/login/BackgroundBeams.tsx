@@ -23,7 +23,7 @@ export const BackgroundBeams = React.memo(() => {
         className="background-beams-svg"
         width="100%"
         height="100%"
-        viewBox="0 0 696 316"
+        viewBox="-500 -300 1500 1500"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -38,8 +38,8 @@ export const BackgroundBeams = React.memo(() => {
               y2="100%"
             >
               <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-              <stop offset="40%" stopColor="#ffffff" stopOpacity="0.1" />
-              <stop offset="60%" stopColor="#ffffff" stopOpacity="0.1" />
+              <stop offset="40%" stopColor="#ffffff" stopOpacity="0.3" />
+              <stop offset="60%" stopColor="#ffffff" stopOpacity="0.3" />
               <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </linearGradient>
           ))}
@@ -49,8 +49,8 @@ export const BackgroundBeams = React.memo(() => {
             key={`path-${index}`}
             d={path}
             stroke={`url(#beam-gradient-${index})`}
-            strokeOpacity="0.4"
-            strokeWidth="0.5"
+            strokeOpacity="0.8"
+            strokeWidth="2"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{
               pathLength: [0, 1, 1, 0],

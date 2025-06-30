@@ -5,8 +5,6 @@ import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './BackgroundBeams'
-import { SplitTextLogo } from './SplitTextLogo'
-import { StarBorderButton } from './StarBorderButton'
 import { FloatingLabelInput } from './FloatingLabelInput'
 
 export default function ResetPassword() {
@@ -82,7 +80,7 @@ export default function ResetPassword() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#000000',
+      background: 'radial-gradient(ellipse at top left, #0a0a0a 0%, #000000 50%), radial-gradient(ellipse at bottom right, #111111 0%, #000000 50%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -101,7 +99,7 @@ export default function ResetPassword() {
             transition={{ delay: 0.2, duration: 0.6 }}
             style={{ textAlign: 'center', marginBottom: '2rem' }}
           >
-            <SplitTextLogo text="Fourteen Voices" className="split-text-logo" />
+            <h1 className="split-text-logo">Fourteen Voices</h1>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -181,9 +179,10 @@ export default function ResetPassword() {
               transition={{ delay: 0.6 }}
               style={{ marginTop: '1.5rem' }}
             >
-              <StarBorderButton
+              <button
                 type="submit"
                 disabled={isLoading}
+                className="star-border-button"
               >
                 {isLoading ? (
                   <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
@@ -193,7 +192,7 @@ export default function ResetPassword() {
                 ) : (
                   'Reset Password'
                 )}
-              </StarBorderButton>
+              </button>
             </motion.div>
 
             <motion.div
