@@ -145,11 +145,11 @@ export async function seedPages(payload: Payload) {
     console.log('✅ Terms of Service page created')
 
     // Now update the layout footer links to point to these pages
-    await updateLayoutFooterLinks(payload, defaultLayout.id, {
-      about: aboutPage.id,
-      contact: contactPage.id,
-      privacy: privacyPage.id,
-      terms: termsPage.id,
+    await updateLayoutFooterLinks(payload, String(defaultLayout.id), {
+      about: String(aboutPage.id),
+      contact: String(contactPage.id),
+      privacy: String(privacyPage.id),
+      terms: String(termsPage.id),
     })
 
     return pages

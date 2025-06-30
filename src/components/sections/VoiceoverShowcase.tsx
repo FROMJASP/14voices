@@ -6,7 +6,24 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, Mic, Clock, CheckCircle2, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BlurFade } from '@/components/magicui/blur-fade'
-import type { Voiceover } from '@/payload-types'
+// Temporary type definition until payload-types.ts is regenerated
+interface Voiceover {
+  id: string
+  name: string
+  description?: string
+  profilePhoto?: {
+    url: string
+    alt?: string
+  } | string
+  status?: string
+  styleTags?: Array<{
+    tag: string
+    customTag?: string
+  }>
+  availability?: {
+    isAvailable?: boolean
+  }
+}
 
 interface VoiceoverWithDemo extends Voiceover {
   demos?: Array<{

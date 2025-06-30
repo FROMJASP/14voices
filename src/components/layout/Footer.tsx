@@ -378,16 +378,18 @@ export function Footer({ config }: FooterProps) {
     borderTopColor: config.borderColor,
   }
 
-  const paddingClasses = {
+  const paddingClasses: Record<string, string> = {
     small: 'py-6',
     medium: 'py-12',
     large: 'py-16',
   }
 
+  const paddingClass = paddingClasses[config.padding as string] || paddingClasses.medium
+
   return (
     <>
       <footer 
-        className={`footer footer--${footerStyle} ${paddingClasses[config.padding || 'medium']}`}
+        className={`footer footer--${footerStyle} ${paddingClass}`}
         style={customStyles}
       >
         <div className="container mx-auto px-4">

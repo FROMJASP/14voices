@@ -36,10 +36,8 @@ import { EmailSettings } from './globals/EmailSettings'
 import { Navigation } from './globals/Navigation'
 import { SiteSettings } from './globals/SiteSettings'
 import path from 'path'
-import { i18n } from './i18n'
 
 export default buildConfig({
-  i18n: i18n.supportedLanguages,
   admin: {
     user: Users.slug,
     importMap: {

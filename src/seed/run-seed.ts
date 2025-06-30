@@ -1,7 +1,6 @@
 import dotenv from 'dotenv'
 import path from 'path'
 import { getPayload } from 'payload'
-import type { Config } from 'payload'
 
 // Load environment variables first
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
@@ -15,7 +14,7 @@ console.log('')
 async function runSeed() {
   // Dynamically import the config AFTER env vars are loaded
   const configModule = await import('../payload.config')
-  const config = configModule.default as Config
+  const config = configModule.default
 
   // Import seed functions
   const { seedSiteSettings } = await import('./site-settings')
