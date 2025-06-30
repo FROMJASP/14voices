@@ -8,7 +8,7 @@ const Scripts: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    group: 'Media',
+    group: 'Documents',
     description: 'Scripts uploaded by clients for voiceover work',
   },
   access: {

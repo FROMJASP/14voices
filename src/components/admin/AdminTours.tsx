@@ -39,7 +39,15 @@ const tours: Record<string, TourConfig> = {
         element: 'a[href*="/admin/collections/voiceovers"]',
         popover: {
           title: '🎙️ Voice-overs Beheren',
-          description: 'Hier kun je voiceovers toevoegen/verwijderen en bepalen welke voiceovers je op de website wil laten zien, hoe je ze wil laten zien en waar je ze wil laten zien.',
+          description: 'Hier kun je voiceovers toevoegen/verwijderen, foto\'s en demo\'s uploaden, en bepalen welke voiceovers je op de website wil laten zien.',
+          position: 'right',
+        },
+      },
+      {
+        element: 'a[href*="/admin/collections/bookings"]',
+        popover: {
+          title: '📅 Boekingen & Documenten',
+          description: 'Beheer hier boekingen, scripts van klanten, en facturen. Alles op één plek!',
           position: 'right',
         },
       },
@@ -48,6 +56,14 @@ const tours: Record<string, TourConfig> = {
         popover: {
           title: '📄 Pagina\'s Beheren',
           description: 'Pas hier de pagina\'s aan van de website zoals bijv. de content, SEO-instellingen, etc.',
+          position: 'right',
+        },
+      },
+      {
+        element: 'a[href*="/admin/collections/media"]',
+        popover: {
+          title: '🖼️ Media Bibliotheek',
+          description: 'Hier vind je alle geüploade bestanden: voiceover foto\'s, demo\'s, en andere media.',
           position: 'right',
         },
       },
@@ -250,6 +266,37 @@ const tours: Record<string, TourConfig> = {
         popover: {
           title: '📝 Formulieren',
           description: 'Maak contactformulieren en andere interactieve elementen.',
+          position: 'right',
+        },
+      },
+    ],
+  },
+  documentsTour: {
+    id: 'documents-tour',
+    title: 'Documenten Beheer',
+    description: 'Leer hoe je documenten kunt beheren',
+    steps: [
+      {
+        element: 'a[href*="/admin/collections/bookings"]',
+        popover: {
+          title: '📅 Boekingen',
+          description: 'Bekijk en beheer alle boekingen voor voice-over projecten.',
+          position: 'right',
+        },
+      },
+      {
+        element: 'a[href*="/admin/collections/scripts"]',
+        popover: {
+          title: '📝 Scripts',
+          description: 'Scripts die door klanten zijn geüpload voor voice-over werk.',
+          position: 'right',
+        },
+      },
+      {
+        element: 'a[href*="/admin/collections/invoices"]',
+        popover: {
+          title: '💰 Facturen',
+          description: 'Beheer facturen met beveiligde toegang voor klanten.',
           position: 'right',
         },
       },

@@ -8,9 +8,7 @@ import sharp from 'sharp'
 import Users from './collections/Users'
 import Media from './collections/Media'
 import Voiceovers from './collections/Voiceovers'
-import VoiceoverPhotos from './collections/VoiceoverPhotos'
-import VoiceoverDemos from './collections/VoiceoverDemos'
-import UserAvatars from './collections/UserAvatars'
+import Groups from './collections/Groups'
 import Scripts from './collections/Scripts'
 import { Bookings } from './payload/collections/Bookings'
 import Invoices from './collections/Invoices'
@@ -30,8 +28,6 @@ import Sections from './collections/Sections'
 import Forms from './collections/Forms'
 import FormSubmissions from './collections/FormSubmissions'
 import Testimonials from './collections/Testimonials'
-import Team from './collections/Team'
-import Portfolio from './collections/Portfolio'
 import Navigation from './collections/Navigation'
 import { EmailSettings } from './globals/EmailSettings'
 import { SiteSettings } from './globals/SiteSettings'
@@ -74,11 +70,9 @@ export default buildConfig({
   },
   collections: [
     Users,
-    Media, // Keep for backward compatibility
+    Media, // General media repository
+    Groups,
     Voiceovers,
-    VoiceoverPhotos,
-    VoiceoverDemos,
-    UserAvatars,
     Bookings,
     Scripts,
     Invoices,
@@ -91,8 +85,6 @@ export default buildConfig({
     Forms,
     FormSubmissions,
     Testimonials,
-    Team,
-    Portfolio,
     EmailComponents,
     EmailTemplates,
     EmailSequences,
@@ -129,8 +121,8 @@ export default buildConfig({
           vercelBlobStorage({
             collections: {
               media: true,
-              'voiceover-photos': true,
-              'voiceover-demos': true,
+              scripts: true,
+              invoices: true,
             },
             token: process.env.BLOB_READ_WRITE_TOKEN,
           }),

@@ -10,8 +10,13 @@ const path = require('path')
 
 const importMapPath = path.join(__dirname, '../src/app/(payload)/admin/importMap.js')
 
-const importMapContent = `import { default as default_4963015b5420ec0ef8dbefbb4c3fba50 } from '../../../components/admin/AudioPlayerField'
-import { default as default_f51553cc80b050deb84974e6bd0e8224 } from '../../../components/admin/AudioCell'
+const importMapContent = `import { NameCell as NameCell_9c0639e919331889896aa9ea1c557661 } from '../../../components/admin/cells/NameCell'
+import { ProfilePhotoCell as ProfilePhotoCell_fc0d7ba41e7df02cabb84445148888d0 } from '../../../components/admin/cells/ProfilePhotoCell'
+import { StyleTagsCell as StyleTagsCell_789abce5a437648d513c3e44bd81ed9c } from '../../../components/admin/cells/StyleTagsCell'
+import { AudioDemoCell as AudioDemoCell_c5277311b993037e42bbdbf8c691c657 } from '../../../components/admin/cells/AudioDemoCell'
+import { StatusCell as StatusCell_9552c302193d4c39b8e8f39758f33f86 } from '../../../components/admin/cells/StatusCell'
+import { GroupCell as GroupCell_4f97fbdb7152b6433c40f3aaa21af63b } from '../../../components/admin/cells/GroupCell'
+import { AvailabilityCell as AvailabilityCell_f18f4f9ba3a684cf14cb7d599fed8813 } from '../../../components/admin/cells/AvailabilityCell'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -43,8 +48,13 @@ import { default as default_admin_enhancements } from '../../../components/admin
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
 export const importMap = {
-  "/components/admin/AudioPlayerField#default": default_4963015b5420ec0ef8dbefbb4c3fba50,
-  "/components/admin/AudioCell#default": default_f51553cc80b050deb84974e6bd0e8224,
+  "./components/admin/cells/NameCell#NameCell": NameCell_9c0639e919331889896aa9ea1c557661,
+  "./components/admin/cells/ProfilePhotoCell#ProfilePhotoCell": ProfilePhotoCell_fc0d7ba41e7df02cabb84445148888d0,
+  "./components/admin/cells/StyleTagsCell#StyleTagsCell": StyleTagsCell_789abce5a437648d513c3e44bd81ed9c,
+  "./components/admin/cells/AudioDemoCell#AudioDemoCell": AudioDemoCell_c5277311b993037e42bbdbf8c691c657,
+  "./components/admin/cells/StatusCell#StatusCell": StatusCell_9552c302193d4c39b8e8f39758f33f86,
+  "./components/admin/cells/GroupCell#GroupCell": GroupCell_4f97fbdb7152b6433c40f3aaa21af63b,
+  "./components/admin/cells/AvailabilityCell#AvailabilityCell": AvailabilityCell_f18f4f9ba3a684cf14cb7d599fed8813,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,

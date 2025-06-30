@@ -11,7 +11,7 @@ export const Bookings: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    group: 'Bookings',
+    group: 'Documents',
     defaultColumns: ['title', 'customer', 'voiceover', 'status', 'createdAt'],
   },
   access: {

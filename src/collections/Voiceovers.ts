@@ -4,9 +4,15 @@ const Voiceovers: CollectionConfig = {
   slug: 'voiceovers',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'profilePhoto', 'status', 'styleTags', 'availability'],
+    defaultColumns: ['profilePhoto', 'name', 'group', 'primaryDemo', 'status', 'availability', 'styleTags'],
     listSearchableFields: ['name', 'description'],
     group: 'Content',
+    pagination: {
+      defaultLimit: 10,
+      limits: [10, 25, 50, 100],
+    },
+    // Try to populate relationships in list view
+    listDepth: 1,
   },
   access: {
     read: () => true,
@@ -22,6 +28,10 @@ const Voiceovers: CollectionConfig = {
       localized: true,
       admin: {
         description: 'The name of the voiceover artist',
+        width: '25%',
+        components: {
+          Cell: './components/admin/cells/NameCell#NameCell',
+        },
       },
     },
     {
@@ -35,9 +45,13 @@ const Voiceovers: CollectionConfig = {
     {
       name: 'profilePhoto',
       type: 'upload',
-      relationTo: 'voiceover-photos',
+      relationTo: 'media',
       admin: {
         description: 'Primary profile photo for this voiceover artist',
+        width: '15%',
+        components: {
+          Cell: './components/admin/cells/ProfilePhotoCell#ProfilePhotoCell',
+        },
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
         if (data?.status === 'active' && !value) {
@@ -48,12 +62,25 @@ const Voiceovers: CollectionConfig = {
     },
     {
       name: 'additionalPhotos',
-      type: 'relationship',
-      relationTo: 'voiceover-photos',
-      hasMany: true,
+      type: 'array',
       admin: {
         description: 'Additional profile photos',
       },
+      fields: [
+        {
+          name: 'photo',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'caption',
+          type: 'text',
+          admin: {
+            description: 'Optional caption for this photo',
+          },
+        },
+      ],
     },
     {
       name: 'styleTags',
@@ -62,6 +89,9 @@ const Voiceovers: CollectionConfig = {
       minRows: 3,
       admin: {
         description: 'Select at least 3 style tags',
+        components: {
+          Cell: './components/admin/cells/StyleTagsCell#StyleTagsCell',
+        },
       },
       fields: [
         {
@@ -92,9 +122,14 @@ const Voiceovers: CollectionConfig = {
     {
       name: 'primaryDemo',
       type: 'upload',
-      relationTo: 'voiceover-demos',
+      relationTo: 'media',
+      label: 'Demos',
       admin: {
         description: 'Primary audio demo (will show file info)',
+        width: '20%',
+        components: {
+          Cell: './components/admin/cells/AudioDemoCell#AudioDemoCell',
+        },
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
         if (data?.status === 'active' && !value) {
@@ -105,12 +140,33 @@ const Voiceovers: CollectionConfig = {
     },
     {
       name: 'additionalDemos',
-      type: 'relationship',
-      relationTo: 'voiceover-demos',
-      hasMany: true,
+      type: 'array',
       admin: {
         description: 'Additional audio demos',
       },
+      fields: [
+        {
+          name: 'demo',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+          admin: {
+            description: 'Title for this demo (e.g., "Commercial Demo", "Narration Demo")',
+          },
+        },
+        {
+          name: 'description',
+          type: 'text',
+          admin: {
+            description: 'Optional description for this demo',
+          },
+        },
+      ],
     },
     {
       name: 'status',
@@ -125,13 +181,34 @@ const Voiceovers: CollectionConfig = {
       ],
       admin: {
         description: 'Controls where this voiceover appears on the website',
+        width: '15%',
+        components: {
+          Cell: './components/admin/cells/StatusCell#StatusCell',
+        },
+      },
+    },
+    {
+      name: 'group',
+      type: 'relationship',
+      relationTo: 'groups',
+      hasMany: false,
+      admin: {
+        description: 'Optional group/batch this voiceover belongs to',
+        width: '20%',
+        components: {
+          Cell: './components/admin/cells/GroupCell#GroupCell',
+        },
       },
     },
     {
       type: 'group',
       name: 'availability',
-      label: 'Availability Settings',
-      admin: {},
+      label: 'Availability',
+      admin: {
+        components: {
+          Cell: './components/admin/cells/AvailabilityCell#AvailabilityCell',
+        },
+      },
       fields: [
         {
           name: 'isAvailable',

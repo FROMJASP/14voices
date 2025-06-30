@@ -1,36 +1,8 @@
+import type { TransformedVoiceover as Voiceover, VoiceoverDemo } from '@/types/voiceover'
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
-export interface VoiceoverDemo {
-  id: string
-  title: string
-  demoType: 'reel' | 'commercials' | 'narrations'
-  audioFile: {
-    url: string
-    filename: string
-  }
-  duration?: string
-  language?: string
-  accent?: string
-  tags?: string[]
-  isPrimary?: boolean
-  voiceover: {
-    id: string
-    name: string
-    slug: string
-  }
-}
-
-export interface Voiceover {
-  id: string
-  name: string
-  slug: string
-  bio?: string
-  profilePhoto?: {
-    url: string
-    alt?: string
-  }
-  demos?: VoiceoverDemo[]
-}
+export type { Voiceover, VoiceoverDemo }
 
 export async function getVoiceovers(): Promise<Voiceover[]> {
   try {

@@ -7,8 +7,6 @@ import { ContentSection } from './blocks/ContentSection'
 import { CallToAction } from './blocks/CallToAction'
 import { FAQAccordion } from './blocks/FAQAccordion'
 import { TestimonialsDisplay } from './blocks/TestimonialsDisplay'
-import { TeamDisplay } from './blocks/TeamDisplay'
-import { PortfolioDisplay } from './blocks/PortfolioDisplay'
 
 interface BlockRendererProps {
   block: Block
@@ -58,18 +56,6 @@ export function BlockRenderer({ block }: BlockRendererProps) {
       return (
         <div className={wrapperClasses}>
           <TestimonialsDisplay data={block.testimonialsDisplay || {}} />
-        </div>
-      )
-    case 'teamDisplay':
-      return (
-        <div className={wrapperClasses}>
-          <TeamDisplay data={block.teamDisplay || {}} />
-        </div>
-      )
-    case 'portfolioDisplay':
-      return (
-        <div className={wrapperClasses}>
-          <PortfolioDisplay data={block.portfolioDisplay || {}} />
         </div>
       )
     default:

@@ -48,13 +48,11 @@ const Sections: CollectionConfig = {
         { label: 'Gallery', value: 'gallery' },
         { label: 'Testimonials', value: 'testimonials' },
         { label: 'Pricing', value: 'pricing' },
-        { label: 'Team', value: 'team' },
         { label: 'FAQ', value: 'faq' },
         { label: 'Contact', value: 'contact' },
         { label: 'CTA', value: 'cta' },
         { label: 'Stats', value: 'stats' },
         { label: 'Process', value: 'process' },
-        { label: 'Portfolio', value: 'portfolio' },
       ],
       admin: {
         position: 'sidebar',

@@ -1,15 +1,14 @@
 export const STORAGE_PATHS = {
   // User-specific paths
-  userAvatar: (userId: string) => `users/${userId}/avatars`,
-  userScript: (userId: string, scriptId: string) => `users/${userId}/scripts/${scriptId}`,
-  userInvoice: (userId: string, invoiceId: string) => `users/${userId}/invoices/${invoiceId}`,
+  userAvatar: (userId: string) => `media/avatars/${userId}`,
+  userScript: (userId: string, scriptId: string) => `documents/scripts/${userId}/${scriptId}`,
+  userInvoice: (userId: string, invoiceId: string) => `documents/invoices/${userId}/${invoiceId}`,
   
-  // System paths (admin-managed)
-  voiceoverPhoto: (voiceoverId: string) => `system/voiceover-photos/${voiceoverId}`,
-  voiceoverDemo: (voiceoverId: string) => `system/voiceover-demos/${voiceoverId}`,
+  // Voiceover media paths
+  voiceoverMedia: (voiceoverId: string) => `media/voiceovers/${voiceoverId}`,
   
   // Public paths
-  publicDemo: (demoId: string) => `public/demos/${demoId}`,
+  publicMedia: (mediaId: string) => `media/public/${mediaId}`,
 } as const
 
 export const getBlobPath = (type: keyof typeof STORAGE_PATHS, ...args: string[]): string => {

@@ -13,3 +13,38 @@ button[aria-label*="Locale"],
 button[aria-label*="Language"] {
   display: none !important;
 }
+
+/* Fix checkbox alignment in table rows */
+.collection-list__cell-checkbox {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 56px !important;
+}
+
+/* Ensure table cells have consistent height */
+.collection-list__cell {
+  min-height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Fix checkbox input alignment */
+.collection-list__cell input[type="checkbox"] {
+  margin: 0 !important;
+}
+
+/* Make entire row clickable for voiceovers collection */
+.collection-list__list-item[data-collection="voiceovers"] {
+  cursor: pointer !important;
+}
+
+.collection-list__list-item[data-collection="voiceovers"]:hover {
+  background-color: rgba(59, 130, 246, 0.05) !important;
+}
+
+/* Dark mode support for row hover */
+@media (prefers-color-scheme: dark) {
+  .collection-list__list-item[data-collection="voiceovers"]:hover {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+  }
+}

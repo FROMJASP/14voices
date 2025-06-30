@@ -16,15 +16,45 @@ export function HelpButton() {
     },
     {
       id: 'voiceoverTour',
-      title: 'Voice-over Toevoegen',
-      description: 'Leer hoe u een nieuwe voice-over artiest toevoegt',
+      title: 'Voice-overs Beheren',
+      description: 'Leer hoe u voice-overs, foto\'s en demo\'s beheert',
       icon: '🎤',
+    },
+    {
+      id: 'documentsTour',
+      title: 'Documenten & Boekingen',
+      description: 'Beheer boekingen, scripts en facturen',
+      icon: '📋',
     },
     {
       id: 'pageTour',
       title: 'Pagina\'s Bewerken',
       description: 'Leer hoe u pagina\'s kunt aanpassen',
       icon: '📄',
+    },
+    {
+      id: 'siteBuilderTour',
+      title: 'Site Builder',
+      description: 'Bouw uw website met layouts en blokken',
+      icon: '🏗️',
+    },
+    {
+      id: 'formTour',
+      title: 'Formulieren',
+      description: 'Maak en beheer formulieren',
+      icon: '📝',
+    },
+    {
+      id: 'emailTour',
+      title: 'E-mail Campagnes',
+      description: 'Stel e-mailcampagnes op',
+      icon: '📧',
+    },
+    {
+      id: 'bookingTour',
+      title: 'Boekingen Beheren',
+      description: 'Beheer voice-over boekingen',
+      icon: '📅',
     },
   ]
 
