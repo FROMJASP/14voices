@@ -32,8 +32,8 @@ import FormSubmissions from './collections/FormSubmissions'
 import Testimonials from './collections/Testimonials'
 import Team from './collections/Team'
 import Portfolio from './collections/Portfolio'
+import Navigation from './collections/Navigation'
 import { EmailSettings } from './globals/EmailSettings'
-import { Navigation } from './globals/Navigation'
 import { SiteSettings } from './globals/SiteSettings'
 import path from 'path'
 
@@ -83,6 +83,7 @@ export default buildConfig({
     Scripts,
     Invoices,
     BlogPosts,
+    Navigation,
     Pages,
     Blocks,
     Layouts,
@@ -103,7 +104,6 @@ export default buildConfig({
   ],
   globals: [
     EmailSettings,
-    Navigation,
     SiteSettings,
   ],
   editor: lexicalEditor(),

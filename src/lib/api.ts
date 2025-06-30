@@ -88,3 +88,86 @@ export async function getVoiceoverDemos(): Promise<VoiceoverDemo[]> {
     return []
   }
 }
+
+export interface NavigationItem {
+  label: string
+  type: 'page' | 'custom' | 'dropdown'
+  page?: {
+    slug: string
+    title: string
+  }
+  url?: string
+  newTab?: boolean
+  subItems?: Array<{
+    label: string
+    type: 'page' | 'custom'
+    page?: {
+      slug: string
+      title: string
+    }
+    url?: string
+    description?: string
+  }>
+}
+
+export interface Navigation {
+  id: string
+  mainMenu?: NavigationItem[]
+  footerColumns?: Array<{
+    title: string
+    links: Array<{
+      label: string
+      type: 'page' | 'custom'
+      page?: {
+        slug: string
+        title: string
+      }
+      url?: string
+      newTab?: boolean
+    }>
+  }>
+  footerBottom?: {
+    copyrightText?: string
+    legalLinks?: Array<{
+      label: string
+      page?: {
+        slug: string
+        title: string
+      }
+    }>
+  }
+  mobileMenu?: {
+    showSearch?: boolean
+    showSocial?: boolean
+    additionalLinks?: Array<{
+      label: string
+      type: 'page' | 'custom'
+      page?: {
+        slug: string
+        title: string
+      }
+      url?: string
+      icon?: string
+    }>
+  }
+}
+
+export async function getNavigation(): Promise<Navigation | null> {
+  try {
+    const res = await fetch(`${API_URL}/api/navigation?depth=2`, {
+      next: { revalidate: 60 }
+    })
+    
+    if (!res.ok) {
+      console.error('Failed to fetch navigation:', res.status)
+      return null
+    }
+    
+    const data = await res.json()
+    // Navigation is a singleton, so we get the first (and only) document
+    return data.docs?.[0] || null
+  } catch (error) {
+    console.error('Error fetching navigation:', error)
+    return null
+  }
+}

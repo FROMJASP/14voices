@@ -12,6 +12,7 @@ import { seedSiteSettings } from './site-settings'
 import { seedLayouts } from './layouts'
 import { seedPages } from './pages'
 import { seedVoiceovers } from './voiceovers'
+import { seedNavigation } from './navigation'
 
 // Debug: Check if env vars are loaded
 console.log('🔍 Checking environment variables...')
@@ -82,6 +83,11 @@ async function seed() {
     // 5. Create voiceovers
     console.log('🎤 Creating voiceovers...')
     await seedVoiceovers(payload)
+    console.log('')
+
+    // 6. Create navigation
+    console.log('🧭 Creating navigation...')
+    await seedNavigation(payload)
     console.log('')
 
     console.log('✨ Database seed completed successfully!')

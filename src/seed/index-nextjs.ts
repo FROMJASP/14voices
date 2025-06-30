@@ -5,6 +5,8 @@ import config from '../payload.config'
 import { seedSiteSettings } from './site-settings'
 import { seedLayouts } from './layouts'
 import { seedPages } from './pages'
+import { seedVoiceovers } from './voiceovers'
+import { seedNavigation } from './navigation'
 
 async function seed() {
   console.log('🔍 Environment check:')
@@ -63,6 +65,16 @@ async function seed() {
     // 4. Create sample pages
     console.log('📄 Creating sample pages...')
     await seedPages(payload)
+    console.log('')
+
+    // 5. Create voiceovers
+    console.log('🎤 Creating voiceovers...')
+    await seedVoiceovers(payload)
+    console.log('')
+
+    // 6. Create navigation
+    console.log('🧭 Creating navigation...')
+    await seedNavigation(payload)
     console.log('')
 
     console.log('✨ Database seed completed successfully!')

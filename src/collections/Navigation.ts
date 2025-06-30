@@ -1,11 +1,39 @@
-import type { GlobalConfig } from 'payload'
+import type { CollectionConfig } from 'payload'
 
-export const Navigation: GlobalConfig = {
+const Navigation: CollectionConfig = {
   slug: 'navigation',
-  label: 'Navigation',
+  labels: {
+    singular: 'Navigation',
+    plural: 'Navigation',
+  },
+  admin: {
+    useAsTitle: 'id',
+    group: 'Site Builder',
+    description: 'Manage site-wide navigation menus',
+    defaultColumns: ['id', 'updatedAt'],
+    hideAPIURL: true,
+  },
   access: {
     read: () => true,
+    create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
     update: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
+    delete: () => false, // Prevent deletion of navigation
+  },
+  // Singleton pattern - only allow one navigation record
+  hooks: {
+    beforeOperation: [
+      async ({ args, operation }) => {
+        if (operation === 'create') {
+          const { count } = await args.req.payload.count({
+            collection: 'navigation',
+          })
+          if (count > 0) {
+            throw new Error('Only one navigation configuration is allowed')
+          }
+        }
+        return args
+      },
+    ],
   },
   fields: [
     {
@@ -281,3 +309,5 @@ export const Navigation: GlobalConfig = {
     },
   ],
 }
+
+export default Navigation
