@@ -2,6 +2,7 @@ import { getPayloadHMR } from '@payloadcms/next/utilities'
 import configPromise from '@payload-config'
 import { LayoutWrapper } from '@/components/LayoutWrapper'
 import { notFound } from 'next/navigation'
+import type { Layout } from '@/payload-types'
 
 interface PageProps {
   params: Promise<{
@@ -18,7 +19,7 @@ export default async function LayoutPreviewPage({ params }: PageProps) {
       collection: 'layouts',
       id: id,
       depth: 2,
-    })
+    }) as Layout
 
     if (!layout) {
       notFound()
