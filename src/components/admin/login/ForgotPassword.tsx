@@ -105,7 +105,7 @@ export default function ForgotPassword() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                   style={{
-                    fontSize: '0.875rem',
+                    fontSize: '1rem',
                     color: 'rgba(255, 255, 255, 0.7)',
                     marginBottom: '1.5rem',
                     textAlign: 'center'
@@ -185,7 +185,7 @@ export default function ForgotPassword() {
                     window.location.href = '/admin'
                   }}
                   style={{
-                    fontSize: '0.875rem',
+                    fontSize: '1rem',
                     color: 'rgba(255, 255, 255, 0.6)',
                     textDecoration: 'none',
                     transition: 'color 0.2s ease',
@@ -260,7 +260,7 @@ export default function ForgotPassword() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
                   style={{
-                    fontSize: '0.875rem',
+                    fontSize: '1rem',
                     color: 'rgba(255, 255, 255, 0.7)',
                     marginBottom: '2rem'
                   }}

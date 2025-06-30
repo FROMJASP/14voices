@@ -111,9 +111,9 @@ export default function BeforeLogin() {
           .floating-label-input:-webkit-autofill ~ .floating-label,
           .floating-label-input:autofill ~ .floating-label {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 0.75rem;
+            font-size: 0.875rem;
             font-weight: 400;
-            transform: translateY(-1.5rem);
+            transform: translateY(-1.25rem);
           }
         `
       }} />
@@ -217,7 +217,7 @@ export default function BeforeLogin() {
                     window.location.href = '/admin/forgot-password'
                   }}
                   style={{
-                    fontSize: '0.875rem',
+                    fontSize: '1rem',
                     color: 'rgba(255, 255, 255, 0.6)',
                     textDecoration: 'none',
                     transition: 'color 0.2s ease',
