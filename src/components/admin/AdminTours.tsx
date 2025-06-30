@@ -51,14 +51,6 @@ const tours: Record<string, TourConfig> = {
           position: 'right',
         },
       },
-      {
-        element: 'a[href*="/admin/collections/layouts"]',
-        popover: {
-          title: '🎨 Layouts Aanpassen',
-          description: 'Hier kun je de volgorde aanpassen waarin de verschillende secties op de website worden getoond.',
-          position: 'right',
-        },
-      },
     ],
   },
   voiceoverTour: {
