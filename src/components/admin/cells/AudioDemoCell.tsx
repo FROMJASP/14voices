@@ -1,12 +1,12 @@
 'use client'
 
-import React from 'react'
+import React, { memo, useMemo } from 'react'
 import type { CellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
-export const AudioDemoCell: React.FC<CellComponentProps> = ({ cellData, rowData }) => {
+export const AudioDemoCell: React.FC<CellComponentProps> = memo(({ cellData, rowData }) => {
   const isDark = useDarkMode()
-  const content = () => {
+  const content = useMemo(() => {
     const demos = []
     
     // Since this is being called for the primaryDemo field,
@@ -54,7 +54,7 @@ export const AudioDemoCell: React.FC<CellComponentProps> = ({ cellData, rowData 
         )}
       </div>
     )
-  }
+  }, [cellData, rowData?.additionalDemos, isDark])
 
   return (
     <div style={{ 
@@ -62,7 +62,9 @@ export const AudioDemoCell: React.FC<CellComponentProps> = ({ cellData, rowData 
       alignItems: 'center',
       minHeight: '56px'
     }}>
-      {content()}
+      {content}
     </div>
   )
-}
+})
+
+AudioDemoCell.displayName = 'AudioDemoCell'

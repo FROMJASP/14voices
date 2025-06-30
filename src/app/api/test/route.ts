@@ -26,10 +26,10 @@ export async function GET() {
         status: v.status,
       })),
     })
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     })
   }
 }

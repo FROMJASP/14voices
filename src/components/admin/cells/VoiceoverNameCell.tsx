@@ -8,8 +8,6 @@ export const VoiceoverNameCell: React.FC<CellComponentProps> = ({ rowData, cellD
   const name = cellData || rowData?.name || 'Unnamed'
   const id = rowData?.id
   
-  // Debug logging to see what data we're getting
-  console.log('VoiceoverNameCell data:', { name, profilePhoto: rowData?.profilePhoto, rowData })
   
   // The profilePhoto might be in different locations based on how data is structured
   let profilePhoto = rowData?.profilePhoto
@@ -34,7 +32,6 @@ export const VoiceoverNameCell: React.FC<CellComponentProps> = ({ rowData, cellD
             border: '2px solid #e5e7eb',
           }}
           onError={(e) => {
-            console.error('Image failed to load:', photoUrl)
             // Hide image and show fallback on error
             const img = e.currentTarget
             const fallback = img.nextElementSibling as HTMLElement

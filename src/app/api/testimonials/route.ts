@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     
     // Build where query from search params
-    const where: Record<string, any> = {}
+    const where: Record<string, unknown> = {}
     searchParams.forEach((value, key) => {
       if (key.startsWith('where[') && key.endsWith(']')) {
         const field = key.slice(6, -1)

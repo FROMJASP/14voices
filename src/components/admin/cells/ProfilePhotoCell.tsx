@@ -1,27 +1,25 @@
 'use client'
 
-import React from 'react'
+import React, { memo, useMemo } from 'react'
 import type { CellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
-export const ProfilePhotoCell: React.FC<CellComponentProps> = ({ cellData, rowData }) => {
+export const ProfilePhotoCell: React.FC<CellComponentProps> = memo(({ cellData, rowData }) => {
   const isDark = useDarkMode()
   // Handle populated upload relationship
-  let imageUrl = null
-  
-  // Since Payload doesn't populate relationships in list views,
-  // we'll show a placeholder. The actual image is only available
-  // when editing the document.
-  if (cellData) {
+  const imageUrl = useMemo(() => {
+    if (!cellData) return null
+    
     // If it's populated (unlikely in list view)
     if (typeof cellData === 'object' && cellData.url) {
-      imageUrl = cellData.url
+      return cellData.url
     }
     // If we have sizes
     else if (typeof cellData === 'object' && cellData.sizes?.thumbnail?.url) {
-      imageUrl = cellData.sizes.thumbnail.url
+      return cellData.sizes.thumbnail.url
     }
-  }
+    return null
+  }, [cellData])
 
   return (
     <div style={{ 
@@ -32,6 +30,7 @@ export const ProfilePhotoCell: React.FC<CellComponentProps> = ({ cellData, rowDa
       padding: '8px 0'
     }}>
       {imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={imageUrl}
           alt="Profile"
@@ -65,4 +64,6 @@ export const ProfilePhotoCell: React.FC<CellComponentProps> = ({ cellData, rowDa
       )}
     </div>
   )
-}
+})
+
+ProfilePhotoCell.displayName = 'ProfilePhotoCell'

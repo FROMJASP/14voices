@@ -2,19 +2,20 @@
 
 import { useState } from 'react'
 import type { Form } from '@/payload-types'
+import type { FormSettings } from '@/types/forms'
 
 interface FormRendererProps {
   form: Form
 }
 
 export function FormRenderer({ form }: FormRendererProps) {
-  const [formData, setFormData] = useState<Record<string, any>>({})
+  const [formData, setFormData] = useState<Record<string, unknown>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState('')
 
-  const handleInputChange = (name: string, value: any) => {
+  const handleInputChange = (name: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [name]: value }))
     // Clear error when user starts typing
     if (errors[name]) {
@@ -160,7 +161,7 @@ export function FormRenderer({ form }: FormRendererProps) {
             required={field.required}
           >
             <option value="">Select...</option>
-            {field.options?.map((option: any) => (
+            {field.options?.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -171,7 +172,7 @@ export function FormRenderer({ form }: FormRendererProps) {
       case 'radio':
         return (
           <div className="space-y-2">
-            {field.options?.map((option: any) => (
+            {field.options?.map((option) => (
               <label key={option.value} className="flex items-center">
                 <input
                   type="radio"
@@ -226,7 +227,7 @@ export function FormRenderer({ form }: FormRendererProps) {
         {form.fields.map((field, index) => (
           <div
             key={index}
-            className={widthClasses[(field as any).width as keyof typeof widthClasses] || 'col-span-full'}
+            className={widthClasses[('width' in field && field.width as keyof typeof widthClasses) || 'full']}
           >
             {field.type !== 'checkbox' && field.type !== 'hidden' && field.type !== 'heading' && field.type !== 'paragraph' && field.label && (
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -237,8 +238,8 @@ export function FormRenderer({ form }: FormRendererProps) {
             
             {renderField(field)}
             
-            {(field as any).helpText && (
-              <p className="mt-1 text-sm text-gray-500">{(field as any).helpText}</p>
+            {'helpText' in field && field.helpText && (
+              <p className="mt-1 text-sm text-gray-500">{field.helpText}</p>
             )}
             
             {errors[field.name] && (
@@ -255,22 +256,22 @@ export function FormRenderer({ form }: FormRendererProps) {
       )}
 
       <div className={`flex ${
-        (form.settings?.submitButton as any)?.position === 'center' ? 'justify-center' :
-        (form.settings?.submitButton as any)?.position === 'right' ? 'justify-end' :
+        (form.settings as FormSettings)?.submitButton?.position === 'center' ? 'justify-center' :
+        (form.settings as FormSettings)?.submitButton?.position === 'right' ? 'justify-end' :
         'justify-start'
       }`}>
         <button
           type="submit"
           disabled={submitting}
           className={`px-8 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 ${
-            (form.settings?.submitButton as any)?.style === 'secondary'
+            (form.settings as FormSettings)?.submitButton?.style === 'secondary'
               ? 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-              : (form.settings?.submitButton as any)?.style === 'outline'
+              : (form.settings as FormSettings)?.submitButton?.style === 'outline'
               ? 'border-2 border-gray-300 hover:bg-gray-100'
               : 'bg-blue-600 text-white hover:bg-blue-700'
           }`}
         >
-          {submitting ? 'Submitting...' : ((form.settings?.submitButton as any)?.text || 'Submit')}
+          {submitting ? 'Submitting...' : ((form.settings as FormSettings)?.submitButton?.text || 'Submit')}
         </button>
       </div>
     </form>

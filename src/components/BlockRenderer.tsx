@@ -1,6 +1,13 @@
 'use client'
 
 import type { Block } from '@/payload-types'
+import type { 
+  HeroBannerData, 
+  FeatureGridData, 
+  ContentSectionData, 
+  CallToActionData, 
+  FAQAccordionData 
+} from '@/types/blocks'
 import { HeroBanner } from './blocks/HeroBanner'
 import { FeatureGrid } from './blocks/FeatureGrid'
 import { ContentSection } from './blocks/ContentSection'
@@ -25,31 +32,31 @@ export function BlockRenderer({ block }: BlockRendererProps) {
     case 'heroBanner':
       return (
         <div className={wrapperClasses}>
-          <HeroBanner data={block.heroBanner as any} />
+          <HeroBanner data={block.heroBanner as HeroBannerData} />
         </div>
       )
     case 'featureGrid':
       return (
         <div className={wrapperClasses}>
-          <FeatureGrid data={block.featureGrid as any} />
+          <FeatureGrid data={block.featureGrid as FeatureGridData} />
         </div>
       )
     case 'contentSection':
       return (
         <div className={wrapperClasses}>
-          <ContentSection data={block.contentSection as any} />
+          <ContentSection data={block.contentSection as ContentSectionData} />
         </div>
       )
     case 'callToAction':
       return (
         <div className={wrapperClasses}>
-          <CallToAction data={block.callToAction as any} />
+          <CallToAction data={block.callToAction as CallToActionData} />
         </div>
       )
     case 'faqAccordion':
       return (
         <div className={wrapperClasses}>
-          <FAQAccordion data={block.faqAccordion as any} />
+          <FAQAccordion data={block.faqAccordion as FAQAccordionData} />
         </div>
       )
     case 'testimonialsDisplay':

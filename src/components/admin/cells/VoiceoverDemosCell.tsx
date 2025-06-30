@@ -8,7 +8,6 @@ export const VoiceoverDemosCell: React.FC<CellComponentProps> = ({ rowData, cell
   const primaryDemo = cellData || rowData?.primaryDemo
   const additionalDemos = rowData?.additionalDemos || []
   
-  console.log('VoiceoverDemosCell data:', { primaryDemo, additionalDemos, rowData })
   
   // Check if primaryDemo exists and get its data
   const hasPrimaryDemo = !!primaryDemo

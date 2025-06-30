@@ -1,19 +1,19 @@
 'use client'
 
-import React from 'react'
+import React, { memo, useCallback } from 'react'
 import type { CellComponentProps } from 'payload'
 import { useRouter } from 'next/navigation'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
-export const NameCell: React.FC<CellComponentProps> = ({ cellData, rowData }) => {
+export const NameCell: React.FC<CellComponentProps> = memo(({ cellData, rowData }) => {
   const router = useRouter()
   const isDark = useDarkMode()
   
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (rowData?.id) {
       router.push(`/admin/collections/voiceovers/${rowData.id}`)
     }
-  }
+  }, [rowData?.id, router])
   
   return (
     <div 
@@ -40,4 +40,6 @@ export const NameCell: React.FC<CellComponentProps> = ({ cellData, rowData }) =>
       </span>
     </div>
   )
-}
+})
+
+NameCell.displayName = 'NameCell'

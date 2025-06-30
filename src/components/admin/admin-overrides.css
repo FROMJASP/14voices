@@ -48,3 +48,14 @@ button[aria-label*="Language"] {
     background-color: rgba(59, 130, 246, 0.1) !important;
   }
 }
+
+/* Admin cell hover effects */
+.admin-cell-name {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s;
+}
+
+.admin-cell-name:hover {
+  text-decoration-color: #3b82f6;
+}
