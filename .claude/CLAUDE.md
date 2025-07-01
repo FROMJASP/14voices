@@ -42,6 +42,8 @@ Support: AVIF images | PDF/DOC/Pages scripts | Secure invoices
 Components: 'use client' required | Server hooks > client components
 Imports: Check v3 paths | Component issues common
 Access: Type assertions needed | (fn as Access)
+Solutions: Use built-in features first | Check Payload docs | Avoid custom components
+Field Components: Standard fields > custom | Use admin.description | Leverage conditions
 ```
 
 ## Thinking Modes
