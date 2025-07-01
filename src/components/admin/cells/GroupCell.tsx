@@ -2,7 +2,6 @@
 
 import React from 'react'
 import type { DefaultCellComponentProps } from 'payload'
-import { useDarkMode } from '@/hooks/useDarkMode'
 
 const groupColors: Record<string, { light: { bg: string; text: string }, dark: { bg: string; text: string } }> = {
   blue: {
@@ -48,12 +47,11 @@ const groupColors: Record<string, { light: { bg: string; text: string }, dark: {
 }
 
 export const GroupCell: React.FC<DefaultCellComponentProps> = ({ cellData }) => {
-  const isDark = useDarkMode()
   
   if (!cellData) {
     return (
       <span style={{ 
-        color: isDark ? '#6b7280' : '#9ca3af', 
+        color: 'var(--theme-text-placeholder)', 
         fontSize: '14px' 
       }}>
         No group
@@ -67,7 +65,7 @@ export const GroupCell: React.FC<DefaultCellComponentProps> = ({ cellData }) => 
   if (!groupData) {
     return (
       <span style={{ 
-        color: isDark ? '#9ca3af' : '#6b7280', 
+        color: 'var(--theme-text-placeholder)', 
         fontSize: '14px' 
       }}>
         Group assigned
@@ -76,7 +74,6 @@ export const GroupCell: React.FC<DefaultCellComponentProps> = ({ cellData }) => 
   }
   
   const colorScheme = groupColors[groupData.color] || groupColors.gray
-  const colors = isDark ? colorScheme.dark : colorScheme.light
   
   return (
     <span
@@ -87,9 +84,10 @@ export const GroupCell: React.FC<DefaultCellComponentProps> = ({ cellData }) => 
         borderRadius: '9999px',
         fontSize: '13px',
         fontWeight: '500',
-        backgroundColor: colors.bg,
-        color: colors.text,
-        whiteSpace: 'nowrap'
+        backgroundColor: colorScheme.light.bg,
+        color: colorScheme.light.text,
+        whiteSpace: 'nowrap',
+        opacity: 0.9
       }}
     >
       {groupData.name || 'Unnamed Group'}

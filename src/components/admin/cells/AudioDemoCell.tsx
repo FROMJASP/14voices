@@ -2,59 +2,62 @@
 
 import React, { memo, useMemo } from 'react'
 import type { DefaultCellComponentProps } from 'payload'
-import { useDarkMode } from '@/hooks/useDarkMode'
 
-export const AudioDemoCell: React.FC<DefaultCellComponentProps> = memo(({ cellData, rowData }) => {
-  const isDark = useDarkMode()
+export const AudioDemoCell: React.FC<DefaultCellComponentProps> = memo(({ rowData }) => {
   const content = useMemo(() => {
     const demos = []
     
-    // Since this is being called for the primaryDemo field,
-    // cellData should contain the primaryDemo data
-    if (cellData) {
-      if (typeof cellData === 'object' && cellData.filename) {
-        // If the media is populated (has filename)
-        demos.push(cellData.filename)
-      } else if (typeof cellData === 'string') {
-        // If it's just an ID, we can't show the filename
-        demos.push('Demo uploaded')
+    // Check for the three specific demo types
+    if (rowData?.fullDemoReel) {
+      const demoData = rowData.fullDemoReel
+      if (typeof demoData === 'object' && demoData.filename) {
+        demos.push({ type: 'Full Demo', filename: demoData.filename })
+      } else if (demoData) {
+        demos.push({ type: 'Full Demo', filename: 'Uploaded' })
       }
     }
     
-    // Also check additional demos from rowData
-    if (rowData?.additionalDemos && Array.isArray(rowData.additionalDemos)) {
-      rowData.additionalDemos.forEach((demoItem) => {
-        if (demoItem.title) {
-          demos.push(demoItem.title)
-        } else if (demoItem.demo?.filename) {
-          demos.push(demoItem.demo.filename)
-        }
-      })
+    if (rowData?.commercialsDemo) {
+      const demoData = rowData.commercialsDemo
+      if (typeof demoData === 'object' && demoData.filename) {
+        demos.push({ type: 'Commercials', filename: demoData.filename })
+      } else if (demoData) {
+        demos.push({ type: 'Commercials', filename: 'Uploaded' })
+      }
+    }
+    
+    if (rowData?.narrativeDemo) {
+      const demoData = rowData.narrativeDemo
+      if (typeof demoData === 'object' && demoData.filename) {
+        demos.push({ type: 'Narrative', filename: demoData.filename })
+      } else if (demoData) {
+        demos.push({ type: 'Narrative', filename: 'Uploaded' })
+      }
     }
     
     if (demos.length === 0) {
       return (
-        <span style={{ color: isDark ? '#6b7280' : '#9ca3af', fontSize: '14px' }}>
+        <span style={{ color: 'var(--theme-text-placeholder)', fontSize: '14px' }}>
           No demos
         </span>
       )
     }
     
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        {demos.slice(0, 2).map((demo, index) => (
-          <span key={index} style={{ fontSize: '13px', color: isDark ? '#e5e7eb' : '#374151' }}>
-            {demo}
-          </span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        {demos.map((demo, index) => (
+          <div key={index} style={{ fontSize: '13px' }}>
+            <span style={{ fontWeight: '500', color: 'var(--theme-text)' }}>
+              {demo.type}:
+            </span>
+            <span style={{ marginLeft: '4px', color: 'var(--theme-success-500)' }}>
+              ✓
+            </span>
+          </div>
         ))}
-        {demos.length > 2 && (
-          <span style={{ fontSize: '12px', color: isDark ? '#9ca3af' : '#6b7280' }}>
-            +{demos.length - 2} more
-          </span>
-        )}
       </div>
     )
-  }, [cellData, rowData?.additionalDemos, isDark])
+  }, [rowData?.fullDemoReel, rowData?.commercialsDemo, rowData?.narrativeDemo])
 
   return (
     <div style={{ 

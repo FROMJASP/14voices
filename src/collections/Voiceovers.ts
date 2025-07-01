@@ -4,7 +4,7 @@ const Voiceovers: CollectionConfig = {
   slug: 'voiceovers',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['profilePhoto', 'name', 'group', 'primaryDemo', 'status', 'availability', 'styleTags'],
+    defaultColumns: ['group', 'name', 'status', 'availability', 'styleTags', 'demos'],
     listSearchableFields: ['name', 'description'],
     group: 'Content',
     pagination: {
@@ -46,10 +46,7 @@ const Voiceovers: CollectionConfig = {
       relationTo: 'media',
       admin: {
         description: 'Primary profile photo for this voiceover artist',
-        width: '15%',
-        components: {
-          Cell: './components/admin/cells/ProfilePhotoCell#ProfilePhotoCell',
-        },
+        disableListColumn: true,
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
         if (data?.status === 'active' && !value) {
@@ -118,53 +115,48 @@ const Voiceovers: CollectionConfig = {
       ],
     },
     {
-      name: 'primaryDemo',
+      name: 'fullDemoReel',
       type: 'upload',
       relationTo: 'media',
-      label: 'Demos',
       admin: {
-        description: 'Primary audio demo (will show file info)',
+        description: 'Full demo reel audio file',
         width: '20%',
-        components: {
-          Cell: './components/admin/cells/AudioDemoCell#AudioDemoCell',
-        },
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
-        if (data?.status === 'active' && !value) {
+        const hasAnyDemo = value || data?.commercialsDemo || data?.narrativeDemo
+        if (data?.status === 'active' && !hasAnyDemo) {
           return 'At least one audio demo is required for active voiceovers'
         }
         return true
       },
     },
     {
-      name: 'additionalDemos',
-      type: 'array',
+      name: 'commercialsDemo',
+      type: 'upload',
+      relationTo: 'media',
       admin: {
-        description: 'Additional audio demos',
+        description: 'Commercials demo audio file',
+        width: '20%',
       },
-      fields: [
-        {
-          name: 'demo',
-          type: 'upload',
-          relationTo: 'media',
-          required: true,
+    },
+    {
+      name: 'narrativeDemo',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Narrative demo audio file',
+        width: '20%',
+      },
+    },
+    {
+      name: 'demos',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: {
+          Cell: './components/admin/cells/AudioDemoCell#AudioDemoCell',
         },
-        {
-          name: 'title',
-          type: 'text',
-          required: true,
-          admin: {
-            description: 'Title for this demo (e.g., "Commercial Demo", "Narration Demo")',
-          },
-        },
-        {
-          name: 'description',
-          type: 'text',
-          admin: {
-            description: 'Optional description for this demo',
-          },
-        },
-      ],
+      },
     },
     {
       name: 'status',
@@ -249,6 +241,24 @@ const Voiceovers: CollectionConfig = {
           }
         }
         return data
+      },
+    ],
+    afterRead: [
+      async ({ doc, req }) => {
+        // Always populate group if it's just an ID
+        if (doc.group && typeof doc.group === 'string') {
+          try {
+            const group = await req.payload.findByID({
+              collection: 'groups',
+              id: doc.group,
+              depth: 0
+            })
+            doc.group = group
+          } catch {
+            // Group might be deleted, leave as is
+          }
+        }
+        return doc
       },
     ],
   },

@@ -2,47 +2,47 @@
 
 import React from 'react'
 import type { DefaultCellComponentProps } from 'payload'
-import { useDarkMode } from '@/hooks/useDarkMode'
 
-const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
+const statusConfig: Record<string, { label: string; light: { color: string; bg: string }, dark: { color: string; bg: string } }> = {
   'active': { 
-    label: 'Active', 
-    color: '#059669', 
-    bg: '#d1fae5' 
+    label: 'Main Page',
+    light: { color: '#059669', bg: '#d1fae5' },
+    dark: { color: '#34d399', bg: '#064e3b' }
   },
   'draft': { 
-    label: 'Draft', 
-    color: '#6b7280', 
-    bg: '#f3f4f6' 
+    label: 'Draft',
+    light: { color: '#6b7280', bg: '#f3f4f6' },
+    dark: { color: '#d1d5db', bg: '#374151' }
   },
   'more-voices': { 
-    label: 'More Voices', 
-    color: '#7c3aed', 
-    bg: '#ede9fe' 
+    label: 'More Voices',
+    light: { color: '#7c3aed', bg: '#ede9fe' },
+    dark: { color: '#c4b5fd', bg: '#581c87' }
   },
   'archived': { 
-    label: 'Archived', 
-    color: '#dc2626', 
-    bg: '#fee2e2' 
+    label: 'Archived',
+    light: { color: '#dc2626', bg: '#fee2e2' },
+    dark: { color: '#f87171', bg: '#7f1d1d' }
   }
 }
 
 export const StatusCell: React.FC<DefaultCellComponentProps> = ({ cellData }) => {
-  const isDark = useDarkMode()
   
   if (!cellData) {
     return (
-      <span style={{ color: isDark ? '#6b7280' : '#9ca3af', fontSize: '14px' }}>
+      <span style={{ color: 'var(--theme-text-placeholder)', fontSize: '14px' }}>
         No status
       </span>
     )
   }
 
   const config = statusConfig[cellData] || { 
-    label: cellData, 
-    color: '#6b7280', 
-    bg: '#f3f4f6' 
+    label: cellData,
+    light: { color: '#6b7280', bg: '#f3f4f6' },
+    dark: { color: '#d1d5db', bg: '#374151' }
   }
+  
+  const colors = config.light
 
   return (
     <div style={{ 
@@ -60,8 +60,8 @@ export const StatusCell: React.FC<DefaultCellComponentProps> = ({ cellData }) =>
           borderRadius: '9999px',
           fontSize: '13px',
           fontWeight: '500',
-          backgroundColor: config.bg,
-          color: config.color,
+          backgroundColor: colors.bg,
+          color: colors.color,
         }}
       >
         <span
@@ -69,7 +69,7 @@ export const StatusCell: React.FC<DefaultCellComponentProps> = ({ cellData }) =>
             width: '6px',
             height: '6px',
             borderRadius: '50%',
-            backgroundColor: config.color,
+            backgroundColor: colors.color,
           }}
         />
         {config.label}

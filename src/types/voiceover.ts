@@ -22,22 +22,24 @@ export interface PayloadVoiceover {
     tag: string
     customTag?: string
   }>
-  primaryDemo?: {
+  fullDemoReel?: {
     id: string
     url: string
     filename: string
     mimeType?: string
   } | string
-  additionalDemos?: Array<{
-    demo: {
-      id: string
-      url: string
-      filename: string
-      mimeType?: string
-    } | string
-    title: string
-    description?: string
-  }>
+  commercialsDemo?: {
+    id: string
+    url: string
+    filename: string
+    mimeType?: string
+  } | string
+  narrativeDemo?: {
+    id: string
+    url: string
+    filename: string
+    mimeType?: string
+  } | string
   status: 'active' | 'draft' | 'more-voices' | 'archived'
   group?: {
     id: string

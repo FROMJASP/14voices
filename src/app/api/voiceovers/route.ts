@@ -39,15 +39,15 @@ export async function GET(request: Request) {
       const voiceover = doc as unknown as PayloadVoiceover
       const demos: VoiceoverDemo[] = []
       
-      // Add primary demo if it exists
-      if (voiceover.primaryDemo && typeof voiceover.primaryDemo === 'object') {
+      // Add full demo reel if it exists
+      if (voiceover.fullDemoReel && typeof voiceover.fullDemoReel === 'object') {
         demos.push({
-          id: voiceover.primaryDemo.id,
-          title: 'Primary Demo',
+          id: voiceover.fullDemoReel.id,
+          title: 'Full Demo Reel',
           demoType: 'reel',
           audioFile: {
-            url: voiceover.primaryDemo.url || '',
-            filename: voiceover.primaryDemo.filename || ''
+            url: voiceover.fullDemoReel.url || '',
+            filename: voiceover.fullDemoReel.filename || ''
           },
           isPrimary: true,
           voiceover: {
@@ -58,26 +58,40 @@ export async function GET(request: Request) {
         })
       }
       
-      // Add additional demos
-      if (voiceover.additionalDemos && Array.isArray(voiceover.additionalDemos)) {
-        voiceover.additionalDemos.forEach((demoItem) => {
-          if (demoItem.demo && typeof demoItem.demo === 'object') {
-            demos.push({
-              id: demoItem.demo.id,
-              title: demoItem.title || 'Demo',
-              demoType: 'commercials',
-              audioFile: {
-                url: demoItem.demo.url || '',
-                filename: demoItem.demo.filename || ''
-              },
-              description: demoItem.description,
-              isPrimary: false,
-              voiceover: {
-                id: voiceover.id,
-                name: voiceover.name,
-                slug: voiceover.slug || voiceover.id
-              }
-            })
+      // Add commercials demo if it exists
+      if (voiceover.commercialsDemo && typeof voiceover.commercialsDemo === 'object') {
+        demos.push({
+          id: voiceover.commercialsDemo.id,
+          title: 'Commercials Demo',
+          demoType: 'commercials',
+          audioFile: {
+            url: voiceover.commercialsDemo.url || '',
+            filename: voiceover.commercialsDemo.filename || ''
+          },
+          isPrimary: false,
+          voiceover: {
+            id: voiceover.id,
+            name: voiceover.name,
+            slug: voiceover.slug || voiceover.id
+          }
+        })
+      }
+      
+      // Add narrative demo if it exists
+      if (voiceover.narrativeDemo && typeof voiceover.narrativeDemo === 'object') {
+        demos.push({
+          id: voiceover.narrativeDemo.id,
+          title: 'Narrative Demo',
+          demoType: 'narrations',
+          audioFile: {
+            url: voiceover.narrativeDemo.url || '',
+            filename: voiceover.narrativeDemo.filename || ''
+          },
+          isPrimary: false,
+          voiceover: {
+            id: voiceover.id,
+            name: voiceover.name,
+            slug: voiceover.slug || voiceover.id
           }
         })
       }

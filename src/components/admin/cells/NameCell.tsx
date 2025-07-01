@@ -3,11 +3,9 @@
 import React, { memo, useCallback } from 'react'
 import type { DefaultCellComponentProps } from 'payload'
 import { useRouter } from 'next/navigation'
-import { useDarkMode } from '@/hooks/useDarkMode'
 
 export const NameCell: React.FC<DefaultCellComponentProps> = memo(({ cellData, rowData }) => {
   const router = useRouter()
-  const isDark = useDarkMode()
   
   const handleClick = useCallback(() => {
     if (rowData?.id) {
@@ -28,12 +26,13 @@ export const NameCell: React.FC<DefaultCellComponentProps> = memo(({ cellData, r
       <span style={{ 
         fontSize: '14px', 
         fontWeight: '500',
-        color: isDark ? '#f3f4f6' : '#111827',
+        // Use CSS variables that Payload provides for theming
+        color: 'var(--theme-text)',
         textDecoration: 'underline',
         textDecorationColor: 'transparent',
         transition: 'text-decoration-color 0.2s'
       }}
-      onMouseEnter={(e) => e.currentTarget.style.textDecorationColor = '#3b82f6'}
+      onMouseEnter={(e) => e.currentTarget.style.textDecorationColor = 'var(--theme-success-500)'}
       onMouseLeave={(e) => e.currentTarget.style.textDecorationColor = 'transparent'}
       >
         {cellData || 'Unnamed'}
