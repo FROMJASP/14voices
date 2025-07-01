@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './login/BackgroundBeams'
@@ -12,6 +12,25 @@ export default function BeforeLogin() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchSiteSettings = async () => {
+      try {
+        const response = await fetch('/api/globals/site-settings?depth=1')
+        if (response.ok) {
+          const data = await response.json()
+          if (data?.favicon?.url) {
+            setLogoUrl(data.favicon.url)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch site settings:', error)
+      }
+    }
+
+    fetchSiteSettings()
+  }, [])
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -141,7 +160,37 @@ export default function BeforeLogin() {
               transition={{ delay: 0.2, duration: 0.6 }}
               style={{ textAlign: 'center', marginBottom: '2rem' }}
             >
-              <h1 className="split-text-logo">Fourteen Voices</h1>
+              {logoUrl ? (
+                <div style={{ marginBottom: '1rem' }}>
+                  <div
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: '16px',
+                      padding: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}
+                  >
+                    <img
+                      src={logoUrl}
+                      alt="Fourteen Voices"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        filter: 'brightness(0) invert(1)'
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <h1 className="split-text-logo">Fourteen Voices</h1>
+              )}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

@@ -3,23 +3,32 @@
 import React, { memo, useMemo } from 'react'
 import type { DefaultCellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
+import { getInitials } from '@/lib/gravatar'
 
 export const ProfilePhotoCell: React.FC<DefaultCellComponentProps> = memo(({ cellData, rowData }) => {
   const isDark = useDarkMode()
-  // Handle populated upload relationship
+  
+  // Handle populated upload relationship and gravatar
   const imageUrl = useMemo(() => {
-    if (!cellData) return null
+    // First check for uploaded avatar
+    if (cellData) {
+      // If it's populated (unlikely in list view)
+      if (typeof cellData === 'object' && cellData.url) {
+        return cellData.url
+      }
+      // If we have sizes
+      else if (typeof cellData === 'object' && cellData.sizes?.thumbnail?.url) {
+        return cellData.sizes.thumbnail.url
+      }
+    }
     
-    // If it's populated (unlikely in list view)
-    if (typeof cellData === 'object' && cellData.url) {
-      return cellData.url
+    // Fall back to gravatar if available
+    if (rowData?.gravatarUrl) {
+      return rowData.gravatarUrl
     }
-    // If we have sizes
-    else if (typeof cellData === 'object' && cellData.sizes?.thumbnail?.url) {
-      return cellData.sizes.thumbnail.url
-    }
+    
     return null
-  }, [cellData])
+  }, [cellData, rowData?.gravatarUrl])
 
   return (
     <div style={{ 
@@ -59,7 +68,7 @@ export const ProfilePhotoCell: React.FC<DefaultCellComponentProps> = memo(({ cel
           }}
           title={cellData ? 'Photo uploaded' : 'No photo'}
         >
-          {rowData?.name ? rowData.name.substring(0, 2).toUpperCase() : 'VP'}
+          {getInitials(rowData?.name || rowData?.email || 'User')}
         </div>
       )}
     </div>

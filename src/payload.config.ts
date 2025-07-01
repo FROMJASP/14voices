@@ -43,6 +43,15 @@ export default buildConfig({
       beforeLogin: ['./components/admin/BeforeLogin#default'],
       afterDashboard: ['./components/admin/AdminEnhancements#default'],
       actions: ['./components/admin/AdminActions#default'],
+      graphics: {
+        Logo: './components/admin/graphics/Logo#default',
+        Icon: './components/admin/graphics/Icon#default',
+      },
+    },
+    views: {
+      account: {
+        Component: './components/admin/CustomAccount#default',
+      },
     },
     meta: {
       titleSuffix: ' - Fourteen Voices',

@@ -1,9 +1,12 @@
 import type { CollectionConfig } from 'payload'
 import { afterUserCreate } from '@/hooks/email-triggers'
+import { generateGravatarUrl } from '@/lib/gravatar'
+import { resolveAvatarURL, addImageProperty } from '@/hooks/user-avatar'
 
 const Users: CollectionConfig = {
   slug: 'users',
   auth: {
+    depth: 1, // Ensure avatar relationship is populated
     forgotPassword: {
       generateEmailHTML: (args) => {
         const { token, user } = args || {}
@@ -139,6 +142,43 @@ const Users: CollectionConfig = {
       type: 'text',
     },
     {
+      name: 'avatar',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Upload a custom profile photo or leave empty to use Gravatar',
+      },
+    },
+    {
+      name: 'gravatarUrl',
+      type: 'text',
+      virtual: true,
+      hooks: {
+        afterRead: [
+          ({ data }) => {
+            if (data?.email) {
+              return generateGravatarUrl(data.email, 200)
+            }
+            return null
+          },
+        ],
+      },
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'avatarURL',
+      type: 'text',
+      virtual: true,
+      hooks: {
+        afterRead: [resolveAvatarURL],
+      },
+      admin: {
+        hidden: true,
+      },
+    },
+    {
       name: 'role',
       type: 'select',
       required: true,
@@ -206,6 +246,27 @@ const Users: CollectionConfig = {
   ],
   hooks: {
     afterChange: [afterUserCreate],
+    afterRead: [
+      async ({ doc, req }) => {
+        // Ensure avatar is properly populated for the admin UI
+        if (doc?.avatar && typeof doc.avatar === 'string') {
+          try {
+            const media = await req.payload.findByID({
+              collection: 'media',
+              id: doc.avatar,
+              depth: 0,
+            })
+            if (media) {
+              doc.avatar = media
+            }
+          } catch (error) {
+            console.error('Error populating avatar:', error)
+          }
+        }
+        return doc
+      },
+      addImageProperty,
+    ],
   },
 }
 
