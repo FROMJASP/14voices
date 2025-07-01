@@ -137,7 +137,7 @@ export function FormRenderer({ form }: FormRendererProps) {
             type={field.type}
             name={field.name}
             placeholder={field.placeholder}
-            value={formData[field.name] || ''}
+            value={(formData[field.name] as string | number | undefined) ?? ''}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
             className={`${baseClasses} ${errorClasses}`}
             required={field.required}
@@ -149,7 +149,7 @@ export function FormRenderer({ form }: FormRendererProps) {
           <textarea
             name={field.name}
             placeholder={field.placeholder}
-            value={formData[field.name] || ''}
+            value={(formData[field.name] as string | undefined) ?? ''}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
             className={`${baseClasses} ${errorClasses} min-h-[120px]`}
             required={field.required}
@@ -160,7 +160,7 @@ export function FormRenderer({ form }: FormRendererProps) {
         return (
           <select
             name={field.name}
-            value={formData[field.name] || ''}
+            value={(formData[field.name] as string | undefined) ?? ''}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
             className={`${baseClasses} ${errorClasses}`}
             required={field.required}
@@ -200,7 +200,7 @@ export function FormRenderer({ form }: FormRendererProps) {
             <input
               type="checkbox"
               name={field.name}
-              checked={formData[field.name] || false}
+              checked={(formData[field.name] as boolean | undefined) ?? false}
               onChange={(e) => handleInputChange(field.name, e.target.checked)}
               className="mr-2"
             />
@@ -209,10 +209,10 @@ export function FormRenderer({ form }: FormRendererProps) {
         )
       
       case 'heading':
-        return <h3 className="text-xl font-semibold">{field.content}</h3>
+        return <h3 className="text-xl font-semibold">{field.content as string}</h3>
       
       case 'paragraph':
-        return <p className="text-gray-600">{field.content}</p>
+        return <p className="text-gray-600">{field.content as string}</p>
       
       default:
         return null
@@ -243,9 +243,9 @@ export function FormRenderer({ form }: FormRendererProps) {
             
             {renderField(field)}
             
-            {'helpText' in field && field.helpText && (
-              <p className="mt-1 text-sm text-gray-500">{field.helpText}</p>
-            )}
+            {'helpText' in field && field.helpText ? (
+              <p className="mt-1 text-sm text-gray-500">{field.helpText as string}</p>
+            ) : null}
             
             {errors[field.name] && (
               <p className="mt-1 text-sm text-red-600">{errors[field.name]}</p>
