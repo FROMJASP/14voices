@@ -31,7 +31,8 @@ export default function BeforeLogin() {
             }
           }
         }
-      } catch (error) {
+      } catch {
+        // Silently fail if settings can't be fetched
       }
     }
 
@@ -71,7 +72,7 @@ export default function BeforeLogin() {
       })
 
       const contentType = response.headers.get('content-type')
-      let data: any = {}
+      let data: { errors?: Array<{ message: string }> } = {}
       
       if (contentType && contentType.includes('application/json')) {
         data = await response.json()
@@ -191,6 +192,7 @@ export default function BeforeLogin() {
                       border: '1px solid rgba(255, 255, 255, 0.2)'
                     }}
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={logoUrl}
                       alt="Fourteen Voices"

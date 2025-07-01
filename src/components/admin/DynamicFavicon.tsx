@@ -6,7 +6,7 @@ export function DynamicFavicon() {
   useEffect(() => {
     async function updateFavicon() {
       try {
-        const response = await fetch('/api/site-settings')
+        const response = await fetch('/api/globals/site-settings')
         if (!response.ok) return
         
         const settings = await response.json()
@@ -38,8 +38,8 @@ export function DynamicFavicon() {
           shortcutLink.href = iconUrl
           document.head.appendChild(shortcutLink)
         }
-      } catch (error) {
-        console.error('Failed to fetch favicon:', error)
+      } catch {
+        // Silently fail if favicon can't be fetched
       }
     }
     

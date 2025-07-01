@@ -47,14 +47,12 @@ export default buildConfig({
         Logo: './components/admin/graphics/Logo#default',
         Icon: './components/admin/graphics/Icon#default',
       },
-    },
-    views: {
-      account: {
-        Component: './components/admin/CustomAccount#default',
-      },
-    },
-    components: {
       providers: ['./components/admin/Root#default'],
+      views: {
+        account: {
+          Component: './components/admin/CustomAccount#default',
+        },
+      },
     },
     meta: {
       titleSuffix: ' - Fourteen Voices',

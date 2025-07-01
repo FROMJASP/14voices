@@ -83,7 +83,7 @@ describe('NavigationBar - TDD New Features', () => {
       const searchButton = screen.getByRole('button', { name: /search/i })
       await user.click(searchButton)
       
-      const searchInput = screen.getByPlaceholderText(/search for voices/i)
+      screen.getByPlaceholderText(/search for voices/i)
       await user.keyboard('{Escape}')
       
       expect(screen.queryByRole('dialog', { name: /search/i })).not.toBeInTheDocument()

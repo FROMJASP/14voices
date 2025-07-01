@@ -3,11 +3,11 @@
 import React, { useState, useCallback } from 'react'
 import { useAuth, useTranslation } from '@payloadcms/ui'
 import { toast } from '@payloadcms/ui'
-import { generateGravatarUrl, getInitials } from '@/lib/gravatar'
+import { getInitials } from '@/lib/gravatar'
 
 const CustomAccount: React.FC = () => {
   const { user, refreshCookie } = useAuth()
-  const { t } = useTranslation()
+  const { } = useTranslation()
   const [isUpdating, setIsUpdating] = useState(false)
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -122,6 +122,7 @@ const CustomAccount: React.FC = () => {
           <div className="avatar-section">
             <div className="avatar-preview">
               {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={avatarUrl}
                   alt={displayName}

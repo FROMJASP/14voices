@@ -1,16 +1,14 @@
 'use client'
 
 import React from 'react'
-import { useConfig } from '@payloadcms/ui'
 
 export default function Icon() {
   const [iconUrl, setIconUrl] = React.useState<string | null>(null)
-  const config = useConfig()
 
   React.useEffect(() => {
     const fetchSiteSettings = async () => {
       try {
-        const response = await fetch(`${config.serverURL}/api/globals/site-settings`, {
+        const response = await fetch('/api/globals/site-settings', {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -24,12 +22,13 @@ export default function Icon() {
             }
           }
         }
-      } catch (error) {
+      } catch {
+        // Silently fail if settings can't be fetched
       }
     }
 
     fetchSiteSettings()
-  }, [config.serverURL])
+  }, [])
 
   if (!iconUrl) {
     return (
@@ -65,6 +64,7 @@ export default function Icon() {
         position: 'relative'
       }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={iconUrl}
         alt="14voices Icon"

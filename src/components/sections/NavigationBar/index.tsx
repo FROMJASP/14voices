@@ -18,5 +18,5 @@ export async function NavigationBar() {
     ? formattedNav.mainMenu 
     : defaultItems
 
-  return <NavigationBarClient navItems={navItems} />
+  return <NavigationBarClient navItems={navItems as any} />
 }

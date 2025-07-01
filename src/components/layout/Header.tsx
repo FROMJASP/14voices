@@ -1,5 +1,5 @@
 interface HeaderProps {
-  config: any
+  config: { style?: string; title?: string }
 }
 
 export function Header({ config }: HeaderProps) {

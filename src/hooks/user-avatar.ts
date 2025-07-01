@@ -31,7 +31,7 @@ export const resolveAvatarURL: FieldHook = async ({ data, req }) => {
  * Hook to add a `image` property for Payload's admin UI
  * Payload's account navigation looks for specific properties
  */
-export const addImageProperty: CollectionAfterReadHook = async ({ doc, req }) => {
+export const addImageProperty: CollectionAfterReadHook = async ({ doc }) => {
   if (!doc) return doc
   
   // Add image property that Payload's admin UI expects

@@ -93,7 +93,7 @@ export function HelpButton() {
                     onClick={() => {
                       setIsOpen(false)
                       setTimeout(() => {
-                        startTour(tour.id as any)
+                        startTour(tour.id as string)
                       }, 300)
                     }}
                     className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"

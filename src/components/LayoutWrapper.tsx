@@ -56,7 +56,7 @@ export function LayoutWrapper({ layout, children }: LayoutWrapperProps) {
 
   return (
     <div className={`layout layout--${layoutData.type}`}>
-      {layoutData.header?.style !== 'hidden' && (
+      {layoutData.header?.style !== 'hidden' && layoutData.header && (
         <Header config={layoutData.header} />
       )}
 
@@ -68,7 +68,7 @@ export function LayoutWrapper({ layout, children }: LayoutWrapperProps) {
                 {children}
               </div>
               <aside className={`sidebar sidebar--${layoutData.sidebar.width || 'medium'}`}>
-                <Sidebar config={layoutData.sidebar} />
+                <Sidebar config={layoutData.sidebar as any} />
               </aside>
             </div>
           ) : (
