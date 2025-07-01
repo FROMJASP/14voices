@@ -1,4 +1,4 @@
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { PageRenderer } from '@/components/PageRenderer'
 import type { Page } from '@/payload-types'
@@ -6,7 +6,7 @@ import { NavigationBar, HeroSection, VoiceoverShowcase } from '@/components/sect
 import DefaultFooter from '@/components/layout/DefaultFooter'
 
 export async function generateMetadata() {
-  const payload = await getPayloadHMR({ config: configPromise })
+  const payload = await getPayload({ config: configPromise })
   
   const pages = await payload.find({
     collection: 'pages',
@@ -55,7 +55,7 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const payload = await getPayloadHMR({ config: configPromise })
+  const payload = await getPayload({ config: configPromise })
   
   const pages = await payload.find({
     collection: 'pages',

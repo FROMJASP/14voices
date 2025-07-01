@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayloadHMR({ config: configPromise })
+    const payload = await getPayload({ config: configPromise })
     const body = await req.json()
     
     const { formId, data } = body

@@ -1,4 +1,4 @@
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 // Temporary type definition until payload-types.ts is regenerated
@@ -14,7 +14,7 @@ interface Navigation {
 
 export async function getNavigationData(): Promise<Navigation | null> {
   try {
-    const payload = await getPayloadHMR({ config: configPromise })
+    const payload = await getPayload({ config: configPromise })
     
     const result = await payload.find({
       collection: 'navigation',

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import config from '@/payload.config'
 import type { PayloadVoiceover, TransformedVoiceover, VoiceoverDemo } from '@/types/voiceover'
 
 export async function GET(request: Request) {
   try {
-    const payload = await getPayloadHMR({ config })
+    const payload = await getPayload({ config })
     
     // Get query parameters
     const { searchParams } = new URL(request.url)

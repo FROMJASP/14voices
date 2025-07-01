@@ -1,4 +1,4 @@
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { LayoutWrapper } from '@/components/LayoutWrapper'
 import { notFound } from 'next/navigation'
@@ -12,7 +12,7 @@ interface PageProps {
 
 export default async function LayoutPreviewPage({ params }: PageProps) {
   const { id } = await params
-  const payload = await getPayloadHMR({ config: configPromise })
+  const payload = await getPayload({ config: configPromise })
   
   try {
     const layout = await payload.findByID({

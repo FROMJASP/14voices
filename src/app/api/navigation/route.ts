@@ -1,10 +1,10 @@
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import { NextResponse } from 'next/server'
 import configPromise from '@payload-config'
 
 export async function GET() {
   try {
-    const payload = await getPayloadHMR({ config: configPromise })
+    const payload = await getPayload({ config: configPromise })
     
     const result = await payload.find({
       collection: 'navigation',

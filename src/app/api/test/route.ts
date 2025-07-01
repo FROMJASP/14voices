@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import config from '@/payload.config'
 
 export async function GET() {
   try {
-    const payload = await getPayloadHMR({ config })
+    const payload = await getPayload({ config })
     
     // Count voiceovers
     const voiceovers = await payload.count({

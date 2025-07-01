@@ -40,10 +40,11 @@ Support: AVIF images | PDF/DOC/Pages scripts | Secure invoices
 ### Payload v3 Beta Issues
 ```yaml
 Components: 'use client' required | Server hooks > client components
-Imports: Check v3 paths | Component issues common
+Imports: Check v3 paths | Component issues common | getPayload from 'payload' NOT getPayloadHMR
 Access: Type assertions needed | (fn as Access)
 Solutions: Use built-in features first | Check Payload docs | Avoid custom components
 Field Components: Standard fields > custom | Use admin.description | Leverage conditions
+Payload Instance: import { getPayload } from 'payload' | await getPayload({ config })
 ```
 
 ## Thinking Modes

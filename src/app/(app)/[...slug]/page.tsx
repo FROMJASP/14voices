@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { PageRenderer } from '@/components/PageRenderer'
 import type { Page } from '@/payload-types'
@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const payload = await getPayloadHMR({ config: configPromise })
+  const payload = await getPayload({ config: configPromise })
   
   const pages = await payload.find({
     collection: 'pages',
@@ -31,7 +31,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { slug: slugArray } = await params
   const slug = slugArray?.join('/') || 'home'
-  const payload = await getPayloadHMR({ config: configPromise })
+  const payload = await getPayload({ config: configPromise })
   
   const pages = await payload.find({
     collection: 'pages',
@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function Page({ params }: PageProps) {
   const { slug: slugArray } = await params
   const slug = slugArray?.join('/') || 'home'
-  const payload = await getPayloadHMR({ config: configPromise })
+  const payload = await getPayload({ config: configPromise })
   
   const pages = await payload.find({
     collection: 'pages',

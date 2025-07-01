@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 export async function GET(request: NextRequest) {
   try {
-    const payload = await getPayloadHMR({ config: configPromise })
+    const payload = await getPayload({ config: configPromise })
     const searchParams = request.nextUrl.searchParams
     
     // Build where query from search params
