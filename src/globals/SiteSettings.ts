@@ -332,12 +332,28 @@ export const SiteSettings: GlobalConfig = {
                   type: 'checkbox',
                   defaultValue: true,
                   label: 'Enable Site Search',
+                  admin: {
+                    components: {
+                      Field: './components/admin/CriticalFeatureField#CriticalFeatureField',
+                    },
+                  },
+                  custom: {
+                    warningMessage: 'Disabling this will remove search functionality from your entire website. Visitors will not be able to search for content.',
+                  },
                 },
                 {
                   name: 'enableBlog',
                   type: 'checkbox',
                   defaultValue: true,
                   label: 'Enable Blog',
+                  admin: {
+                    components: {
+                      Field: './components/admin/CriticalFeatureField#CriticalFeatureField',
+                    },
+                  },
+                  custom: {
+                    warningMessage: 'Disabling this will hide all blog posts and the blog section from your website. This affects SEO and content visibility.',
+                  },
                 },
                 {
                   name: 'maintenanceMode',
