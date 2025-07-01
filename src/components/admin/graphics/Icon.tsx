@@ -22,12 +22,9 @@ export default function Icon() {
             if (data?.favicon?.url) {
               setIconUrl(data.favicon.url)
             }
-          } else {
-            console.error('Response is not JSON:', contentType)
           }
         }
       } catch (error) {
-        console.error('Failed to fetch site settings:', error)
       }
     }
 

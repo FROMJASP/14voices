@@ -29,12 +29,9 @@ export default function BeforeLogin() {
             if (data?.favicon?.url) {
               setLogoUrl(data.favicon.url)
             }
-          } else {
-            console.error('Response is not JSON:', contentType)
           }
         }
       } catch (error) {
-        console.error('Failed to fetch site settings:', error)
       }
     }
 
@@ -79,7 +76,6 @@ export default function BeforeLogin() {
       if (contentType && contentType.includes('application/json')) {
         data = await response.json()
       } else {
-        console.error('Login response is not JSON:', contentType)
         setError('Server error. Please try again.')
         toast.error('Server error. Please try again.')
         return
