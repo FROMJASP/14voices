@@ -10,11 +10,20 @@ export default function Logo() {
   React.useEffect(() => {
     const fetchSiteSettings = async () => {
       try {
-        const response = await fetch(`${config.serverURL}/api/globals/site-settings?depth=1`)
+        const response = await fetch(`${config.serverURL}/api/globals/site-settings`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         if (response.ok) {
-          const data = await response.json()
-          if (data?.favicon?.url) {
-            setLogoUrl(data.favicon.url)
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            if (data?.favicon?.url) {
+              setLogoUrl(data.favicon.url)
+            }
+          } else {
+            console.error('Response is not JSON:', contentType)
           }
         }
       } catch (error) {

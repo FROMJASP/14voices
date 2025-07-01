@@ -10,11 +10,20 @@ export default function Icon() {
   React.useEffect(() => {
     const fetchSiteSettings = async () => {
       try {
-        const response = await fetch(`${config.serverURL}/api/globals/site-settings?depth=1`)
+        const response = await fetch(`${config.serverURL}/api/globals/site-settings`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         if (response.ok) {
-          const data = await response.json()
-          if (data?.favicon?.url) {
-            setIconUrl(data.favicon.url)
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            if (data?.favicon?.url) {
+              setIconUrl(data.favicon.url)
+            }
+          } else {
+            console.error('Response is not JSON:', contentType)
           }
         }
       } catch (error) {
@@ -56,17 +65,18 @@ export default function Icon() {
         justifyContent: 'center',
         backgroundColor: 'var(--theme-elevation-100)',
         borderRadius: '4px',
-        padding: '2px'
+        position: 'relative'
       }}
     >
       <img
         src={iconUrl}
         alt="14voices Icon"
         style={{
-          width: '100%',
-          height: '100%',
+          width: '17px',
+          height: '17px',
           objectFit: 'contain',
-          filter: 'brightness(0) invert(1)'
+          filter: 'brightness(0) invert(1)',
+          flexShrink: 0
         }}
       />
     </div>

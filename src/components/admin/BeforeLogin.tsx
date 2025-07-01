@@ -17,11 +17,20 @@ export default function BeforeLogin() {
   useEffect(() => {
     const fetchSiteSettings = async () => {
       try {
-        const response = await fetch('/api/globals/site-settings?depth=1')
+        const response = await fetch('/api/globals/site-settings', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         if (response.ok) {
-          const data = await response.json()
-          if (data?.favicon?.url) {
-            setLogoUrl(data.favicon.url)
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            if (data?.favicon?.url) {
+              setLogoUrl(data.favicon.url)
+            }
+          } else {
+            console.error('Response is not JSON:', contentType)
           }
         }
       } catch (error) {
@@ -64,7 +73,17 @@ export default function BeforeLogin() {
         credentials: 'include',
       })
 
-      const data = await response.json()
+      const contentType = response.headers.get('content-type')
+      let data: any = {}
+      
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json()
+      } else {
+        console.error('Login response is not JSON:', contentType)
+        setError('Server error. Please try again.')
+        toast.error('Server error. Please try again.')
+        return
+      }
 
       if (response.ok) {
         toast.success('Welcome back! Redirecting...')
