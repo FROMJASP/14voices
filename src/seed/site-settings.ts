@@ -62,8 +62,11 @@ export async function seedSiteSettings(payload: Payload) {
         features: {
           enableSearch: true,
           enableBlog: true,
-          enableComments: false,
           maintenanceMode: false,
+          maintenanceTitle: "We zijn zo terug!",
+          maintenanceMessage: "We voeren momenteel gepland onderhoud uit. We zijn zo weer online.",
+          maintenanceContactLabel: "Contact nodig?",
+          showContactEmail: true,
         },
       },
     })

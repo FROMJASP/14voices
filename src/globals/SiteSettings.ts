@@ -340,23 +340,57 @@ export const SiteSettings: GlobalConfig = {
                   label: 'Enable Blog',
                 },
                 {
-                  name: 'enableComments',
-                  type: 'checkbox',
-                  defaultValue: false,
-                  label: 'Enable Comments',
-                },
-                {
                   name: 'maintenanceMode',
                   type: 'checkbox',
                   defaultValue: false,
                   label: 'Enable Maintenance Mode',
                 },
                 {
-                  name: 'maintenanceMessage',
-                  type: 'textarea',
+                  name: 'maintenanceTitle',
+                  type: 'text',
+                  defaultValue: "We zijn zo terug!",
+                  label: 'Title',
                   admin: {
                     condition: (data, siblingData) => siblingData?.maintenanceMode === true,
-                    description: 'Message to show during maintenance',
+                    description: 'Main heading for the maintenance page',
+                  },
+                },
+                {
+                  name: 'maintenanceMessage',
+                  type: 'textarea',
+                  defaultValue: "We voeren momenteel gepland onderhoud uit. We zijn zo weer online.",
+                  label: 'Message',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.maintenanceMode === true,
+                    description: 'Main message to show during maintenance',
+                  },
+                },
+                {
+                  name: 'maintenanceContactLabel',
+                  type: 'text',
+                  defaultValue: 'Contact nodig?',
+                  label: 'Contact Label',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.maintenanceMode === true,
+                    description: 'Label above contact email',
+                  },
+                },
+                {
+                  name: 'showContactEmail',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: 'Show Contact Email',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.maintenanceMode === true,
+                  },
+                },
+                {
+                  name: 'maintenancePreview',
+                  type: 'ui',
+                  admin: {
+                    components: {
+                      Field: './components/admin/MaintenanceModePreview#MaintenanceModePreview',
+                    },
                   },
                 },
               ],
