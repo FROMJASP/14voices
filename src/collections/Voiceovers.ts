@@ -11,8 +11,6 @@ const Voiceovers: CollectionConfig = {
       defaultLimit: 10,
       limits: [10, 25, 50, 100],
     },
-    // Try to populate relationships in list view
-    listDepth: 1,
   },
   access: {
     read: () => true,

@@ -4,13 +4,13 @@ import React from 'react'
 import type { CellComponentProps } from 'payload'
 import Link from 'next/link'
 
-export const VoiceoverNameCell: React.FC<CellComponentProps> = ({ rowData, cellData, field }) => {
+export const VoiceoverNameCell: React.FC<CellComponentProps> = ({ rowData, cellData }) => {
   const name = cellData || rowData?.name || 'Unnamed'
   const id = rowData?.id
   
   
   // The profilePhoto might be in different locations based on how data is structured
-  let profilePhoto = rowData?.profilePhoto
+  const profilePhoto = rowData?.profilePhoto
   
   // Check various possible URL locations
   const photoUrl = profilePhoto?.url || 
@@ -21,6 +21,7 @@ export const VoiceoverNameCell: React.FC<CellComponentProps> = ({ rowData, cellD
   const content = (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       {photoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={photoUrl}
           alt={profilePhoto?.alt || name}

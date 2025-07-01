@@ -14,12 +14,12 @@ export async function GET(request: NextRequest) {
         const field = key.slice(6, -1)
         const parts = field.split('][')
         
-        let current = where
+        let current: Record<string, unknown> = where
         for (let i = 0; i < parts.length - 1; i++) {
           if (!current[parts[i]]) {
             current[parts[i]] = {}
           }
-          current = current[parts[i]]
+          current = current[parts[i]] as Record<string, unknown>
         }
         
         const lastPart = parts[parts.length - 1]

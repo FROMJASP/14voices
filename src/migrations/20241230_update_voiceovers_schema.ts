@@ -1,7 +1,7 @@
 import { MigrateUpArgs, MigrateDownArgs } from '@payloadcms/db-postgres'
 import { sql } from '@payloadcms/db-postgres/dist/drizzle/index.js'
 
-export async function up({ db, payload }: MigrateUpArgs): Promise<void> {
+export async function up({ db }: MigrateUpArgs): Promise<void> {
   // Add new columns to voiceovers table
   await db.execute(sql`
     ALTER TABLE voiceovers 
@@ -118,12 +118,12 @@ export async function up({ db, payload }: MigrateUpArgs): Promise<void> {
         WHERE is_primary = false OR is_primary IS NULL;
       `)
     }
-  } catch (error) {
+  } catch {
     console.log('Old tables do not exist, skipping migration')
   }
 }
 
-export async function down({ db, payload }: MigrateDownArgs): Promise<void> {
+export async function down({ db }: MigrateDownArgs): Promise<void> {
   // Remove the new columns
   await db.execute(sql`
     ALTER TABLE voiceovers 

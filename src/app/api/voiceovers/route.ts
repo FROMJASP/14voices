@@ -3,11 +3,6 @@ import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '@/payload.config'
 import type { PayloadVoiceover, TransformedVoiceover, VoiceoverDemo } from '@/types/voiceover'
 
-interface VoiceoverWhereClause {
-  slug?: { equals: string }
-  status?: { in: string[] }
-}
-
 export async function GET(request: Request) {
   try {
     const payload = await getPayloadHMR({ config })
@@ -20,7 +15,7 @@ export async function GET(request: Request) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 50)
     
     // Build where clause
-    const whereClause: VoiceoverWhereClause = {}
+    const whereClause: any = {}
     
     if (slug) {
       whereClause.slug = { equals: slug }
@@ -40,7 +35,8 @@ export async function GET(request: Request) {
     })
 
     // Transform data to match frontend expectations
-    const transformedData = voiceovers.docs.map((voiceover: PayloadVoiceover): TransformedVoiceover => {
+    const transformedData = voiceovers.docs.map((doc): TransformedVoiceover => {
+      const voiceover = doc as unknown as PayloadVoiceover
       const demos: VoiceoverDemo[] = []
       
       // Add primary demo if it exists
