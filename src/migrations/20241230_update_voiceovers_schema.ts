@@ -1,5 +1,5 @@
 import { MigrateUpArgs, MigrateDownArgs } from '@payloadcms/db-postgres'
-import { sql } from '@payloadcms/db-postgres/dist/drizzle/index.js'
+import { sql } from 'drizzle-orm'
 
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   // Add new columns to voiceovers table
