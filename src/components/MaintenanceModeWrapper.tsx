@@ -22,16 +22,29 @@ export function MaintenanceModeWrapper({ children, forceMaintenanceMode = false 
       }
 
       try {
-        const response = await fetch('/api/site-settings')
+        const response = await fetch('/api/site-settings', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         if (response.ok) {
-          const data = await response.json()
-          const maintenanceEnabled = data?.features?.maintenanceMode || false
-          
-          setIsMaintenanceMode(maintenanceEnabled)
-          setMaintenanceData(data)
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            const maintenanceEnabled = data?.features?.maintenanceMode || false
+            
+            setIsMaintenanceMode(maintenanceEnabled)
+            setMaintenanceData(data)
+          } else {
+            console.error('Response is not JSON:', contentType)
+          }
         }
       } catch (error) {
         console.error('Failed to check maintenance mode:', error)
+        // Log more details about the error
+        if (error instanceof Error) {
+          console.error('Error details:', error.message)
+        }
       } finally {
         setIsLoading(false)
       }

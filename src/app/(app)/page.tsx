@@ -3,6 +3,7 @@ import configPromise from '@payload-config'
 import { PageRenderer } from '@/components/PageRenderer'
 import type { Page } from '@/payload-types'
 import { NavigationBar, HeroSection, VoiceoverShowcase } from '@/components/sections'
+import { StemmenSection, PrijzenSection, BlogSection, ContactSection } from '@/components/sections/HomepageSections'
 import DefaultFooter from '@/components/layout/DefaultFooter'
 
 export async function generateMetadata() {
@@ -80,6 +81,10 @@ export default async function HomePage() {
         <NavigationBar />
         <HeroSection />
         <VoiceoverShowcase />
+        <StemmenSection />
+        <PrijzenSection />
+        <BlogSection />
+        <ContactSection />
         <DefaultFooter />
       </>
     )

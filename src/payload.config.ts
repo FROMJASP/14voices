@@ -53,13 +53,16 @@ export default buildConfig({
         Component: './components/admin/CustomAccount#default',
       },
     },
+    components: {
+      providers: ['./components/admin/Root#default'],
+    },
     meta: {
       titleSuffix: ' - Fourteen Voices',
       openGraph: {
         images: ['/og-image.jpg'],
       },
       icons: {
-        icon: '/favicon.ico',
+        icon: '/favicon.svg',
       },
     },
   },

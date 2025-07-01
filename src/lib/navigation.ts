@@ -46,6 +46,13 @@ export function formatNavigationItem(item: any) {
       newTab: item.newTab,
       subItems: item.subItems,
     }
+  } else if (item.type === 'anchor' && item.anchor) {
+    return {
+      label: item.label,
+      href: `/#${item.anchor}`,
+      type: item.type,
+      isAnchor: true,
+    }
   } else if (item.type === 'dropdown' && item.subItems) {
     return {
       label: item.label,

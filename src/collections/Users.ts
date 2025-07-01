@@ -185,6 +185,7 @@ const Users: CollectionConfig = {
       defaultValue: 'user',
       options: [
         { label: 'Admin', value: 'admin' },
+        { label: 'Editor', value: 'editor' },
         { label: 'User', value: 'user' },
       ],
       access: {

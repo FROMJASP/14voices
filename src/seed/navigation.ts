@@ -38,14 +38,19 @@ export async function seedNavigation(payload: Payload) {
             page: homePage?.id,
           },
           {
-            label: 'Onze Stemmen',
-            type: 'custom',
-            url: '/voiceovers',
+            label: 'Stemmen',
+            type: 'anchor',
+            anchor: 'stemmen',
           },
           {
-            label: 'Over Ons',
-            type: aboutPage ? 'page' : 'custom',
-            ...(aboutPage ? { page: aboutPage.id } : { url: '/over-ons' }),
+            label: 'Prijzen',
+            type: 'anchor',
+            anchor: 'prijzen',
+          },
+          {
+            label: 'Blog',
+            type: 'anchor',
+            anchor: 'blog',
           },
           {
             label: 'Diensten',
@@ -79,8 +84,8 @@ export async function seedNavigation(payload: Payload) {
           },
           {
             label: 'Contact',
-            type: contactPage ? 'page' : 'custom',
-            ...(contactPage ? { page: contactPage.id } : { url: '/contact' }),
+            type: 'anchor',
+            anchor: 'contact',
           },
         ],
         footerColumns: [

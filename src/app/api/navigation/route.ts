@@ -1,23 +1,33 @@
-import { getPayload } from 'payload'
 import { NextResponse } from 'next/server'
-import configPromise from '@payload-config'
+import { getNavigationData, formatNavigation } from '@/lib/navigation'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const payload = await getPayload({ config: configPromise })
-    
-    const result = await payload.find({
-      collection: 'navigation',
-      depth: 2,
-      limit: 1,
+    const navigationData = await getNavigationData()
+    const formattedNav = formatNavigation(navigationData)
+
+    // Cache for 5 minutes
+    return NextResponse.json(formattedNav, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
     })
-    
-    return NextResponse.json(result)
   } catch (error) {
-    console.error('Error fetching navigation:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch navigation' },
-      { status: 500 }
-    )
+    console.error('Failed to fetch navigation:', error)
+    
+    // Return default navigation as fallback
+    const defaultNav = {
+      mainMenu: [
+        { label: 'Home', href: '/', type: 'page' },
+        { label: 'Stemmen', href: '/#stemmen', type: 'anchor', isAnchor: true },
+        { label: 'Prijzen', href: '/#prijzen', type: 'anchor', isAnchor: true },
+        { label: 'Blog', href: '/#blog', type: 'anchor', isAnchor: true },
+        { label: 'Contact', href: '/#contact', type: 'anchor', isAnchor: true },
+      ]
+    }
+    
+    return NextResponse.json(defaultNav, { status: 200 })
   }
 }

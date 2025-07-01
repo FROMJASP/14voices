@@ -21,6 +21,7 @@ async function runSeed() {
   const { seedLayouts } = await import('./layouts')
   const { seedPages } = await import('./pages')
   const { seedVoiceovers } = await import('./voiceovers')
+  const { seedNavigation } = await import('./navigation')
 
   const payload = await getPayload({ config })
 
@@ -68,6 +69,11 @@ async function runSeed() {
     // 5. Create voiceovers
     console.log('🎤 Creating voiceovers...')
     await seedVoiceovers(payload)
+    console.log('')
+
+    // 6. Create navigation
+    console.log('🧭 Setting up navigation...')
+    await seedNavigation(payload)
     console.log('')
 
     console.log('✨ Database seed completed successfully!')

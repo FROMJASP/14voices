@@ -63,6 +63,7 @@ const Navigation: CollectionConfig = {
                   options: [
                     { label: 'Page', value: 'page' },
                     { label: 'Custom Link', value: 'custom' },
+                    { label: 'Anchor Link', value: 'anchor' },
                     { label: 'Dropdown', value: 'dropdown' },
                   ],
                   required: true,
@@ -90,6 +91,14 @@ const Navigation: CollectionConfig = {
                   admin: {
                     condition: (data, siblingData) => siblingData?.type === 'custom',
                     description: 'Open link in new tab',
+                  },
+                },
+                {
+                  name: 'anchor',
+                  type: 'text',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'anchor',
+                    description: 'Enter section ID without # (e.g., "stemmen", "prijzen")',
                   },
                 },
                 {

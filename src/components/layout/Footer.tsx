@@ -15,13 +15,26 @@ export function Footer({ config }: FooterProps) {
   useEffect(() => {
     async function fetchSiteSettings() {
       try {
-        const response = await fetch('/api/site-settings')
+        const response = await fetch('/api/site-settings', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         if (response.ok) {
-          const data = await response.json()
-          setSiteSettings(data)
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            setSiteSettings(data)
+          } else {
+            console.error('Response is not JSON:', contentType)
+          }
         }
       } catch (error) {
         console.error('Failed to fetch site settings:', error)
+        // Log more details about the error
+        if (error instanceof Error) {
+          console.error('Error details:', error.message)
+        }
       }
     }
 
