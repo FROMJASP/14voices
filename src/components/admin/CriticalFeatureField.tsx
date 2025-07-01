@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useField, Label } from '@payloadcms/ui'
+import { useField } from '@payloadcms/ui'
 
 export function CriticalFeatureField({ path, label, custom, required }: any) {
   const { value, setValue } = useField({ path })
@@ -25,7 +25,12 @@ export function CriticalFeatureField({ path, label, custom, required }: any) {
 
   return (
     <div className="field-type checkbox">
-      <Label htmlFor={path} label={label} required={required} />
+      <div className="field-label">
+        <label htmlFor={path}>
+          {label}
+          {required && <span className="required">*</span>}
+        </label>
+      </div>
       <div 
         className="checkbox-input"
         style={{
