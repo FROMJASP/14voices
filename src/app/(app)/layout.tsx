@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { MaintenanceModeWrapper } from "@/components/MaintenanceModeWrapper";
 import "./globals.css";
@@ -13,10 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "14voices - Professionele Voice-overs",
-  description: "Professionele voice-overs voor elk project. Van commercials tot bedrijfsfilms.",
-};
+export { generateMetadata } from "./metadata";
 
 export default function RootLayout({
   children,
