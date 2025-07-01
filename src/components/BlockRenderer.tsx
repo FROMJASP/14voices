@@ -32,31 +32,31 @@ export function BlockRenderer({ block }: BlockRendererProps) {
     case 'heroBanner':
       return (
         <div className={wrapperClasses}>
-          <HeroBanner data={block.heroBanner as HeroBannerData} />
+          <HeroBanner data={block.heroBanner as unknown as HeroBannerData} />
         </div>
       )
     case 'featureGrid':
       return (
         <div className={wrapperClasses}>
-          <FeatureGrid data={block.featureGrid as FeatureGridData} />
+          <FeatureGrid data={block.featureGrid as unknown as FeatureGridData} />
         </div>
       )
     case 'contentSection':
       return (
         <div className={wrapperClasses}>
-          <ContentSection data={block.contentSection as ContentSectionData} />
+          <ContentSection data={block.contentSection as unknown as ContentSectionData} />
         </div>
       )
     case 'callToAction':
       return (
         <div className={wrapperClasses}>
-          <CallToAction data={block.callToAction as CallToActionData} />
+          <CallToAction data={block.callToAction as unknown as CallToActionData} />
         </div>
       )
     case 'faqAccordion':
       return (
         <div className={wrapperClasses}>
-          <FAQAccordion data={block.faqAccordion as FAQAccordionData} />
+          <FAQAccordion data={block.faqAccordion as unknown as FAQAccordionData} />
         </div>
       )
     case 'testimonialsDisplay':
