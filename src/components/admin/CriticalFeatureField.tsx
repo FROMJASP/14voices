@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useField } from '@payloadcms/ui'
+import { useField, Label } from '@payloadcms/ui'
 
-export function CriticalFeatureField({ path, label, custom }: any) {
+export function CriticalFeatureField({ path, label, custom, required }: any) {
   const { value, setValue } = useField({ path })
   const warningMessage = custom?.warningMessage || 'Disabling this feature may affect your website functionality.'
 
@@ -25,28 +25,30 @@ export function CriticalFeatureField({ path, label, custom }: any) {
 
   return (
     <div className="field-type checkbox">
+      <Label htmlFor={path} label={label} required={required} />
       <div 
+        className="checkbox-input"
         style={{
           backgroundColor: value ? 'transparent' : '#fef2f2',
-          padding: value ? '0' : '16px',
+          padding: value ? '8px' : '16px',
           borderRadius: '6px',
           border: value ? 'none' : '2px solid #ef4444',
           transition: 'all 0.2s ease',
-          marginBottom: '16px',
+          marginTop: '8px',
         }}
       >
         <label style={{ display: 'flex', alignItems: 'flex-start', cursor: 'pointer' }}>
           <input
+            id={path}
             type="checkbox"
             checked={value || false}
             onChange={handleChange}
             style={{ marginRight: '8px', marginTop: '2px' }}
           />
-          <div>
-            <div style={{ fontWeight: 500 }}>{label}</div>
+          <div style={{ flex: 1 }}>
             {!value && (
               <div style={{ 
-                marginTop: '4px',
+                marginBottom: '4px',
                 fontSize: '13px',
                 color: '#dc2626',
                 fontWeight: '600',
@@ -55,9 +57,9 @@ export function CriticalFeatureField({ path, label, custom }: any) {
               </div>
             )}
             <div style={{ 
-              marginTop: '4px',
               fontSize: '12px',
               color: value ? '#6b7280' : '#dc2626',
+              lineHeight: '1.5',
             }}>
               {warningMessage}
             </div>
