@@ -45,7 +45,6 @@ import { default as default_0e63ca13049e5fd88da5304cfad30e1e } from '@/component
 import { default as default_437b3ecbde60fc8598a1c9679e03fce3 } from '../../../components/admin/BeforeLogin'
 import { default as default_admin_actions } from '../../../components/admin/AdminActions'
 import { default as default_admin_enhancements } from '../../../components/admin/AdminEnhancements'
-import { CriticalFeatureField as CriticalFeatureField_custom } from '../../../components/admin/CriticalFeatureField'
 import { MaintenanceModePreview as MaintenanceModePreview_custom } from '../../../components/admin/MaintenanceModePreview'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
@@ -85,7 +84,6 @@ export const importMap = {
   "./components/admin/BeforeLogin#default": default_437b3ecbde60fc8598a1c9679e03fce3,
   "./components/admin/AdminActions#default": default_admin_actions,
   "./components/admin/AdminEnhancements#default": default_admin_enhancements,
-  "./components/admin/CriticalFeatureField#CriticalFeatureField": CriticalFeatureField_custom,
   "./components/admin/MaintenanceModePreview#MaintenanceModePreview": MaintenanceModePreview_custom,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e
 }

@@ -333,12 +333,13 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: true,
                   label: 'Enable Site Search',
                   admin: {
-                    components: {
-                      Field: './components/admin/CriticalFeatureField#CriticalFeatureField',
+                    description: '⚠️ WARNING: Disabling this will remove search functionality from your entire website. Visitors will not be able to search for content.',
+                    condition: (data, siblingData) => {
+                      if (siblingData?.enableSearch === false && siblingData?.enableSearch !== undefined) {
+                        return confirm('Are you absolutely sure you want to disable site search? This will remove all search functionality from your website.')
+                      }
+                      return true
                     },
-                  },
-                  custom: {
-                    warningMessage: 'Disabling this will remove search functionality from your entire website. Visitors will not be able to search for content.',
                   },
                 },
                 {
@@ -347,12 +348,13 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: true,
                   label: 'Enable Blog',
                   admin: {
-                    components: {
-                      Field: './components/admin/CriticalFeatureField#CriticalFeatureField',
+                    description: '⚠️ WARNING: Disabling this will hide all blog posts and the blog section from your website. This affects SEO and content visibility.',
+                    condition: (data, siblingData) => {
+                      if (siblingData?.enableBlog === false && siblingData?.enableBlog !== undefined) {
+                        return confirm('Are you absolutely sure you want to disable the blog? This will hide all blog content from your website.')
+                      }
+                      return true
                     },
-                  },
-                  custom: {
-                    warningMessage: 'Disabling this will hide all blog posts and the blog section from your website. This affects SEO and content visibility.',
                   },
                 },
                 {
