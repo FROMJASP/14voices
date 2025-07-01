@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 
-export const VoiceoverDemosCell: React.FC<CellComponentProps> = ({ rowData, cellData }) => {
+export const VoiceoverDemosCell: React.FC<DefaultCellComponentProps> = ({ rowData, cellData }) => {
   // cellData contains the primaryDemo value
   const primaryDemo = cellData || rowData?.primaryDemo
   const additionalDemos = rowData?.additionalDemos || []

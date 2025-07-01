@@ -39,18 +39,23 @@ export function FormRenderer({ form }: FormRendererProps) {
       if (formData[field.name] && field.validation) {
         const value = formData[field.name]
         
-        if (field.validation.minLength && value.length < field.validation.minLength) {
-          newErrors[field.name] = `Minimum length is ${field.validation.minLength}`
-        }
-        
-        if (field.validation.maxLength && value.length > field.validation.maxLength) {
-          newErrors[field.name] = `Maximum length is ${field.validation.maxLength}`
-        }
-        
-        if (field.validation.pattern && typeof field.validation.pattern === 'string') {
-          const regex = new RegExp(field.validation.pattern)
-          if (!regex.test(value)) {
-            newErrors[field.name] = (field.validation.customError as string) || 'Invalid format'
+        if (typeof value === 'string') {
+          const minLength = field.validation.minLength as number | undefined
+          const maxLength = field.validation.maxLength as number | undefined
+          
+          if (minLength && value.length < minLength) {
+            newErrors[field.name] = `Minimum length is ${minLength}`
+          }
+          
+          if (maxLength && value.length > maxLength) {
+            newErrors[field.name] = `Maximum length is ${maxLength}`
+          }
+          
+          if (field.validation.pattern && typeof field.validation.pattern === 'string') {
+            const regex = new RegExp(field.validation.pattern)
+            if (!regex.test(value)) {
+              newErrors[field.name] = (field.validation.customError as string) || 'Invalid format'
+            }
           }
         }
       }

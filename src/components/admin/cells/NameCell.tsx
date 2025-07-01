@@ -1,11 +1,11 @@
 'use client'
 
 import React, { memo, useCallback } from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 import { useRouter } from 'next/navigation'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
-export const NameCell: React.FC<CellComponentProps> = memo(({ cellData, rowData }) => {
+export const NameCell: React.FC<DefaultCellComponentProps> = memo(({ cellData, rowData }) => {
   const router = useRouter()
   const isDark = useDarkMode()
   

@@ -7,7 +7,7 @@ export default function VoiceoverRowClick() {
   const router = useRouter()
 
   useEffect(() => {
-    const handleRowClick = (e: MouseEvent) => {
+    const handleRowClick = (e: Event) => {
       // Find the closest row element
       const row = (e.target as HTMLElement).closest('.collection-list__list-item[data-collection="voiceovers"]')
       if (!row) return

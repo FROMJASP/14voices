@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 import Link from 'next/link'
 
-export const VoiceoverNameCell: React.FC<CellComponentProps> = ({ rowData, cellData }) => {
+export const VoiceoverNameCell: React.FC<DefaultCellComponentProps> = ({ rowData, cellData }) => {
   const name = cellData || rowData?.name || 'Unnamed'
   const id = rowData?.id
   

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
@@ -27,7 +27,7 @@ const statusConfig: Record<string, { label: string; color: string; bg: string }>
   }
 }
 
-export const StatusCell: React.FC<CellComponentProps> = ({ cellData }) => {
+export const StatusCell: React.FC<DefaultCellComponentProps> = ({ cellData }) => {
   const isDark = useDarkMode()
   
   if (!cellData) {

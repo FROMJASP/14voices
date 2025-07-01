@@ -1,10 +1,10 @@
 'use client'
 
 import React, { memo, useMemo } from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
-export const AudioDemoCell: React.FC<CellComponentProps> = memo(({ cellData, rowData }) => {
+export const AudioDemoCell: React.FC<DefaultCellComponentProps> = memo(({ cellData, rowData }) => {
   const isDark = useDarkMode()
   const content = useMemo(() => {
     const demos = []

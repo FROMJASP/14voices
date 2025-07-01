@@ -1,10 +1,10 @@
 'use client'
 
 import React, { memo, useMemo } from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
-export const ProfilePhotoCell: React.FC<CellComponentProps> = memo(({ cellData, rowData }) => {
+export const ProfilePhotoCell: React.FC<DefaultCellComponentProps> = memo(({ cellData, rowData }) => {
   const isDark = useDarkMode()
   // Handle populated upload relationship
   const imageUrl = useMemo(() => {

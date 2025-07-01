@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
-export const AvailabilityCell: React.FC<CellComponentProps> = ({ rowData }) => {
+export const AvailabilityCell: React.FC<DefaultCellComponentProps> = ({ rowData }) => {
   const isDark = useDarkMode()
   const isAvailable = rowData?.availability?.isAvailable !== false
 

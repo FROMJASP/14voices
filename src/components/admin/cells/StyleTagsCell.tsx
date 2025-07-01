@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
 const tagLabels: Record<string, string> = {
@@ -23,7 +23,7 @@ const tagColors: Record<string, { bg: string; text: string }> = {
   'custom': { bg: '#f3f4f6', text: '#4b5563' },
 }
 
-export const StyleTagsCell: React.FC<CellComponentProps> = ({ cellData }) => {
+export const StyleTagsCell: React.FC<DefaultCellComponentProps> = ({ cellData }) => {
   const isDark = useDarkMode()
   
   if (!cellData || !Array.isArray(cellData) || cellData.length === 0) {

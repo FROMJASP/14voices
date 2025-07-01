@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import type { CellComponentProps } from 'payload'
+import type { DefaultCellComponentProps } from 'payload'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
 const groupColors: Record<string, { light: { bg: string; text: string }, dark: { bg: string; text: string } }> = {
@@ -47,7 +47,7 @@ const groupColors: Record<string, { light: { bg: string; text: string }, dark: {
   }
 }
 
-export const GroupCell: React.FC<CellComponentProps> = ({ cellData }) => {
+export const GroupCell: React.FC<DefaultCellComponentProps> = ({ cellData }) => {
   const isDark = useDarkMode()
   
   if (!cellData) {
