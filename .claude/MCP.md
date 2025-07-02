@@ -1,12 +1,72 @@
-# MCP.md - Model Context Protocol Ops | 14Voices Focus
+## Available MCP Configuration for 14Voices
+
+```yaml
+Available MCPs (Check These):
+  Sequential: --seq (Complex analysis and systematic thinking)
+  Magic: --magic (UI component generation)
+  Playwright: --playwright (Browser automation and testing)
+
+Not Available:
+  Context7: --c7 (MCP not found in your instance)
+
+Documentation Strategy Without Context7:
+  Manual Docs: Your .claude/docs/ patterns for ALL external libraries
+  WebSearch: For latest documentation when needed
+  Local Knowledge: Claude's built-in knowledge for stable libraries
+  Official Sources: Direct links to documentation when researching
+```
+
+## Available MCP Workflows for 14Voices
+
+```yaml
+Sequential + Magic Workflow:
+  /persona:refactorer --seq --magic "Systematically analyze component duplication and generate unified components"
+  /persona:architect --seq "Deep analysis of domain-driven design improvements"
+  /persona:analyzer --seq "Complex debugging with step-by-step reasoning"
+
+Magic + Playwright Workflow:
+  /persona:frontend --magic --playwright "Generate audio components and test across browsers"
+  /persona:qa --magic --playwright "Create test components and validate with E2E testing"
+
+Sequential + Playwright Workflow:
+  /persona:performance --seq --playwright "Analyze performance bottlenecks and test with real metrics"
+  /persona:qa --seq --playwright "Systematic testing approach with browser automation"
+
+Pure Sequential (Most Reliable):
+  /persona:architect --seq "Complex architectural analysis"
+  /persona:analyzer --seq "Deep debugging and root cause analysis"
+  /persona:refactorer --seq "Systematic code quality improvements"
+```
+
+## Playwright Integration for 14Voices Testing
+
+````yaml
+Playwright Use Cases for Voiceover Agency:
+  Audio Playback Testing: Cross-browser demo streaming | Mobile audio controls | Autoplay policies | Progress bars
+  Order Flow Validation: Complete customer journey | Form submissions | File uploads | Payment processing
+  Performance Monitoring: Real User Metrics (RUM) | Core Web Vitals | Audio loading times | Mobile performance
+  Visual Regression: Component screenshots | Layout consistency | Admin panel UI | Mobile responsiveness
+  Accessibility Testing: Screen reader compatibility | Keyboard navigation | ARIA labels | Audio controls
+
+14Voices-Specific Playwright Workflows:
+  Demo Streaming: Test audio playback across Chrome/Firefox/Safari | Validate streaming performance | Check mobile controls
+  Customer Journey: Browse → Listen → Order → Pay → Confirm (full E2E validation)
+  Admin Panel: Test Payload admin customizations | Validate import map components | Check workflows
+  Performance: Measure demo loading times | Test cache effectiveness | Monitor Core Web Vitals
+  Mobile Experience: Touch interactions | Audio on mobile Safari | Progressive web app features
+
+Playwright + VSCode Integration:
+  /ide + Playwright → Run tests in real-time | Screenshot comparisons | Performance reports | Debug visually
+  Live Testing: Edit components → Run Playwright tests → See results immediately → Iterate quickly
+  CI Integration: Playwright tests in GitHub Actions | Visual regression detection | Performance budgets
+```# MCP.md - Model Context Protocol Ops | 14Voices Focus
 
 ## Legend
-
-| Symbol | Meaning  |     | Abbrev | Meaning        |
-| ------ | -------- | --- | ------ | -------------- |
-| →      | leads to |     | ops    | operations     |
-| &      | and/with |     | UI     | user interface |
-| w/     | with     |     | impl   | implementation |
+| Symbol | Meaning | | Abbrev | Meaning |
+|--------|---------|---|--------|---------|
+| → | leads to | | ops | operations |
+| & | and/with | | UI | user interface |
+| w/ | with | | impl | implementation |
 
 ## Decision Matrix
 
@@ -47,42 +107,92 @@ Research-First (shared/research-first.yml):
   14Voices: Payload customization → C7(built-in features) BEFORE any custom impl
   Build tools → C7(official docs) BEFORE troubleshooting
   Payment processing → C7(Stripe docs) + Sequential(security) BEFORE impl
-```
+````
 
-## 14Voices Business Execution Playbooks
+## Puppeteer Integration for 14Voices Testing
 
 ```yaml
-Build Debugging:
-  Trigger: "Build fails" | "Vercel error" | "TypeScript issues"
-  Flow: Sequential(analyze error patterns) → C7(build tool docs) → environment check → native fix
-  NEVER: Magic for build configs | Puppeteer for build testing | Start with Vercel debugging
+Puppeteer Use Cases for Voiceover Agency:
+  Audio Playback Testing: Cross-browser demo streaming | Mobile audio controls | Autoplay policies | Progress bars
+  Order Flow Validation: Complete customer journey | Form submissions | File uploads | Payment processing
+  Performance Monitoring: Real User Metrics (RUM) | Core Web Vitals | Audio loading times | Mobile performance
+  Visual Regression: Component screenshots | Layout consistency | Admin panel UI | Mobile responsiveness
+  Accessibility Testing: Screen reader compatibility | Keyboard navigation | ARIA labels | Audio controls
 
-Order Flow Development:
-  Trigger: "Order processing" | "Checkout flow" | "Payment integration"
-  Flow: C7(Stripe docs) → Sequential(security analysis) → Magic(UI components) → Puppeteer(E2E testing)
-  Priority: Security first → UX second → Performance third
+14Voices-Specific Puppeteer Workflows:
+  Demo Streaming: Test audio playback across devices | Validate streaming performance | Check mobile controls
+  Customer Journey: Browse → Listen → Order → Pay → Confirm (full E2E validation)
+  Admin Panel: Test Payload admin customizations | Validate import map components | Check workflows
+  Performance: Measure demo loading times | Test cache effectiveness | Monitor Core Web Vitals
+  Mobile Experience: Touch interactions | Audio on mobile Safari | Progressive web app features
 
-Audio Streaming:
-  Trigger: "Demo playback" | "Audio optimization" | "Streaming issues"
-  Flow: Sequential(performance analysis) → C7(audio optimization) → native impl → Puppeteer(cross-browser test)
-  Focus: Mobile performance → Loading speed → Quality consistency
+Puppeteer + VSCode Integration:
+  /ide + Puppeteer → Run tests in real-time | Screenshot comparisons | Performance reports | Debug visually
+  Live Testing: Edit components → Run Puppeteer tests → See results immediately → Iterate quickly
+  CI Integration: Puppeteer tests in GitHub Actions | Visual regression detection | Performance budgets
+```
 
-Email Automation:
-  Trigger: "Email templates" | "Resend integration" | "Notification flow"
-  Flow: C7(Resend docs) → Sequential(workflow design) → native impl → testing validation
-  Critical: Delivery reliability → Template consistency → Compliance
+## Context7 + Puppeteer Workflows
 
-CMS Management:
-  Trigger: "Payload admin" | "Content management" | "Collection design" | "Import map error" | "Component not found"
-  Flow: C7(Payload docs) → Sequential(standard patterns + import map config) → Magic(custom components) → native impl
-  Rule: Built-in features first → Custom components with proper import map → Never fight architecture
-  Import Map Focus: Component mapping → Module resolution → Path consistency → Build/runtime alignment
+```yaml
+Advanced Testing Patterns:
+  Component Testing: Magic(create component) → Puppeteer(validate functionality) → Performance(measure impact)
+  Audio Optimization: Sequential(analyze performance) → Puppeteer(test real-world usage) → Optimize based on data
+  Customer Experience: Design with user journey → Puppeteer(validate complete flow) → Measure conversion rates
+  Cross-Browser: Puppeteer tests across Chrome/Firefox/Safari → Validate audio streaming compatibility
+
+Puppeteer MCP Automation:
+  --pup flag triggers: UI component generation → Puppeteer validation → Performance measurement → Screenshots
+  E2E Workflows: Order flow changes → Puppeteer full journey test → Payment validation → Email confirmation
+  Performance Testing: Code changes → Puppeteer Core Web Vitals → Cache effectiveness → Mobile performance
+  Visual Testing: Component updates → Puppeteer screenshots → Visual diff → Regression detection
+```
+
+## VSCode + Context7 Workflow
+
+```yaml
+IDE-Enhanced Documentation:
+  /ide + C7 resolve-library-id → get real-time docs → apply to files → test immediately
+  Multi-File Updates: C7 patterns → apply across domain → validate TypeScript → test build
+  Library Upgrades: C7 migration guides → systematic updates → validation → deployment
+
+14Voices-Specific C7 Patterns:
+  Payload Beta Issues: C7 resolve-library-id("payload") → get-docs(topic:"v3-migration") → apply fixes
+  Next.js 15 Features: C7 resolve-library-id("next") → get-docs(topic:"app-router-15") → optimization
+  React 19 Patterns: C7 resolve-library-id("react") → get-docs(topic:"concurrent-features") → implementation
+  Tailwind v4 Syntax: C7 resolve-library-id("tailwindcss") → get-docs(topic:"v4-syntax") → component updates
+
+Performance Optimization:
+  C7 Session Caching: Cache docs for session | Avoid repeated fetches | Progressive loading
+  Selective Fetching: Only fetch when needed | Skip stable libraries | Focus on changing APIs
+  Local Patterns: Cache 14Voices-specific patterns | Business logic | Domain conventions
+  Offline Support: Manual .claude/docs backup | Critical patterns cached | Never blocked
+```
+
+## 14Voices Architecture Patterns
+
+```yaml
+14Voices Architecture Patterns:
+  Domain Analysis: /ide + Sequential(architecture review) + C7(DDD patterns) + multi-file updates
+  Performance Optimization: /ide + Sequential(bottleneck analysis) + real-time monitoring + instant fixes
+  Component Refactoring: /ide + identify duplications + extract to shared/ + update all references
+  Security Hardening: /ide + vulnerability scan + apply Zod schemas + test validation
+  Cache Strategy: /ide + analyze performance + optimize Redis patterns + monitor metrics
+
+Current Architecture Integration:
+  Domain Layer: /ide access to repositories/services + real-time modifications + type updates
+  Component Layer: Navigate shared/unified + extract patterns + batch updates + instant validation
+  Infrastructure: Edit cache/email/db layers + optimize performance + test immediately
+  Security: Update middleware/validation + apply security patterns + test endpoints
+  Performance: Monitor /api/cache/metrics + optimize queries + validate improvements
+```
 
 Code Quality:
-  Trigger: "Duplication" | "Refactoring" | "Code cleanup"
-  Flow: Sequential(pattern analysis) → identify extraction opportunities → native refactor
-  Focus: Component extraction → Utility consolidation → Pattern standardization
-```
+Trigger: "Duplication" | "Refactoring" | "Code cleanup"
+Flow: Sequential(pattern analysis) → identify extraction opportunities → native refactor
+Focus: Component extraction → Utility consolidation → Pattern standardization
+
+````
 
 ## Token Economics & 14Voices Priorities
 
@@ -98,7 +208,7 @@ UltraCompressed: --uc flag|High context|Token budget | ~70% reduction | Clarity�
   MEDIUM: Audio optimization (Sequential) | Email automation (C7) | Performance analysis (Sequential+Puppeteer)
   LOW: General UI components (Magic) | Documentation (C7) | Simple configs (Native)
   BANNED: Payload admin customization (any MCP) | Speculative optimization | Non-critical features
-```
+````
 
 ## Quality Control & 14Voices Standards
 

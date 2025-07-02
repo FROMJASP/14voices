@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
 import { getServerSideUser } from '@/utilities/payload'
+import { z } from 'zod'
 
 function getDateRange(range: string): Date {
   const now = new Date()
@@ -19,6 +20,11 @@ function getDateRange(range: string): Date {
   }
 }
 
+// Validation schema for query parameters
+const analyticsQuerySchema = z.object({
+  range: z.enum(['24h', '7d', '30d', '90d']).optional().default('7d')
+})
+
 export async function GET(req: NextRequest) {
   try {
     const user = await getServerSideUser()
@@ -28,7 +34,20 @@ export async function GET(req: NextRequest) {
     }
     
     const { searchParams } = new URL(req.url)
-    const range = searchParams.get('range') || '7d'
+    
+    // Validate query parameters
+    const validationResult = analyticsQuerySchema.safeParse({
+      range: searchParams.get('range') || undefined
+    })
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { range } = validationResult.data
     const startDate = getDateRange(range)
     
     const payload = await getPayload()

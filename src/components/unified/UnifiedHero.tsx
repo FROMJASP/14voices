@@ -96,13 +96,11 @@ export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedH
         ${isMediaBg ? 'relative z-10' : ''} 
         ${variant === 'banner' ? 'h-full flex items-center justify-center' : ''}
       `}>
-        <Container maxWidth={variant === 'page' ? 'md' : 'xl'} className="text-center">
+        <Container className="text-center">
           {title && (
             <Heading 
               as="h1" 
-              size={variant === 'page' ? '1' : '1'}
-              color={isDarkBg ? 'white' : 'default'}
-              className="mb-4 md:mb-6"
+              className={`mb-4 md:mb-6 ${isDarkBg ? 'text-white' : 'text-gray-900'}`}
             >
               {title}
             </Heading>
@@ -110,9 +108,7 @@ export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedH
           
           {subtitle && (
             <Text 
-              size={variant === 'page' ? 'large' : 'xl'}
-              color={isDarkBg ? 'white-muted' : 'default'}
-              className={`mb-8 ${variant === 'banner' ? 'max-w-3xl mx-auto' : ''}`}
+              className={`mb-8 text-lg ${variant === 'banner' ? 'max-w-3xl mx-auto' : ''} ${isDarkBg ? 'text-gray-200' : 'text-gray-600'}`}
             >
               {subtitle}
             </Text>
@@ -123,13 +119,13 @@ export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedH
               {buttons.map((button, index) => (
                 <Button
                   key={index}
-                  text={button.text}
-                  link={button.link}
-                  style={button.style}
-                  size={variant === 'banner' ? 'large' : 'medium'}
-                  isDarkBg={isDarkBg}
+                  href={button.link}
+                  variant={button.style as 'primary' | 'secondary' | 'outline' | undefined}
+                  size={variant === 'banner' ? 'lg' : 'md'}
                   className={variant === 'banner' ? 'transform hover:scale-105 shadow-lg' : ''}
-                />
+                >
+                  {button.text}
+                </Button>
               ))}
             </div>
           )}

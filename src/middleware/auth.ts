@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSideUser } from '@/utilities/payload'
-import { headers } from 'next/headers'
 
 export type AuthOptions = {
   requireAuth?: boolean

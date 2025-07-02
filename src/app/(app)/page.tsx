@@ -2,9 +2,10 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { PageRenderer } from '@/components/PageRenderer'
 import type { Page } from '@/payload-types'
-import { NavigationBar, HeroSection, VoiceoverShowcase } from '@/components/sections'
+import { NavigationBar, VoiceoverShowcase } from '@/components/sections'
+import { UnifiedHero } from '@/components/unified'
 import { StemmenSection, PrijzenSection, BlogSection, ContactSection } from '@/components/sections/HomepageSections'
-import DefaultFooter from '@/components/layout/DefaultFooter'
+import { Footer } from '@/components/layout/Footer'
 
 export async function generateMetadata() {
   const payload = await getPayload({ config: configPromise })
@@ -79,13 +80,13 @@ export default async function HomePage() {
     return (
       <>
         <NavigationBar />
-        <HeroSection />
+        <UnifiedHero variant="page" />
         <VoiceoverShowcase />
         <StemmenSection />
         <PrijzenSection />
         <BlogSection />
         <ContactSection />
-        <DefaultFooter />
+        <Footer />
       </>
     )
   }

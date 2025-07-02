@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
+import { z } from 'zod'
 
 interface ContentNode {
   type: string
@@ -17,9 +18,28 @@ function replaceVariables(content: string, variables: Record<string, string | nu
   return result
 }
 
+// Additional schema for email preview
+const previewBodySchema = z.object({
+  content: z.any(), // Rich text content
+  header: z.string().optional(),
+  footer: z.string().optional(),
+  testData: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional()
+})
+
 export async function POST(req: NextRequest) {
   try {
-    const { content, header, footer, testData } = await req.json()
+    const body = await req.json()
+    
+    // Validate request body
+    const validationResult = previewBodySchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid preview data', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { content, header, footer, testData } = validationResult.data
     const payload = await getPayload()
     
     let html = '<html><body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5;">'
@@ -41,7 +61,7 @@ export async function POST(req: NextRequest) {
           return acc
         }, '') || ''
         
-        html += replaceVariables(headerContent, testData)
+        html += replaceVariables(headerContent, testData || {})
         html += '<hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">'
       }
     }
@@ -55,7 +75,7 @@ export async function POST(req: NextRequest) {
       return acc
     }, '') || ''
     
-    html += replaceVariables(mainContent, testData)
+    html += replaceVariables(mainContent, testData || {})
     
     // Add footer if exists
     if (footer) {
@@ -75,7 +95,7 @@ export async function POST(req: NextRequest) {
           return acc
         }, '') || ''
         
-        html += replaceVariables(footerContent, testData)
+        html += replaceVariables(footerContent, testData || {})
       }
     }
     

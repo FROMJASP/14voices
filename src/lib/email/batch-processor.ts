@@ -19,7 +19,7 @@ interface BatchEmailJob {
     id: string
     key: string
   }
-  variables?: Record<string, unknown>
+  variables?: Record<string, string | number | boolean>
 }
 
 interface BatchResult {
@@ -208,21 +208,23 @@ export class EmailBatchProcessor {
       })
     )
 
-    const failPromises = results.failed.map(({ jobId, error }) =>
-      this.payload.db.collections['email-jobs'].updateOne(
-        { _id: jobId },
-        {
-          $set: {
-            status: 'failed',
-            lastAttempt: now,
-            error: error,
-          },
-          $inc: {
-            attempts: 1,
-          },
-        }
-      )
-    )
+    const failPromises = results.failed.map(async ({ jobId, error }) => {
+      const job = await this.payload.findByID({
+        collection: 'email-jobs',
+        id: jobId,
+      })
+      
+      return this.payload.update({
+        collection: 'email-jobs',
+        id: jobId,
+        data: {
+          status: 'failed',
+          lastAttempt: now,
+          error: error,
+          attempts: (job.attempts || 0) + 1,
+        },
+      })
+    })
 
     await Promise.all([...successPromises, ...failPromises])
   }
@@ -283,16 +285,17 @@ export class EmailBatchProcessor {
         return result
       }
 
-      await this.payload.db.collections['email-jobs'].updateMany(
-        {
-          _id: { $in: failedJobs.docs.map(job => job.id) },
-        },
-        {
-          $set: {
-            status: 'scheduled',
-            scheduledFor: new Date(),
-          },
-        }
+      await Promise.all(
+        failedJobs.docs.map(job => 
+          this.payload.update({
+            collection: 'email-jobs',
+            id: job.id,
+            data: {
+              status: 'scheduled',
+              scheduledFor: new Date(),
+            },
+          })
+        )
       )
 
       return await this.processBatch(failedJobs.docs.length)
@@ -308,15 +311,6 @@ export class EmailBatchProcessor {
     sent: number
     cancelled: number
   }> {
-    const stats = await this.payload.db.collections['email-jobs'].aggregate([
-      {
-        $group: {
-          _id: '$status',
-          count: { $sum: 1 },
-        },
-      },
-    ])
-
     const result = {
       scheduled: 0,
       processing: 0,
@@ -325,11 +319,22 @@ export class EmailBatchProcessor {
       cancelled: 0,
     }
 
-    for (const stat of stats) {
-      if (stat._id in result) {
-        result[stat._id as keyof typeof result] = stat.count
-      }
-    }
+    // Query for each status type
+    const statuses: Array<keyof typeof result> = ['scheduled', 'processing', 'failed', 'sent', 'cancelled']
+    
+    await Promise.all(
+      statuses.map(async (status) => {
+        const count = await this.payload.count({
+          collection: 'email-jobs',
+          where: {
+            status: {
+              equals: status,
+            },
+          },
+        })
+        result[status] = count.totalDocs
+      })
+    )
 
     return result
   }
@@ -338,11 +343,42 @@ export class EmailBatchProcessor {
     const cutoffDate = new Date()
     cutoffDate.setDate(cutoffDate.getDate() - daysToKeep)
 
-    const result = await this.payload.db.collections['email-jobs'].deleteMany({
-      status: { $in: ['sent', 'cancelled'] },
-      updatedAt: { $lt: cutoffDate },
+    // Find old jobs
+    const oldJobs = await this.payload.find({
+      collection: 'email-jobs',
+      where: {
+        and: [
+          {
+            status: {
+              in: ['sent', 'cancelled'],
+            },
+          },
+          {
+            updatedAt: {
+              less_than: cutoffDate.toISOString(),
+            },
+          },
+        ],
+      },
+      limit: 1000,
     })
 
-    return result.deletedCount || 0
+    // Delete them one by one
+    let deletedCount = 0
+    await Promise.all(
+      oldJobs.docs.map(async (job) => {
+        try {
+          await this.payload.delete({
+            collection: 'email-jobs',
+            id: job.id,
+          })
+          deletedCount++
+        } catch (error) {
+          console.error(`Failed to delete job ${job.id}:`, error)
+        }
+      })
+    )
+
+    return deletedCount
   }
 }

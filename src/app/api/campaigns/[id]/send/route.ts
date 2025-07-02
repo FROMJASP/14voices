@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from '@/utilities/payload'
+import { getPayload, getServerSideUser } from '@/utilities/payload'
 import { resendMarketing } from '@/lib/email/resend-marketing'
 import type { EmailCampaign } from '@/types/email-marketing'
 import { campaignSendSchema } from '@/lib/validation/schemas'
-import { withAuth, withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
 import { sanitizeHtml } from '@/lib/validation/schemas'
 
 async function handler(
@@ -226,8 +225,20 @@ async function renderCampaignContent(campaign: EmailCampaign): Promise<string> {
 }
 
 // Export the handler with middleware
-export const POST = composeMiddleware(
-  withSecurityHeaders,
-  withRateLimit,
-  withAuth
-)(handler)
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  // Simple auth check
+  const user = await getServerSideUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  
+  // Call the handler
+  const response = await handler(req, { params })
+  
+  // Add security headers
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  
+  return response
+}

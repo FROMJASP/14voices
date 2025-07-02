@@ -3,17 +3,39 @@ import { getPayload } from '@/utilities/payload'
 import { resendMarketing } from '@/lib/email/resend-marketing'
 import type { Payload, Where } from 'payload'
 import type { EmailAudience, SegmentRules } from '@/types/email-marketing'
+import { z } from 'zod'
+import { audienceCreateSchema } from '@/lib/validation/schemas'
+
+// Validation schema for GET query parameters
+const audienceQuerySchema = z.object({
+  active: z.enum(['true', 'false']).optional(),
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(10)
+})
 
 export async function GET(req: NextRequest) {
   try {
     const payload = await getPayload()
     const { searchParams } = new URL(req.url)
-    const active = searchParams.get('active')
-    const limit = parseInt(searchParams.get('limit') || '10')
-    const page = parseInt(searchParams.get('page') || '1')
+    
+    // Validate query parameters
+    const validationResult = audienceQuerySchema.safeParse({
+      active: searchParams.get('active') || undefined,
+      page: searchParams.get('page') || undefined,
+      limit: searchParams.get('limit') || undefined
+    })
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { active, limit, page } = validationResult.data
 
     const where: Where = {}
-    if (active !== null) {
+    if (active !== undefined) {
       where.active = { equals: active === 'true' }
     }
 
@@ -46,6 +68,15 @@ export async function POST(req: NextRequest) {
   try {
     const payload = await getPayload()
     const data = await req.json()
+    
+    // Validate request body
+    const validationResult = audienceCreateSchema.safeParse(data)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid audience data', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
 
     let resendAudienceId = null
     if (data.syncWithResend) {

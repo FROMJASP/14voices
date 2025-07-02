@@ -46,8 +46,6 @@ export default async function VoiceoverPage({ params }: { params: Promise<{ slug
               <AudioPlayer
                 src={primaryDemo.audioFile.url}
                 title={primaryDemo.title}
-                artist={voiceover.name}
-                className="mb-6"
               />
               
               {primaryDemo.tags && primaryDemo.tags.length > 0 && (
@@ -68,17 +66,13 @@ export default async function VoiceoverPage({ params }: { params: Promise<{ slug
           {otherDemos.length > 0 && (
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">More Demos</h2>
-              <div className="space-y-3">
-                {otherDemos.map((demo) => (
-                  <DemoPlayer
-                    key={demo.id}
-                    src={demo.audioFile.url}
-                    title={demo.title}
-                    demoType={demo.demoType}
-                    duration={demo.duration}
-                  />
-                ))}
-              </div>
+              <DemoPlayer
+                demos={otherDemos.map(demo => ({
+                  id: demo.id,
+                  title: demo.title,
+                  audioUrl: demo.audioFile.url
+                }))}
+              />
             </div>
           )}
 

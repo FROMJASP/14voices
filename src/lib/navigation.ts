@@ -53,7 +53,7 @@ interface MobileMenu {
   [key: string]: unknown
 }
 
-export function formatNavigationItem(item: NavigationItem) {
+export function formatNavigationItem(item: NavigationItem): any {
   if (item.type === 'page' && item.page) {
     return {
       label: item.label,

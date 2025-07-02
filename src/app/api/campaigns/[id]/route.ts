@@ -1,12 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
+import { z } from 'zod'
+import { idSchema, campaignUpdateSchema } from '@/lib/validation/schemas'
+
+// Parameter validation schema
+const paramsSchema = z.object({
+  id: idSchema
+})
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params
+    const resolvedParams = await params
+    
+    // Validate parameters
+    const validationResult = paramsSchema.safeParse(resolvedParams)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid campaign ID', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { id } = validationResult.data
     const payload = await getPayload()
     
     const campaign = await payload.findByID({
@@ -37,9 +55,30 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params
+    const resolvedParams = await params
+    const body = await req.json()
+    
+    // Validate parameters
+    const paramsValidation = paramsSchema.safeParse(resolvedParams)
+    if (!paramsValidation.success) {
+      return NextResponse.json(
+        { error: 'Invalid campaign ID', details: paramsValidation.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    // Validate request body
+    const bodyValidation = campaignUpdateSchema.safeParse(body)
+    if (!bodyValidation.success) {
+      return NextResponse.json(
+        { error: 'Invalid update data', details: bodyValidation.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { id } = paramsValidation.data
+    const data = bodyValidation.data
     const payload = await getPayload()
-    const data = await req.json()
 
     const campaign = await payload.update({
       collection: 'email-campaigns',
@@ -62,7 +101,18 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params
+    const resolvedParams = await params
+    
+    // Validate parameters
+    const validationResult = paramsSchema.safeParse(resolvedParams)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid campaign ID', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { id } = validationResult.data
     const payload = await getPayload()
 
     await payload.delete({

@@ -106,7 +106,7 @@ export function parsePaginationParams(req: NextRequest): PaginationParams {
 export function createCacheKey(base: string, params: Record<string, unknown>): string {
   const sortedParams = Object.entries(params)
     .sort(([a], [b]) => a.localeCompare(b))
-    .filter(([_, value]) => value !== undefined && value !== null)
+    .filter(([, value]) => value !== undefined && value !== null)
     .map(([key, value]) => `${key}:${JSON.stringify(value)}`)
     .join('|')
   
@@ -304,7 +304,7 @@ export function createPaginatedHandler<T>(
     }
   }, {
     ...options,
-    transform: (result) => {
+    transform: (result: any) => {
       const transformed = options.transform ? options.transform(result.data) : result.data
       return {
         ...result,
@@ -328,7 +328,7 @@ export async function batchProcess<T, R>(
   
   for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize)
-    const batchPromises = batch.map(async (item, index) => {
+    const batchPromises = batch.map(async (item) => {
       try {
         return await processor(item)
       } catch (error) {

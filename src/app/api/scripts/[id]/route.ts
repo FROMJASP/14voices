@@ -1,12 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
 import { headers } from 'next/headers'
+import { z } from 'zod'
+import { idSchema } from '@/lib/validation/schemas'
+
+// Parameter validation schema
+const paramsSchema = z.object({
+  id: idSchema
+})
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params
+  const resolvedParams = await params
+  
+  // Validate parameters
+  const validationResult = paramsSchema.safeParse(resolvedParams)
+  if (!validationResult.success) {
+    return NextResponse.json(
+      { error: 'Invalid script ID', details: validationResult.error.errors },
+      { status: 400 }
+    )
+  }
+  
+  const { id } = validationResult.data
+  
   try {
     const payload = await getPayload()
     const headersList = await headers()
@@ -97,7 +116,19 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params
+  const resolvedParams = await params
+  
+  // Validate parameters
+  const validationResult = paramsSchema.safeParse(resolvedParams)
+  if (!validationResult.success) {
+    return NextResponse.json(
+      { error: 'Invalid script ID', details: validationResult.error.errors },
+      { status: 400 }
+    )
+  }
+  
+  const { id } = validationResult.data
+  
   try {
     const payload = await getPayload()
     const headersList = await headers()

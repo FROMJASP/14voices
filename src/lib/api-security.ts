@@ -79,7 +79,6 @@ export function checkRateLimit(
 export function getClientId(req: NextRequest): string {
   return req.headers.get('x-forwarded-for') || 
          req.headers.get('x-real-ip') || 
-         req.ip || 
          'anonymous'
 }
 

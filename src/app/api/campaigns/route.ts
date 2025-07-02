@@ -1,14 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
 import type { Where } from 'payload'
+import { z } from 'zod'
+import { campaignCreateSchema } from '@/lib/validation/schemas'
+
+// Validation schema for GET query parameters
+const campaignQuerySchema = z.object({
+  status: z.enum(['draft', 'sending', 'sent', 'scheduled', 'failed']).optional(),
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(10)
+})
 
 export async function GET(req: NextRequest) {
   try {
     const payload = await getPayload()
     const { searchParams } = new URL(req.url)
-    const status = searchParams.get('status')
-    const limit = parseInt(searchParams.get('limit') || '10')
-    const page = parseInt(searchParams.get('page') || '1')
+    
+    // Validate query parameters
+    const validationResult = campaignQuerySchema.safeParse({
+      status: searchParams.get('status') || undefined,
+      page: searchParams.get('page') || undefined,
+      limit: searchParams.get('limit') || undefined
+    })
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { status, limit, page } = validationResult.data
 
     const where: Where = {}
     if (status) {
@@ -44,6 +66,15 @@ export async function POST(req: NextRequest) {
   try {
     const payload = await getPayload()
     const data = await req.json()
+    
+    // Validate request body
+    const validationResult = campaignCreateSchema.safeParse(data)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid campaign data', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
 
     const campaign = await payload.create({
       collection: 'email-campaigns',

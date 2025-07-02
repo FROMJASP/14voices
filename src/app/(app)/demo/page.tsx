@@ -1,11 +1,12 @@
-import { NavigationBar, HeroSection, VoiceoverShowcase } from '@/components/sections'
+import { NavigationBar, VoiceoverShowcase } from '@/components/sections'
+import { UnifiedHero } from '@/components/unified'
 
 export default function DemoPage() {
   return (
     <>
       <NavigationBar />
       <main>
-        <HeroSection />
+        <UnifiedHero variant="page" />
         <VoiceoverShowcase />
       </main>
     </>

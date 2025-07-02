@@ -10,7 +10,7 @@ import type {
 } from '@/types/blocks'
 import { UnifiedHero, UnifiedCTA } from './unified'
 import { FeatureGrid } from './blocks/FeatureGrid'
-import { ContentSection } from './blocks/ContentSection'
+import { UnifiedSection } from './unified/UnifiedSection'
 import { FAQAccordion } from './blocks/FAQAccordion'
 import { TestimonialsDisplay } from './blocks/TestimonialsDisplay'
 
@@ -43,7 +43,7 @@ export function BlockRenderer({ block }: BlockRendererProps) {
     case 'contentSection':
       return (
         <div className={wrapperClasses}>
-          <ContentSection data={block.contentSection as unknown as ContentSectionData} />
+          <UnifiedSection data={block.contentSection as unknown as ContentSectionData} />
         </div>
       )
     case 'callToAction':

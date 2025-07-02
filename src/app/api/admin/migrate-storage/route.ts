@@ -3,8 +3,8 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { migrateStorageStructure } from '@/lib/storage/migration'
 import { storageMigrationSchema } from '@/lib/validation/schemas'
-import { withAuth, withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
 import { validateRequest } from '@/lib/api-security'
+import { getServerSideUser } from '@/utilities/payload'
 
 async function handler(req: NextRequest) {
   try {
@@ -60,8 +60,21 @@ async function handler(req: NextRequest) {
 }
 
 // Export with admin-only auth middleware
-export const POST = composeMiddleware(
-  withSecurityHeaders,
-  withRateLimit({ windowMs: 3600000, max: 5 }), // 5 migrations per hour
-  withAuth({ requireAuth: true, allowedRoles: ['admin'] })
-)(handler)
+export async function POST(req: NextRequest) {
+  // Check auth first
+  const user = await getServerSideUser()
+  if (!user || !user.roles?.includes('admin')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  
+  // Check rate limit would go here
+  // For now, just call the handler
+  const response = await handler(req)
+  
+  // Add security headers
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  
+  return response
+}

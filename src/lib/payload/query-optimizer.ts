@@ -1,4 +1,4 @@
-import type { Payload, PayloadRequest, Where } from 'payload'
+import type { Payload, Where } from 'payload'
 
 interface OptimizedQueryOptions {
   collection: string
@@ -11,7 +11,7 @@ interface OptimizedQueryOptions {
   populate?: Record<string, boolean | OptimizedQueryOptions>
 }
 
-interface BatchQueryOptions<T> {
+interface BatchQueryOptions {
   collection: string
   ids: string[]
   depth?: number
@@ -43,15 +43,25 @@ export class QueryOptimizer {
     hasPrevPage: boolean
   }> {
     const cacheKey = this.generateCacheKey(options)
-    const cached = this.getFromCache(cacheKey)
+    const cached = this.getFromCache(cacheKey) as {
+      docs: T[]
+      totalDocs: number
+      totalPages: number
+      page: number
+      limit: number
+      hasNextPage: boolean
+      hasPrevPage: boolean
+    } | null
     
     if (cached) {
       return cached
     }
 
     // Ensure minimum depth of 2 for proper relation population
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { populate, ...payloadOptions } = options
     const optimizedOptions = {
-      ...options,
+      ...payloadOptions,
       depth: Math.max(options.depth || 2, 2),
     }
 
@@ -59,14 +69,22 @@ export class QueryOptimizer {
     
     this.setCache(cacheKey, result)
     
-    return result
+    return result as unknown as {
+      docs: T[]
+      totalDocs: number
+      totalPages: number
+      page: number
+      limit: number
+      hasNextPage: boolean
+      hasPrevPage: boolean
+    }
   }
 
   /**
    * Batch fetch multiple records by IDs to prevent N+1 queries
    */
-  async findByIds<T = unknown>(options: BatchQueryOptions<T>): Promise<Map<string, T>> {
-    const { collection, ids, depth = 2, locale, populate } = options
+  async findByIds<T = unknown>(options: BatchQueryOptions): Promise<Map<string, T>> {
+    const { collection, ids, depth = 2, locale } = options
     
     if (ids.length === 0) {
       return new Map()
@@ -84,7 +102,7 @@ export class QueryOptimizer {
       const cached = this.getFromCache(cacheKey)
       
       if (cached) {
-        cachedItems.set(id, cached)
+        cachedItems.set(id, cached as T)
       } else {
         uncachedIds.push(id)
       }
@@ -108,7 +126,7 @@ export class QueryOptimizer {
       for (const doc of result.docs) {
         const cacheKey = `${collection}:${doc.id}:${locale || 'default'}`
         this.setCache(cacheKey, doc)
-        cachedItems.set(doc.id, doc as T)
+        cachedItems.set(String(doc.id), doc as T)
       }
     }
 
@@ -192,7 +210,7 @@ export class QueryOptimizer {
   ): Promise<{ [K in keyof T]: unknown }> {
     const entries = Object.entries(queries)
     const results = await Promise.all(
-      entries.map(([_, options]) => this.find(options))
+      entries.map(([, options]) => this.find(options))
     )
     
     return Object.fromEntries(
@@ -254,7 +272,9 @@ export class QueryOptimizer {
     // Limit cache size
     if (this.cache.size > 1000) {
       const firstKey = this.cache.keys().next().value
-      this.cache.delete(firstKey)
+      if (firstKey !== undefined) {
+        this.cache.delete(firstKey)
+      }
     }
   }
 }
@@ -335,7 +355,9 @@ function extractFieldsFromWhere(where: Where): string[] {
         if (!['equals', 'not_equals', 'in', 'not_in', 'greater_than', 'less_than', 'greater_than_equal', 'less_than_equal', 'like', 'contains'].includes(key)) {
           fields.push(field)
         }
-        traverse(obj[key], field)
+        if (obj[key] !== null) {
+          traverse(obj[key] as Record<string, unknown>, field)
+        }
       } else if (prefix && !['equals', 'not_equals', 'in', 'not_in', 'greater_than', 'less_than', 'greater_than_equal', 'less_than_equal', 'like', 'contains'].includes(key)) {
         fields.push(prefix)
       }

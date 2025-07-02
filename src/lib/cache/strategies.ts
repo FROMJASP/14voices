@@ -20,7 +20,7 @@ export class WriteThrough implements CacheStrategy {
     if (fresh !== undefined) {
       await this.cache.set(key, fresh)
     }
-    return fresh
+    return fresh as T | undefined
   }
 
   async set(key: string, value: unknown, ttl?: number): Promise<void> {
@@ -42,7 +42,7 @@ export class WriteAround implements CacheStrategy {
     return this.cache.get<T>(key)
   }
 
-  async set(key: string, value: unknown, ttl?: number): Promise<void> {
+  async set(key: string, value: unknown): Promise<void> {
     await this.dataWriter(key, value)
     await this.cache.delete(key)
   }
@@ -248,7 +248,7 @@ export function createCacheStrategy(
   options: {
     cache?: CacheManager
     dataFetcher?: (key: string) => Promise<unknown>
-    dataWriter?: (key: string, value: unknown) => Promise<void> | (batch: Array<{ key: string; value: unknown }>) => Promise<void>
+    dataWriter?: ((key: string, value: unknown) => Promise<void>) | ((batch: Array<{ key: string; value: unknown }>) => Promise<void>)
     tiers?: Array<{ cache: CacheManager; ttl: number; name: string }>
     refreshThreshold?: number
     refreshInterval?: number
@@ -258,18 +258,39 @@ export function createCacheStrategy(
 ): CacheStrategy {
   switch (type) {
     case 'write-through':
+      if (!options.dataFetcher) {
+        throw new Error('dataFetcher is required for write-through cache strategy')
+      }
       return new WriteThrough(options.cache, options.dataFetcher)
     
     case 'write-around':
-      return new WriteAround(options.cache, options.dataWriter)
+      if (!options.dataWriter) {
+        throw new Error('dataWriter is required for write-around cache strategy')
+      }
+      if (options.dataWriter.length === 2) {
+        return new WriteAround(options.cache, options.dataWriter as (key: string, value: unknown) => Promise<void>)
+      }
+      throw new Error('write-around cache strategy requires a dataWriter with (key, value) signature')
     
     case 'write-behind':
-      return new WriteBehind(options.cache, options.dataWriter, options)
+      if (!options.dataWriter) {
+        throw new Error('dataWriter is required for write-behind cache strategy')
+      }
+      if (options.dataWriter.length === 1) {
+        return new WriteBehind(options.cache, options.dataWriter as (batch: Array<{ key: string; value: unknown }>) => Promise<void>, options)
+      }
+      throw new Error('write-behind cache strategy requires a dataWriter with (batch) signature')
     
     case 'refresh-ahead':
+      if (!options.dataFetcher) {
+        throw new Error('dataFetcher is required for refresh-ahead cache strategy')
+      }
       return new RefreshAhead(options.cache, options.dataFetcher, options)
     
     case 'multi-tier':
+      if (!options.tiers) {
+        throw new Error('tiers are required for multi-tier cache strategy')
+      }
       return new MultiTierCache(options.tiers)
     
     default:

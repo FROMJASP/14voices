@@ -28,14 +28,21 @@ export function UnifiedCTA({ variant = 'block', blockData, actionData }: Unified
 
   const isDarkBg = backgroundColor === 'primary' || backgroundColor === 'dark'
 
+  const bgClasses = {
+    'primary': 'bg-blue-600',
+    'dark': 'bg-gray-900',
+    'gray': 'bg-gray-100',
+    'white': 'bg-white'
+  }
+
   return (
     <Section 
-      backgroundColor={backgroundColor}
       className={`
         ${variant === 'block' ? 'cta-block' : 'cta-section'}
+        ${backgroundColor ? bgClasses[backgroundColor] : ''}
       `}
     >
-      <Container maxWidth={style === 'split' ? 'lg' : 'md'}>
+      <Container>
         <div className={`
           ${style ? styleClasses[style as keyof typeof styleClasses] : 'text-center'}
         `}>
@@ -43,9 +50,7 @@ export function UnifiedCTA({ variant = 'block', blockData, actionData }: Unified
             {heading && (
               <Heading 
                 as="h2" 
-                size="2"
-                color={isDarkBg ? 'white' : 'default'}
-                className="mb-4"
+                className={`mb-4 ${isDarkBg ? 'text-white' : 'text-gray-900'}`}
               >
                 {heading}
               </Heading>
@@ -53,9 +58,7 @@ export function UnifiedCTA({ variant = 'block', blockData, actionData }: Unified
             
             {text && (
               <Text 
-                size="large"
-                color={isDarkBg ? 'white-muted' : 'default'}
-                className="mb-8"
+                className={`mb-8 text-lg ${isDarkBg ? 'text-gray-200' : 'text-gray-600'}`}
               >
                 {text}
               </Text>
@@ -71,12 +74,12 @@ export function UnifiedCTA({ variant = 'block', blockData, actionData }: Unified
               {buttons.map((button, index) => (
                 <Button
                   key={index}
-                  text={button.text}
-                  link={button.link}
-                  style={button.style}
-                  isDarkBg={isDarkBg}
+                  href={button.link}
+                  variant={button.style as 'primary' | 'secondary' | 'outline'}
                   className={variant === 'action' ? 'transition-all' : ''}
-                />
+                >
+                  {button.text}
+                </Button>
               ))}
             </div>
           )}

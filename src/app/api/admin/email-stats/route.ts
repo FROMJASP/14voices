@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { getPayload } from '@/utilities/payload'
 import { getEmailQueueStats } from '@/lib/email/sequences'
+import { z } from 'zod'
+
+// Validation schema for query parameters
+const emailStatsQuerySchema = z.object({
+  period: z.enum(['hour', 'day', 'week', 'month']).optional().default('day')
+})
 
 export async function GET(request: Request) {
   try {
@@ -13,9 +19,22 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    const payload = await getPayload()
     const { searchParams } = new URL(request.url)
-    const period = searchParams.get('period') || 'day'
+    
+    // Validate query parameters
+    const validationResult = emailStatsQuerySchema.safeParse({
+      period: searchParams.get('period') || undefined
+    })
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { period } = validationResult.data
+    const payload = await getPayload()
     
     // Get current queue stats
     const queueStats = await getEmailQueueStats(payload)
@@ -71,65 +90,106 @@ export async function GET(request: Request) {
       ? ((emailLogs.totalDocs / totalAttempted) * 100).toFixed(2)
       : '0.00'
     
-    // Get template performance
-    const templateStats = await payload.db.collections['email-logs'].aggregate([
-      {
-        $match: {
-          sentAt: { $gte: startDate }
-        }
+    // Get template performance by fetching all logs and grouping manually
+    const allLogs = await payload.find({
+      collection: 'email-logs',
+      where: {
+        sentAt: {
+          greater_than: startDate,
+        },
       },
-      {
-        $group: {
-          _id: '$template',
-          count: { $sum: 1 },
-          firstSent: { $min: '$sentAt' },
-          lastSent: { $max: '$sentAt' }
-        }
-      },
-      {
-        $sort: { count: -1 }
-      },
-      {
-        $limit: 10
-      }
-    ])
+      limit: 1000,
+      sort: '-sentAt',
+    })
     
-    // Get sequence performance
-    const sequenceStats = await payload.db.collections['email-jobs'].aggregate([
-      {
-        $match: {
-          sequence: { $exists: true },
-          updatedAt: { $gte: startDate }
+    // Group by template
+    const templateStatsMap = new Map<string, {
+      count: number
+      firstSent: Date
+      lastSent: Date
+    }>()
+    
+    allLogs.docs.forEach((log) => {
+      const template = log.template || 'unknown'
+      const existing = templateStatsMap.get(template)
+      
+      if (existing) {
+        existing.count++
+        if (log.sentAt < existing.firstSent) {
+          existing.firstSent = log.sentAt
         }
-      },
-      {
-        $group: {
-          _id: {
-            sequence: '$sequence',
-            status: '$status'
-          },
-          count: { $sum: 1 }
+        if (log.sentAt > existing.lastSent) {
+          existing.lastSent = log.sentAt
         }
-      },
-      {
-        $group: {
-          _id: '$_id.sequence',
-          stats: {
-            $push: {
-              status: '$_id.status',
-              count: '$count'
-            }
-          },
-          total: { $sum: '$count' }
-        }
-      },
-      {
-        $sort: { total: -1 }
-      },
-      {
-        $limit: 10
+      } else {
+        templateStatsMap.set(template, {
+          count: 1,
+          firstSent: log.sentAt,
+          lastSent: log.sentAt,
+        })
       }
-    ])
+    })
+    
+    const templateStats = Array.from(templateStatsMap.entries())
+      .map(([template, stats]) => ({
+        _id: template,
+        ...stats,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10)
+    
+    // Get sequence performance by fetching jobs and grouping manually
+    const allJobs = await payload.find({
+      collection: 'email-jobs',
+      where: {
+        and: [
+          {
+            sequence: {
+              exists: true,
+            },
+          },
+          {
+            updatedAt: {
+              greater_than: startDate,
+            },
+          },
+        ],
+      },
+      limit: 1000,
+      sort: '-updatedAt',
+    })
+    
+    // Group by sequence and status
+    const sequenceStatsMap = new Map<string, Map<string, number>>()
+    
+    allJobs.docs.forEach((job) => {
+      const sequence = job.sequence || 'unknown'
+      const status = job.status || 'unknown'
+      
+      if (!sequenceStatsMap.has(sequence)) {
+        sequenceStatsMap.set(sequence, new Map())
+      }
+      
+      const sequenceMap = sequenceStatsMap.get(sequence)!
+      sequenceMap.set(status, (sequenceMap.get(status) || 0) + 1)
+    })
+    
+    const sequenceStats = Array.from(sequenceStatsMap.entries())
+      .map(([sequence, statusMap]) => {
+        const stats = Array.from(statusMap.entries()).map(([status, count]) => ({
+          status,
+          count,
+        }))
+        const total = stats.reduce((sum, stat) => sum + stat.count, 0)
+        
+        return {
+          _id: sequence,
+          stats,
+          total,
+        }
+      })
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 10)
     
     // Calculate throughput
     const periodHours = (now.getTime() - startDate.getTime()) / (1000 * 60 * 60)

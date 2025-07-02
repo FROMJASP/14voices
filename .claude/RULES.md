@@ -116,14 +116,25 @@ Debug Protocol: Local success → Environment check → Dependency validation �
 NEVER: Push without local build | Debug on Vercel first | Copy-paste errors repeatedly
 ```
 
-### Payload Anti-Patterns [C:10]
+### Git Safety Protocols [C:10]
 
 ```yaml
-BANNED: Custom admin React components | Admin UI overrides | Complex field components | Experimental features
-REQUIRED: Standard field types | Built-in validation | admin.description | Conditions | Access control
-Safe Patterns: Simple field definitions | Clear relationships | Standard upload collections | Built-in features
-Alternative: Build separate customer UI | Use Payload API | Focus on frontend experience | Admin stays standard
-Debugging: Official docs first | Built-in features only | Standard patterns | No experimental code
+NEVER: Start Claude Code session without clean git status | Make major changes without commits | Experiment without safety branch
+ALWAYS: git add . && git commit before experiments | Push frequently to GitHub | Create feature branches for big changes
+Safety Net: Every change tracked | Recovery always possible | GitHub as backup | Branches for experiments
+Emergency Recovery: git log → identify good state → git reset --hard → back to safety
+Checkpoint Pattern: Before refactoring → git commit -m "Before major refactor" → experiment → rollback if needed
+Branch Strategy: main (production) | develop (integration) | feature/* (experiments) | hotfix/* (urgent fixes)
+```
+
+### VSCode + Git Integration [H:8]
+
+```yaml
+IDE Workflow: /ide + git integration + real-time status + easy commits + push immediately
+Safety Commands: git status | git add -p | git commit -m | git push | git log --oneline
+Recovery Commands: git stash | git reset | git checkout | git revert | git cherry-pick
+Branch Management: git checkout -b feature/name | git merge | git rebase | git branch -d
+Session Safety: Start with clean status → commit before changes → push after success → tag releases
 ```
 
 ### Code Quality Standards [H:8]

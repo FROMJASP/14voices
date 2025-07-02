@@ -1,4 +1,4 @@
-import { Payload } from 'payload'
+import { Payload, Where } from 'payload'
 import { 
   VoiceoverEntity, 
   VoiceoverQueryParams, 
@@ -141,13 +141,11 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
     if (cached) return cached
 
     try {
-      const searchConditions = {
+      const searchConditions: Where = {
         or: [
           { name: { contains: query } },
           { description: { contains: query } },
-          { 'styleTags.tag': { contains: query } },
-          { 'styleTags.customTag': { contains: query } },
-        ]
+        ] as Where[]
       }
 
       const whereClause = params?.status 

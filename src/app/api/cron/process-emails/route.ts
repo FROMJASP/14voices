@@ -7,6 +7,14 @@ import {
   retryFailedEmails,
   cleanupOldEmailJobs 
 } from '@/lib/email/sequences'
+import { z } from 'zod'
+
+// Validation schema for query parameters
+const cronQuerySchema = z.object({
+  action: z.enum(['process', 'retry', 'stats', 'cleanup']).optional().default('process'),
+  limit: z.coerce.number().int().min(1).max(10000).optional().default(1000),
+  days: z.coerce.number().int().min(1).max(365).optional().default(30)
+})
 
 export async function GET(request: Request) {
   const startTime = Date.now()
@@ -21,8 +29,22 @@ export async function GET(request: Request) {
     }
     
     const { searchParams } = new URL(request.url)
-    const action = searchParams.get('action') || 'process'
-    const limit = parseInt(searchParams.get('limit') || '1000', 10)
+    
+    // Validate query parameters
+    const validationResult = cronQuerySchema.safeParse({
+      action: searchParams.get('action') || undefined,
+      limit: searchParams.get('limit') || undefined,
+      days: searchParams.get('days') || undefined
+    })
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { action, limit, days } = validationResult.data
     
     const payload = await getPayload()
     
@@ -46,8 +68,7 @@ export async function GET(request: Request) {
         
       case 'cleanup':
         // Clean up old sent/cancelled jobs
-        const daysToKeep = parseInt(searchParams.get('days') || '30', 10)
-        const deletedCount = await cleanupOldEmailJobs(payload, daysToKeep)
+        const deletedCount = await cleanupOldEmailJobs(payload, days)
         result = { deletedCount }
         break
         
@@ -87,6 +108,13 @@ export async function GET(request: Request) {
   }
 }
 
+// Validation schema for POST body
+const cronBodySchema = z.object({
+  action: z.enum(['process', 'retry', 'cleanup']).optional().default('process'),
+  limit: z.number().int().min(1).max(10000).optional().default(1000),
+  daysToKeep: z.number().int().min(1).max(365).optional().default(30)
+})
+
 // Optional: POST endpoint for manual triggers
 export async function POST(request: Request) {
   try {
@@ -98,7 +126,17 @@ export async function POST(request: Request) {
     }
     
     const body = await request.json()
-    const { action = 'process', limit = 1000, ...params } = body
+    
+    // Validate request body
+    const validationResult = cronBodySchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { action, limit, daysToKeep } = validationResult.data
     
     const payload = await getPayload()
     let result: unknown = {}
@@ -113,7 +151,7 @@ export async function POST(request: Request) {
         break
         
       case 'cleanup':
-        const deletedCount = await cleanupOldEmailJobs(payload, params.daysToKeep || 30)
+        const deletedCount = await cleanupOldEmailJobs(payload, daysToKeep)
         result = { deletedCount }
         break
         

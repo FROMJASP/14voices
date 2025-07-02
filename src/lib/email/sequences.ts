@@ -106,7 +106,7 @@ export async function triggerEmailSequence(options: TriggerSequenceOptions): Pro
 
   // Batch create all jobs
   await Promise.all(
-    jobsToCreate.map(data => 
+    jobsToCreate.map((data: any) => 
       payload.create({
         collection: 'email-jobs',
         data,
@@ -234,12 +234,19 @@ export async function triggerEmailSequenceBatch(options: BatchTriggerOptions): P
     }
   }
   
-  // Batch create all jobs using bulk operations
+  // Batch create all jobs using Payload API
   if (allJobsToCreate.length > 0) {
-    const batchSize = 100
+    const batchSize = 10 // Smaller batch size for API calls
     for (let i = 0; i < allJobsToCreate.length; i += batchSize) {
       const batch = allJobsToCreate.slice(i, i + batchSize)
-      await payload.db.collections['email-jobs'].insertMany(batch)
+      await Promise.all(
+        batch.map((data) =>
+          payload.create({
+            collection: 'email-jobs',
+            data,
+          })
+        )
+      )
     }
   }
   
@@ -253,18 +260,42 @@ export async function cancelEmailSequence(options: {
 }): Promise<void> {
   const { sequenceId, userId, payload } = options
   
-  // Use bulk update for better performance
-  await payload.db.collections['email-jobs'].updateMany(
-    {
-      recipient: userId,
-      sequence: sequenceId,
-      status: 'scheduled',
+  // Find and cancel all scheduled jobs
+  const jobsToCancel = await payload.find({
+    collection: 'email-jobs',
+    where: {
+      and: [
+        {
+          recipient: {
+            equals: userId,
+          },
+        },
+        {
+          sequence: {
+            equals: sequenceId,
+          },
+        },
+        {
+          status: {
+            equals: 'scheduled',
+          },
+        },
+      ],
     },
-    {
-      $set: {
-        status: 'cancelled',
-      },
-    }
+    limit: 1000,
+  })
+
+  // Update each job to cancelled status
+  await Promise.all(
+    jobsToCancel.docs.map((job) =>
+      payload.update({
+        collection: 'email-jobs',
+        id: job.id,
+        data: {
+          status: 'cancelled',
+        },
+      })
+    )
   )
 }
 
@@ -303,20 +334,51 @@ export async function cancelEmailSequenceBatch(options: {
 }): Promise<number> {
   const { sequenceId, userIds, payload } = options
   
-  const result = await payload.db.collections['email-jobs'].updateMany(
-    {
-      recipient: { $in: userIds },
-      sequence: sequenceId,
-      status: 'scheduled',
+  // Find jobs to cancel
+  const jobsToCancel = await payload.find({
+    collection: 'email-jobs',
+    where: {
+      and: [
+        {
+          recipient: {
+            in: userIds,
+          },
+        },
+        {
+          sequence: {
+            equals: sequenceId,
+          },
+        },
+        {
+          status: {
+            equals: 'scheduled',
+          },
+        },
+      ],
     },
-    {
-      $set: {
-        status: 'cancelled',
-      },
-    }
+    limit: 1000,
+  })
+  
+  // Cancel each job
+  let cancelledCount = 0
+  await Promise.all(
+    jobsToCancel.docs.map(async (job) => {
+      try {
+        await payload.update({
+          collection: 'email-jobs',
+          id: job.id,
+          data: {
+            status: 'cancelled',
+          },
+        })
+        cancelledCount++
+      } catch (error) {
+        console.error(`Failed to cancel job ${job.id}:`, error)
+      }
+    })
   )
   
-  return result.modifiedCount || 0
+  return cancelledCount
 }
 
 export async function getEmailQueueStats(payload: Payload): Promise<{

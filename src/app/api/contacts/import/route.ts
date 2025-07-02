@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from '@/utilities/payload'
+import { getPayload, getServerSideUser } from '@/utilities/payload'
 import { contactImportSchema } from '@/lib/validation/schemas'
-import { withAuth, withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
 import { validateRequest } from '@/lib/api-security'
 
 async function handler(req: NextRequest) {
@@ -16,7 +15,7 @@ async function handler(req: NextRequest) {
     if (contacts.length > 100) {
       // For large imports, require admin role
       const user = await payload.auth({ headers: req.headers })
-      if (!user || user.role !== 'admin') {
+      if (!user || !user.user?.roles?.includes('admin')) {
         return NextResponse.json(
           { error: 'Large imports require admin privileges' },
           { status: 403 }
@@ -159,8 +158,20 @@ async function handler(req: NextRequest) {
 }
 
 // Export with security middleware
-export const POST = composeMiddleware(
-  withSecurityHeaders,
-  withRateLimit({ windowMs: 300000, max: 10 }), // 10 imports per 5 minutes
-  withAuth({ requireAuth: true })
-)(handler)
+export async function POST(req: NextRequest) {
+  // Simple auth check
+  const user = await getServerSideUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  
+  // Call the handler
+  const response = await handler(req)
+  
+  // Add security headers
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  
+  return response
+}

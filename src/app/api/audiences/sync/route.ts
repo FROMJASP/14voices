@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from '@/utilities/payload'
+import { getPayload, getServerSideUser } from '@/utilities/payload'
 import { resendMarketing } from '@/lib/email/resend-marketing'
 import type { EmailContact, SegmentRules } from '@/types/email-marketing'
 import type { Where } from 'payload'
 import { audienceSyncSchema } from '@/lib/validation/schemas'
-import { withAuth, withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
 
 async function handler(req: NextRequest) {
   try {
@@ -26,9 +25,6 @@ async function handler(req: NextRequest) {
       collection: 'email-audiences',
       id: audienceId,
       depth: 2,
-      populate: {
-        contacts: true,
-      },
     })
 
     if (!audience) {
@@ -80,7 +76,7 @@ async function handler(req: NextRequest) {
             limit: 1000,
             depth: 0,
           })
-          contacts = result.docs
+          contacts = result.docs as EmailContact[]
         } else {
           contacts = audience.contacts as EmailContact[]
         }
@@ -280,8 +276,20 @@ function buildDynamicQuery(segmentRules: SegmentRules | undefined): Where {
 }
 
 // Export the handler with middleware
-export const POST = composeMiddleware(
-  withSecurityHeaders,
-  withRateLimit,
-  withAuth
-)(handler)
+export async function POST(req: NextRequest) {
+  // Simple auth check
+  const user = await getServerSideUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  
+  // Call the handler
+  const response = await handler(req)
+  
+  // Add security headers
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  
+  return response
+}

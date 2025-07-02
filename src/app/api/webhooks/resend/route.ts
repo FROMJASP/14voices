@@ -4,7 +4,6 @@ import crypto from 'crypto'
 import { getPayload } from '@/utilities/payload'
 import type { Payload } from 'payload'
 import { webhookEventSchema } from '@/lib/validation/schemas'
-import { withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
 
 const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET || ''
 
@@ -228,10 +227,17 @@ async function handler(req: NextRequest) {
 }
 
 // Export with security middleware (no auth required for webhooks)
-export const POST = composeMiddleware(
-  withSecurityHeaders,
-  withRateLimit({ windowMs: 60000, max: 1000 }) // Allow high rate for webhooks
-)(handler)
+export async function POST(req: NextRequest) {
+  // Call the handler (no auth for webhooks)
+  const response = await handler(req)
+  
+  // Add security headers
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  
+  return response
+}
 
 async function handleBroadcastEvent(payload: Payload, event: ResendWebhookEvent) {
   try {

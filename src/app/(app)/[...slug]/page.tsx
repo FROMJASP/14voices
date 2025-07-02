@@ -23,9 +23,11 @@ export async function generateStaticParams() {
     limit: 100,
   })
 
-  return pages.docs.map((page) => ({
-    slug: (page as Page).slug === 'home' ? [] : (page as Page).slug.split('/'),
-  }))
+  return pages.docs
+    .filter((page) => (page as Page).slug !== 'home')
+    .map((page) => ({
+      slug: (page as Page).slug.split('/'),
+    }))
 }
 
 export async function generateMetadata({ params }: PageProps) {

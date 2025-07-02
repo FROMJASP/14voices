@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSideUser } from '@/utilities/payload'
 import { Resend } from 'resend'
+import { z } from 'zod'
+import { validateRequest } from '@/lib/api-security'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
+
+// Email test validation schema
+const emailTestBodySchema = z.object({
+  content: z.any(), // Rich text content
+  subject: z.string().min(1).max(200),
+  header: z.any().optional(),
+  footer: z.any().optional(),
+  testData: z.record(z.string(), z.any()).optional()
+})
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +23,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    const { content, subject, header, footer, testData } = await req.json()
+    // Validate request body
+    const validatedData = await validateRequest(req, emailTestBodySchema)
+    const { content, subject, header, footer, testData } = validatedData
     
     // Use the same preview generation logic
     const previewResponse = await fetch(new URL('/api/email/preview', req.url).toString(), {

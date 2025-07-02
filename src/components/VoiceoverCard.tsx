@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { DemoPlayer } from './DemoPlayer'
+import { UnifiedAudioPlayer } from './unified/UnifiedAudioPlayer'
 import type { Voiceover } from '@/lib/api'
 
 interface VoiceoverCardProps {
@@ -36,11 +36,12 @@ export function VoiceoverCard({ voiceover }: VoiceoverCardProps) {
       {primaryDemo && (
         <div className="px-6 pb-6">
           <h3 className="text-sm font-medium text-gray-700 mb-2">Featured Demo</h3>
-          <DemoPlayer
+          <UnifiedAudioPlayer
             src={primaryDemo.audioFile.url}
             title={primaryDemo.title}
             demoType={primaryDemo.demoType}
             duration={primaryDemo.duration}
+            variant="compact"
           />
         </div>
       )}

@@ -1,9 +1,25 @@
 import { z } from 'zod'
 
 // Common schemas
-const emailSchema = z.string().email().toLowerCase().trim()
-const idSchema = z.string().min(1).max(100)
-const dateSchema = z.string().datetime()
+export const emailSchema = z.string().email().toLowerCase().trim()
+export const idSchema = z.string().min(1).max(100)
+export const dateSchema = z.string().datetime()
+export const uuidSchema = z.string().uuid()
+export const slugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+
+// Pagination schemas
+export const paginationSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+  sort: z.string().optional(),
+  order: z.enum(['asc', 'desc']).optional().default('asc')
+})
+
+// Query parameter schemas
+export const dateRangeSchema = z.object({
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional()
+})
 
 // Audience sync validation
 export const audienceSyncSchema = z.object({
@@ -176,13 +192,6 @@ export const layoutUpdateSchema = z.object({
   isDefault: z.boolean().optional(),
 })
 
-// Pagination validation
-export const paginationSchema = z.object({
-  page: z.coerce.number().int().min(1).optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
-  sort: z.string().optional(),
-  order: z.enum(['asc', 'desc']).optional().default('desc'),
-})
 
 // Search validation
 export const searchSchema = z.object({

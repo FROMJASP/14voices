@@ -1,14 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
 import type { EmailLog } from '@/types/email-marketing'
+import { z } from 'zod'
+import { idSchema, dateSchema } from '@/lib/validation/schemas'
+
+// Validation schema for query parameters
+const analyticsQuerySchema = z.object({
+  campaignId: idSchema.optional(),
+  startDate: dateSchema.optional(),
+  endDate: dateSchema.optional()
+})
 
 export async function GET(req: NextRequest) {
   try {
     const payload = await getPayload()
     const { searchParams } = new URL(req.url)
-    const campaignId = searchParams.get('campaignId')
-    const startDate = searchParams.get('startDate')
-    const endDate = searchParams.get('endDate')
+    
+    // Validate query parameters
+    const validationResult = analyticsQuerySchema.safeParse({
+      campaignId: searchParams.get('campaignId') || undefined,
+      startDate: searchParams.get('startDate') || undefined,
+      endDate: searchParams.get('endDate') || undefined
+    })
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { campaignId, startDate, endDate } = validationResult.data
 
     if (campaignId) {
       const campaign = await payload.findByID({

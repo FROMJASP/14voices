@@ -2,11 +2,37 @@ import { NextRequest } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { createApiHandler, parsePaginationParams } from '@/lib/api/handlers'
+import { z } from 'zod'
+
+// Query parameter validation schema
+const testimonialsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+  sort: z.string().optional(),
+  where: z.record(z.any()).optional()
+})
 
 export const GET = createApiHandler(
   async (request: NextRequest) => {
     const payload = await getPayload({ config: configPromise })
     const searchParams = request.nextUrl.searchParams
+    
+    // Parse and validate query parameters
+    const queryParams: Record<string, any> = {}
+    searchParams.forEach((value, key) => {
+      if (key.startsWith('where[')) {
+        if (!queryParams.where) queryParams.where = {}
+        queryParams.where[key] = value
+      } else {
+        queryParams[key] = value
+      }
+    })
+    
+    const validationResult = testimonialsQuerySchema.safeParse(queryParams)
+    if (!validationResult.success) {
+      throw new Error(`Invalid query parameters: ${validationResult.error.message}`)
+    }
+    
     const pagination = parsePaginationParams(request)
     
     const where: Record<string, unknown> = {}

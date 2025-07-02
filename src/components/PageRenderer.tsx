@@ -1,14 +1,12 @@
 'use client'
 
-import type { Page, Block, Section, Form } from '@/payload-types'
+import type { Page, Block, Form } from '@/payload-types'
 import { UnifiedHero, UnifiedCTA } from './unified'
-import { RichTextBlock } from './blocks/RichTextBlock'
-import { TwoColumnBlock } from './blocks/TwoColumnBlock'
+import { UnifiedSection } from './unified/UnifiedSection'
 import { ReusableBlock } from './blocks/ReusableBlock'
-import { SectionBlock } from './blocks/SectionBlock'
 import { FormBlock } from './blocks/FormBlock'
 import { LayoutWrapper } from './LayoutWrapper'
-import type { RichTextBlockData, TwoColumnBlockData, CTABlockData } from '@/types/blocks'
+import type { TwoColumnBlockData, CTABlockData } from '@/types/blocks'
 
 interface PageRendererProps {
   page: Page
@@ -25,15 +23,15 @@ export function PageRenderer({ page }: PageRendererProps) {
         {page.blocks?.map((block, index) => {
           switch (block.blockType) {
             case 'richText':
-              return <RichTextBlock key={index} block={block as unknown as RichTextBlockData} />
+              return <UnifiedSection key={index} content={(block as any).content} />
             case 'twoColumn':
-              return <TwoColumnBlock key={index} block={block as unknown as TwoColumnBlockData} />
+              return <UnifiedSection key={index} {...(block as unknown as TwoColumnBlockData)} />
             case 'cta':
               return <UnifiedCTA key={index} variant="block" blockData={block as unknown as CTABlockData} />
             case 'reusableBlock':
               return <ReusableBlock key={index} block={block as { block: string | Block; blockType: 'reusableBlock' }} />
             case 'section':
-              return <SectionBlock key={index} block={block as { section: string | Section; blockType: 'section' }} />
+              return <UnifiedSection key={index} section={(block as any).section} />
             case 'form':
               return <FormBlock key={index} block={block as { form: string | Form; showTitle?: boolean; showDescription?: boolean; blockType: 'form' }} />
             default:
