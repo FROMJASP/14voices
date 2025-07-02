@@ -19,7 +19,7 @@ interface BatchEmailJob {
     id: string
     key: string
   }
-  variables?: Record<string, any>
+  variables?: Record<string, unknown>
 }
 
 interface BatchResult {

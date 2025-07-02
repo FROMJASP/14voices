@@ -1,8 +1,6 @@
 import { 
   VoiceoverEntity, 
   VoiceoverQueryParams, 
-  PaginatedResult,
-  VoiceoverStatus,
   DemoEntity,
   ValidationError
 } from '../types'

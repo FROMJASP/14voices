@@ -21,7 +21,7 @@ interface BatchQueryOptions<T> {
 
 export class QueryOptimizer {
   private payload: Payload
-  private cache: Map<string, { data: any; timestamp: number }>
+  private cache: Map<string, { data: unknown; timestamp: number }>
   private cacheTTL: number
 
   constructor(payload: Payload, cacheTTL: number = 5 * 60 * 1000) {
@@ -33,7 +33,7 @@ export class QueryOptimizer {
   /**
    * Performs an optimized query with proper depth control and relation population
    */
-  async find<T = any>(options: OptimizedQueryOptions): Promise<{
+  async find<T = unknown>(options: OptimizedQueryOptions): Promise<{
     docs: T[]
     totalDocs: number
     totalPages: number
@@ -65,7 +65,7 @@ export class QueryOptimizer {
   /**
    * Batch fetch multiple records by IDs to prevent N+1 queries
    */
-  async findByIds<T = any>(options: BatchQueryOptions<T>): Promise<Map<string, T>> {
+  async findByIds<T = unknown>(options: BatchQueryOptions<T>): Promise<Map<string, T>> {
     const { collection, ids, depth = 2, locale, populate } = options
     
     if (ids.length === 0) {
@@ -118,7 +118,7 @@ export class QueryOptimizer {
   /**
    * Populate relations for a set of documents efficiently
    */
-  async populateRelations<T = any>(
+  async populateRelations<T = unknown>(
     docs: T[],
     relations: Record<string, string>
   ): Promise<T[]> {
@@ -148,7 +148,7 @@ export class QueryOptimizer {
     }
     
     // Batch fetch all relations
-    const relationData = new Map<string, Map<string, any>>()
+    const relationData = new Map<string, Map<string, unknown>>()
     
     for (const [collection, ids] of relationMap.entries()) {
       const items = await this.findByIds({
@@ -189,7 +189,7 @@ export class QueryOptimizer {
    */
   async parallel<T extends Record<string, OptimizedQueryOptions>>(
     queries: T
-  ): Promise<{ [K in keyof T]: any }> {
+  ): Promise<{ [K in keyof T]: unknown }> {
     const entries = Object.entries(queries)
     const results = await Promise.all(
       entries.map(([_, options]) => this.find(options))
@@ -197,7 +197,7 @@ export class QueryOptimizer {
     
     return Object.fromEntries(
       entries.map(([key], index) => [key, results[index]])
-    ) as any
+    ) as { [K in keyof T]: unknown }
   }
 
   /**
@@ -231,7 +231,7 @@ export class QueryOptimizer {
     })
   }
 
-  private getFromCache(key: string): any | null {
+  private getFromCache(key: string): unknown | null {
     const cached = this.cache.get(key)
     
     if (!cached) return null
@@ -245,7 +245,7 @@ export class QueryOptimizer {
     return cached.data
   }
 
-  private setCache(key: string, data: any): void {
+  private setCache(key: string, data: unknown): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -324,11 +324,11 @@ export function generateIndexRecommendations(
 function extractFieldsFromWhere(where: Where): string[] {
   const fields: string[] = []
   
-  function traverse(obj: any, prefix: string = '') {
+  function traverse(obj: Record<string, unknown>, prefix: string = '') {
     for (const key in obj) {
       if (key === 'and' || key === 'or') {
         if (Array.isArray(obj[key])) {
-          obj[key].forEach((condition: any) => traverse(condition, prefix))
+          obj[key].forEach((condition: Record<string, unknown>) => traverse(condition, prefix))
         }
       } else if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
         const field = prefix ? `${prefix}.${key}` : key

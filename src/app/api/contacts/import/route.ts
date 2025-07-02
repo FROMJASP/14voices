@@ -146,7 +146,7 @@ async function handler(req: NextRequest) {
     // Handle validation errors
     if (error instanceof Error && error.name === 'ValidationError') {
       return NextResponse.json(
-        { error: 'Invalid import data', details: (error as any).errors },
+        { error: 'Invalid import data', details: (error as Error & {errors?: unknown}).errors },
         { status: 400 }
       )
     }

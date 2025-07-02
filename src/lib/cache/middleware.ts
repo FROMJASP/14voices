@@ -32,7 +32,7 @@ export function createCacheMiddleware(options: CacheMiddlewareOptions = {}) {
       : generateCacheKey(request, options.varyBy)
     
     const cachedResponse = await globalCache.get<{
-      body: any
+      body: unknown
       headers: Record<string, string>
       status: number
     }>(cacheKey)
@@ -155,7 +155,7 @@ export function createStaleWhileRevalidate(options: {
     const staleKey = `stale:${cacheKey}`
     
     const cached = await globalCache.get<{
-      body: any
+      body: unknown
       headers: Record<string, string>
       status: number
       timestamp: number
@@ -172,7 +172,12 @@ export function createStaleWhileRevalidate(options: {
       return response
     }
     
-    const staleCached = await globalCache.get<any>(staleKey)
+    const staleCached = await globalCache.get<{
+      body: unknown
+      headers: Record<string, string>
+      status: number
+      timestamp: number
+    }>(staleKey)
     if (staleCached) {
       const response = NextResponse.json(staleCached.body, {
         status: staleCached.status,

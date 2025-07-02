@@ -29,15 +29,15 @@ export interface ApiHandlerOptions {
     requests: number
     window: number
   }
-  transform?: (data: any) => any
-  validate?: (data: any) => boolean | Promise<boolean>
+  transform?: (data: unknown) => unknown
+  validate?: (data: unknown) => boolean | Promise<boolean>
 }
 
 export interface ApiError {
   message: string
   code?: string
   status: number
-  details?: any
+  details?: unknown
 }
 
 export class ApiResponse {
@@ -103,7 +103,7 @@ export function parsePaginationParams(req: NextRequest): PaginationParams {
   }
 }
 
-export function createCacheKey(base: string, params: Record<string, any>): string {
+export function createCacheKey(base: string, params: Record<string, unknown>): string {
   const sortedParams = Object.entries(params)
     .sort(([a], [b]) => a.localeCompare(b))
     .filter(([_, value]) => value !== undefined && value !== null)
@@ -277,14 +277,14 @@ async function handleWithCache<T>(
 }
 
 export function createPaginatedHandler<T>(
-  fetcher: (params: PaginationParams & Record<string, any>) => Promise<{ data: T[]; total: number }>,
+  fetcher: (params: PaginationParams & Record<string, unknown>) => Promise<{ data: T[]; total: number }>,
   options: ApiHandlerOptions = {}
 ): (req: NextRequest) => Promise<NextResponse> {
   return createApiHandler(async (req: NextRequest) => {
     const paginationParams = parsePaginationParams(req)
     const { searchParams } = new URL(req.url)
     
-    const additionalParams: Record<string, any> = {}
+    const additionalParams: Record<string, unknown> = {}
     for (const [key, value] of searchParams.entries()) {
       if (!['page', 'limit', 'sort', 'order'].includes(key)) {
         additionalParams[key] = value

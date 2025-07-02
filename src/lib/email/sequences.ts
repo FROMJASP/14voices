@@ -85,7 +85,11 @@ export async function triggerEmailSequence(options: TriggerSequenceOptions): Pro
   }
   
   // Create jobs for each email in the sequence
-  const jobsToCreate = sequence.emails.map((emailConfig: any, i: number) => ({
+  const jobsToCreate = sequence.emails.map((emailConfig: {
+    template: { id: string }
+    delayValue: number
+    delayUnit: string
+  }, i: number) => ({
     recipient: userId,
     template: emailConfig.template.id,
     sequence: sequence.id,
@@ -176,7 +180,15 @@ export async function triggerEmailSequenceBatch(options: BatchTriggerOptions): P
   const usersWithJobs = new Set(existingJobs.docs.map(job => job.recipient.id))
   
   // Prepare all jobs to create
-  const allJobsToCreate: any[] = []
+  const allJobsToCreate: Array<{
+    recipient: string
+    template: string
+    sequence: string
+    sequenceEmailIndex: number
+    scheduledFor: Date
+    status: string
+    variables: Record<string, unknown>
+  }> = []
   
   for (const userId of userIds) {
     try {
@@ -192,7 +204,11 @@ export async function triggerEmailSequenceBatch(options: BatchTriggerOptions): P
         continue
       }
       
-      const userJobs = sequence.emails.map((emailConfig: any, i: number) => ({
+      const userJobs = sequence.emails.map((emailConfig: {
+        template: { id: string }
+        delayValue: number
+        delayUnit: string
+      }, i: number) => ({
         recipient: userId,
         template: emailConfig.template.id,
         sequence: sequence.id,

@@ -7,7 +7,7 @@ interface CacheEntry<T> {
 interface CacheOptions {
   maxSize?: number
   defaultTTL?: number
-  onEvict?: (key: string, value: any) => void
+  onEvict?: (key: string, value: unknown) => void
 }
 
 interface CacheStats {
@@ -18,7 +18,7 @@ interface CacheStats {
   maxSize: number
 }
 
-export class LRUCache<T = any> {
+export class LRUCache<T = unknown> {
   private cache: Map<string, CacheEntry<T>>
   private maxSize: number
   private currentSize: number
@@ -41,7 +41,7 @@ export class LRUCache<T = any> {
     }
   }
 
-  private calculateSize(value: any): number {
+  private calculateSize(value: unknown): number {
     if (typeof value === 'string') return value.length * 2
     if (typeof value === 'number') return 8
     if (typeof value === 'boolean') return 4
@@ -189,7 +189,7 @@ interface RedisConfig {
 class RedisAdapter {
   private config: RedisConfig
   private connected: boolean = false
-  private client: any = null
+  private client: ReturnType<typeof import('redis').createClient> | null = null
 
   constructor(config: RedisConfig) {
     this.config = {
@@ -238,7 +238,7 @@ class RedisAdapter {
     }
   }
 
-  async set(key: string, value: any, ttl?: number): Promise<void> {
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
     if (!this.connected || !this.client) return
     
     try {
@@ -344,7 +344,7 @@ export class CacheManager {
     return undefined
   }
 
-  async set(key: string, value: any, ttl?: number): Promise<void> {
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
     const promises: Promise<void>[] = []
 
     if (this.layers.memory) {
@@ -437,8 +437,8 @@ export class CacheManager {
     return result
   }
 
-  createKeyGenerator(prefix: string): (...args: any[]) => string {
-    return (...args: any[]) => {
+  createKeyGenerator(prefix: string): (...args: unknown[]) => string {
+    return (...args: unknown[]) => {
       const parts = args.map(arg => {
         if (typeof arg === 'object' && arg !== null) {
           return JSON.stringify(arg, Object.keys(arg).sort())

@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     
     const payload = await getPayload()
     
-    let result: any = {}
+    let result: unknown = {}
     
     switch (action) {
       case 'process':
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
     const { action = 'process', limit = 1000, ...params } = body
     
     const payload = await getPayload()
-    let result: any = {}
+    let result: unknown = {}
     
     switch (action) {
       case 'process':

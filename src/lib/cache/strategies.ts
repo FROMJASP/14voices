@@ -2,14 +2,14 @@ import globalCache, { CacheManager } from './index'
 
 export interface CacheStrategy {
   get<T>(key: string): Promise<T | undefined>
-  set(key: string, value: any, ttl?: number): Promise<void>
+  set(key: string, value: unknown, ttl?: number): Promise<void>
   invalidate(patterns: string[]): Promise<void>
 }
 
 export class WriteThrough implements CacheStrategy {
   constructor(
     private cache: CacheManager = globalCache,
-    private dataFetcher: (key: string) => Promise<any>
+    private dataFetcher: (key: string) => Promise<unknown>
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
@@ -23,7 +23,7 @@ export class WriteThrough implements CacheStrategy {
     return fresh
   }
 
-  async set(key: string, value: any, ttl?: number): Promise<void> {
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
     await this.cache.set(key, value, ttl)
   }
 
@@ -35,14 +35,14 @@ export class WriteThrough implements CacheStrategy {
 export class WriteAround implements CacheStrategy {
   constructor(
     private cache: CacheManager = globalCache,
-    private dataWriter: (key: string, value: any) => Promise<void>
+    private dataWriter: (key: string, value: unknown) => Promise<void>
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
     return this.cache.get<T>(key)
   }
 
-  async set(key: string, value: any, ttl?: number): Promise<void> {
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
     await this.dataWriter(key, value)
     await this.cache.delete(key)
   }
@@ -53,12 +53,12 @@ export class WriteAround implements CacheStrategy {
 }
 
 export class WriteBehind implements CacheStrategy {
-  private writeQueue: Map<string, { value: any; timestamp: number }> = new Map()
+  private writeQueue: Map<string, { value: unknown; timestamp: number }> = new Map()
   private flushInterval: NodeJS.Timeout | null = null
 
   constructor(
     private cache: CacheManager = globalCache,
-    private dataWriter: (batch: Array<{ key: string; value: any }>) => Promise<void>,
+    private dataWriter: (batch: Array<{ key: string; value: unknown }>) => Promise<void>,
     private options: {
       flushInterval?: number
       maxQueueSize?: number
@@ -82,7 +82,7 @@ export class WriteBehind implements CacheStrategy {
     return this.cache.get<T>(key)
   }
 
-  async set(key: string, value: any, ttl?: number): Promise<void> {
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
     await this.cache.set(key, value, ttl)
     this.writeQueue.set(key, { value, timestamp: Date.now() })
 
@@ -135,7 +135,7 @@ export class RefreshAhead implements CacheStrategy {
 
   constructor(
     private cache: CacheManager = globalCache,
-    private dataFetcher: (key: string) => Promise<any>,
+    private dataFetcher: (key: string) => Promise<unknown>,
     private options: {
       refreshThreshold?: number
       refreshInterval?: number
@@ -167,7 +167,7 @@ export class RefreshAhead implements CacheStrategy {
     return entry.value
   }
 
-  async set(key: string, value: any, ttl: number = 300000): Promise<void> {
+  async set(key: string, value: unknown, ttl: number = 300000): Promise<void> {
     await this.cache.set(key, { value, expiry: Date.now() + ttl }, ttl)
   }
 
@@ -226,7 +226,7 @@ export class MultiTierCache implements CacheStrategy {
     return undefined
   }
 
-  async set(key: string, value: any, ttl?: number): Promise<void> {
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
     await Promise.all(
       this.tiers.map((tier) => 
         tier.cache.set(key, value, ttl || tier.ttl)
@@ -245,7 +245,16 @@ export class MultiTierCache implements CacheStrategy {
 
 export function createCacheStrategy(
   type: 'write-through' | 'write-around' | 'write-behind' | 'refresh-ahead' | 'multi-tier',
-  options: any
+  options: {
+    cache?: CacheManager
+    dataFetcher?: (key: string) => Promise<unknown>
+    dataWriter?: (key: string, value: unknown) => Promise<void> | (batch: Array<{ key: string; value: unknown }>) => Promise<void>
+    tiers?: Array<{ cache: CacheManager; ttl: number; name: string }>
+    refreshThreshold?: number
+    refreshInterval?: number
+    flushInterval?: number
+    maxQueueSize?: number
+  }
 ): CacheStrategy {
   switch (type) {
     case 'write-through':

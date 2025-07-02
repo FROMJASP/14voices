@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { createApiHandler, parsePaginationParams, ApiResponse } from '@/lib/api/handlers'
+import { createApiHandler, parsePaginationParams } from '@/lib/api/handlers'
 
 export const GET = createApiHandler(
   async (request: NextRequest) => {

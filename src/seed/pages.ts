@@ -176,8 +176,8 @@ async function updateLayoutFooterLinks(
     })
 
     // Update navigation column links
-    const updatedNavColumns = layout.footer.navigationColumns.map((column: any) => {
-      const updatedLinks = column.links.map((link: any) => {
+    const updatedNavColumns = layout.footer.navigationColumns.map((column: {links: Array<{label: string; page?: string; [key: string]: unknown}>; [key: string]: unknown}) => {
+      const updatedLinks = column.links.map((link: {label: string; page?: string; [key: string]: unknown}) => {
         // Map page names to IDs
         if (link.label === 'About Us') {
           return { ...link, page: pageIds.about }
@@ -191,7 +191,7 @@ async function updateLayoutFooterLinks(
     })
 
     // Update legal links
-    const updatedLegalLinks = layout.footer.legalLinks.map((link: any) => {
+    const updatedLegalLinks = layout.footer.legalLinks.map((link: {label: string; page?: string; [key: string]: unknown}) => {
       if (link.label === 'Privacy Policy') {
         return { ...link, page: pageIds.privacy }
       }

@@ -53,7 +53,15 @@ const VALIDATION_IMPORTS = {
   'webhooks/resend': 'webhookEventSchema',
 }
 
-async function updateRoute(routeConfig: any) {
+interface RouteConfig {
+  path: string
+  requireAuth?: boolean
+  rateLimit?: { max: number; window: number }
+  roles?: string[]
+  validateWebhook?: boolean
+}
+
+async function updateRoute(routeConfig: RouteConfig) {
   const filePath = path.join(process.cwd(), routeConfig.path)
   
   try {

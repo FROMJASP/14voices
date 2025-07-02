@@ -4,10 +4,10 @@ import configPromise from '@payload-config'
 // Temporary type definition until payload-types.ts is regenerated
 interface Navigation {
   id: string
-  mainMenu?: any[]
-  footerColumns?: any[]
-  footerBottom?: any
-  mobileMenu?: any
+  mainMenu?: NavigationItem[]
+  footerColumns?: FooterColumn[]
+  footerBottom?: FooterBottom
+  mobileMenu?: MobileMenu
   createdAt?: string
   updatedAt?: string
 }
@@ -30,7 +30,30 @@ export async function getNavigationData(): Promise<Navigation | null> {
   }
 }
 
-export function formatNavigationItem(item: any) {
+interface NavigationItem {
+  type: 'page' | 'custom' | 'anchor' | 'dropdown'
+  label: string
+  page?: { slug: string }
+  url?: string
+  newTab?: boolean
+  anchor?: string
+  subItems?: NavigationItem[]
+}
+
+interface FooterColumn {
+  title: string
+  links?: NavigationItem[]
+}
+
+interface FooterBottom {
+  [key: string]: unknown
+}
+
+interface MobileMenu {
+  [key: string]: unknown
+}
+
+export function formatNavigationItem(item: NavigationItem) {
   if (item.type === 'page' && item.page) {
     return {
       label: item.label,
@@ -57,7 +80,7 @@ export function formatNavigationItem(item: any) {
     return {
       label: item.label,
       type: item.type,
-      subItems: item.subItems?.map((subItem: any) => formatNavigationItem(subItem)),
+      subItems: item.subItems?.map((subItem: NavigationItem) => formatNavigationItem(subItem)),
     }
   }
   

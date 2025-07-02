@@ -23,9 +23,9 @@ export async function seedNavigation(payload: Payload) {
       },
     })
 
-    const homePage = pages.docs.find((page: any) => page.slug === 'home')
-    const aboutPage = pages.docs.find((page: any) => page.slug === 'about')
-    const contactPage = pages.docs.find((page: any) => page.slug === 'contact')
+    const homePage = pages.docs.find((page: {slug: string}) => page.slug === 'home')
+    const aboutPage = pages.docs.find((page: {slug: string}) => page.slug === 'about')
+    const contactPage = pages.docs.find((page: {slug: string}) => page.slug === 'contact')
 
     // Create navigation
     const navigation = await payload.create({
@@ -160,11 +160,11 @@ export async function seedNavigation(payload: Payload) {
           legalLinks: [
             {
               label: 'Privacy Policy',
-              page: pages.docs.find((page: any) => page.slug === 'privacy-policy')?.id,
+              page: pages.docs.find((page: {slug: string}) => page.slug === 'privacy-policy')?.id,
             },
             {
               label: 'Algemene Voorwaarden',
-              page: pages.docs.find((page: any) => page.slug === 'terms')?.id,
+              page: pages.docs.find((page: {slug: string}) => page.slug === 'terms')?.id,
             },
           ],
         },

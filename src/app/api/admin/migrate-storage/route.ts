@@ -10,7 +10,7 @@ async function handler(req: NextRequest) {
   try {
     // Validate request
     const validatedData = await validateRequest(req, storageMigrationSchema)
-    const { dryRun, collections, batchSize } = validatedData
+    const { dryRun } = validatedData
     
     const payload = await getPayload({ config })
     const token = process.env.BLOB_READ_WRITE_TOKEN
@@ -25,7 +25,7 @@ async function handler(req: NextRequest) {
       setTimeout(() => reject(new Error('Migration timeout')), 300000) // 5 minute timeout
     )
     
-    const results = await Promise.race([migrationPromise, timeoutPromise]) as any
+    const results = await Promise.race([migrationPromise, timeoutPromise]) as Array<{status: string; [key: string]: unknown}>
     
     return NextResponse.json({
       dryRun,
@@ -40,7 +40,7 @@ async function handler(req: NextRequest) {
     if (error instanceof Error) {
       if (error.name === 'ValidationError') {
         return NextResponse.json(
-          { error: 'Invalid request', details: (error as any).errors },
+          { error: 'Invalid request', details: (error as Error & {errors?: unknown}).errors },
           { status: 400 }
         )
       }

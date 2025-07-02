@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { headers } from 'next/headers'
+// import { headers } from 'next/headers'
 import { getPayload } from '@/utilities/payload'
 import { performEmailSystemHealthCheck } from '@/lib/email/monitoring'
 
 export async function GET() {
   try {
-    const headersList = await headers()
+    // const headersList = await headers()
     // const authHeader = headersList.get('authorization')
     
     // Optional: Add authentication for health checks

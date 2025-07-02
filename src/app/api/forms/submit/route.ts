@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     
     // Check if form has redirect settings
     const redirectUrl = form.settings && typeof form.settings === 'object' && 'redirectUrl' in form.settings 
-      ? (form.settings as { redirectUrl?: string }).redirectUrl 
+      ? (form.settings as Record<string, unknown>).redirectUrl as string | undefined 
       : undefined
     
     return NextResponse.json({
