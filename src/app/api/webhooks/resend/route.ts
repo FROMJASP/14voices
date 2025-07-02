@@ -3,6 +3,8 @@ import { headers } from 'next/headers'
 import crypto from 'crypto'
 import { getPayload } from '@/utilities/payload'
 import type { Payload } from 'payload'
+import { webhookEventSchema } from '@/lib/validation/schemas'
+import { withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
 
 const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET || ''
 
@@ -31,29 +33,72 @@ function verifyWebhookSignature(
   signature: string,
   secret: string
 ): boolean {
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex')
-  
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(`v1=${expectedSignature}`)
-  )
+  try {
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(payload)
+      .digest('hex')
+    
+    // Handle both v1= prefix and raw signature
+    const receivedSignature = signature.startsWith('v1=') 
+      ? signature.slice(3) 
+      : signature
+    
+    return crypto.timingSafeEqual(
+      Buffer.from(receivedSignature),
+      Buffer.from(expectedSignature)
+    )
+  } catch (error) {
+    console.error('Signature verification error:', error)
+    return false
+  }
 }
 
-export async function POST(req: NextRequest) {
+async function handler(req: NextRequest) {
   try {
     const body = await req.text()
     const headersList = await headers()
     const signature = headersList.get('resend-signature')
     
-    if (!signature || !verifyWebhookSignature(body, signature, RESEND_WEBHOOK_SECRET)) {
+    // Verify webhook signature first
+    if (!signature || !RESEND_WEBHOOK_SECRET) {
+      console.error('Missing webhook signature or secret')
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    if (!verifyWebhookSignature(body, signature, RESEND_WEBHOOK_SECRET)) {
+      console.error('Invalid webhook signature')
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
     }
     
-    const event: ResendWebhookEvent = JSON.parse(body)
+    // Parse and validate event
+    let event: ResendWebhookEvent
+    try {
+      const parsedBody = JSON.parse(body)
+      const validationResult = webhookEventSchema.safeParse(parsedBody)
+      
+      if (!validationResult.success) {
+        console.error('Invalid webhook payload:', validationResult.error)
+        return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
+      }
+      
+      event = parsedBody as ResendWebhookEvent
+    } catch (e) {
+      console.error('Failed to parse webhook body:', e)
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    }
     const payload = await getPayload()
+    
+    // Validate event type
+    const validEventTypes = [
+      'email.sent', 'email.delivered', 'email.opened', 
+      'email.clicked', 'email.bounced', 'email.complained'
+    ]
+    
+    if (!validEventTypes.includes(event.type)) {
+      console.warn(`Unknown event type: ${event.type}`)
+      return NextResponse.json({ received: true })
+    }
     
     // Check if this is a broadcast event
     if (event.data.broadcast_id) {
@@ -158,8 +203,8 @@ export async function POST(req: NextRequest) {
           },
         })
         
-        // Also unsubscribe user
-        if (log.recipient?.id) {
+        // Also unsubscribe user if recipient exists
+        if (log.recipient && typeof log.recipient === 'object' && 'id' in log.recipient) {
           await payload.update({
             collection: 'users',
             id: log.recipient.id,
@@ -174,12 +219,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true })
   } catch (error) {
     console.error('Webhook error:', error)
+    // Don't expose internal errors to webhook provider
     return NextResponse.json(
-      { error: 'Webhook processing failed' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
 }
+
+// Export with security middleware (no auth required for webhooks)
+export const POST = composeMiddleware(
+  withSecurityHeaders,
+  withRateLimit({ windowMs: 60000, max: 1000 }) // Allow high rate for webhooks
+)(handler)
 
 async function handleBroadcastEvent(payload: Payload, event: ResendWebhookEvent) {
   try {

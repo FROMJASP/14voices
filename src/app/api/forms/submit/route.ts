@@ -1,20 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { formSubmitSchema } from '@/lib/validation/schemas'
+import { validateRequest, getClientId, checkRateLimit, securityHeaders } from '@/lib/api-security'
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayload({ config: configPromise })
-    const body = await req.json()
+    // Rate limiting
+    const clientId = getClientId(req)
+    const rateLimitResult = checkRateLimit(clientId, 10, 60000) // 10 submissions per minute
     
-    const { formId, data } = body
-    
-    if (!formId || !data) {
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
-        { message: 'Form ID and data are required' },
-        { status: 400 }
+        { message: 'Too many submissions. Please try again later.' },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)),
+            'X-RateLimit-Limit': '10',
+            'X-RateLimit-Remaining': '0',
+            ...securityHeaders
+          }
+        }
       )
     }
+    
+    // Validate request
+    const validatedData = await validateRequest(req, formSubmitSchema)
+    const { formId, data } = validatedData
+    
+    const payload = await getPayload({ config: configPromise })
+    
+    // Additional validation for form data
+    if (typeof data !== 'object' || Object.keys(data).length === 0) {
+      return NextResponse.json(
+        { message: 'Form data cannot be empty' },
+        { status: 400, headers: securityHeaders }
+      )
+    }
+    
+    // Sanitize form data - remove any potential XSS
+    const sanitizedData = Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key.slice(0, 100), // Limit key length
+        typeof value === 'string' ? value.slice(0, 10000) : value // Limit string values
+      ])
+    )
     
     // Verify the form exists
     const form = await payload.findByID({
@@ -29,14 +60,16 @@ export async function POST(req: NextRequest) {
       )
     }
     
-    // Create form submission
+    // Create form submission with sanitized data
     const submission = await payload.create({
       collection: 'formSubmissions',
       data: {
         form: formId,
-        data,
+        data: sanitizedData,
         submittedAt: new Date().toISOString(),
         status: 'pending',
+        source: validatedData.source || 'website',
+        ipAddress: clientId, // Store for abuse prevention
       },
     })
     
@@ -49,12 +82,27 @@ export async function POST(req: NextRequest) {
       success: true,
       submission: submission.id,
       redirectUrl,
+    }, {
+      headers: {
+        'X-RateLimit-Limit': '10',
+        'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+        ...securityHeaders
+      }
     })
   } catch (error) {
     console.error('Form submission error:', error)
+    
+    // Handle validation errors
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json(
+        { message: 'Invalid form data', errors: (error as any).errors },
+        { status: 400, headers: securityHeaders }
+      )
+    }
+    
     return NextResponse.json(
       { message: 'Failed to submit form' },
-      { status: 500 }
+      { status: 500, headers: securityHeaders }
     )
   }
 }

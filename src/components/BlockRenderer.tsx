@@ -8,10 +8,9 @@ import type {
   CallToActionData, 
   FAQAccordionData 
 } from '@/types/blocks'
-import { HeroBanner } from './blocks/HeroBanner'
+import { UnifiedHero, UnifiedCTA } from './unified'
 import { FeatureGrid } from './blocks/FeatureGrid'
 import { ContentSection } from './blocks/ContentSection'
-import { CallToAction } from './blocks/CallToAction'
 import { FAQAccordion } from './blocks/FAQAccordion'
 import { TestimonialsDisplay } from './blocks/TestimonialsDisplay'
 
@@ -32,7 +31,7 @@ export function BlockRenderer({ block }: BlockRendererProps) {
     case 'heroBanner':
       return (
         <div className={wrapperClasses}>
-          <HeroBanner data={block.heroBanner as unknown as HeroBannerData} />
+          <UnifiedHero variant="banner" bannerData={block.heroBanner as unknown as HeroBannerData} />
         </div>
       )
     case 'featureGrid':
@@ -50,7 +49,7 @@ export function BlockRenderer({ block }: BlockRendererProps) {
     case 'callToAction':
       return (
         <div className={wrapperClasses}>
-          <CallToAction data={block.callToAction as unknown as CallToActionData} />
+          <UnifiedCTA variant="action" actionData={block.callToAction as unknown as CallToActionData} />
         </div>
       )
     case 'faqAccordion':

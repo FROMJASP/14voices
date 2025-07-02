@@ -2,15 +2,38 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
 import { resendMarketing } from '@/lib/email/resend-marketing'
 import type { EmailCampaign } from '@/types/email-marketing'
+import { campaignSendSchema } from '@/lib/validation/schemas'
+import { withAuth, withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
+import { sanitizeHtml } from '@/lib/validation/schemas'
 
-export async function POST(
+async function handler(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params
+    
+    // Validate campaign ID format
+    if (!id || typeof id !== 'string' || id.length > 100) {
+      return NextResponse.json(
+        { error: 'Invalid campaign ID' },
+        { status: 400 }
+      )
+    }
+    
     const payload = await getPayload()
-    const { test = false, testEmails = [] } = await req.json()
+    const body = await req.json()
+    
+    // Validate input
+    const validationResult = campaignSendSchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { test, testEmails } = validationResult.data
 
     const campaign = await payload.findByID({
       collection: 'email-campaigns',
@@ -137,7 +160,8 @@ export async function POST(
 
 async function renderCampaignContent(campaign: EmailCampaign): Promise<string> {
   if (campaign.contentType === 'markdown') {
-    return campaign.markdownContent || ''
+    // Sanitize markdown content
+    return sanitizeHtml(campaign.markdownContent || '')
   }
 
   if (campaign.contentType === 'react') {
@@ -152,25 +176,40 @@ async function renderCampaignContent(campaign: EmailCampaign): Promise<string> {
   
   const contentObj = campaign.content as { root?: { children?: ContentNode[] } }
   const html = contentObj?.root?.children?.reduce((acc: string, node: ContentNode) => {
+    // Validate node type
+    const allowedTypes = ['paragraph', 'heading', 'list', 'quote']
+    if (!allowedTypes.includes(node.type)) {
+      return acc
+    }
+    
     if (node.type === 'paragraph') {
-      const text = node.children?.map((child: { text?: string }) => child.text || '').join('')
+      const text = node.children?.map((child: { text?: string }) => 
+        sanitizeHtml(child.text || '')
+      ).join('')
       return acc + `<p>${text}</p>`
     }
     if (node.type === 'heading') {
-      const level = node.tag || 'h2'
-      const text = node.children?.map((child: { text?: string }) => child.text || '').join('')
+      // Validate heading level
+      const allowedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+      const level = allowedTags.includes(node.tag || '') ? node.tag : 'h2'
+      const text = node.children?.map((child: { text?: string }) => 
+        sanitizeHtml(child.text || '')
+      ).join('')
       return acc + `<${level}>${text}</${level}>`
     }
     return acc
   }, '') || ''
 
+  // Sanitize subject to prevent XSS in title
+  const sanitizedSubject = sanitizeHtml(campaign.subject)
+  
   return `
     <!DOCTYPE html>
     <html>
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${campaign.subject}</title>
+        <title>${sanitizedSubject}</title>
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -185,3 +224,10 @@ async function renderCampaignContent(campaign: EmailCampaign): Promise<string> {
     </html>
   `
 }
+
+// Export the handler with middleware
+export const POST = composeMiddleware(
+  withSecurityHeaders,
+  withRateLimit,
+  withAuth
+)(handler)

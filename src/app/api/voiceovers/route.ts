@@ -1,144 +1,138 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import type { PayloadVoiceover, TransformedVoiceover, VoiceoverDemo } from '@/types/voiceover'
+import { PayloadVoiceoverRepository } from '@/domains/voiceover/repositories/VoiceoverRepository'
+import { VoiceoverService } from '@/domains/voiceover/services/VoiceoverService'
+import { 
+  VoiceoverQueryParams, 
+  ValidationError, 
+  VoiceoverNotFoundError,
+  RepositoryConnectionError 
+} from '@/domains/voiceover/types'
 
 export async function GET(request: Request) {
   try {
+    // Initialize Payload
     const payload = await getPayload({ config })
     
-    // Get query parameters
+    // Initialize repository and service
+    const repository = new PayloadVoiceoverRepository(payload)
+    const service = new VoiceoverService(repository, {
+      defaultLocale: 'nl',
+      defaultLimit: 10,
+      maxLimit: 50,
+    })
+    
+    // Parse query parameters
     const { searchParams } = new URL(request.url)
     const locale = searchParams.get('locale') || 'nl'
     const slug = searchParams.get('where[slug][equals]')
     const page = parseInt(searchParams.get('page') || '1')
-    const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 50)
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const search = searchParams.get('search')
     
-    // Build where clause
-    const whereClause: any = {}
-    
-    if (slug) {
-      whereClause.slug = { equals: slug }
-    } else {
-      whereClause.status = { in: ['active', 'more-voices'] }
-    }
-    
-    // Fetch voiceovers with pagination
-    const voiceovers = await payload.find({
-      collection: 'voiceovers',
-      where: whereClause,
-      depth: slug ? 2 : 1, // Full depth only for single voiceover
+    // Build query parameters
+    const queryParams: VoiceoverQueryParams = {
       locale,
       page,
       limit,
-      sort: '-createdAt',
-    })
-
-    // Transform data to match frontend expectations
-    const transformedData = voiceovers.docs.map((doc): TransformedVoiceover => {
-      const voiceover = doc as unknown as PayloadVoiceover
-      const demos: VoiceoverDemo[] = []
-      
-      // Add full demo reel if it exists
-      if (voiceover.fullDemoReel && typeof voiceover.fullDemoReel === 'object') {
-        demos.push({
-          id: voiceover.fullDemoReel.id,
-          title: 'Full Demo Reel',
-          demoType: 'reel',
-          audioFile: {
-            url: voiceover.fullDemoReel.url || '',
-            filename: voiceover.fullDemoReel.filename || ''
-          },
-          isPrimary: true,
-          voiceover: {
-            id: voiceover.id,
-            name: voiceover.name,
-            slug: voiceover.slug || voiceover.id
-          }
-        })
+      depth: slug ? 2 : 1,
+    }
+    
+    // Handle different query types
+    let result
+    
+    if (slug) {
+      // Single voiceover by slug
+      const voiceover = await service.getVoiceoverBySlug(slug, locale)
+      result = {
+        success: true,
+        docs: [voiceover],
+        data: [voiceover], // Backward compatibility
+        totalDocs: 1,
+        totalPages: 1,
+        page: 1,
+        limit: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
       }
-      
-      // Add commercials demo if it exists
-      if (voiceover.commercialsDemo && typeof voiceover.commercialsDemo === 'object') {
-        demos.push({
-          id: voiceover.commercialsDemo.id,
-          title: 'Commercials Demo',
-          demoType: 'commercials',
-          audioFile: {
-            url: voiceover.commercialsDemo.url || '',
-            filename: voiceover.commercialsDemo.filename || ''
-          },
-          isPrimary: false,
-          voiceover: {
-            id: voiceover.id,
-            name: voiceover.name,
-            slug: voiceover.slug || voiceover.id
-          }
-        })
+    } else if (search) {
+      // Search voiceovers
+      const { voiceovers, pagination } = await service.searchVoiceovers(search, queryParams)
+      result = {
+        success: true,
+        docs: voiceovers,
+        data: voiceovers, // Backward compatibility
+        ...pagination,
       }
-      
-      // Add narrative demo if it exists
-      if (voiceover.narrativeDemo && typeof voiceover.narrativeDemo === 'object') {
-        demos.push({
-          id: voiceover.narrativeDemo.id,
-          title: 'Narrative Demo',
-          demoType: 'narrations',
-          audioFile: {
-            url: voiceover.narrativeDemo.url || '',
-            filename: voiceover.narrativeDemo.filename || ''
-          },
-          isPrimary: false,
-          voiceover: {
-            id: voiceover.id,
-            name: voiceover.name,
-            slug: voiceover.slug || voiceover.id
-          }
-        })
+    } else {
+      // Get active voiceovers (default behavior)
+      const { voiceovers, pagination } = await service.getActiveVoiceovers(queryParams)
+      result = {
+        success: true,
+        docs: voiceovers,
+        data: voiceovers, // Backward compatibility
+        ...pagination,
       }
-      
-      return {
-        id: voiceover.id,
-        name: voiceover.name,
-        slug: voiceover.slug || voiceover.id,
-        bio: voiceover.description,
-        profilePhoto: voiceover.profilePhoto && typeof voiceover.profilePhoto === 'object' ? {
-          url: voiceover.profilePhoto.url || '',
-          alt: voiceover.name
-        } : undefined,
-        demos,
-        status: voiceover.status,
-        group: voiceover.group && typeof voiceover.group === 'object' ? voiceover.group : undefined,
-        styleTags: voiceover.styleTags
-      }
-    })
-
-    const response = NextResponse.json({
-      success: true,
-      docs: transformedData,
-      data: transformedData, // Keep for backward compatibility
-      totalDocs: voiceovers.totalDocs,
-      totalPages: voiceovers.totalPages,
-      page: voiceovers.page,
-      limit: voiceovers.limit,
-      hasNextPage: voiceovers.hasNextPage,
-      hasPrevPage: voiceovers.hasPrevPage,
-    })
-
+    }
+    
+    const response = NextResponse.json(result)
+    
     // Add caching headers
     response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     response.headers.set('CDN-Cache-Control', 'max-age=3600')
     
     return response
   } catch (error) {
-    // Log error to monitoring service in production
-    if (error instanceof Error) {
-      // TODO: Send to monitoring service
-      // logError({ message: error.message, stack: error.stack })
+    // Handle specific error types
+    if (error instanceof ValidationError) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: error.message,
+          code: error.code,
+        },
+        { status: error.statusCode || 400 }
+      )
     }
+    
+    if (error instanceof VoiceoverNotFoundError) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: error.message,
+          code: error.code,
+        },
+        { status: error.statusCode || 404 }
+      )
+    }
+    
+    if (error instanceof RepositoryConnectionError) {
+      // Log to monitoring service
+      console.error('[VoiceoverAPI] Repository connection error:', {
+        message: error.message,
+        details: error.details,
+        stack: error.stack,
+      })
+      
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Service temporarily unavailable',
+          code: error.code,
+        },
+        { status: error.statusCode || 503 }
+      )
+    }
+    
+    // Generic error handling
+    console.error('[VoiceoverAPI] Unexpected error:', error)
+    
     return NextResponse.json(
       { 
         success: false,
-        error: 'Failed to fetch voiceovers' 
+        error: 'Failed to fetch voiceovers',
+        code: 'INTERNAL_ERROR',
       },
       { status: 500 }
     )

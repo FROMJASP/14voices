@@ -1,8 +1,16 @@
 import { Payload } from 'payload'
+import { EmailBatchProcessor } from './batch-processor'
 
 interface TriggerSequenceOptions {
   sequenceKey: string
   userId: string
+  variables?: Record<string, string | number | boolean>
+  payload: Payload
+}
+
+interface BatchTriggerOptions {
+  sequenceKey: string
+  userIds: string[]
   variables?: Record<string, string | number | boolean>
   payload: Payload
 }
@@ -77,21 +85,119 @@ export async function triggerEmailSequence(options: TriggerSequenceOptions): Pro
   }
   
   // Create jobs for each email in the sequence
-  for (let i = 0; i < sequence.emails.length; i++) {
-    const emailConfig = sequence.emails[i]
-    const scheduledFor = calculateScheduleDate(
-      emailConfig.delayValue,
-      emailConfig.delayUnit
+  const jobsToCreate = sequence.emails.map((emailConfig: any, i: number) => ({
+    recipient: userId,
+    template: emailConfig.template.id,
+    sequence: sequence.id,
+    sequenceEmailIndex: i,
+    scheduledFor: calculateScheduleDate(emailConfig.delayValue, emailConfig.delayUnit),
+    status: 'scheduled',
+    variables: {
+      ...variables,
+      userName: user.name || user.email,
+      userEmail: user.email,
+      sequenceName: sequence.name,
+    },
+  }))
+
+  // Batch create all jobs
+  await Promise.all(
+    jobsToCreate.map(data => 
+      payload.create({
+        collection: 'email-jobs',
+        data,
+      })
     )
-    
-    await payload.create({
-      collection: 'email-jobs',
-      data: {
+  )
+}
+
+export async function triggerEmailSequenceBatch(options: BatchTriggerOptions): Promise<{
+  successful: number
+  failed: number
+  errors: Array<{ userId: string; error: string }>
+}> {
+  const { sequenceKey, userIds, variables = {}, payload } = options
+  const result = {
+    successful: 0,
+    failed: 0,
+    errors: [] as Array<{ userId: string; error: string }>
+  }
+  
+  // Fetch sequence once
+  const sequences = await payload.find({
+    collection: 'email-sequences',
+    where: {
+      key: {
+        equals: sequenceKey,
+      },
+      active: {
+        equals: true,
+      },
+    },
+    depth: 2,
+  })
+  
+  const sequence = sequences.docs[0]
+  
+  if (!sequence) {
+    throw new Error(`Email sequence with key "${sequenceKey}" not found`)
+  }
+  
+  // Batch fetch users
+  const users = await payload.find({
+    collection: 'users',
+    where: {
+      id: {
+        in: userIds,
+      },
+    },
+    limit: userIds.length,
+  })
+  
+  const userMap = new Map(users.docs.map(user => [user.id, user]))
+  
+  // Check existing jobs in batch
+  const existingJobs = await payload.find({
+    collection: 'email-jobs',
+    where: {
+      recipient: {
+        in: userIds,
+      },
+      sequence: {
+        equals: sequence.id,
+      },
+      status: {
+        in: ['scheduled', 'processing'],
+      },
+    },
+    limit: userIds.length,
+  })
+  
+  const usersWithJobs = new Set(existingJobs.docs.map(job => job.recipient.id))
+  
+  // Prepare all jobs to create
+  const allJobsToCreate: any[] = []
+  
+  for (const userId of userIds) {
+    try {
+      if (usersWithJobs.has(userId)) {
+        console.log(`User ${userId} already has active jobs for sequence ${sequenceKey}`)
+        continue
+      }
+      
+      const user = userMap.get(userId)
+      if (!user) {
+        result.failed++
+        result.errors.push({ userId, error: 'User not found' })
+        continue
+      }
+      
+      const userJobs = sequence.emails.map((emailConfig: any, i: number) => ({
         recipient: userId,
         template: emailConfig.template.id,
         sequence: sequence.id,
         sequenceEmailIndex: i,
-        scheduledFor,
+        scheduledFor: calculateScheduleDate(emailConfig.delayValue, emailConfig.delayUnit),
         status: 'scheduled',
         variables: {
           ...variables,
@@ -99,9 +205,29 @@ export async function triggerEmailSequence(options: TriggerSequenceOptions): Pro
           userEmail: user.email,
           sequenceName: sequence.name,
         },
-      },
-    })
+      }))
+      
+      allJobsToCreate.push(...userJobs)
+      result.successful++
+    } catch (error) {
+      result.failed++
+      result.errors.push({ 
+        userId, 
+        error: error instanceof Error ? error.message : String(error) 
+      })
+    }
   }
+  
+  // Batch create all jobs using bulk operations
+  if (allJobsToCreate.length > 0) {
+    const batchSize = 100
+    for (let i = 0; i < allJobsToCreate.length; i += batchSize) {
+      const batch = allJobsToCreate.slice(i, i + batchSize)
+      await payload.db.collections['email-jobs'].insertMany(batch)
+    }
+  }
+  
+  return result
 }
 
 export async function cancelEmailSequence(options: {
@@ -111,101 +237,123 @@ export async function cancelEmailSequence(options: {
 }): Promise<void> {
   const { sequenceId, userId, payload } = options
   
-  const jobs = await payload.find({
-    collection: 'email-jobs',
-    where: {
-      recipient: {
-        equals: userId,
-      },
-      sequence: {
-        equals: sequenceId,
-      },
-      status: {
-        equals: 'scheduled',
-      },
+  // Use bulk update for better performance
+  await payload.db.collections['email-jobs'].updateMany(
+    {
+      recipient: userId,
+      sequence: sequenceId,
+      status: 'scheduled',
     },
-  })
-  
-  for (const job of jobs.docs) {
-    await payload.update({
-      collection: 'email-jobs',
-      id: job.id,
-      data: {
+    {
+      $set: {
         status: 'cancelled',
       },
-    })
+    }
+  )
+}
+
+export async function processScheduledEmails(payload: Payload, limit: number = 1000): Promise<{
+  successful: number
+  failed: number
+  duration: number
+}> {
+  const processor = new EmailBatchProcessor(payload, {
+    batchSize: 100,
+    maxRetries: 3,
+    concurrency: 10,
+  })
+  
+  const result = await processor.processBatch(limit)
+  
+  console.log(`Email processing completed:`, {
+    successful: result.successful.length,
+    failed: result.failed.length,
+    totalProcessed: result.totalProcessed,
+    duration: `${result.duration}ms`,
+    throughput: `${(result.totalProcessed / (result.duration / 1000)).toFixed(2)} emails/sec`
+  })
+  
+  return {
+    successful: result.successful.length,
+    failed: result.failed.length,
+    duration: result.duration,
   }
 }
 
-export async function processScheduledEmails(payload: Payload): Promise<void> {
-  const now = new Date()
+export async function cancelEmailSequenceBatch(options: {
+  sequenceId: string
+  userIds: string[]
+  payload: Payload
+}): Promise<number> {
+  const { sequenceId, userIds, payload } = options
   
-  const dueJobs = await payload.find({
+  const result = await payload.db.collections['email-jobs'].updateMany(
+    {
+      recipient: { $in: userIds },
+      sequence: sequenceId,
+      status: 'scheduled',
+    },
+    {
+      $set: {
+        status: 'cancelled',
+      },
+    }
+  )
+  
+  return result.modifiedCount || 0
+}
+
+export async function getEmailQueueStats(payload: Payload): Promise<{
+  scheduled: number
+  processing: number
+  failed: number
+  sent: number
+  cancelled: number
+  retryable: number
+}> {
+  const processor = new EmailBatchProcessor(payload)
+  const stats = await processor.getQueueStats()
+  
+  // Get retryable count
+  const retryableJobs = await payload.count({
     collection: 'email-jobs',
     where: {
       status: {
-        equals: 'scheduled',
+        equals: 'failed',
       },
-      scheduledFor: {
-        less_than_equal: now,
+      attempts: {
+        less_than: 3,
       },
     },
-    limit: 50,
-    depth: 2,
   })
   
-  for (const job of dueJobs.docs) {
-    try {
-      await payload.update({
-        collection: 'email-jobs',
-        id: job.id,
-        data: {
-          status: 'processing',
-        },
-      })
-      
-      const { sendEmail } = await import('./renderer')
-      
-      const emailId = await sendEmail({
-        templateKey: job.template.key,
-        variables: job.variables || {},
-        recipient: {
-          email: job.recipient.email,
-          name: job.recipient.name,
-        },
-        tags: job.sequence ? [`sequence:${job.sequence.key}`] : [],
-        payload,
-      })
-      
-      const emailLog = await payload.find({
-        collection: 'email-logs',
-        where: {
-          resendId: {
-            equals: emailId,
-          },
-        },
-        limit: 1,
-      })
-      
-      await payload.update({
-        collection: 'email-jobs',
-        id: job.id,
-        data: {
-          status: 'sent',
-          emailLog: emailLog.docs[0]?.id,
-        },
-      })
-    } catch (error) {
-      await payload.update({
-        collection: 'email-jobs',
-        id: job.id,
-        data: {
-          status: 'failed',
-          attempts: (job.attempts || 0) + 1,
-          lastAttempt: now,
-          error: error instanceof Error ? error.message : String(error),
-        },
-      })
-    }
+  return {
+    ...stats,
+    retryable: retryableJobs.totalDocs,
   }
+}
+
+export async function retryFailedEmails(payload: Payload, limit: number = 100): Promise<{
+  successful: number
+  failed: number
+  duration: number
+}> {
+  const processor = new EmailBatchProcessor(payload, {
+    batchSize: 50,
+    maxRetries: 3,
+    concurrency: 5,
+  })
+  
+  const result = await processor.retryFailedJobs(limit)
+  
+  return {
+    successful: result.successful.length,
+    failed: result.failed.length,
+    duration: result.duration,
+  }
+}
+
+export async function cleanupOldEmailJobs(payload: Payload, daysToKeep: number = 30): Promise<number> {
+  const processor = new EmailBatchProcessor(payload)
+  return await processor.cleanupOldJobs(daysToKeep)
 }

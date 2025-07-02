@@ -3,16 +3,32 @@ import { getPayload } from '@/utilities/payload'
 import { resendMarketing } from '@/lib/email/resend-marketing'
 import type { EmailContact, SegmentRules } from '@/types/email-marketing'
 import type { Where } from 'payload'
+import { audienceSyncSchema } from '@/lib/validation/schemas'
+import { withAuth, withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
 
-export async function POST(req: NextRequest) {
+async function handler(req: NextRequest) {
   try {
     const payload = await getPayload()
-    const { audienceId } = await req.json()
+    const body = await req.json()
+    
+    // Validate input
+    const validationResult = audienceSyncSchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: validationResult.error.errors },
+        { status: 400 }
+      )
+    }
+    
+    const { audienceId } = validationResult.data
 
     const audience = await payload.findByID({
       collection: 'email-audiences',
       id: audienceId,
       depth: 2,
+      populate: {
+        contacts: true,
+      },
     })
 
     if (!audience) {
@@ -50,17 +66,25 @@ export async function POST(req: NextRequest) {
     let contacts: EmailContact[] = []
     
     if (audience.type === 'static' && audience.contacts) {
-      contacts = Array.isArray(audience.contacts) 
-        ? audience.contacts 
-        : await payload.find({
+      // Ensure contacts are properly populated
+      if (Array.isArray(audience.contacts) && audience.contacts.length > 0) {
+        if (typeof audience.contacts[0] === 'string') {
+          // If contacts are IDs, fetch them in a single query
+          const result = await payload.find({
             collection: 'email-contacts',
             where: {
               id: {
-                in: audience.contacts,
+                in: audience.contacts as string[],
               },
             },
             limit: 1000,
-          }).then(res => res.docs)
+            depth: 0,
+          })
+          contacts = result.docs
+        } else {
+          contacts = audience.contacts as EmailContact[]
+        }
+      }
     } else if (audience.type === 'dynamic') {
       const result = await payload.find({
         collection: 'email-contacts',
@@ -87,43 +111,66 @@ export async function POST(req: NextRequest) {
       errors: [] as { contactId: string; email: string; error: string }[],
     }
 
-    for (const contact of contacts) {
-      try {
-        if (!contact.resendContactId) {
-          const resendContact = await resendMarketing.createContact({
-            email: contact.email,
-            firstName: contact.firstName,
-            lastName: contact.lastName,
-            unsubscribed: !contact.subscribed,
-            audienceId: resendAudienceId,
-          })
+    // Batch process contacts to reduce API calls and database operations
+    const batchSize = 50
+    const contactBatches = []
+    for (let i = 0; i < contacts.length; i += batchSize) {
+      contactBatches.push(contacts.slice(i, i + batchSize))
+    }
 
-          await payload.update({
-            collection: 'email-contacts',
-            id: contact.id,
-            data: {
-              resendContactId: resendContact?.id || '',
-            },
-          })
+    for (const batch of contactBatches) {
+      const promises = batch.map(async (contact) => {
+        try {
+          if (!contact.resendContactId) {
+            const resendContact = await resendMarketing.createContact({
+              email: contact.email,
+              firstName: contact.firstName,
+              lastName: contact.lastName,
+              unsubscribed: !contact.subscribed,
+              audienceId: resendAudienceId,
+            })
+
+            await payload.update({
+              collection: 'email-contacts',
+              id: contact.id,
+              data: {
+                resendContactId: resendContact?.id || '',
+              },
+            })
+          } else {
+            await resendMarketing.updateContact({
+              id: contact.resendContactId,
+              audienceId: resendAudienceId,
+              firstName: contact.firstName,
+              lastName: contact.lastName,
+              unsubscribed: !contact.subscribed,
+            })
+          }
+          
+          return { success: true, contact }
+        } catch (error) {
+          return {
+            success: false,
+            contact,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          }
+        }
+      })
+
+      const results = await Promise.all(promises)
+      
+      results.forEach((result) => {
+        if (result.success) {
+          syncResults.synced++
         } else {
-          await resendMarketing.updateContact({
-            id: contact.resendContactId,
-            audienceId: resendAudienceId,
-            firstName: contact.firstName,
-            lastName: contact.lastName,
-            unsubscribed: !contact.subscribed,
+          syncResults.failed++
+          syncResults.errors.push({
+            contactId: result.contact.id,
+            email: result.contact.email,
+            error: result.error || 'Unknown error',
           })
         }
-        
-        syncResults.synced++
-      } catch (error) {
-        syncResults.failed++
-        syncResults.errors.push({
-          contactId: contact.id,
-          email: contact.email,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
-      }
+      })
     }
 
     await payload.update({
@@ -159,50 +206,82 @@ function buildDynamicQuery(segmentRules: SegmentRules | undefined): Where {
     return where
   }
 
-  const conditions = segmentRules.rules.map((rule) => {
-    const condition: Where = {}
-    
-    switch (rule.field) {
-      case 'tags':
-        if (rule.operator === 'contains') {
-          condition['tags.tag'] = { contains: rule.value }
-        } else if (rule.operator === 'not_contains') {
-          condition['tags.tag'] = { not_equals: rule.value }
-        }
-        break
-        
-      case 'location':
-        if (rule.operator === 'equals') {
-          condition['location.country'] = { equals: rule.value }
-        }
-        break
-        
-      case 'engagement':
-        if (rule.operator === 'greater_than') {
-          condition['engagement.engagementScore'] = { greater_than: parseInt(rule.value || '0') }
-        } else if (rule.operator === 'less_than') {
-          condition['engagement.engagementScore'] = { less_than: parseInt(rule.value || '0') }
-        }
-        break
-        
-      case 'signupDate':
-        const date = new Date(rule.value || '')
-        if (rule.operator === 'greater_than') {
-          condition['source.signupDate'] = { greater_than: date }
-        } else if (rule.operator === 'less_than') {
-          condition['source.signupDate'] = { less_than: date }
-        }
-        break
-    }
-    
-    return condition
-  })
+  // Validate and sanitize rules to prevent injection
+  const validFields = ['tags', 'location', 'engagement', 'signupDate']
+  const validOperators = ['contains', 'not_contains', 'equals', 'greater_than', 'less_than']
+  
+  const conditions = segmentRules.rules
+    .filter(rule => {
+      // Validate field and operator are from allowed list
+      return validFields.includes(rule.field) && validOperators.includes(rule.operator)
+    })
+    .map((rule) => {
+      const condition: Where = {}
+      
+      // Sanitize value to prevent injection
+      const sanitizedValue = String(rule.value || '').slice(0, 1000)
+      
+      switch (rule.field) {
+        case 'tags':
+          if (rule.operator === 'contains') {
+            condition['tags.tag'] = { contains: sanitizedValue }
+          } else if (rule.operator === 'not_contains') {
+            condition['tags.tag'] = { not_equals: sanitizedValue }
+          }
+          break
+          
+        case 'location':
+          if (rule.operator === 'equals') {
+            // Validate country code format
+            const countryCode = sanitizedValue.toUpperCase().slice(0, 2)
+            if (/^[A-Z]{2}$/.test(countryCode)) {
+              condition['location.country'] = { equals: countryCode }
+            }
+          }
+          break
+          
+        case 'engagement':
+          // Safely parse integer with bounds checking
+          const score = Math.max(0, Math.min(100, parseInt(sanitizedValue || '0', 10) || 0))
+          if (rule.operator === 'greater_than') {
+            condition['engagement.engagementScore'] = { greater_than: score }
+          } else if (rule.operator === 'less_than') {
+            condition['engagement.engagementScore'] = { less_than: score }
+          }
+          break
+          
+        case 'signupDate':
+          // Validate date format
+          const dateStr = sanitizedValue.match(/^\d{4}-\d{2}-\d{2}/)?.[0]
+          if (dateStr) {
+            const date = new Date(dateStr)
+            if (!isNaN(date.getTime())) {
+              if (rule.operator === 'greater_than') {
+                condition['source.signupDate'] = { greater_than: date }
+              } else if (rule.operator === 'less_than') {
+                condition['source.signupDate'] = { less_than: date }
+              }
+            }
+          }
+          break
+      }
+      
+      return condition
+    })
+    .filter(condition => Object.keys(condition).length > 0) // Remove empty conditions
 
-  if (segmentRules.logic === 'any') {
+  if (segmentRules.logic === 'any' && conditions.length > 0) {
     where.or = conditions
-  } else {
+  } else if (conditions.length > 0) {
     Object.assign(where, ...conditions)
   }
 
   return where
 }
+
+// Export the handler with middleware
+export const POST = composeMiddleware(
+  withSecurityHeaders,
+  withRateLimit,
+  withAuth
+)(handler)

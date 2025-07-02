@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from '@/utilities/payload'
+import { contactImportSchema } from '@/lib/validation/schemas'
+import { withAuth, withRateLimit, withSecurityHeaders, composeMiddleware } from '@/middleware/auth'
+import { validateRequest } from '@/lib/api-security'
 
-export async function POST(req: NextRequest) {
+async function handler(req: NextRequest) {
   try {
+    // Validate request
+    const validatedData = await validateRequest(req, contactImportSchema)
+    const { contacts, audienceId, skipDuplicates } = validatedData
+    
     const payload = await getPayload()
-    const { contacts, audienceId, updateExisting = false } = await req.json()
-
-    if (!Array.isArray(contacts)) {
-      return NextResponse.json(
-        { error: 'Contacts must be an array' },
-        { status: 400 }
-      )
+    
+    // Additional security check for large imports
+    if (contacts.length > 100) {
+      // For large imports, require admin role
+      const user = await payload.auth({ headers: req.headers })
+      if (!user || user.role !== 'admin') {
+        return NextResponse.json(
+          { error: 'Large imports require admin privileges' },
+          { status: 403 }
+        )
+      }
     }
 
     const results = {
@@ -33,20 +44,24 @@ export async function POST(req: NextRequest) {
         })
 
         if (existingContact.totalDocs > 0) {
-          if (updateExisting) {
+          if (!skipDuplicates) {
+            // Update existing contact with validated data only
+            const updateData: any = {}
+            if (contactData.firstName) updateData.firstName = contactData.firstName
+            if (contactData.lastName) updateData.lastName = contactData.lastName
+            if (contactData.tags) updateData.tags = contactData.tags.map((tag: string) => ({ tag }))
+            if (contactData.customFields) updateData.customFields = contactData.customFields
+            
             await payload.update({
               collection: 'email-contacts',
               id: existingContact.docs[0].id,
-              data: {
-                ...contactData,
-                email: existingContact.docs[0].email, // Don't update email
-              },
+              data: updateData,
             })
             results.updated++
           } else {
             results.errors.push({
               email: contactData.email,
-              error: 'Contact already exists',
+              error: 'Contact already exists (skipped)',
             })
             results.failed++
           }
@@ -54,10 +69,15 @@ export async function POST(req: NextRequest) {
           await payload.create({
             collection: 'email-contacts',
             data: {
-              ...contactData,
+              email: contactData.email,
+              firstName: contactData.firstName || '',
+              lastName: contactData.lastName || '',
+              tags: contactData.tags?.map((tag: string) => ({ tag })) || [],
+              customFields: contactData.customFields || {},
+              subscribed: true,
               source: {
-                type: 'csv',
-                detail: 'Bulk import',
+                type: 'import',
+                detail: 'API bulk import',
                 signupDate: new Date(),
               },
             },
@@ -75,6 +95,11 @@ export async function POST(req: NextRequest) {
 
     if (audienceId && results.imported > 0) {
       try {
+        // Validate audience ID format
+        if (typeof audienceId !== 'string' || audienceId.length > 100) {
+          throw new Error('Invalid audience ID')
+        }
+        
         const audience = await payload.findByID({
           collection: 'email-audiences',
           id: audienceId,
@@ -117,9 +142,25 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     console.error('Failed to import contacts:', error)
+    
+    // Handle validation errors
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json(
+        { error: 'Invalid import data', details: (error as any).errors },
+        { status: 400 }
+      )
+    }
+    
     return NextResponse.json(
       { error: 'Failed to import contacts' },
       { status: 500 }
     )
   }
 }
+
+// Export with security middleware
+export const POST = composeMiddleware(
+  withSecurityHeaders,
+  withRateLimit({ windowMs: 300000, max: 10 }), // 10 imports per 5 minutes
+  withAuth({ requireAuth: true })
+)(handler)

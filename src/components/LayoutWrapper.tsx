@@ -37,7 +37,14 @@ export function LayoutWrapper({ layout, children }: LayoutWrapperProps) {
   }, [layout])
 
   if (loading || !layoutData) {
-    return <div className="min-h-screen">{children}</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+          <p className="mt-4 text-gray-600">Layout laden...</p>
+        </div>
+      </div>
+    )
   }
 
   const containerClasses = {

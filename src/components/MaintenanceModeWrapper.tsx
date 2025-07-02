@@ -53,6 +53,8 @@ export function MaintenanceModeWrapper({ children, forceMaintenanceMode = false 
     checkMaintenanceMode()
   }, [forceMaintenanceMode])
 
+  // Don't render anything on server during initial load
+  // This prevents hydration mismatches
   if (isLoading) {
     return null
   }

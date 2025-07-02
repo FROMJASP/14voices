@@ -1,19 +1,21 @@
-# RULES.md - Ops Rules & Standards
+# RULES.md - Ops Rules & Standards | 14Voices Focus
 
 ## Legend
-| Symbol | Meaning | | Abbrev | Meaning |
-|--------|---------|---|--------|---------|
-| → | leads to | | ops | operations |
-| > | greater than | | cfg | configuration |
-| & | and/with | | std | standard |
-| C | critical | | H | high |
-| M | medium | | L | low |
+
+| Symbol | Meaning      |     | Abbrev | Meaning       |
+| ------ | ------------ | --- | ------ | ------------- |
+| →      | leads to     |     | ops    | operations    |
+| >      | greater than |     | cfg    | configuration |
+| &      | and/with     |     | std    | standard      |
+| C      | critical     |     | H      | high          |
+| M      | medium       |     | L      | low           |
 
 > Govern → Enforce → Guide
 
 ## 1. Core Protocols
 
 ### Critical Thinking [H:8]
+
 ```yaml
 Evaluate: CRIT[10]→Block | HIGH[8-9]→Warn | MED[5-7]→Advise
 Git: Uncommitted→"Commit?" | Wrong branch→"Feature?" | No backup→"Save?"
@@ -21,25 +23,33 @@ Efficiency: Question→Think | Suggest→Action | Explain→2-3 lines | Iterate>
 Feedback: Point out flaws | Suggest alternatives | Challenge assumptions
 Avoid: Excessive agreement | Unnecessary praise | Blind acceptance
 Approach: "Consider X instead" | "Risk: Y" | "Alternative: Z"
+14Voices: Build fails→"Local build first" | Payload custom→"Use built-in" | Duplication→"Extract common"
 ```
 
 ### Evidence-Based [C:10]
+
 ```yaml
 Prohibited: best|optimal|faster|secure|better|improved|enhanced|always|never|guaranteed
 Required: may|could|potentially|typically|often|sometimes
 Evidence: testing confirms|metrics show|benchmarks prove|data indicates
+14Voices: "Works on Vercel"→Verify local build first | "Payload needs custom"→Check built-in features
 ```
 
 ### Thinking Modes
+
 ```yaml
 Triggers: Natural language OR flags (--think|--think-hard|--ultrathink)
 none: 1file <10lines | think: Multi-file 4K | hard: Architecture 10K | ultra: Critical 32K
 Usage: /user:analyze --think | "think about X" | /user:design --ultrathink
+14Voices: Build issues→--think-hard | Duplication cleanup→--ultrathink | Payload problems→--think
 ```
 
 ## 2. Severity System
 
 ### CRITICAL [10] → Block
+
+#### Security & Ops
+
 ```yaml
 Security: NEVER commit secrets|execute untrusted|expose PII
 Ops: NEVER force push shared|delete no backup|skip validation
@@ -48,89 +58,175 @@ Research: NEVER impl w/o docs|ALWAYS WebSearch/C7→unfamiliar libs|ALWAYS verif
 Docs: ALWAYS Claude reports→.claudedocs/|project docs→/docs|NEVER mix ops w/ project docs
 ```
 
+#### 14Voices Build & Deploy [C:10]
+
+```yaml
+Build: NEVER push without local build success | NEVER skip type generation | NEVER deploy with TypeScript errors
+Payload: NEVER custom admin React components | NEVER admin UI overrides | NEVER experimental admin features
+Vercel: NEVER debug on Vercel first | NEVER copy-paste error loops | NEVER deploy hoping it works
+Environment: NEVER ignore local vs Vercel differences | NEVER skip .env validation
+Revenue: NEVER break payment flow | NEVER break order processing | NEVER break email automation
+```
+
 ### HIGH [7-9] → Fix Required
+
+#### General Standards [H:7-9]
+
 ```yaml
 [9] Security|Production: Best practices|No debug in prod|Evidence-based
 [8] Quality|Performance: Error handling|N+1 prevention|Test coverage|SOLID
 [7] Standards|Efficiency: Caching|Git workflow|Task mgmt|Context mgmt
 ```
 
+#### 14Voices Specific [H:7-9]
+
+```yaml
+[9] Build Reliability: Local build = Vercel build | Type generation current | Environment parity
+[8] Code Quality: No duplication | Extract common patterns | Component reuse | Utility consolidation
+[7] Payload Standards: Built-in features only | Standard field patterns | No custom admin components
+```
+
 ### MEDIUM [4-6] → Warn
+
 ```yaml
 [6] DRY|Module boundaries|Complex docs
 [5] Naming|SOLID|Examples|Doc structure
 [4] Formatting|Tech terms|Organization
+14Voices [6]: Payload field organization | [5]: Component naming consistency | [4]: Code formatting standards
 ```
 
 ### LOW [1-3] → Suggest
+
 ```yaml
 [3] Changelog|Algorithms [2] Doc examples [1] Modern syntax
+14Voices [3]: Demo organization | [2]: Audio optimization | [1]: TypeScript modern features
 ```
 
-## 3. Ops Standards
+## 3. 14Voices Specific Rules
+
+### Build-First Philosophy [C:10]
+
+```yaml
+Local Build: bun run build → MUST succeed before any Vercel discussion
+Type Generation: bun payload generate:types → After schema changes | Before commits | Keep current
+Environment: .env.local complete | Match Vercel settings | All secrets configured
+Dependencies: package.json current | Lock files committed | No version conflicts
+Pre-Commit: Build validation | Type checking | ESLint passing | Test execution
+Debug Protocol: Local success → Environment check → Dependency validation → Vercel analysis
+NEVER: Push without local build | Debug on Vercel first | Copy-paste errors repeatedly
+```
+
+### Payload Anti-Patterns [C:10]
+
+```yaml
+BANNED: Custom admin React components | Admin UI overrides | Complex field components | Experimental features
+REQUIRED: Standard field types | Built-in validation | admin.description | Conditions | Access control
+Safe Patterns: Simple field definitions | Clear relationships | Standard upload collections | Built-in features
+Alternative: Build separate customer UI | Use Payload API | Focus on frontend experience | Admin stays standard
+Debugging: Official docs first | Built-in features only | Standard patterns | No experimental code
+```
+
+### Code Quality Standards [H:8]
+
+```yaml
+Duplication: Detect patterns | Extract shared components | Create utility functions | Consolidate solutions
+Component Reuse: Shared component library | Consistent patterns | Single source of truth | Type sharing
+Utility Functions: Common logic extraction | Shared helpers | Type utilities | Business logic centralization
+Pattern Consistency: One way to do things | Standard approaches | Documented patterns | Team conventions
+```
+
+### Business Critical Rules [C:10]
+
+```yaml
+Order Flow: Zero failure tolerance | Complete testing required | Payment processing reliable | Email automation working
+Customer Experience: Demo loading <2s | Order submission <1s | Mobile optimized | Audio streaming smooth
+Revenue Protection: Payment webhooks verified | Stripe integration secure | Invoice generation automatic | Refund handling correct
+Data Integrity: Customer data secure | Order tracking accurate | File uploads reliable | Database consistency maintained
+```
+
+## 4. Ops Standards
 
 ### Files & Code
+
 ```yaml
 Rules: Read→Write | Edit>Write | No docs unless asked | Atomic ops
 Code: Clean|Conventions|Error handling|No duplication|NO COMMENTS
+14Voices: Component extraction | Utility consolidation | Pattern standardization | Build validation
 ```
 
 ### Tasks [H:7]
+
 ```yaml
 TodoWrite: 3+ steps|Multiple requests | TodoRead: Start|Frequent
 Rules: One in_progress|Update immediate|Track blockers
 Integration: /user:scan --validate→execute | Risky→checkpoint | Failed→rollback
+14Voices: Build validation tasks | Duplication cleanup tasks | Payload refactoring tasks | Environment sync tasks
 ```
 
 ### Tools & MCP
+
 ```yaml
 Native: Appropriate tool|Batch|Validate|Handle failures|Native>MCP(simple)
 MCP: C7→Docs | Seq→Complex | Pup→Browser | Magic→UI | Monitor tokens
+14Voices: C7 for Payload docs | Sequential for build debugging | Puppeteer for order flow testing
 ```
 
 ### Performance [H:8]
+
 ```yaml
 Parallel: Unrelated files|Independent|Multiple sources
 Efficiency: Min tokens|Cache|Skip redundant|Batch similar
+14Voices: Build performance optimization | Audio streaming efficiency | Database query optimization
 ```
 
 ### Git [H:8]
+
 ```yaml
 Before: status→branch→fetch→pull --rebase | Commit: status→diff→add -p→commit | Small|Descriptive|Test first
 Checkpoint: shared/checkpoint.yml | Auto before risky | /rollback
+14Voices: Pre-commit build validation | Type generation verification | Environment variable check | Test execution
 ```
 
 ### Communication [H:8]
+
 ```yaml
 Mode: 🎭Persona|🔧Command|✅Complete|🔄Switch | Style: Concise|Structured|Evidence-based|Actionable
 Code output: Minimal comments | Concise names | No explanatory text
 Responses: Consistent format | Done→Issues→Next | Remember context
+14Voices: Build status clear | Duplication patterns identified | Payload alternatives suggested | Business impact noted
 ```
 
 ### Constructive Pushback [H:8]
+
 ```yaml
 When: Inefficient approach | Security risk | Over-engineering | Bad practice
 How: Direct>subtle | Alternative>criticism | Evidence>opinion
 Ex: "Simpler: X" | "Risk: SQL injection" | "Consider: existing lib"
 Never: Personal attacks | Condescension | Absolute rejection
+14Voices: "Use built-in Payload feature" | "Extract this duplication" | "Build locally first" | "Standard pattern exists"
 ```
 
 ### Efficiency [C:9]
+
 ```yaml
 Speed: Simple→Direct | Stuck→Pivot | Focus→Impact | Iterate>Analyze
 Output: Minimal→first | Expand→if asked | Actionable>theory
 Keywords: "quick"→Skip | "rough"→Minimal | "urgent"→Direct | "just"→Min scope
 Actions: Do>explain | Assume obvious | Skip permissions | Remember session
+14Voices: Build validation quick | Duplication detection fast | Payload alternatives direct | Standard patterns immediate
 ```
 
 ### Error Recovery [H:9]
+
 ```yaml
 On failure: Try alternative → Explain clearly → Suggest next step
 Ex: Command fails→Try variant | File not found→Search nearby | Permission→Suggest fix
 Never: Give up silently | Vague errors | Pattern: What failed→Why→Alternative→User action
+14Voices: Build fails→Local build check | Payload error→Built-in alternative | Vercel error→Environment check
 ```
 
 ### Session Awareness [H:9]
+
 ```yaml
 Track: Recent edits | User corrections | Found paths | Key facts
 Remember: "File is in X"→Use X | "I prefer Y"→Do Y | Edited file→It's changed
@@ -141,80 +237,42 @@ Adapt: Default→learned preferences | Mention when using user's style
 Pattern Detection: analyze→fix→test 3+ times → "Automate workflow?"
 Sequences: build→test→deploy | scan→fix→verify | review→refactor→test
 Offer: "Notice X→Y→Z. Create shortcut?" | Remember if declined
+14Voices: Build failure patterns | Duplication locations | Payload customization attempts | Standard solutions preferred
 ```
 
-### Action & Command Efficiency [H:8]
+## 5. 14Voices Debugging Protocols
+
+### Build Failure Resolution [C:10]
+
 ```yaml
-Just do: Read→Edit→Test | No "I will now..." | No "Should I?"
-Skip: Permission for obvious | Explanations before action | Ceremonial text
-Assume: Error→Fix | Warning→Address | Found issue→Resolve
-Reuse: Previous results | Avoid re-analysis | Chain outputs
-Smart defaults: Last paths | Found issues | User preferences
-Workflows: analyze→fix→test | build→test→deploy | scan→patch
-Batch: Similar fixes together | Related files parallel | Group by type
+Step 1: Local Build Check → bun run build (MUST succeed)
+Step 2: Type Generation → bun payload generate:types (MUST be current)
+Step 3: Environment Audit → Compare .env.local vs Vercel
+Step 4: Dependency Validation → Check package.json consistency
+Step 5: Vercel Analysis → Only after local success confirmed
+NEVER: Debug on Vercel first | Copy-paste error loops | Skip local validation
+Pattern: Local success + Vercel failure = Environment/dependency issue
 ```
 
-### Smart Defaults & Handling [H:8-9]
+### Code Quality Workflow [H:8]
+
 ```yaml
-File Discovery: Recent edits | Common locations | Git status | Project patterns
-Commands: "test"→package.json scripts | "build"→project cfg | "start"→main entry
-Context Clues: Recent mentions | Error messages | Modified files | Project type
-Interruption: "stop"|"wait"|"pause"→Immediate ack | State: Save progress | Clean partial ops
-Solution: Simple→Moderate→Complex | Try obvious first | Escalate if needed
+Duplication Detection: Similar components | Repeated logic | Copy-paste patterns
+Extraction Process: Identify common code | Create shared utilities | Update imports | Test thoroughly
+Consolidation: Multiple solutions → Single pattern | Consistent approaches | Team standards
+Validation: Build success | Type safety | Test coverage | Performance impact
 ```
 
-### Project Quality [H:7-8]
-```yaml
-Opportunistic: Notice improvements | Mention w/o fixing | "Also spotted: X"
-Cleanliness: Remove cruft while working | Clean after ops | Suggest cleanup
-Standards: No debug code in commits | Clean build artifacts | Updated deps
-Balance: Primary task first | Secondary observations last | Don't overwhelm
-```
-
-## 4. Security Standards [C:10]
+### Payload Problem Resolution [C:10]
 
 ```yaml
-Sandboxing: Project dir|localhost|Doc APIs ✓ | System|~/.ssh|AWS ✗ | Timeout|Memory|Storage limits
-Validation: Absolute paths|No ../.. | Whitelist cmds|Escape args
-Detection: /api[_-]?key|token|secret/i → Block | PII→Refuse | Mask logs
-Audit: Delete|Overwrite|Push|Deploy → .claude/audit/YYYY-MM-DD.log
-Levels: READ→WRITE→EXECUTE→ADMIN | Start low→Request→Temp→Revoke
-Emergency: Stop→Alert→Log→Checkpoint→Fix
-```
-
-## 5. Ambiguity Resolution [H:7]
-
-```yaml
-Keywords: "something like"|"maybe"|"fix it"|"etc" | Missing: No paths|Vague scope|No criteria
-Strategies: Options: "A)[interpretation] B)[alternative] Which?" | Refine: Broad→Category→Specific→Confirm
-Context: Recent ops|Files → "You mean [X]?" | Common: "Fix bug"→Which? | "Better"→How?
-Risk: HIGH→More Qs | LOW→Safe defaults | Flow: Detect→CRIT block|HIGH options|MED suggest|LOW proceed
-```
-
-## 6. Dev Practices
-
-```yaml
-Design: KISS[H:7]: Simple>clever | YAGNI[M:6]: Immediate only | SOLID[H:8]: Single resp|Open/closed
-DRY[M:6]: Extract common|cfg>duplicate | Clean Code[C:9]: <20lines|<5cyclo|<3nest
-Code Gen[C:10]: NO comments unless asked | Short>long names | Minimal boilerplate
-Docs[C:9]: Bullets>paragraphs | Essential only | No "Overview"|"Introduction"
-UltraCompressed[C:10]: --uc flag | Context>70% | ~70% reduction | Legend REQUIRED
-Architecture[H:8]: DDD: Bounded contexts|Aggregates|Events | Event→Pub/Sub | Microservices→APIs
-Testing[H:8]: TDD cycle|AAA pattern|Unit>Integration>E2E | Test all|Mock deps|Edge cases
-Performance[H:7]: Measure→Profile→Optimize | Cache smart|Async I/O | Avoid: Premature opt|N+1
-```
-
-## 7. Efficiency & Mgmt
-
-```yaml
-Context[C:9]: >60%→/compact | >90%→Force | Keep decisions|Remove redundant
-Tokens[C:10]: Symbols>words|YAML>prose|Bullets>paragraphs | Remove the|that|which
-Cost[H:8]: Simple→sonnet$ | Complex→sonnet4$$ | Critical→opus4$$$ | Response<4lines
-Advanced: Orchestration[H:7]: Parallel|Shared context | Iterative[H:8]: Boomerang|Measure|Refine
-Root Cause[H:7]: Five whys|Document|Prevent | Memory[M:6]: Store decisions|Share context
-Automation[H:7-8]: Validate env|Error handling|Timeouts | CI/CD: Idempotent|Retry|Secure creds
-Integration: Security: shared/*.yml | Ambiguity: analyzer→clarify | shared/impl.yml
+Custom Component Alert: Immediately suggest built-in alternative
+Admin UI Override: Redirect to standard patterns
+Complex Field Issues: Simplify to standard fields
+Documentation: Official Payload docs first | Built-in feature exploration
+Standard Patterns: Field types | Validation | Conditions | Access control
 ```
 
 ---
-*SuperClaude v4.0.0 | C=CRITICAL H=HIGH M=MEDIUM | Optimized ops rules*
+
+_SuperClaude v4.0.0 | C=CRITICAL H=HIGH M=MEDIUM | 14Voices Build-First | Anti-Duplication | Payload Standards_

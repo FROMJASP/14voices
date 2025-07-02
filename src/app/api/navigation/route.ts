@@ -1,24 +1,28 @@
-import { NextResponse } from 'next/server'
 import { getNavigationData, formatNavigation } from '@/lib/navigation'
+import { createApiHandler } from '@/lib/api/handlers'
+import globalCache from '@/lib/cache'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-  try {
-    const navigationData = await getNavigationData()
-    const formattedNav = formatNavigation(navigationData)
-
-    // Cache for 5 minutes
-    return NextResponse.json(formattedNav, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+export const GET = createApiHandler(
+  async () => {
+    return await globalCache.wrap(
+      'navigation:main',
+      async () => {
+        const navigationData = await getNavigationData()
+        return formatNavigation(navigationData)
       },
-    })
-  } catch (error) {
-    console.error('Failed to fetch navigation:', error)
-    
-    // Return default navigation as fallback
-    const defaultNav = {
+      300000 // 5 minutes
+    )
+  },
+  {
+    cache: {
+      enabled: true,
+      ttl: 300000, // 5 minutes
+      key: () => 'navigation:api',
+      invalidatePatterns: ['navigation:*']
+    },
+    transform: (data) => data || {
       mainMenu: [
         { label: 'Home', href: '/', type: 'page' },
         { label: 'Stemmen', href: '/#stemmen', type: 'anchor', isAnchor: true },
@@ -27,7 +31,5 @@ export async function GET() {
         { label: 'Contact', href: '/#contact', type: 'anchor', isAnchor: true },
       ]
     }
-    
-    return NextResponse.json(defaultNav, { status: 200 })
   }
-}
+)

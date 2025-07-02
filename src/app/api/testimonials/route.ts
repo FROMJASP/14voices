@@ -1,13 +1,14 @@
 import { NextRequest } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { createApiHandler, parsePaginationParams, ApiResponse } from '@/lib/api/handlers'
 
-export async function GET(request: NextRequest) {
-  try {
+export const GET = createApiHandler(
+  async (request: NextRequest) => {
     const payload = await getPayload({ config: configPromise })
     const searchParams = request.nextUrl.searchParams
+    const pagination = parsePaginationParams(request)
     
-    // Build where query from search params
     const where: Record<string, unknown> = {}
     searchParams.forEach((value, key) => {
       if (key.startsWith('where[') && key.endsWith(']')) {
@@ -31,22 +32,31 @@ export async function GET(request: NextRequest) {
       }
     })
     
-    const limit = parseInt(searchParams.get('limit') || '10')
-    const sort = searchParams.get('sort') || '-publishedDate'
-    
     const testimonials = await payload.find({
       collection: 'testimonials',
       where: {
         ...where,
         status: { equals: 'published' },
       },
-      limit,
-      sort,
+      limit: pagination.limit,
+      page: pagination.page,
+      sort: pagination.sort || '-publishedDate',
     })
     
-    return Response.json(testimonials)
-  } catch (error) {
-    console.error('Error fetching testimonials:', error)
-    return Response.json({ error: 'Failed to fetch testimonials' }, { status: 500 })
+    return testimonials
+  },
+  {
+    cache: {
+      enabled: true,
+      ttl: 300000, // 5 minutes
+      key: (req) => {
+        const params = Object.fromEntries(req.nextUrl.searchParams)
+        return `testimonials:${JSON.stringify(params)}`
+      }
+    },
+    rateLimit: {
+      requests: 30,
+      window: 60
+    }
   }
-}
+)
