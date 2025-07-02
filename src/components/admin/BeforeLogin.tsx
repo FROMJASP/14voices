@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { BackgroundBeams } from './login/BackgroundBeams'
 import { FloatingLabelInput } from './login/FloatingLabelInput'

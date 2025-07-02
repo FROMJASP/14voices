@@ -46,6 +46,9 @@ import { default as default_437b3ecbde60fc8598a1c9679e03fce3 } from '../../../co
 import { default as default_admin_actions } from '../../../components/admin/AdminActions'
 import { default as default_admin_enhancements } from '../../../components/admin/AdminEnhancements'
 import { MaintenanceModePreview as MaintenanceModePreview_custom } from '../../../components/admin/MaintenanceModePreview'
+import { default as default_16e62c7e42dfe7700742ba3a13bf8900 } from '../../../components/admin/graphics/Icon'
+import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../components/admin/graphics/Logo'
+import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
 export const importMap = {
@@ -85,6 +88,9 @@ export const importMap = {
   "./components/admin/AdminActions#default": default_admin_actions,
   "./components/admin/AdminEnhancements#default": default_admin_enhancements,
   "./components/admin/MaintenanceModePreview#MaintenanceModePreview": MaintenanceModePreview_custom,
+  "./components/admin/graphics/Icon#default": default_16e62c7e42dfe7700742ba3a13bf8900,
+  "./components/admin/graphics/Logo#default": default_13338d86bf8cb9661b50b401726320cd,
+  "./components/admin/Root#default": default_52fc470c96be62b5d8029b692894d144,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e
 }
 `
