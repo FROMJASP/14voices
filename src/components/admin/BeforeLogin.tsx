@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import React, { useState, useCallback, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { toast } from 'sonner'
-import { BackgroundBeams } from './login/BackgroundBeams'
-import { FloatingLabelInput } from './login/FloatingLabelInput'
-import './login/login-animations.css'
+import React, { useState, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
+import { BackgroundBeams } from './login/BackgroundBeams';
+import { FloatingLabelInput } from './login/FloatingLabelInput';
+import './login/login-animations.css';
 
 export default function BeforeLogin() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSiteSettings = async () => {
@@ -21,88 +21,92 @@ export default function BeforeLogin() {
           headers: {
             'Content-Type': 'application/json',
           },
-        })
+        });
         if (response.ok) {
-          const contentType = response.headers.get('content-type')
+          const contentType = response.headers.get('content-type');
           if (contentType && contentType.includes('application/json')) {
-            const data = await response.json()
+            const data = await response.json();
             if (data?.favicon?.url) {
-              setLogoUrl(data.favicon.url)
+              setLogoUrl(data.favicon.url);
             }
           }
         }
       } catch {
         // Silently fail if settings can't be fetched
       }
-    }
+    };
 
-    fetchSiteSettings()
-  }, [])
+    fetchSiteSettings();
+  }, []);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setError('');
 
-    // Custom validation
-    if (!email) {
-      setError('Please enter your email address')
-      return
-    }
-
-    if (!email.includes('@')) {
-      setError('Please enter a valid email address')
-      return
-    }
-
-    if (!password) {
-      setError('Please enter your password')
-      return
-    }
-
-    setIsLoading(true)
-
-    try {
-      const response = await fetch('/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      })
-
-      const contentType = response.headers.get('content-type')
-      let data: { errors?: Array<{ message: string }> } = {}
-      
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json()
-      } else {
-        setError('Server error. Please try again.')
-        toast.error('Server error. Please try again.')
-        return
+      // Custom validation
+      if (!email) {
+        setError('Please enter your email address');
+        return;
       }
 
-      if (response.ok) {
-        toast.success('Welcome back! Redirecting...')
-        setTimeout(() => {
-          window.location.href = '/admin'
-        }, 1000)
-      } else {
-        setError(data.errors?.[0]?.message || 'Invalid email or password')
-        toast.error('Login failed. Please check your credentials.')
+      if (!email.includes('@')) {
+        setError('Please enter a valid email address');
+        return;
       }
-    } catch {
-      setError('An error occurred. Please try again.')
-      toast.error('Something went wrong. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [email, password])
+
+      if (!password) {
+        setError('Please enter your password');
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await fetch('/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+          credentials: 'include',
+        });
+
+        const contentType = response.headers.get('content-type');
+        let data: { errors?: Array<{ message: string }> } = {};
+
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          setError('Server error. Please try again.');
+          toast.error('Server error. Please try again.');
+          return;
+        }
+
+        if (response.ok) {
+          toast.success('Welcome back! Redirecting...');
+          setTimeout(() => {
+            window.location.href = '/admin';
+          }, 1000);
+        } else {
+          setError(data.errors?.[0]?.message || 'Invalid email or password');
+          toast.error('Login failed. Please check your credentials.');
+        }
+      } catch {
+        setError('An error occurred. Please try again.');
+        toast.error('Something went wrong. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [email, password]
+  );
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
           /* Hide Payload's default login form */
           .login__brand { display: none !important; }
           .login__form { display: none !important; }
@@ -150,19 +154,24 @@ export default function BeforeLogin() {
             font-weight: 400;
             transform: translateY(-1.25rem);
           }
-        `
-      }} />
-      <div className="custom-login-wrapper" style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'radial-gradient(ellipse at top left, #0a0a0a 0%, #000000 50%), radial-gradient(ellipse at bottom right, #111111 0%, #000000 50%)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+        `,
+        }}
+      />
+      <div
+        className="custom-login-wrapper"
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background:
+            'radial-gradient(ellipse at top left, #0a0a0a 0%, #000000 50%), radial-gradient(ellipse at bottom right, #111111 0%, #000000 50%)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
         <BackgroundBeams />
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -189,7 +198,7 @@ export default function BeforeLogin() {
                       backdropFilter: 'blur(10px)',
                       borderRadius: '16px',
                       padding: '12px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
                     }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -200,7 +209,7 @@ export default function BeforeLogin() {
                         width: '100%',
                         height: '100%',
                         objectFit: 'contain',
-                        filter: 'brightness(0) invert(1)'
+                        filter: 'brightness(0) invert(1)',
                       }}
                     />
                   </div>
@@ -217,7 +226,7 @@ export default function BeforeLogin() {
                 Admin Portal
               </motion.p>
             </motion.div>
-            
+
             <form onSubmit={handleSubmit} noValidate>
               <AnimatePresence mode="wait">
                 {error && (
@@ -232,7 +241,7 @@ export default function BeforeLogin() {
                   </motion.div>
                 )}
               </AnimatePresence>
-              
+
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -248,7 +257,7 @@ export default function BeforeLogin() {
                   autoComplete="email"
                 />
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -265,22 +274,22 @@ export default function BeforeLogin() {
                   showPasswordToggle
                 />
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.55 }}
-                style={{ 
-                  textAlign: 'right', 
+                style={{
+                  textAlign: 'right',
                   marginBottom: '1.5rem',
-                  marginTop: '-0.5rem'
+                  marginTop: '-0.5rem',
                 }}
               >
                 <button
                   type="button"
                   onClick={() => {
                     // Use window.location for more reliable navigation
-                    window.location.href = '/admin/forgot-password'
+                    window.location.href = '/admin/forgot-password';
                   }}
                   style={{
                     fontSize: '1rem',
@@ -292,26 +301,31 @@ export default function BeforeLogin() {
                     cursor: 'pointer',
                     padding: 0,
                     font: 'inherit',
+                    position: 'relative',
+                    zIndex: 10,
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)')}
                 >
                   Forgot password?
                 </button>
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="star-border-button"
-                >
+                <button type="submit" disabled={isLoading} className="star-border-button">
                   {isLoading ? (
-                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <span
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                      }}
+                    >
                       <span className="loading-spinner" />
                       Signing in...
                     </span>
@@ -321,7 +335,7 @@ export default function BeforeLogin() {
                 </button>
               </motion.div>
             </form>
-            
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -334,5 +348,5 @@ export default function BeforeLogin() {
         </motion.div>
       </div>
     </>
-  )
+  );
 }

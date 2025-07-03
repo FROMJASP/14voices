@@ -1,28 +1,16 @@
 import * as Sentry from '@sentry/nextjs';
+import type { Instrumentation } from 'next';
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     await import('./sentry.server.config');
   }
+
+  if (process.env.NEXT_RUNTIME === 'edge') {
+    await import('./sentry.edge.config');
+  }
 }
 
-// Type definitions matching Sentry's expectations
-type RequestInfo = {
-  path: string;
-  method: string;
-  headers: Record<string, string | string[] | undefined>;
+export const onRequestError: Instrumentation.onRequestError = (error, request, context) => {
+  Sentry.captureRequestError(error, request, context);
 };
-
-type ErrorContext = {
-  routerKind: string;
-  routePath: string;
-  routeType: string;
-};
-
-export async function onRequestError(
-  error: unknown,
-  request: RequestInfo,
-  errorContext: ErrorContext
-): Promise<void> {
-  Sentry.captureRequestError(error, request, errorContext);
-}
