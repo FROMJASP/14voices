@@ -1,15 +1,24 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import { PageRenderer } from '@/components/PageRenderer'
-import type { Page } from '@/payload-types'
-import { NavigationBar, VoiceoverShowcase } from '@/components/sections'
-import { UnifiedHero } from '@/components/unified'
-import { StemmenSection, PrijzenSection, BlogSection, ContactSection } from '@/components/sections/HomepageSections'
-import { Footer } from '@/components/layout/Footer'
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
+import { PageRenderer } from '@/components/PageRenderer';
+import type { Page } from '@/payload-types';
+import {
+  NavigationBar,
+  VoiceoverShowcase,
+  Footer,
+  AnnouncementBanner,
+} from '@/components/sections';
+import { UnifiedHero } from '@/components/unified';
+import {
+  StemmenSection,
+  PrijzenSection,
+  BlogSection,
+  ContactSection,
+} from '@/components/sections/HomepageSections';
 
 export async function generateMetadata() {
-  const payload = await getPayload({ config: configPromise })
-  
+  const payload = await getPayload({ config: configPromise });
+
   const pages = await payload.find({
     collection: 'pages',
     where: {
@@ -21,22 +30,21 @@ export async function generateMetadata() {
       },
     },
     limit: 1,
-  })
+  });
 
-  const page = pages.docs[0] as Page | undefined
+  const page = pages.docs[0] as Page | undefined;
 
   if (!page) {
     return {
       title: '14voices',
       description: 'Professional voice-over services',
-    }
+    };
   }
 
-  const title = page.meta?.title || page.title
-  const description = page.meta?.description || ''
-  const image = page.meta?.image && typeof page.meta.image === 'object' 
-    ? page.meta.image.url 
-    : undefined
+  const title = page.meta?.title || page.title;
+  const description = page.meta?.description || '';
+  const image =
+    page.meta?.image && typeof page.meta.image === 'object' ? page.meta.image.url : undefined;
 
   return {
     title,
@@ -53,12 +61,12 @@ export async function generateMetadata() {
       description: page.openGraph?.description || description,
       images: image ? [image] : [],
     },
-  }
+  };
 }
 
 export default async function HomePage() {
-  const payload = await getPayload({ config: configPromise })
-  
+  const payload = await getPayload({ config: configPromise });
+
   const pages = await payload.find({
     collection: 'pages',
     where: {
@@ -71,14 +79,15 @@ export default async function HomePage() {
     },
     limit: 1,
     depth: 2,
-  })
+  });
 
-  const page = pages.docs[0] as Page | undefined
+  const page = pages.docs[0] as Page | undefined;
 
   // If no home page exists, show our beautiful landing page
   if (!page) {
     return (
       <>
+        <AnnouncementBanner />
         <NavigationBar />
         <UnifiedHero variant="page" />
         <VoiceoverShowcase />
@@ -88,8 +97,8 @@ export default async function HomePage() {
         <ContactSection />
         <Footer />
       </>
-    )
+    );
   }
 
-  return <PageRenderer page={page} />
+  return <PageRenderer page={page} />;
 }

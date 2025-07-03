@@ -1,4 +1,4 @@
-import { NavigationBarClient } from './NavigationBarClient';
+import { NavigationBarEnhanced } from './NavigationBarEnhanced';
 import { getNavigationData, formatNavigation } from '@/lib/navigation';
 
 interface NavItem {
@@ -14,10 +14,9 @@ export async function NavigationBar() {
   const navigationData = await getNavigationData();
   const formattedNav = formatNavigation(navigationData);
 
-  // Default navigation items if no CMS data
+  // Default navigation items with favicon
   const defaultItems = [
-    { label: 'Home', href: '/', type: 'page' },
-    { label: 'Stemmen', href: '/#stemmen', type: 'anchor', isAnchor: true },
+    { label: 'Voiceovers', href: '/#stemmen', type: 'anchor', isAnchor: true },
     { label: 'Prijzen', href: '/#prijzen', type: 'anchor', isAnchor: true },
     { label: 'Blog', href: '/#blog', type: 'anchor', isAnchor: true },
     { label: 'Contact', href: '/#contact', type: 'anchor', isAnchor: true },
@@ -28,5 +27,8 @@ export async function NavigationBar() {
       ? (formattedNav.mainMenu.filter(Boolean) as NavItem[])
       : defaultItems;
 
-  return <NavigationBarClient navItems={navItems} />;
+  // Check if banner is enabled
+  const hasBanner = navigationData?.banner?.enabled || false;
+
+  return <NavigationBarEnhanced navItems={navItems} hasBanner={hasBanner} />;
 }

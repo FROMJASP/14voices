@@ -61,7 +61,7 @@ export default function ForgotPassword() {
         setIsLoading(false);
       }
     },
-    [email, showError]
+    [email]
   );
 
   return (

@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
 const Navigation: CollectionConfig = {
   slug: 'navigation',
@@ -26,12 +26,12 @@ const Navigation: CollectionConfig = {
         if (operation === 'create') {
           const { count } = await args.req.payload.count({
             collection: 'navigation',
-          })
+          });
           if (count > 0) {
-            throw new Error('Only one navigation configuration is allowed')
+            throw new Error('Only one navigation configuration is allowed');
           }
         }
-        return args
+        return args;
       },
     ],
   },
@@ -314,9 +314,117 @@ const Navigation: CollectionConfig = {
             },
           ],
         },
+        {
+          label: 'Announcement Banner',
+          fields: [
+            {
+              name: 'banner',
+              type: 'group',
+              fields: [
+                {
+                  name: 'enabled',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: 'Show Banner',
+                  admin: {
+                    description: 'Toggle the announcement banner on/off',
+                  },
+                },
+                {
+                  name: 'message',
+                  type: 'text',
+                  defaultValue:
+                    'We hebben een nieuwe website, klik hier om meer te lezen wat er is veranderd!',
+                  required: true,
+                  admin: {
+                    description: 'The message to display in the banner',
+                  },
+                },
+                {
+                  name: 'linkText',
+                  type: 'text',
+                  admin: {
+                    description: 'Optional link text (e.g., "Learn more")',
+                  },
+                },
+                {
+                  name: 'linkType',
+                  type: 'select',
+                  options: [
+                    { label: 'No Link', value: 'none' },
+                    { label: 'Page', value: 'page' },
+                    { label: 'Custom URL', value: 'custom' },
+                  ],
+                  defaultValue: 'none',
+                },
+                {
+                  name: 'linkPage',
+                  type: 'relationship',
+                  relationTo: 'pages',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.linkType === 'page',
+                  },
+                },
+                {
+                  name: 'linkUrl',
+                  type: 'text',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.linkType === 'custom',
+                    description: 'Full URL including https://',
+                  },
+                },
+                {
+                  name: 'dismissible',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: 'Allow users to dismiss',
+                  admin: {
+                    description: 'Shows an X button to close the banner',
+                  },
+                },
+                {
+                  name: 'style',
+                  type: 'select',
+                  options: [
+                    { label: 'Gradient', value: 'gradient' },
+                    { label: 'Solid', value: 'solid' },
+                    { label: 'Subtle', value: 'subtle' },
+                  ],
+                  defaultValue: 'gradient',
+                  admin: {
+                    description: 'Visual style of the banner',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Preview',
+          fields: [
+            {
+              name: 'navigationPreview',
+              type: 'ui',
+              admin: {
+                components: {
+                  Field: '/components/admin/NavigationPreview#NavigationPreview',
+                },
+              },
+            },
+            {
+              name: 'footerPreview',
+              type: 'ui',
+              admin: {
+                components: {
+                  Field: '/components/admin/FooterPreview#FooterPreview',
+                },
+              },
+            },
+          ],
+        },
       ],
     },
   ],
-}
+};
 
-export default Navigation
+export default Navigation;
