@@ -1,81 +1,38 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
 export default function Icon() {
-  const [iconUrl, setIconUrl] = React.useState<string | null>(null)
-
-  React.useEffect(() => {
-    const fetchSiteSettings = async () => {
-      try {
-        const response = await fetch('/api/globals/site-settings', {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        if (response.ok) {
-          const contentType = response.headers.get('content-type')
-          if (contentType && contentType.includes('application/json')) {
-            const data = await response.json()
-            if (data?.favicon?.url) {
-              setIconUrl(data.favicon.url)
-            }
-          }
-        }
-      } catch {
-        // Silently fail if settings can't be fetched
-      }
-    }
-
-    fetchSiteSettings()
-  }, [])
-
-  if (!iconUrl) {
-    return (
-      <div
-        style={{
-          width: '25px',
-          height: '25px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          color: 'var(--theme-text)',
-          backgroundColor: 'var(--theme-elevation-50)',
-          borderRadius: '4px'
-        }}
-      >
-        14
-      </div>
-    )
-  }
-
+  // For the breadcrumb icon, we'll use a home icon
+  // This is more intuitive and universally understood
   return (
     <div
       style={{
-        width: '25px',
-        height: '25px',
+        width: '20px',
+        height: '20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'var(--theme-elevation-100)',
-        borderRadius: '4px',
-        position: 'relative'
+        color: 'var(--theme-text)',
+        flexShrink: 0,
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={iconUrl}
-        alt="14voices Icon"
-        style={{
-          width: '17px',
-          height: '17px',
-          objectFit: 'contain',
-          filter: 'brightness(0) invert(1)',
-          flexShrink: 0
-        }}
-      />
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ display: 'block' }}
+      >
+        <path
+          d="M8 1.5L2 6.5V13.5C2 13.7761 2.22386 14 2.5 14H6V10H10V14H13.5C13.7761 14 14 13.7761 14 13.5V6.5L8 1.5Z"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import type { GlobalConfig } from 'payload'
+import type { GlobalConfig } from 'payload';
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -43,7 +43,8 @@ export const SiteSettings: GlobalConfig = {
               type: 'upload',
               relationTo: 'media',
               admin: {
-                description: 'Favicon (16x16 or 32x32 px)',
+                description:
+                  'Upload a custom favicon (recommended: 32x32px SVG or PNG). If no favicon is uploaded, a default dark "14" icon will be used.',
               },
             },
             {
@@ -333,12 +334,18 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: true,
                   label: 'Enable Site Search',
                   admin: {
-                    description: '⚠️ WARNING: Disabling this will remove search functionality from your entire website. Visitors will not be able to search for content.',
+                    description:
+                      '⚠️ WARNING: Disabling this will remove search functionality from your entire website. Visitors will not be able to search for content.',
                     condition: (data, siblingData) => {
-                      if (siblingData?.enableSearch === false && siblingData?.enableSearch !== undefined) {
-                        return confirm('Are you absolutely sure you want to disable site search? This will remove all search functionality from your website.')
+                      if (
+                        siblingData?.enableSearch === false &&
+                        siblingData?.enableSearch !== undefined
+                      ) {
+                        return confirm(
+                          'Are you absolutely sure you want to disable site search? This will remove all search functionality from your website.'
+                        );
                       }
-                      return true
+                      return true;
                     },
                   },
                 },
@@ -348,12 +355,18 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: true,
                   label: 'Enable Blog',
                   admin: {
-                    description: '⚠️ WARNING: Disabling this will hide all blog posts and the blog section from your website. This affects SEO and content visibility.',
+                    description:
+                      '⚠️ WARNING: Disabling this will hide all blog posts and the blog section from your website. This affects SEO and content visibility.',
                     condition: (data, siblingData) => {
-                      if (siblingData?.enableBlog === false && siblingData?.enableBlog !== undefined) {
-                        return confirm('Are you absolutely sure you want to disable the blog? This will hide all blog content from your website.')
+                      if (
+                        siblingData?.enableBlog === false &&
+                        siblingData?.enableBlog !== undefined
+                      ) {
+                        return confirm(
+                          'Are you absolutely sure you want to disable the blog? This will hide all blog content from your website.'
+                        );
                       }
-                      return true
+                      return true;
                     },
                   },
                 },
@@ -366,7 +379,7 @@ export const SiteSettings: GlobalConfig = {
                 {
                   name: 'maintenanceTitle',
                   type: 'text',
-                  defaultValue: "We zijn zo terug!",
+                  defaultValue: 'We zijn zo terug!',
                   label: 'Title',
                   admin: {
                     condition: (data, siblingData) => siblingData?.maintenanceMode === true,
@@ -376,7 +389,8 @@ export const SiteSettings: GlobalConfig = {
                 {
                   name: 'maintenanceMessage',
                   type: 'textarea',
-                  defaultValue: "We voeren momenteel gepland onderhoud uit. We zijn zo weer online.",
+                  defaultValue:
+                    'We voeren momenteel gepland onderhoud uit. We zijn zo weer online.',
                   label: 'Message',
                   admin: {
                     condition: (data, siblingData) => siblingData?.maintenanceMode === true,
@@ -418,4 +432,4 @@ export const SiteSettings: GlobalConfig = {
       ],
     },
   ],
-}
+};

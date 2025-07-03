@@ -185,7 +185,7 @@ export default function BeforeLogin() {
               transition={{ delay: 0.2, duration: 0.6 }}
               style={{ textAlign: 'center', marginBottom: '2rem' }}
             >
-              {logoUrl ? (
+              {logoUrl || '/favicon.svg' ? (
                 <div style={{ marginBottom: '1rem' }}>
                   <div
                     style={{
@@ -203,13 +203,27 @@ export default function BeforeLogin() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={logoUrl}
+                      src={logoUrl || '/favicon.svg'}
                       alt="Fourteen Voices"
                       style={{
                         width: '100%',
                         height: '100%',
                         objectFit: 'contain',
-                        filter: 'brightness(0) invert(1)',
+                      }}
+                      onError={(e) => {
+                        // If both logoUrl and favicon.svg fail, show text fallback
+                        e.currentTarget.style.display = 'none';
+                        const parent = e.currentTarget.parentElement?.parentElement;
+                        if (parent) {
+                          parent.style.display = 'none';
+                          const textFallback = parent.nextElementSibling as HTMLHeadingElement;
+                          if (!textFallback) {
+                            const h1 = document.createElement('h1');
+                            h1.className = 'split-text-logo';
+                            h1.textContent = 'Fourteen Voices';
+                            parent.parentElement?.appendChild(h1);
+                          }
+                        }
                       }}
                     />
                   </div>
