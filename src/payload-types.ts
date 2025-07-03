@@ -70,13 +70,56 @@ export interface User {
   id: string
   email: string
   name?: string
+  avatar?: string | Media
+  avatarURL?: string
+  avatarColor?: string
+  status: 'active' | 'inactive' | 'suspended'
   role: 'admin' | 'user' | 'editor'
+  department?: 'management' | 'production' | 'marketing' | 'finance' | 'support' | 'other'
+  jobTitle?: string
+  phone?: string
+  bio?: string
+  timezone?: string
+  socialLinks?: {
+    linkedin?: string
+    twitter?: string
+    github?: string
+    website?: string
+  }
+  preferredLanguage?: 'nl' | 'en'
   emailPreferences?: {
     unsubscribed?: boolean
     marketing?: boolean
     transactional?: boolean
     updates?: boolean
   }
+  security?: {
+    lastLogin?: string
+    loginCount?: number
+    twoFactorEnabled?: boolean
+    passwordChangedAt?: string
+    loginHistory?: Array<{
+      timestamp: string
+      ipAddress?: string
+      userAgent?: string
+      success?: boolean
+    }>
+  }
+  lastLogin?: string
+  notifications?: {
+    inApp?: boolean
+    push?: boolean
+    sms?: boolean
+  }
+  metadata?: {
+    tags?: Array<{ tag: string }>
+    notes?: string
+    customFields?: Record<string, unknown>
+    createdBy?: string | User
+    updatedBy?: string | User
+  }
+  image?: string
+  initials?: string
   createdAt: string
   updatedAt: string
 }
