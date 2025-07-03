@@ -1,29 +1,29 @@
-import { Payload } from 'payload'
+import { Payload } from 'payload';
 
 interface QueryStats {
-  query: string
-  calls: number
-  totalTime: number
-  meanTime: number
-  rows: number
+  query: string;
+  calls: number;
+  totalTime: number;
+  meanTime: number;
+  rows: number;
 }
 
 interface IndexUsage {
-  tableName: string
-  indexName: string
-  indexScans: number
-  indexSize: string
-  isUnused: boolean
+  tableName: string;
+  indexName: string;
+  indexScans: number;
+  indexSize: string;
+  isUnused: boolean;
 }
 
 interface TableStats {
-  tableName: string
-  rowCount: number
-  tableSize: string
-  indexSize: string
-  totalSize: string
-  lastVacuum: Date | null
-  lastAnalyze: Date | null
+  tableName: string;
+  rowCount: number;
+  tableSize: string;
+  indexSize: string;
+  totalSize: string;
+  lastVacuum: Date | null;
+  lastAnalyze: Date | null;
 }
 
 export class DatabasePerformanceMonitor {
@@ -34,8 +34,8 @@ export class DatabasePerformanceMonitor {
    */
   async getSlowQueries(): Promise<QueryStats[]> {
     // TODO: Implement when Payload v3 supports raw SQL queries
-    console.warn('getSlowQueries not implemented for Payload v3')
-    return []
+    console.warn('getSlowQueries not implemented for Payload v3');
+    return [];
   }
 
   /**
@@ -43,8 +43,8 @@ export class DatabasePerformanceMonitor {
    */
   async getIndexUsage(): Promise<IndexUsage[]> {
     // TODO: Implement when Payload v3 supports raw SQL queries
-    console.warn('getIndexUsage not implemented for Payload v3')
-    return []
+    console.warn('getIndexUsage not implemented for Payload v3');
+    return [];
   }
 
   /**
@@ -52,8 +52,8 @@ export class DatabasePerformanceMonitor {
    */
   async getTableStats(): Promise<TableStats[]> {
     // TODO: Implement when Payload v3 supports raw SQL queries
-    console.warn('getTableStats not implemented for Payload v3')
-    return []
+    console.warn('getTableStats not implemented for Payload v3');
+    return [];
   }
 
   /**
@@ -61,63 +61,64 @@ export class DatabasePerformanceMonitor {
    */
   async getMissingIndexes(): Promise<string[]> {
     // TODO: Implement when Payload v3 supports raw SQL queries
-    console.warn('getMissingIndexes not implemented for Payload v3')
-    return []
+    console.warn('getMissingIndexes not implemented for Payload v3');
+    return [];
   }
 
   /**
    * Analyze query execution plan
    */
-  async explainQuery(): Promise<any[]> {
+  async explainQuery(): Promise<Array<Record<string, unknown>>> {
     // TODO: Implement when Payload v3 supports raw SQL queries
-    console.warn('explainQuery not implemented for Payload v3')
-    return []
+    console.warn('explainQuery not implemented for Payload v3');
+    return [];
   }
 
   /**
    * Get database connection statistics
    */
   async getConnectionStats(): Promise<{
-    current: number
-    max: number
-    idle: number
-    waiting: number
+    current: number;
+    max: number;
+    idle: number;
+    waiting: number;
   }> {
     // TODO: Implement when Payload v3 supports raw SQL queries
-    console.warn('getConnectionStats not implemented for Payload v3')
-    return { current: 0, max: 0, idle: 0, waiting: 0 }
+    console.warn('getConnectionStats not implemented for Payload v3');
+    return { current: 0, max: 0, idle: 0, waiting: 0 };
   }
 
   /**
    * Generate comprehensive performance report
    */
   async generatePerformanceReport(): Promise<{
-    slowQueries: QueryStats[]
-    unusedIndexes: IndexUsage[]
-    largestTables: TableStats[]
-    missingIndexes: string[]
+    slowQueries: QueryStats[];
+    unusedIndexes: IndexUsage[];
+    largestTables: TableStats[];
+    missingIndexes: string[];
     connectionStats: {
-      current: number
-      max: number
-      idle: number
-      waiting: number
-    }
+      current: number;
+      max: number;
+      idle: number;
+      waiting: number;
+    };
   }> {
-    const [slowQueries, indexUsage, tableStats, missingIndexes, connectionStats] = await Promise.all([
-      this.getSlowQueries(),
-      this.getIndexUsage(),
-      this.getTableStats(),
-      this.getMissingIndexes(),
-      this.getConnectionStats(),
-    ])
+    const [slowQueries, indexUsage, tableStats, missingIndexes, connectionStats] =
+      await Promise.all([
+        this.getSlowQueries(),
+        this.getIndexUsage(),
+        this.getTableStats(),
+        this.getMissingIndexes(),
+        this.getConnectionStats(),
+      ]);
 
     return {
       slowQueries,
-      unusedIndexes: indexUsage.filter(idx => idx.isUnused),
+      unusedIndexes: indexUsage.filter((idx) => idx.isUnused),
       largestTables: tableStats.slice(0, 10),
       missingIndexes,
       connectionStats,
-    }
+    };
   }
 }
 
@@ -143,8 +144,8 @@ export const performanceRecommendations = {
     'Monitor autovacuum settings',
     'Configure connection pooling',
   ],
-}
+};
 
 export function createPerformanceMonitor(payload: Payload): DatabasePerformanceMonitor {
-  return new DatabasePerformanceMonitor(payload)
+  return new DatabasePerformanceMonitor(payload);
 }

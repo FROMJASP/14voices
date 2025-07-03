@@ -1,38 +1,41 @@
-import { Payload, Where } from 'payload'
-import { 
-  VoiceoverEntity, 
-  VoiceoverQueryParams, 
+import { Payload, Where } from 'payload';
+import {
+  VoiceoverEntity,
+  VoiceoverQueryParams,
   PaginatedResult,
   VoiceoverNotFoundError,
   RepositoryConnectionError,
   ValidationError,
   DemoEntity,
-  VoiceoverStatus
-} from '../types'
-import { PayloadVoiceover } from '@/types/voiceover'
+  VoiceoverStatus,
+} from '../types';
+import { PayloadVoiceover } from '@/types/voiceover';
 
 export interface IVoiceoverRepository {
-  findAll(params: VoiceoverQueryParams): Promise<PaginatedResult<VoiceoverEntity>>
-  findBySlug(slug: string, locale?: string): Promise<VoiceoverEntity>
-  findById(id: string, locale?: string): Promise<VoiceoverEntity>
-  findByStatus(status: VoiceoverStatus[], params?: VoiceoverQueryParams): Promise<PaginatedResult<VoiceoverEntity>>
-  search(query: string, params?: VoiceoverQueryParams): Promise<PaginatedResult<VoiceoverEntity>>
+  findAll(params: VoiceoverQueryParams): Promise<PaginatedResult<VoiceoverEntity>>;
+  findBySlug(slug: string, locale?: string): Promise<VoiceoverEntity>;
+  findById(id: string, locale?: string): Promise<VoiceoverEntity>;
+  findByStatus(
+    status: VoiceoverStatus[],
+    params?: VoiceoverQueryParams
+  ): Promise<PaginatedResult<VoiceoverEntity>>;
+  search(query: string, params?: VoiceoverQueryParams): Promise<PaginatedResult<VoiceoverEntity>>;
 }
 
 export class PayloadVoiceoverRepository implements IVoiceoverRepository {
-  private cache: Map<string, { data: any; timestamp: number }> = new Map()
-  private readonly CACHE_TTL = 60 * 1000 // 60 seconds
+  private cache: Map<string, { data: unknown; timestamp: number }> = new Map();
+  private readonly CACHE_TTL = 60 * 1000; // 60 seconds
 
   constructor(private payload: Payload) {}
 
   async findAll(params: VoiceoverQueryParams): Promise<PaginatedResult<VoiceoverEntity>> {
-    const cacheKey = `voiceovers:all:${JSON.stringify(params)}`
-    const cached = this.getFromCache(cacheKey)
-    if (cached) return cached
+    const cacheKey = `voiceovers:all:${JSON.stringify(params)}`;
+    const cached = this.getFromCache<PaginatedResult<VoiceoverEntity>>(cacheKey);
+    if (cached) return cached;
 
     try {
-      const whereClause = this.buildWhereClause(params)
-      
+      const whereClause = this.buildWhereClause(params);
+
       const result = await this.payload.find({
         collection: 'voiceovers',
         where: whereClause,
@@ -41,33 +44,33 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         page: params.page || 1,
         limit: Math.min(params.limit || 10, 50),
         sort: params.sort || '-createdAt',
-      })
+      });
 
       const transformed = {
-        docs: result.docs.map(doc => this.transformToEntity(doc as unknown as PayloadVoiceover)),
+        docs: result.docs.map((doc) => this.transformToEntity(doc as unknown as PayloadVoiceover)),
         totalDocs: result.totalDocs,
         totalPages: result.totalPages,
         page: result.page || 1,
         limit: result.limit,
         hasNextPage: result.hasNextPage || false,
         hasPrevPage: result.hasPrevPage || false,
-      }
+      };
 
-      this.setCache(cacheKey, transformed)
-      return transformed
+      this.setCache(cacheKey, transformed);
+      return transformed;
     } catch (error) {
-      throw new RepositoryConnectionError('Failed to fetch voiceovers', error)
+      throw new RepositoryConnectionError('Failed to fetch voiceovers', error);
     }
   }
 
   async findBySlug(slug: string, locale?: string): Promise<VoiceoverEntity> {
     if (!slug) {
-      throw new ValidationError('Slug is required')
+      throw new ValidationError('Slug is required');
     }
 
-    const cacheKey = `voiceover:slug:${slug}:${locale || 'nl'}`
-    const cached = this.getFromCache(cacheKey)
-    if (cached) return cached
+    const cacheKey = `voiceover:slug:${slug}:${locale || 'nl'}`;
+    const cached = this.getFromCache<VoiceoverEntity>(cacheKey);
+    if (cached) return cached;
 
     try {
       const result = await this.payload.find({
@@ -76,29 +79,29 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         depth: 2,
         locale: locale || 'nl',
         limit: 1,
-      })
+      });
 
       if (result.docs.length === 0) {
-        throw new VoiceoverNotFoundError(slug)
+        throw new VoiceoverNotFoundError(slug);
       }
 
-      const entity = this.transformToEntity(result.docs[0] as unknown as PayloadVoiceover)
-      this.setCache(cacheKey, entity)
-      return entity
+      const entity = this.transformToEntity(result.docs[0] as unknown as PayloadVoiceover);
+      this.setCache(cacheKey, entity);
+      return entity;
     } catch (error) {
-      if (error instanceof VoiceoverNotFoundError) throw error
-      throw new RepositoryConnectionError('Failed to fetch voiceover by slug', error)
+      if (error instanceof VoiceoverNotFoundError) throw error;
+      throw new RepositoryConnectionError('Failed to fetch voiceover by slug', error);
     }
   }
 
   async findById(id: string, locale?: string): Promise<VoiceoverEntity> {
     if (!id) {
-      throw new ValidationError('ID is required')
+      throw new ValidationError('ID is required');
     }
 
-    const cacheKey = `voiceover:id:${id}:${locale || 'nl'}`
-    const cached = this.getFromCache(cacheKey)
-    if (cached) return cached
+    const cacheKey = `voiceover:id:${id}:${locale || 'nl'}`;
+    const cached = this.getFromCache<VoiceoverEntity>(cacheKey);
+    if (cached) return cached;
 
     try {
       const result = await this.payload.findByID({
@@ -106,51 +109,51 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         id,
         depth: 2,
         locale: locale || 'nl',
-      })
+      });
 
       if (!result) {
-        throw new VoiceoverNotFoundError(id)
+        throw new VoiceoverNotFoundError(id);
       }
 
-      const entity = this.transformToEntity(result as unknown as PayloadVoiceover)
-      this.setCache(cacheKey, entity)
-      return entity
+      const entity = this.transformToEntity(result as unknown as PayloadVoiceover);
+      this.setCache(cacheKey, entity);
+      return entity;
     } catch (error) {
-      if (error instanceof VoiceoverNotFoundError) throw error
-      throw new RepositoryConnectionError('Failed to fetch voiceover by ID', error)
+      if (error instanceof VoiceoverNotFoundError) throw error;
+      throw new RepositoryConnectionError('Failed to fetch voiceover by ID', error);
     }
   }
 
   async findByStatus(
-    status: VoiceoverStatus[], 
+    status: VoiceoverStatus[],
     params?: VoiceoverQueryParams
   ): Promise<PaginatedResult<VoiceoverEntity>> {
     return this.findAll({
       ...params,
       status,
-    })
+    });
   }
 
-  async search(query: string, params?: VoiceoverQueryParams): Promise<PaginatedResult<VoiceoverEntity>> {
+  async search(
+    query: string,
+    params?: VoiceoverQueryParams
+  ): Promise<PaginatedResult<VoiceoverEntity>> {
     if (!query || query.trim().length < 2) {
-      throw new ValidationError('Search query must be at least 2 characters')
+      throw new ValidationError('Search query must be at least 2 characters');
     }
 
-    const cacheKey = `voiceovers:search:${query}:${JSON.stringify(params)}`
-    const cached = this.getFromCache(cacheKey)
-    if (cached) return cached
+    const cacheKey = `voiceovers:search:${query}:${JSON.stringify(params)}`;
+    const cached = this.getFromCache<PaginatedResult<VoiceoverEntity>>(cacheKey);
+    if (cached) return cached;
 
     try {
       const searchConditions: Where = {
-        or: [
-          { name: { contains: query } },
-          { description: { contains: query } },
-        ] as Where[]
-      }
+        or: [{ name: { contains: query } }, { description: { contains: query } }] as Where[],
+      };
 
-      const whereClause = params?.status 
+      const whereClause = params?.status
         ? { and: [searchConditions, { status: { in: params.status } }] }
-        : searchConditions
+        : searchConditions;
 
       const result = await this.payload.find({
         collection: 'voiceovers',
@@ -160,44 +163,44 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         page: params?.page || 1,
         limit: Math.min(params?.limit || 10, 50),
         sort: params?.sort || '-createdAt',
-      })
+      });
 
       const transformed = {
-        docs: result.docs.map(doc => this.transformToEntity(doc as unknown as PayloadVoiceover)),
+        docs: result.docs.map((doc) => this.transformToEntity(doc as unknown as PayloadVoiceover)),
         totalDocs: result.totalDocs,
         totalPages: result.totalPages,
         page: result.page || 1,
         limit: result.limit,
         hasNextPage: result.hasNextPage || false,
         hasPrevPage: result.hasPrevPage || false,
-      }
+      };
 
-      this.setCache(cacheKey, transformed)
-      return transformed
+      this.setCache(cacheKey, transformed);
+      return transformed;
     } catch (error) {
-      throw new RepositoryConnectionError('Search query failed', error)
+      throw new RepositoryConnectionError('Search query failed', error);
     }
   }
 
-  private buildWhereClause(params: VoiceoverQueryParams): any {
-    const whereClause: any = {}
+  private buildWhereClause(params: VoiceoverQueryParams): Where {
+    const whereClause: Where = {};
 
     if (params.slug) {
-      whereClause.slug = { equals: params.slug }
+      whereClause.slug = { equals: params.slug };
     }
 
     if (params.status && params.status.length > 0) {
-      whereClause.status = { in: params.status }
+      whereClause.status = { in: params.status };
     } else if (!params.slug) {
       // Default to active and more-voices if no specific status requested
-      whereClause.status = { in: ['active', 'more-voices'] }
+      whereClause.status = { in: ['active', 'more-voices'] };
     }
 
-    return whereClause
+    return whereClause;
   }
 
   private transformToEntity(payload: PayloadVoiceover): VoiceoverEntity {
-    const demos: DemoEntity[] = []
+    const demos: DemoEntity[] = [];
 
     // Transform demo reels
     if (payload.fullDemoReel && typeof payload.fullDemoReel === 'object') {
@@ -212,7 +215,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         },
         isPrimary: true,
         voiceoverId: payload.id,
-      })
+      });
     }
 
     if (payload.commercialsDemo && typeof payload.commercialsDemo === 'object') {
@@ -227,7 +230,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         },
         isPrimary: false,
         voiceoverId: payload.id,
-      })
+      });
     }
 
     if (payload.narrativeDemo && typeof payload.narrativeDemo === 'object') {
@@ -242,7 +245,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         },
         isPrimary: false,
         voiceoverId: payload.id,
-      })
+      });
     }
 
     return {
@@ -250,20 +253,21 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
       name: payload.name,
       slug: payload.slug || payload.id,
       bio: payload.description,
-      profilePhoto: payload.profilePhoto && typeof payload.profilePhoto === 'object' 
-        ? {
-            url: payload.profilePhoto.url || '',
-            alt: payload.name,
-          }
-        : undefined,
+      profilePhoto:
+        payload.profilePhoto && typeof payload.profilePhoto === 'object'
+          ? {
+              url: payload.profilePhoto.url || '',
+              alt: payload.name,
+            }
+          : undefined,
       demos,
       status: payload.status,
       group: payload.group && typeof payload.group === 'object' ? payload.group : undefined,
       styleTags: payload.styleTags,
-      availability: payload.availability 
+      availability: payload.availability
         ? {
             isAvailable: payload.availability.isAvailable,
-            unavailableFrom: payload.availability.unavailableFrom 
+            unavailableFrom: payload.availability.unavailableFrom
               ? new Date(payload.availability.unavailableFrom)
               : undefined,
             unavailableUntil: payload.availability.unavailableUntil
@@ -273,38 +277,38 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         : undefined,
       createdAt: new Date(payload.createdAt),
       updatedAt: new Date(payload.updatedAt),
-    }
+    };
   }
 
-  private getFromCache(key: string): any | null {
-    const cached = this.cache.get(key)
-    if (!cached) return null
+  private getFromCache<T>(key: string): T | null {
+    const cached = this.cache.get(key);
+    if (!cached) return null;
 
-    const isExpired = Date.now() - cached.timestamp > this.CACHE_TTL
+    const isExpired = Date.now() - cached.timestamp > this.CACHE_TTL;
     if (isExpired) {
-      this.cache.delete(key)
-      return null
+      this.cache.delete(key);
+      return null;
     }
 
-    return cached.data
+    return cached.data as T;
   }
 
-  private setCache(key: string, data: any): void {
-    this.cache.set(key, { data, timestamp: Date.now() })
+  private setCache<T>(key: string, data: T): void {
+    this.cache.set(key, { data, timestamp: Date.now() });
 
     // Cleanup old cache entries
     if (this.cache.size > 100) {
-      const entries = Array.from(this.cache.entries())
-      entries.sort((a, b) => a[1].timestamp - b[1].timestamp)
-      
+      const entries = Array.from(this.cache.entries());
+      entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+
       // Remove oldest 20 entries
       for (let i = 0; i < 20; i++) {
-        this.cache.delete(entries[i][0])
+        this.cache.delete(entries[i][0]);
       }
     }
   }
 
   clearCache(): void {
-    this.cache.clear()
+    this.cache.clear();
   }
 }

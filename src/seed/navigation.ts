@@ -1,4 +1,4 @@
-import type { Payload } from 'payload'
+import type { Payload } from 'payload';
 
 export async function seedNavigation(payload: Payload) {
   try {
@@ -6,11 +6,11 @@ export async function seedNavigation(payload: Payload) {
     const existingNavigation = await payload.find({
       collection: 'navigation',
       limit: 1,
-    })
+    });
 
     if (existingNavigation.docs.length > 0) {
-      console.log('ℹ️  Navigation already exists, skipping seed')
-      return existingNavigation.docs[0]
+      console.log('ℹ️  Navigation already exists, skipping seed');
+      return existingNavigation.docs[0];
     }
 
     // Get some pages to link to
@@ -21,11 +21,17 @@ export async function seedNavigation(payload: Payload) {
           equals: 'published',
         },
       },
-    })
+    });
 
-    const homePage = pages.docs.find((page) => (page as any).slug === 'home')
-    const aboutPage = pages.docs.find((page) => (page as any).slug === 'about')
-    const contactPage = pages.docs.find((page) => (page as any).slug === 'contact')
+    const homePage = pages.docs.find(
+      (page) => (page as unknown as { slug: string }).slug === 'home'
+    );
+    const aboutPage = pages.docs.find(
+      (page) => (page as unknown as { slug: string }).slug === 'about'
+    );
+    const contactPage = pages.docs.find(
+      (page) => (page as unknown as { slug: string }).slug === 'contact'
+    );
 
     // Create navigation
     const navigation = await payload.create({
@@ -160,11 +166,15 @@ export async function seedNavigation(payload: Payload) {
           legalLinks: [
             {
               label: 'Privacy Policy',
-              page: pages.docs.find((page) => (page as any).slug === 'privacy-policy')?.id,
+              page: pages.docs.find(
+                (page) => (page as unknown as { slug: string }).slug === 'privacy-policy'
+              )?.id,
             },
             {
               label: 'Algemene Voorwaarden',
-              page: pages.docs.find((page) => (page as any).slug === 'terms')?.id,
+              page: pages.docs.find(
+                (page) => (page as unknown as { slug: string }).slug === 'terms'
+              )?.id,
             },
           ],
         },
@@ -187,12 +197,12 @@ export async function seedNavigation(payload: Payload) {
           ],
         },
       },
-    })
+    });
 
-    console.log('✅ Navigation created successfully')
-    return navigation
+    console.log('✅ Navigation created successfully');
+    return navigation;
   } catch (error) {
-    console.error('❌ Error creating navigation:', error)
-    throw error
+    console.error('❌ Error creating navigation:', error);
+    throw error;
   }
 }

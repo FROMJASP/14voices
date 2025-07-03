@@ -1,16 +1,94 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { ChevronUp, Mail, Phone, MapPin, Clock, Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import {
+  ChevronUp,
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+} from 'lucide-react';
 
 interface FooterProps {
-  config?: any
+  config?: {
+    style?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    showNewsletterSignup?: boolean;
+    newsletterTitle?: string;
+    newsletterDescription?: string;
+    copyrightText?: string;
+    showSocialLinks?: boolean;
+    showContactInfo?: boolean;
+    showBusinessHours?: boolean;
+    showQuickLinks?: boolean;
+    quickLinks?: Array<{ label: string; url: string }>;
+    customContent?: unknown;
+    showLogo?: boolean;
+    description?: string;
+    legalLinks?: Array<{ label: string; url: string; page?: { slug: string } }>;
+    contactDisplay?: {
+      showEmail?: boolean;
+      showPhone?: boolean;
+      showAddress?: boolean;
+      showHours?: boolean;
+    };
+    navigationColumns?: Array<{
+      title: string;
+      links?: Array<{
+        label: string;
+        url: string;
+        page?: { slug: string };
+        openInNewTab?: boolean;
+      }>;
+    }>;
+    contact?: {
+      email?: string;
+      phone?: string;
+    };
+    newsletter?: {
+      enabled?: boolean;
+      title?: string;
+      description?: string;
+      placeholder?: string;
+      buttonText?: string;
+    };
+    borderTop?: boolean;
+    borderColor?: string;
+    padding?: string;
+    showBackToTop?: boolean;
+  };
 }
 
 export function Footer({ config }: FooterProps) {
-  const [siteSettings, setSiteSettings] = useState<any>(null)
-  const [showBackToTop, setShowBackToTop] = useState(false)
+  const [siteSettings, setSiteSettings] = useState<{
+    companyName?: string;
+    tagline?: string;
+    contactEmail?: string;
+    contactPhone?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      state?: string;
+      postalCode?: string;
+      country?: string;
+    };
+    businessHours?: Array<{ day: string; hours: string }>;
+    socialMedia?: {
+      facebook?: string;
+      twitter?: string;
+      instagram?: string;
+      linkedin?: string;
+      youtube?: string;
+    };
+  } | null>(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     async function fetchSiteSettings() {
@@ -19,67 +97,68 @@ export function Footer({ config }: FooterProps) {
           headers: {
             'Content-Type': 'application/json',
           },
-        })
+        });
         if (response.ok) {
-          const contentType = response.headers.get('content-type')
+          const contentType = response.headers.get('content-type');
           if (contentType && contentType.includes('application/json')) {
-            const data = await response.json()
-            setSiteSettings(data)
+            const data = await response.json();
+            setSiteSettings(data);
           } else {
-            console.error('Response is not JSON:', contentType)
+            console.error('Response is not JSON:', contentType);
           }
         }
       } catch (error) {
-        console.error('Failed to fetch site settings:', error)
+        console.error('Failed to fetch site settings:', error);
         // Log more details about the error
         if (error instanceof Error) {
-          console.error('Error details:', error.message)
+          console.error('Error details:', error.message);
         }
       }
     }
 
-    fetchSiteSettings()
-  }, [])
+    fetchSiteSettings();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowBackToTop(window.pageYOffset > 300)
-    }
+      setShowBackToTop(window.pageYOffset > 300);
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (!config || config.style === 'hidden') {
-    return null
+    return null;
   }
 
-  const footerStyle = config.style || 'multi-column'
-  
+  const footerStyle = config.style || 'multi-column';
+
   // Replace placeholders in copyright text
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
   const copyrightText = (config.copyrightText || '© {year} {siteName}. All rights reserved.')
     .replace('{year}', currentYear.toString())
-    .replace('{siteName}', siteSettings?.siteName || '14voices')
+    .replace('{siteName}', siteSettings?.companyName || '14voices');
 
   // Social media icons mapping
-  const socialIcons: Record<string, React.ComponentType<any>> = {
+  const socialIcons: Record<string, React.ComponentType<{ className?: string }>> = {
     facebook: Facebook,
     twitter: Twitter,
     instagram: Instagram,
     linkedin: Linkedin,
     youtube: Youtube,
-  }
+  };
 
   // Get active social links
-  const socialLinks = siteSettings?.socialLinks ? 
-    Object.entries(siteSettings.socialLinks)
-      .filter(([, url]) => url)
-      .map(([platform, url]) => ({ platform, url })) : []
+  const socialLinks = siteSettings?.socialMedia
+    ? Object.entries(siteSettings.socialMedia)
+        .filter(([, url]) => url)
+        .map(([platform, url]) => ({ platform, url }))
+    : [];
 
   // Render different footer styles
   const renderFooter = () => {
@@ -91,14 +170,14 @@ export function Footer({ config }: FooterProps) {
               <div className="flex items-center gap-4">
                 {config.showLogo && (
                   <Link href="/" className="font-bold text-xl">
-                    {siteSettings?.siteName || '14voices'}
+                    {siteSettings?.companyName || '14voices'}
                   </Link>
                 )}
                 <span className="text-sm text-muted-foreground">{copyrightText}</span>
               </div>
               {config.legalLinks && config.legalLinks.length > 0 && (
                 <div className="flex items-center gap-4">
-                  {config.legalLinks.map((link: any, index: number) => (
+                  {config.legalLinks.map((link, index) => (
                     <Link
                       key={index}
                       href={link.page?.slug ? `/${link.page.slug}` : '#'}
@@ -111,14 +190,16 @@ export function Footer({ config }: FooterProps) {
               )}
             </div>
           </div>
-        )
+        );
 
       case 'centered':
         return (
           <div className="py-12 text-center">
             {config.showLogo && (
               <Link href="/" className="inline-block mb-6">
-                <span className="font-bold text-2xl">{siteSettings?.siteName || '14voices'}</span>
+                <span className="font-bold text-2xl">
+                  {siteSettings?.companyName || '14voices'}
+                </span>
               </Link>
             )}
             {config.description && (
@@ -127,7 +208,7 @@ export function Footer({ config }: FooterProps) {
             {socialLinks.length > 0 && config.showSocialLinks && (
               <div className="flex justify-center gap-4 mb-8">
                 {socialLinks.map(({ platform, url }) => {
-                  const Icon = socialIcons[platform]
+                  const Icon = socialIcons[platform];
                   return Icon ? (
                     <a
                       key={platform}
@@ -138,7 +219,7 @@ export function Footer({ config }: FooterProps) {
                     >
                       <Icon className="w-5 h-5" />
                     </a>
-                  ) : null
+                  ) : null;
                 })}
               </div>
             )}
@@ -146,7 +227,7 @@ export function Footer({ config }: FooterProps) {
               <p className="text-sm text-muted-foreground">{copyrightText}</p>
             </div>
           </div>
-        )
+        );
 
       case 'split':
         return (
@@ -155,41 +236,50 @@ export function Footer({ config }: FooterProps) {
               <div>
                 {config.showLogo && (
                   <Link href="/" className="inline-block mb-4">
-                    <span className="font-bold text-2xl">{siteSettings?.siteName || '14voices'}</span>
+                    <span className="font-bold text-2xl">
+                      {siteSettings?.companyName || '14voices'}
+                    </span>
                   </Link>
                 )}
                 {config.description && (
                   <p className="text-muted-foreground mb-6">{config.description}</p>
                 )}
-                {config.showContactInfo && siteSettings?.contact && (
-                  <div className="space-y-3">
-                    {config.contactDisplay?.showEmail && siteSettings.contact.email && (
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-muted-foreground" />
-                        <a href={`mailto:${siteSettings.contact.email}`} className="text-sm hover:underline">
-                          {siteSettings.contact.email}
-                        </a>
-                      </div>
-                    )}
-                    {config.contactDisplay?.showPhone && siteSettings.contact.phone && (
-                      <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-muted-foreground" />
-                        <a href={`tel:${siteSettings.contact.phone}`} className="text-sm hover:underline">
-                          {siteSettings.contact.phone}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                )}
+                {config.showContactInfo &&
+                  (siteSettings?.contactEmail || siteSettings?.contactPhone) && (
+                    <div className="space-y-3">
+                      {config.contactDisplay?.showEmail && siteSettings.contactEmail && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-muted-foreground" />
+                          <a
+                            href={`mailto:${siteSettings.contactEmail}`}
+                            className="text-sm hover:underline"
+                          >
+                            {siteSettings.contactEmail}
+                          </a>
+                        </div>
+                      )}
+                      {config.contactDisplay?.showPhone && siteSettings.contactPhone && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-muted-foreground" />
+                          <a
+                            href={`tel:${siteSettings.contactPhone}`}
+                            className="text-sm hover:underline"
+                          >
+                            {siteSettings.contactPhone}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
               </div>
               <div>
                 {config.navigationColumns && config.navigationColumns.length > 0 && (
                   <div className="grid grid-cols-2 gap-8">
-                    {config.navigationColumns.slice(0, 2).map((column: any, index: number) => (
+                    {config.navigationColumns.slice(0, 2).map((column, index) => (
                       <div key={index}>
                         <h3 className="font-semibold mb-4">{column.title}</h3>
                         <ul className="space-y-2">
-                          {column.links?.map((link: any, linkIndex: number) => (
+                          {column.links?.map((link, linkIndex) => (
                             <li key={linkIndex}>
                               <Link
                                 href={link.page?.slug ? `/${link.page.slug}` : link.url || '#'}
@@ -212,7 +302,7 @@ export function Footer({ config }: FooterProps) {
                 <p className="text-sm text-muted-foreground">{copyrightText}</p>
                 {config.legalLinks && config.legalLinks.length > 0 && (
                   <div className="flex items-center gap-4">
-                    {config.legalLinks.map((link: any, index: number) => (
+                    {config.legalLinks.map((link, index) => (
                       <Link
                         key={index}
                         href={link.page?.slug ? `/${link.page.slug}` : '#'}
@@ -226,7 +316,7 @@ export function Footer({ config }: FooterProps) {
               </div>
             </div>
           </div>
-        )
+        );
 
       case 'multi-column':
       default:
@@ -237,7 +327,9 @@ export function Footer({ config }: FooterProps) {
               <div className="lg:col-span-4">
                 {config.showLogo && (
                   <Link href="/" className="inline-block mb-4">
-                    <span className="font-bold text-2xl">{siteSettings?.siteName || '14voices'}</span>
+                    <span className="font-bold text-2xl">
+                      {siteSettings?.companyName || '14voices'}
+                    </span>
                   </Link>
                 )}
                 {config.description && (
@@ -246,7 +338,7 @@ export function Footer({ config }: FooterProps) {
                 {socialLinks.length > 0 && config.showSocialLinks && (
                   <div className="flex gap-3">
                     {socialLinks.map(({ platform, url }) => {
-                      const Icon = socialIcons[platform]
+                      const Icon = socialIcons[platform];
                       return Icon ? (
                         <a
                           key={platform}
@@ -257,7 +349,7 @@ export function Footer({ config }: FooterProps) {
                         >
                           <Icon className="w-5 h-5" />
                         </a>
-                      ) : null
+                      ) : null;
                     })}
                   </div>
                 )}
@@ -266,11 +358,11 @@ export function Footer({ config }: FooterProps) {
               {/* Navigation Columns */}
               {config.navigationColumns && config.navigationColumns.length > 0 && (
                 <>
-                  {config.navigationColumns.map((column: any, index: number) => (
+                  {config.navigationColumns.map((column, index) => (
                     <div key={index} className="lg:col-span-2">
                       <h3 className="font-semibold mb-4">{column.title}</h3>
                       <ul className="space-y-2">
-                        {column.links?.map((link: any, linkIndex: number) => (
+                        {column.links?.map((link, linkIndex) => (
                           <li key={linkIndex}>
                             <Link
                               href={link.page?.slug ? `/${link.page.slug}` : link.url || '#'}
@@ -288,58 +380,79 @@ export function Footer({ config }: FooterProps) {
               )}
 
               {/* Contact Info */}
-              {config.showContactInfo && siteSettings?.contact && (
-                <div className="lg:col-span-3">
-                  <h3 className="font-semibold mb-4">Contact Us</h3>
-                  <div className="space-y-3">
-                    {config.contactDisplay?.showEmail && siteSettings.contact.email && (
-                      <div className="flex items-start gap-2">
-                        <Mail className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <a href={`mailto:${siteSettings.contact.email}`} className="text-sm hover:underline">
-                          {siteSettings.contact.email}
-                        </a>
-                      </div>
-                    )}
-                    {config.contactDisplay?.showPhone && siteSettings.contact.phone && (
-                      <div className="flex items-start gap-2">
-                        <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <a href={`tel:${siteSettings.contact.phone}`} className="text-sm hover:underline">
-                          {siteSettings.contact.phone}
-                        </a>
-                      </div>
-                    )}
-                    {config.contactDisplay?.showAddress && siteSettings.contact.address && (
-                      <div className="flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <div className="text-sm">
-                          {siteSettings.contact.address.street && <div>{siteSettings.contact.address.street}</div>}
-                          {(siteSettings.contact.address.city || siteSettings.contact.address.state || siteSettings.contact.address.zip) && (
-                            <div>
-                              {siteSettings.contact.address.city}
-                              {siteSettings.contact.address.city && siteSettings.contact.address.state && ', '}
-                              {siteSettings.contact.address.state} {siteSettings.contact.address.zip}
-                            </div>
-                          )}
-                          {siteSettings.contact.address.country && <div>{siteSettings.contact.address.country}</div>}
+              {config.showContactInfo &&
+                (siteSettings?.contactEmail || siteSettings?.contactPhone) && (
+                  <div className="lg:col-span-3">
+                    <h3 className="font-semibold mb-4">Contact Us</h3>
+                    <div className="space-y-3">
+                      {config.contactDisplay?.showEmail && siteSettings.contactEmail && (
+                        <div className="flex items-start gap-2">
+                          <Mail className="w-4 h-4 text-muted-foreground mt-0.5" />
+                          <a
+                            href={`mailto:${siteSettings.contactEmail}`}
+                            className="text-sm hover:underline"
+                          >
+                            {siteSettings.contactEmail}
+                          </a>
                         </div>
-                      </div>
-                    )}
-                    {config.contactDisplay?.showHours && siteSettings.contact.hours && (
-                      <div className="flex items-start gap-2">
-                        <Clock className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <div className="text-sm whitespace-pre-line">{siteSettings.contact.hours}</div>
-                      </div>
-                    )}
+                      )}
+                      {config.contactDisplay?.showPhone && siteSettings.contactPhone && (
+                        <div className="flex items-start gap-2">
+                          <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
+                          <a
+                            href={`tel:${siteSettings.contactPhone}`}
+                            className="text-sm hover:underline"
+                          >
+                            {siteSettings.contactPhone}
+                          </a>
+                        </div>
+                      )}
+                      {config.contactDisplay?.showAddress && siteSettings.address && (
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                          <div className="text-sm">
+                            {siteSettings.address.street && (
+                              <div>{siteSettings.address.street}</div>
+                            )}
+                            {(siteSettings.address.city ||
+                              siteSettings.address.state ||
+                              siteSettings.address.postalCode) && (
+                              <div>
+                                {siteSettings.address.city}
+                                {siteSettings.address.city && siteSettings.address.state && ', '}
+                                {siteSettings.address.state} {siteSettings.address.postalCode}
+                              </div>
+                            )}
+                            {siteSettings.address.country && (
+                              <div>{siteSettings.address.country}</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      {config.contactDisplay?.showHours && siteSettings.businessHours && (
+                        <div className="flex items-start gap-2">
+                          <Clock className="w-4 h-4 text-muted-foreground mt-0.5" />
+                          <div className="text-sm">
+                            {siteSettings.businessHours?.map((item, index) => (
+                              <div key={index}>
+                                <span className="font-medium">{item.day}:</span> {item.hours}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Newsletter */}
               {config.newsletter?.enabled && (
                 <div className="lg:col-span-3">
                   <h3 className="font-semibold mb-4">{config.newsletter.title}</h3>
                   {config.newsletter.description && (
-                    <p className="text-sm text-muted-foreground mb-4">{config.newsletter.description}</p>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {config.newsletter.description}
+                    </p>
                   )}
                   <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
                     <input
@@ -365,7 +478,7 @@ export function Footer({ config }: FooterProps) {
                 <p className="text-sm text-muted-foreground">{copyrightText}</p>
                 {config.legalLinks && config.legalLinks.length > 0 && (
                   <div className="flex items-center gap-4">
-                    {config.legalLinks.map((link: any, index: number) => (
+                    {config.legalLinks.map((link, index) => (
                       <Link
                         key={index}
                         href={link.page?.slug ? `/${link.page.slug}` : '#'}
@@ -379,9 +492,9 @@ export function Footer({ config }: FooterProps) {
               </div>
             </div>
           </div>
-        )
+        );
     }
-  }
+  };
 
   // Apply custom styling if provided
   const customStyles = {
@@ -389,25 +502,20 @@ export function Footer({ config }: FooterProps) {
     color: config.textColor,
     borderTopWidth: config.borderTop ? '1px' : '0',
     borderTopColor: config.borderColor,
-  }
+  };
 
   const paddingClasses: Record<string, string> = {
     small: 'py-6',
     medium: 'py-12',
     large: 'py-16',
-  }
+  };
 
-  const paddingClass = paddingClasses[config.padding as string] || paddingClasses.medium
+  const paddingClass = paddingClasses[config.padding as string] || paddingClasses.medium;
 
   return (
     <>
-      <footer 
-        className={`footer footer--${footerStyle} ${paddingClass}`}
-        style={customStyles}
-      >
-        <div className="container mx-auto px-4">
-          {renderFooter()}
-        </div>
+      <footer className={`footer footer--${footerStyle} ${paddingClass}`} style={customStyles}>
+        <div className="container mx-auto px-4">{renderFooter()}</div>
       </footer>
 
       {/* Back to Top Button */}
@@ -421,5 +529,5 @@ export function Footer({ config }: FooterProps) {
         </button>
       )}
     </>
-  )
+  );
 }

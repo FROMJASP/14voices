@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as Sentry from '@sentry/nextjs';
-import { User } from '@/types';
+import { User } from '@/payload-types';
 
 /**
  * Hook to set user context in Sentry

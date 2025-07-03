@@ -1,24 +1,41 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { MaintenanceMode } from './MaintenanceMode'
+import { useEffect, useState } from 'react';
+import { MaintenanceMode } from './MaintenanceMode';
 
 interface MaintenanceModeWrapperProps {
-  children: React.ReactNode
-  forceMaintenanceMode?: boolean
+  children: React.ReactNode;
+  forceMaintenanceMode?: boolean;
 }
 
-export function MaintenanceModeWrapper({ children, forceMaintenanceMode = false }: MaintenanceModeWrapperProps) {
-  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false)
-  const [maintenanceData, setMaintenanceData] = useState<any>({})
-  const [isLoading, setIsLoading] = useState(true)
+export function MaintenanceModeWrapper({
+  children,
+  forceMaintenanceMode = false,
+}: MaintenanceModeWrapperProps) {
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const [maintenanceData, setMaintenanceData] = useState<{
+    title?: string;
+    message?: string;
+    expectedDuration?: string;
+    showContactInfo?: boolean;
+    features?: {
+      maintenanceTitle?: string;
+      maintenanceMessage?: string;
+      maintenanceContactLabel?: string;
+      showContactEmail?: boolean;
+    };
+    contact?: {
+      email?: string;
+    };
+  }>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function checkMaintenanceMode() {
       if (forceMaintenanceMode) {
-        setIsMaintenanceMode(true)
-        setIsLoading(false)
-        return
+        setIsMaintenanceMode(true);
+        setIsLoading(false);
+        return;
       }
 
       try {
@@ -26,50 +43,50 @@ export function MaintenanceModeWrapper({ children, forceMaintenanceMode = false 
           headers: {
             'Content-Type': 'application/json',
           },
-        })
+        });
         if (response.ok) {
-          const contentType = response.headers.get('content-type')
+          const contentType = response.headers.get('content-type');
           if (contentType && contentType.includes('application/json')) {
-            const data = await response.json()
-            const maintenanceEnabled = data?.features?.maintenanceMode || false
-            
-            setIsMaintenanceMode(maintenanceEnabled)
-            setMaintenanceData(data)
+            const data = await response.json();
+            const maintenanceEnabled = data?.features?.maintenanceMode || false;
+
+            setIsMaintenanceMode(maintenanceEnabled);
+            setMaintenanceData(data);
           } else {
-            console.error('Response is not JSON:', contentType)
+            console.error('Response is not JSON:', contentType);
           }
         }
       } catch (error) {
-        console.error('Failed to check maintenance mode:', error)
+        console.error('Failed to check maintenance mode:', error);
         // Log more details about the error
         if (error instanceof Error) {
-          console.error('Error details:', error.message)
+          console.error('Error details:', error.message);
         }
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
 
-    checkMaintenanceMode()
-  }, [forceMaintenanceMode])
+    checkMaintenanceMode();
+  }, [forceMaintenanceMode]);
 
   // Don't render anything on server during initial load
   // This prevents hydration mismatches
   if (isLoading) {
-    return null
+    return null;
   }
 
   if (isMaintenanceMode) {
     return (
-      <MaintenanceMode 
+      <MaintenanceMode
         title={maintenanceData?.features?.maintenanceTitle}
         message={maintenanceData?.features?.maintenanceMessage}
         contactLabel={maintenanceData?.features?.maintenanceContactLabel}
         contactEmail={maintenanceData?.contact?.email}
         showContactEmail={maintenanceData?.features?.showContactEmail}
       />
-    )
+    );
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }

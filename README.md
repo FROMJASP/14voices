@@ -9,10 +9,14 @@ A modern web application built with Next.js 15, Payload CMS 3.0, and PostgreSQL.
 - **Database**: PostgreSQL (via @payloadcms/db-postgres)
 - **Styling**: Tailwind CSS v4
 - **Authentication**: Built-in Payload auth
-- **Media Storage**: Local filesystem (Sharp for image processing)
+- **Media Storage**: Vercel Blob
 - **Animation**: Motion (Framer Motion v12)
 - **Email**: Resend API
 - **TypeScript**: v5 with strict mode
+- **Error Monitoring**: Sentry with Discord alerts
+- **Testing**: Playwright (E2E) & Vitest (Unit)
+- **Code Quality**: ESLint, Prettier, Husky
+- **Package Manager**: Bun (required)
 
 ## Features
 
@@ -28,24 +32,27 @@ A modern web application built with Next.js 15, Payload CMS 3.0, and PostgreSQL.
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - PostgreSQL database (local or cloud)
-- bun (recommended) or npm
+- Bun package manager (required, not npm/yarn)
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/14voices.git
 cd 14voices
 ```
 
 2. Install dependencies:
+
 ```bash
 bun install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 ```
@@ -53,6 +60,7 @@ cp .env.example .env.local
 4. Update `.env.local` with your database credentials and Payload secret.
 
 5. Run the development server:
+
 ```bash
 bun dev
 ```
