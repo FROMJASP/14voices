@@ -51,6 +51,8 @@ cd 14voices
 bun install
 ```
 
+**Note**: The postinstall script automatically installs platform-specific dependencies (Sharp and Tailwind CSS oxide) for Linux/Vercel deployments.
+
 3. Set up environment variables:
 
 ```bash
@@ -104,6 +106,15 @@ bun start
 
 # Run linting
 bun run lint
+
+# Run type checking
+bun run typecheck
+
+# Generate Payload types (after schema changes)
+bun payload generate:types
+
+# Generate import map (after adding custom components)
+bun payload generate:importmap
 ```
 
 ## Deployment

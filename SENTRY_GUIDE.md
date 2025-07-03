@@ -149,6 +149,20 @@ Before deploying:
 
 ## 🔧 Troubleshooting
 
+### Build warning about `onRequestError` hook?
+
+This is a known issue with Sentry's build-time detection. If you see:
+
+```
+[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file
+```
+
+The warning can be safely ignored if:
+
+- Your `instrumentation.ts` exports the `onRequestError` function
+- The function properly calls `captureRequestError`
+- Error tracking works correctly at runtime
+
 ### Errors not appearing in Sentry?
 
 1. Check browser console for CSP errors
