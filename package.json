@@ -18,7 +18,12 @@
     "test": "vitest",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "prepare": "husky",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.0.0-beta.135",
@@ -60,6 +65,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.53.2",
+    "@sentry/nextjs": "^9.34.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -70,7 +77,10 @@
     "dotenv": "^17.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5",
     "vitest": "^3.2.4"

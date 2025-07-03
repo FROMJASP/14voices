@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+.next
+.turbo
+dist
+build
+
+# Environment
+.env*
+!.env.example
+
+# Generated files
+*.tsbuildinfo
+coverage
+.vercel
+.cache
+
+# Payload
+payload-types.ts
+importmap.js
+
+# Locks
+bun.lockb
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

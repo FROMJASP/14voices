@@ -45,7 +45,13 @@ export const securityConfig = {
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
-    'connect-src': ["'self'", 'https://api.resend.com', 'wss:'],
+    'connect-src': [
+      "'self'",
+      'https://api.resend.com',
+      'https://*.ingest.sentry.io',
+      'https://*.ingest.de.sentry.io',
+      'wss:',
+    ],
     'frame-ancestors': ["'none'"],
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
@@ -118,12 +124,7 @@ export const securityConfig = {
 
   // Blocked patterns
   blockedPatterns: {
-    userAgents: [
-      /bot/i,
-      /crawler/i,
-      /spider/i,
-      /scraper/i,
-    ],
+    userAgents: [/bot/i, /crawler/i, /spider/i, /scraper/i],
     paths: [
       '/.env',
       '/.git',
@@ -148,13 +149,13 @@ export const securityConfig = {
       'onload=',
     ],
   },
-}
+};
 
 /**
  * Get rate limit configuration for a specific endpoint type
  */
 export function getRateLimitConfig(type: keyof typeof securityConfig.rateLimits) {
-  return securityConfig.rateLimits[type] || securityConfig.rateLimits.public
+  return securityConfig.rateLimits[type] || securityConfig.rateLimits.public;
 }
 
 /**
@@ -163,41 +164,39 @@ export function getRateLimitConfig(type: keyof typeof securityConfig.rateLimits)
 export function buildCSPHeader(): string {
   return Object.entries(securityConfig.csp)
     .map(([directive, values]) => `${directive} ${values.join(' ')}`)
-    .join('; ')
+    .join('; ');
 }
 
 /**
  * Check if a path is blocked
  */
 export function isBlockedPath(path: string): boolean {
-  return securityConfig.blockedPatterns.paths.some(pattern => 
+  return securityConfig.blockedPatterns.paths.some((pattern) =>
     path.toLowerCase().includes(pattern.toLowerCase())
-  )
+  );
 }
 
 /**
  * Check if a user agent is blocked
  */
 export function isBlockedUserAgent(userAgent: string): boolean {
-  return securityConfig.blockedPatterns.userAgents.some(pattern =>
-    pattern.test(userAgent)
-  )
+  return securityConfig.blockedPatterns.userAgents.some((pattern) => pattern.test(userAgent));
 }
 
 /**
  * Sanitize user input by removing potentially dangerous patterns
  */
 export function sanitizeInput(input: string): string {
-  let sanitized = input
-  
+  let sanitized = input;
+
   // Remove SQL injection patterns
-  securityConfig.blockedPatterns.queryParams.forEach(pattern => {
-    const regex = new RegExp(pattern, 'gi')
-    sanitized = sanitized.replace(regex, '')
-  })
-  
+  securityConfig.blockedPatterns.queryParams.forEach((pattern) => {
+    const regex = new RegExp(pattern, 'gi');
+    sanitized = sanitized.replace(regex, '');
+  });
+
   // Limit length
-  sanitized = sanitized.slice(0, securityConfig.validation.maxStringLength)
-  
-  return sanitized.trim()
+  sanitized = sanitized.slice(0, securityConfig.validation.maxStringLength);
+
+  return sanitized.trim();
 }

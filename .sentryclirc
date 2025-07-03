@@ -1,0 +1,7 @@
+[defaults]
+url=https://sentry.io/
+org=fromjasp
+project=14voices
+
+[auth]
+token=SENTRY_AUTH_TOKEN

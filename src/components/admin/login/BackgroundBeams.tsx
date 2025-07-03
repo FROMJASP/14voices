@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { motion } from 'framer-motion'
+import React from 'react';
+import { motion } from 'framer-motion';
 
 export const BackgroundBeams = React.memo(() => {
   const paths = [
@@ -15,7 +15,7 @@ export const BackgroundBeams = React.memo(() => {
     'M-331 -245C-331 -245 -263 160 201 287C665 414 733 819 733 819',
     'M-324 -253C-324 -253 -256 152 208 279C672 406 740 811 740 811',
     'M-317 -261C-317 -261 -249 144 215 271C679 398 747 803 747 803',
-  ]
+  ];
 
   return (
     <div className="background-beams-container">
@@ -57,17 +57,18 @@ export const BackgroundBeams = React.memo(() => {
               opacity: [0, 1, 1, 0],
             }}
             transition={{
-              duration: 8,
-              delay: index * 0.5,
+              duration: 12,
+              delay: index * 0.8,
               repeat: Infinity,
               ease: 'linear',
+              repeatDelay: 2,
             }}
           />
         ))}
       </svg>
       <div className="background-radial-gradient" />
     </div>
-  )
-})
+  );
+});
 
-BackgroundBeams.displayName = 'BackgroundBeams'
+BackgroundBeams.displayName = 'BackgroundBeams';
