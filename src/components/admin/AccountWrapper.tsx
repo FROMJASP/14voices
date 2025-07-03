@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { useAuth } from '@payloadcms/ui';
-import { getInitials } from '@/lib/gravatar';
+import { getInitials } from '@/lib/initials';
 
 export default function AccountWrapper() {
   const { user } = useAuth();
 
   // Get the avatar URL from user data
-  const avatarUrl = user?.image || user?.avatar?.url || user?.avatarURL || user?.gravatarUrl;
+  const avatarUrl = user?.image || user?.avatar?.url || user?.avatarURL;
   const displayName = user?.name || user?.email || 'User';
 
   // Override the default Payload account icon with custom styles

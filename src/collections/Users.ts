@@ -1,7 +1,6 @@
-import type { CollectionConfig } from 'payload'
-import { afterUserCreate } from '@/hooks/email-triggers'
-import { generateGravatarUrl } from '@/lib/gravatar'
-import { resolveAvatarURL, addImageProperty } from '@/hooks/user-avatar'
+import type { CollectionConfig } from 'payload';
+import { afterUserCreate } from '@/hooks/email-triggers';
+import { resolveAvatarURL, addImageProperty } from '@/hooks/user-avatar';
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -9,10 +8,10 @@ const Users: CollectionConfig = {
     depth: 1, // Ensure avatar relationship is populated
     forgotPassword: {
       generateEmailHTML: (args) => {
-        const { token, user } = args || {}
+        const { token, user } = args || {};
         // Construct the reset URL pointing to our custom reset page
-        const resetPasswordURL = `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/reset-password?token=${token}`
-        
+        const resetPasswordURL = `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/reset-password?token=${token}`;
+
         return `
           <!doctype html>
           <html>
@@ -118,7 +117,7 @@ const Users: CollectionConfig = {
               </div>
             </body>
           </html>
-        `
+        `;
       },
     },
   },
@@ -130,9 +129,9 @@ const Users: CollectionConfig = {
     create: ({ req: { user } }) => user?.role === 'admin',
     update: ({ req: { user }, id }) => {
       // Allow users to update their own profile
-      if (user?.id === id) return true
+      if (user?.id === id) return true;
       // Allow admins to update any user
-      return user?.role === 'admin'
+      return user?.role === 'admin';
     },
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
@@ -146,25 +145,7 @@ const Users: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       admin: {
-        description: 'Upload a custom profile photo or leave empty to use Gravatar',
-      },
-    },
-    {
-      name: 'gravatarUrl',
-      type: 'text',
-      virtual: true,
-      hooks: {
-        afterRead: [
-          ({ data }) => {
-            if (data?.email) {
-              return generateGravatarUrl(data.email, 200)
-            }
-            return null
-          },
-        ],
-      },
-      admin: {
-        hidden: true,
+        description: 'Upload a custom profile photo',
       },
     },
     {
@@ -256,19 +237,19 @@ const Users: CollectionConfig = {
               collection: 'media',
               id: doc.avatar,
               depth: 0,
-            })
+            });
             if (media) {
-              doc.avatar = media
+              doc.avatar = media;
             }
           } catch (error) {
-            console.error('Error populating avatar:', error)
+            console.error('Error populating avatar:', error);
           }
         }
-        return doc
+        return doc;
       },
       addImageProperty,
     ],
   },
-}
+};
 
-export default Users
+export default Users;

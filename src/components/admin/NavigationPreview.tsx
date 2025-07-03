@@ -16,7 +16,17 @@ export const NavigationPreview: React.FC = () => {
 
   // Extract navigation items from form data
   const mainMenu = fields?.mainMenu?.value || [];
-  const banner = fields?.banner?.value || {};
+  const banner =
+    (fields?.banner?.value as {
+      enabled?: boolean;
+      message?: string;
+      linkText?: string;
+      linkType?: string;
+      linkUrl?: string;
+      linkPage?: unknown;
+      dismissible?: boolean;
+      style?: 'gradient' | 'solid' | 'subtle';
+    }) || {};
 
   // Format navigation items for the preview
   const formattedNavItems = Array.isArray(mainMenu)
@@ -147,9 +157,7 @@ export const NavigationPreview: React.FC = () => {
                   enabled={true}
                   message={banner.message || 'Banner message'}
                   linkText={banner.linkText}
-                  linkType={banner.linkType || 'none'}
                   linkUrl={banner.linkUrl}
-                  linkPage={banner.linkPage}
                   dismissible={banner.dismissible}
                   style={banner.style || 'gradient'}
                 />

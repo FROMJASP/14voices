@@ -8,6 +8,16 @@ interface Navigation {
   footerColumns?: FooterColumn[];
   footerBottom?: FooterBottom;
   mobileMenu?: MobileMenu;
+  banner?: {
+    enabled?: boolean;
+    message?: string;
+    linkText?: string;
+    linkType?: string;
+    linkUrl?: string;
+    linkPage?: { slug: string };
+    dismissible?: boolean;
+    style?: 'gradient' | 'solid' | 'subtle';
+  };
   createdAt?: string;
   updatedAt?: string;
 }
