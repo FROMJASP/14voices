@@ -52,6 +52,7 @@ export const securityConfig = {
       'https://*.ingest.de.sentry.io',
       'wss:',
     ],
+    'worker-src': ["'self'", 'blob:'],
     'frame-ancestors': ["'none'"],
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
