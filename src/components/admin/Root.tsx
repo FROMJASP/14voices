@@ -1,14 +1,17 @@
 'use client'
 
 import React from 'react'
-import { DynamicFavicon } from './DynamicFavicon'
+import SafeDynamicFavicon from './DynamicFavicon'
+import { ErrorBoundary } from './ErrorBoundary'
+import LastPassCleanup from './LastPassCleanup'
 
 const Root: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <>
-      <DynamicFavicon />
+    <ErrorBoundary>
+      <SafeDynamicFavicon />
+      <LastPassCleanup />
       {children}
-    </>
+    </ErrorBoundary>
   )
 }
 

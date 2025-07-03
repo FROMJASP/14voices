@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import './driver-theme.css'
@@ -20,6 +20,10 @@ interface TourConfig {
   description: string
   steps: TourStep[]
 }
+
+// Singleton pattern to prevent multiple instances
+let globalDriverInstance: ReturnType<typeof driver> | null = null
+let isDriverActive = false
 
 const tours: Record<string, TourConfig> = {
   firstTime: {
@@ -304,35 +308,94 @@ const tours: Record<string, TourConfig> = {
   },
 }
 
+// Safe cleanup function
+const safeDestroyDriver = () => {
+  if (globalDriverInstance && isDriverActive) {
+    try {
+      globalDriverInstance.destroy()
+    } catch {
+      // Silently ignore destroy errors
+    } finally {
+      globalDriverInstance = null
+      isDriverActive = false
+    }
+  }
+}
+
 export function AdminTours() {
+  const mountedRef = useRef(true)
+  const initTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
   useEffect(() => {
+    mountedRef.current = true
+
     // Check if it's the user's first time
     const hasSeenTour = localStorage.getItem('14voices_tour_completed')
     
     if (!hasSeenTour) {
-      // Wait a bit for the page to load
-      setTimeout(() => {
-        const driverObj = driver({
-          showProgress: true,
-          showButtons: ['next', 'previous', 'close'],
-          steps: tours.firstTime.steps,
-          nextBtnText: 'Volgende',
-          prevBtnText: 'Vorige',
-          doneBtnText: 'Klaar',
-          animate: true,
-          smoothScroll: true,
-          allowClose: true,
-          disableActiveInteraction: true,
-          stagePadding: 8,
-          popoverOffset: 12,
-          onDestroyStarted: () => {
-            localStorage.setItem('14voices_tour_completed', 'true')
-            driverObj.destroy()
-          },
-        })
-        
-        driverObj.drive()
-      }, 1000)
+      // Clean up any existing instance first
+      safeDestroyDriver()
+
+      // Wait for page to stabilize
+      initTimeoutRef.current = setTimeout(() => {
+        if (!mountedRef.current) return
+
+        try {
+          // Ensure we don't have multiple instances
+          if (isDriverActive) return
+
+          isDriverActive = true
+          globalDriverInstance = driver({
+            showProgress: true,
+            showButtons: ['next', 'previous', 'close'],
+            steps: tours.firstTime.steps,
+            nextBtnText: 'Volgende',
+            prevBtnText: 'Vorige',
+            doneBtnText: 'Klaar',
+            animate: true,
+            smoothScroll: true,
+            allowClose: true,
+            disableActiveInteraction: true,
+            stagePadding: 8,
+            popoverOffset: 12,
+            onDestroyStarted: () => {
+              if (!mountedRef.current) return
+              
+              try {
+                localStorage.setItem('14voices_tour_completed', 'true')
+              } catch {}
+              
+              // Defer cleanup to next tick
+              setTimeout(() => {
+                isDriverActive = false
+                globalDriverInstance = null
+              }, 0)
+            },
+          })
+          
+          if (globalDriverInstance && mountedRef.current) {
+            globalDriverInstance.drive()
+          }
+        } catch {
+          console.error('Error starting tour')
+          safeDestroyDriver()
+        }
+      }, 1500)
+    }
+    
+    // Cleanup function
+    return () => {
+      mountedRef.current = false
+      
+      if (initTimeoutRef.current) {
+        clearTimeout(initTimeoutRef.current)
+        initTimeoutRef.current = null
+      }
+      
+      // Defer cleanup to avoid React errors
+      requestAnimationFrame(() => {
+        safeDestroyDriver()
+      })
     }
   }, [])
 
@@ -344,20 +407,38 @@ export function startTour(tourName: keyof typeof tours) {
   const tour = tours[tourName]
   if (!tour) return
 
-  const driverObj = driver({
-    showProgress: true,
-    showButtons: ['next', 'previous', 'close'],
-    steps: tour.steps,
-    nextBtnText: 'Volgende',
-    prevBtnText: 'Vorige',
-    doneBtnText: 'Klaar',
-    animate: true,
-    smoothScroll: true,
-    allowClose: true,
-    disableActiveInteraction: true,
-    stagePadding: 8,
-    popoverOffset: 12,
-  })
+  // Ensure no other tour is active
+  safeDestroyDriver()
 
-  driverObj.drive()
+  try {
+    isDriverActive = true
+    const driverObj = driver({
+      showProgress: true,
+      showButtons: ['next', 'previous', 'close'],
+      steps: tour.steps,
+      nextBtnText: 'Volgende',
+      prevBtnText: 'Vorige',
+      doneBtnText: 'Klaar',
+      animate: true,
+      smoothScroll: true,
+      allowClose: true,
+      disableActiveInteraction: true,
+      stagePadding: 8,
+      popoverOffset: 12,
+      onDestroyStarted: () => {
+        setTimeout(() => {
+          isDriverActive = false
+          if (globalDriverInstance === driverObj) {
+            globalDriverInstance = null
+          }
+        }, 0)
+      },
+    })
+
+    globalDriverInstance = driverObj
+    driverObj.drive()
+  } catch {
+    console.error('Failed to start tour')
+    safeDestroyDriver()
+  }
 }
