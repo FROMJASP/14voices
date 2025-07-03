@@ -4,15 +4,24 @@ export async function register() {
   }
 }
 
-export const onRequestError = async (err: unknown, request: unknown, context: unknown) => {
-  const Sentry = await import('@sentry/nextjs');
-  Sentry.captureRequestError(
-    err as Error,
-    request as {
-      path: string;
-      method: string;
-      headers: Record<string, string | string[] | undefined>;
-    },
-    context as { routerKind: string; routePath: string; routeType: string }
-  );
+// Type definitions matching Sentry's expectations
+type RequestInfo = {
+  path: string;
+  method: string;
+  headers: Record<string, string | string[] | undefined>;
 };
+
+type ErrorContext = {
+  routerKind: string;
+  routePath: string;
+  routeType: string;
+};
+
+export async function onRequestError(
+  error: unknown,
+  request: RequestInfo,
+  errorContext: ErrorContext
+): Promise<void> {
+  const { captureRequestError } = await import('@sentry/nextjs');
+  captureRequestError(error, request, errorContext);
+}
