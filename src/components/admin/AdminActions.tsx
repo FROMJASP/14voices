@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { startTour } from './AdminTours';
+import { startTour } from './AdminToursShepherd';
 import { Map } from 'lucide-react';
 import './admin-button.css';
 

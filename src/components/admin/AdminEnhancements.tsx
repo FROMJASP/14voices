@@ -1,6 +1,6 @@
 'use client';
 
-import { AdminTours } from './AdminTours';
+import { AdminTours } from './AdminToursShepherd';
 import VoiceoverRowClick from './VoiceoverRowClick';
 import { DarkModeProvider } from '@/providers/DarkModeProvider';
 import { ErrorBoundary } from './ErrorBoundary';
