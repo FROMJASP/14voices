@@ -39,19 +39,56 @@ export function TourStylesShepherd() {
         position: relative !important;
       }
       
+      /* Force the target to be highlighted properly - fallback if SVG fails */
+      .shepherd-target.shepherd-enabled,
+      .shepherd-target-highlight {
+        outline: 3px solid #3b82f6 !important;
+        outline-offset: 4px !important;
+        position: relative !important;
+        z-index: 9999 !important;
+      }
+      
+      /* Alternative highlight using pseudo-element */
+      .shepherd-enabled.shepherd-target::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+        z-index: -1;
+      }
+      
       /* Modal overlay SVG styling */
       .shepherd-modal-overlay-container svg {
         height: 100vh !important;
         width: 100vw !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        pointer-events: none !important;
       }
       
       /* Modal opening for highlighted element - the cutout */
       .shepherd-modal-overlay-container rect {
         rx: 8 !important;
         ry: 8 !important;
+        fill: black !important;
       }
       
       /* Ensure the SVG path (dark overlay) has proper fill */
+      .shepherd-modal-overlay-container path {
+        pointer-events: auto !important;
+        fill-rule: evenodd !important;
+      }
+      
+      /* Fix for SVG mask rendering */
+      .shepherd-modal-overlay-container {
+        pointer-events: none !important;
+      }
+      
       .shepherd-modal-overlay-container path {
         pointer-events: auto !important;
       }

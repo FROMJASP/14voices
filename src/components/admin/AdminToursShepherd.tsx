@@ -240,6 +240,24 @@ export function AdminTours() {
               arrow: true,
               modalOverlayOpeningPadding: 8,
               modalOverlayOpeningRadius: 8,
+              canClickTarget: false,
+              highlightClass: 'shepherd-target-highlight',
+              when: {
+                show() {
+                  // Force highlight class on target element
+                  const target = this.target;
+                  if (target) {
+                    target.classList.add('shepherd-target-highlight');
+                  }
+                },
+                hide() {
+                  // Remove highlight class
+                  const target = this.target;
+                  if (target) {
+                    target.classList.remove('shepherd-target-highlight');
+                  }
+                },
+              },
             },
           });
 
@@ -279,6 +297,25 @@ export function AdminTours() {
             console.log('[Tour] Tour cancelled');
             localStorage.setItem('14voices_tour_completed', 'true');
             globalTour = null;
+          });
+
+          // Debug: Check SVG creation
+          tour.on('show', () => {
+            setTimeout(() => {
+              const modalOverlay = document.querySelector('.shepherd-modal-overlay-container');
+              const svg = modalOverlay?.querySelector('svg');
+              const rect = svg?.querySelector('rect');
+              const path = svg?.querySelector('path');
+
+              console.log('[Tour Debug] Modal overlay:', !!modalOverlay);
+              console.log('[Tour Debug] SVG:', !!svg);
+              console.log('[Tour Debug] Rect (cutout):', !!rect);
+              console.log('[Tour Debug] Path (overlay):', !!path);
+
+              if (svg && !rect) {
+                console.warn('[Tour Debug] SVG exists but no rect for cutout!');
+              }
+            }, 100);
           });
 
           globalTour = tour;
@@ -383,6 +420,25 @@ export async function startTour(tourName: string) {
     tour.on('cancel', () => {
       console.log('[Tour] Tour cancelled');
       globalTour = null;
+    });
+
+    // Debug: Check SVG creation
+    tour.on('show', () => {
+      setTimeout(() => {
+        const modalOverlay = document.querySelector('.shepherd-modal-overlay-container');
+        const svg = modalOverlay?.querySelector('svg');
+        const rect = svg?.querySelector('rect');
+        const path = svg?.querySelector('path');
+
+        console.log('[Tour Debug] Modal overlay:', !!modalOverlay);
+        console.log('[Tour Debug] SVG:', !!svg);
+        console.log('[Tour Debug] Rect (cutout):', !!rect);
+        console.log('[Tour Debug] Path (overlay):', !!path);
+
+        if (svg && !rect) {
+          console.warn('[Tour Debug] SVG exists but no rect for cutout!');
+        }
+      }, 100);
     });
 
     globalTour = tour;
