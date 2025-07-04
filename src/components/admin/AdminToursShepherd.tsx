@@ -238,7 +238,7 @@ export function AdminTours() {
                 enabled: true,
               },
               arrow: true,
-              modalOverlayOpeningPadding: 4,
+              modalOverlayOpeningPadding: 8,
               modalOverlayOpeningRadius: 8,
             },
           });

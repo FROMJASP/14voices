@@ -25,11 +25,24 @@ export function TourStylesShepherd() {
       .shepherd-modal-overlay-container {
         background-color: rgba(0, 0, 0, 0.2) !important;
         cursor: pointer !important;
+        z-index: 9998 !important;
       }
       
       /* Highlighted element opening */
       .shepherd-modal-overlay-container.shepherd-modal-is-visible path {
         fill: rgba(0, 0, 0, 0.2) !important;
+      }
+      
+      /* Ensure highlighted element is visible */
+      .shepherd-target {
+        z-index: 9999 !important;
+        position: relative !important;
+      }
+      
+      /* Modal opening for highlighted element */
+      .shepherd-modal-overlay-container rect {
+        rx: 8 !important;
+        ry: 8 !important;
       }
       
       /* Tour element styling */
@@ -40,6 +53,7 @@ export function TourStylesShepherd() {
         border-radius: 12px !important;
         overflow: hidden !important;
         max-width: 500px !important;
+        z-index: 10000 !important;
       }
       
       /* Header styling */
