@@ -2,15 +2,17 @@
 
 import { useEffect, useRef } from 'react';
 import { TourStylesShepherd } from './TourStylesShepherd';
+import type Shepherd from 'shepherd.js';
+import type { Tour, ShepherdStepOptions, ShepherdButtonOptions } from 'shepherd.js';
 
 // Lazy load Shepherd.js to avoid build issues
-let Shepherd: any = null;
+let ShepherdLib: typeof Shepherd | null = null;
 
 const loadShepherd = async () => {
-  if (!Shepherd) {
+  if (!ShepherdLib) {
     try {
       const shepherdModule = await import('shepherd.js');
-      Shepherd = shepherdModule.default;
+      ShepherdLib = shepherdModule.default;
 
       // Import CSS dynamically on client-side only
       if (typeof window !== 'undefined') {
@@ -23,11 +25,31 @@ const loadShepherd = async () => {
       console.error('Failed to load Shepherd.js:', error);
     }
   }
-  return Shepherd;
+  return ShepherdLib;
 };
 
+// Tour step configuration interface
+interface TourStep {
+  title: string;
+  text: string;
+  buttons: Array<{
+    text: string;
+    action: 'next' | 'back' | 'complete' | 'cancel';
+    classes: string;
+  }>;
+  attachTo?: {
+    element: string;
+    on: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  };
+}
+
+interface TourConfig {
+  id: string;
+  steps: TourStep[];
+}
+
 // Tour configurations
-const tours = {
+const tours: Record<string, TourConfig> = {
   firstTime: {
     id: 'first-time-tour',
     steps: [
@@ -199,7 +221,7 @@ const tours = {
 };
 
 // Global instance to prevent multiple tours
-let globalTour: any = null;
+let globalTour: Tour | null = null;
 
 export function AdminTours() {
   const mountedRef = useRef(true);
@@ -245,14 +267,14 @@ export function AdminTours() {
               when: {
                 show() {
                   // Force highlight class on target element
-                  const target = this.target;
+                  const target = this.getTarget();
                   if (target) {
                     target.classList.add('shepherd-target-highlight');
                   }
                 },
                 hide() {
                   // Remove highlight class
-                  const target = this.target;
+                  const target = this.getTarget();
                   if (target) {
                     target.classList.remove('shepherd-target-highlight');
                   }
@@ -263,20 +285,22 @@ export function AdminTours() {
 
           // Add steps
           tours.firstTime.steps.forEach((step, index) => {
-            const shepherdStep: any = {
+            const shepherdStep: ShepherdStepOptions = {
               id: `step-${index}`,
               title: step.title,
               text: step.text,
-              buttons: step.buttons.map((btn) => ({
-                text: btn.text,
-                action: function () {
-                  if (btn.action === 'next') tour.next();
-                  else if (btn.action === 'back') tour.back();
-                  else if (btn.action === 'complete') tour.complete();
-                  else tour.cancel();
-                },
-                classes: btn.classes,
-              })),
+              buttons: step.buttons.map(
+                (btn): ShepherdButtonOptions => ({
+                  text: btn.text,
+                  action: function () {
+                    if (btn.action === 'next') tour.next();
+                    else if (btn.action === 'back') tour.back();
+                    else if (btn.action === 'complete') tour.complete();
+                    else tour.cancel();
+                  },
+                  classes: btn.classes,
+                })
+              ),
             };
 
             if (step.attachTo) {
@@ -365,7 +389,7 @@ export async function startTour(tourName: string) {
     globalTour = null;
   }
 
-  const tourConfig = (tours as any)[tourName];
+  const tourConfig = tours[tourName];
   if (!tourConfig) {
     console.error('Tour not found:', tourName);
     return;
@@ -387,21 +411,23 @@ export async function startTour(tourName: string) {
     });
 
     // Add steps
-    tourConfig.steps.forEach((step: any, index: number) => {
-      const shepherdStep: any = {
+    tourConfig.steps.forEach((step, index) => {
+      const shepherdStep: ShepherdStepOptions = {
         id: `step-${index}`,
         title: step.title,
         text: step.text,
-        buttons: step.buttons.map((btn: any) => ({
-          text: btn.text,
-          action: function () {
-            if (btn.action === 'next') tour.next();
-            else if (btn.action === 'back') tour.back();
-            else if (btn.action === 'complete') tour.complete();
-            else tour.cancel();
-          },
-          classes: btn.classes,
-        })),
+        buttons: step.buttons.map(
+          (btn): ShepherdButtonOptions => ({
+            text: btn.text,
+            action: function () {
+              if (btn.action === 'next') tour.next();
+              else if (btn.action === 'back') tour.back();
+              else if (btn.action === 'complete') tour.complete();
+              else tour.cancel();
+            },
+            classes: btn.classes,
+          })
+        ),
       };
 
       if (step.attachTo) {
