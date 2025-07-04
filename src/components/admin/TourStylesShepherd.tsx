@@ -58,14 +58,26 @@ export function TourStylesShepherd() {
         margin: 0 !important;
       }
       
-      /* Close button */
+      /* Close button positioning */
       .shepherd-cancel-icon {
+        position: absolute !important;
+        top: 0.75rem !important;
+        right: 0.75rem !important;
+        left: auto !important;
         color: #6b7280 !important;
         transition: color 0.2s !important;
+        cursor: pointer !important;
+        z-index: 10 !important;
       }
       
       .shepherd-cancel-icon:hover {
         color: #374151 !important;
+      }
+      
+      /* Ensure header has relative positioning for absolute close button */
+      .shepherd-header {
+        position: relative !important;
+        padding-right: 2.5rem !important; /* Make room for close button */
       }
       
       /* Content area */
