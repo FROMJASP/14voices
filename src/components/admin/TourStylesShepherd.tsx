@@ -33,16 +33,27 @@ export function TourStylesShepherd() {
         fill: rgba(0, 0, 0, 0.2) !important;
       }
       
-      /* Ensure highlighted element is visible */
-      .shepherd-target {
+      /* Ensure highlighted element is visible above overlay */
+      .shepherd-enabled.shepherd-target {
         z-index: 9999 !important;
         position: relative !important;
       }
       
-      /* Modal opening for highlighted element */
+      /* Modal overlay SVG styling */
+      .shepherd-modal-overlay-container svg {
+        height: 100vh !important;
+        width: 100vw !important;
+      }
+      
+      /* Modal opening for highlighted element - the cutout */
       .shepherd-modal-overlay-container rect {
         rx: 8 !important;
         ry: 8 !important;
+      }
+      
+      /* Ensure the SVG path (dark overlay) has proper fill */
+      .shepherd-modal-overlay-container path {
+        pointer-events: auto !important;
       }
       
       /* Tour element styling */
@@ -169,7 +180,18 @@ export function TourStylesShepherd() {
       
       /* Arrow styling */
       .shepherd-arrow {
-        border-color: #ffffff !important;
+        width: 16px !important;
+        height: 16px !important;
+      }
+      
+      .shepherd-arrow:before {
+        background: #ffffff !important;
+        border: 1px solid #e5e7eb !important;
+        width: 16px !important;
+        height: 16px !important;
+        content: '' !important;
+        transform: rotate(45deg) !important;
+        position: absolute !important;
       }
       
       /* For centered popovers without element */
