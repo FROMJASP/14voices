@@ -4,13 +4,13 @@
 }
 
 /* Alternative selector if the above doesn't work */
-[class*="localizer"] {
+[class*='localizer'] {
   display: none !important;
 }
 
 /* Hide locale dropdown button */
-button[aria-label*="Locale"],
-button[aria-label*="Language"] {
+button[aria-label*='Locale'],
+button[aria-label*='Language'] {
   display: none !important;
 }
 
@@ -29,22 +29,22 @@ button[aria-label*="Language"] {
 }
 
 /* Fix checkbox input alignment */
-.collection-list__cell input[type="checkbox"] {
+.collection-list__cell input[type='checkbox'] {
   margin: 0 !important;
 }
 
 /* Make entire row clickable for voiceovers collection */
-.collection-list__list-item[data-collection="voiceovers"] {
+.collection-list__list-item[data-collection='voiceovers'] {
   cursor: pointer !important;
 }
 
-.collection-list__list-item[data-collection="voiceovers"]:hover {
+.collection-list__list-item[data-collection='voiceovers']:hover {
   background-color: rgba(59, 130, 246, 0.05) !important;
 }
 
 /* Dark mode support for row hover */
 @media (prefers-color-scheme: dark) {
-  .collection-list__list-item[data-collection="voiceovers"]:hover {
+  .collection-list__list-item[data-collection='voiceovers']:hover {
     background-color: rgba(59, 130, 246, 0.1) !important;
   }
 }
@@ -60,3 +60,37 @@ button[aria-label*="Language"] {
   text-decoration-color: #3b82f6;
 }
 
+/* Animations for ShimmerButton */
+@keyframes shimmer-slide {
+  to {
+    transform: translate(calc(100cqw - 100%), 0);
+  }
+}
+
+@keyframes spin-around {
+  0% {
+    transform: translateZ(0) rotate(0);
+  }
+  15%,
+  35% {
+    transform: translateZ(0) rotate(90deg);
+  }
+  65%,
+  85% {
+    transform: translateZ(0) rotate(270deg);
+  }
+  100% {
+    transform: translateZ(0) rotate(360deg);
+  }
+}
+
+/* Support for container queries */
+@supports (container-type: size) {
+  .animate-shimmer-slide {
+    animation: shimmer-slide var(--speed) ease-in-out infinite;
+  }
+
+  .animate-spin-around {
+    animation: spin-around var(--speed) linear infinite;
+  }
+}

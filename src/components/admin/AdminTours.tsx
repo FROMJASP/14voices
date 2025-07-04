@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import { useEffect, useRef } from 'react'
-import { driver } from 'driver.js'
-import 'driver.js/dist/driver.css'
-import './driver-theme.css'
+import { useEffect, useRef } from 'react';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import './driver-theme.css';
 
 interface TourStep {
-  element: string
+  element: string;
   popover: {
-    title: string
-    description: string
-    position: 'top' | 'right' | 'bottom' | 'left'
-  }
+    title: string;
+    description: string;
+    position: 'top' | 'right' | 'bottom' | 'left';
+  };
 }
 
 interface TourConfig {
-  id: string
-  title: string
-  description: string
-  steps: TourStep[]
+  id: string;
+  title: string;
+  description: string;
+  steps: TourStep[];
 }
 
 // Singleton pattern to prevent multiple instances
-let globalDriverInstance: ReturnType<typeof driver> | null = null
-let isDriverActive = false
+let globalDriverInstance: ReturnType<typeof driver> | null = null;
+let isDriverActive = false;
 
 const tours: Record<string, TourConfig> = {
   firstTime: {
@@ -35,7 +35,8 @@ const tours: Record<string, TourConfig> = {
         element: '.template-default__nav',
         popover: {
           title: '👋 Welkom bij 14voices!',
-          description: 'Dit is jouw admin dashboard waar je alle content kunt beheren. Tip: De rondleiding past zich aan op basis van de pagina waar je bent - klik op "Rondleiding" voor specifieke hulp per sectie!',
+          description:
+            'Dit is jouw admin dashboard waar je alle content kunt beheren. Tip: De rondleiding past zich aan op basis van de pagina waar je bent - klik op "Rondleiding" voor specifieke hulp per sectie!',
           position: 'bottom',
         },
       },
@@ -43,7 +44,8 @@ const tours: Record<string, TourConfig> = {
         element: 'a[href*="/admin/collections/voiceovers"]',
         popover: {
           title: '🎙️ Voice-overs Beheren',
-          description: 'Hier kun je voiceovers toevoegen/verwijderen, foto\'s en demo\'s uploaden, en bepalen welke voiceovers je op de website wil laten zien.',
+          description:
+            "Hier kun je voiceovers toevoegen/verwijderen, foto's en demo's uploaden, en bepalen welke voiceovers je op de website wil laten zien.",
           position: 'right',
         },
       },
@@ -51,15 +53,17 @@ const tours: Record<string, TourConfig> = {
         element: 'a[href*="/admin/collections/bookings"]',
         popover: {
           title: '📅 Boekingen & Documenten',
-          description: 'Beheer hier boekingen, scripts van klanten, en facturen. Alles op één plek!',
+          description:
+            'Beheer hier boekingen, scripts van klanten, en facturen. Alles op één plek!',
           position: 'right',
         },
       },
       {
         element: 'a[href*="/admin/collections/pages"]',
         popover: {
-          title: '📄 Pagina\'s Beheren',
-          description: 'Pas hier de pagina\'s aan van de website zoals bijv. de content, SEO-instellingen, etc.',
+          title: "📄 Pagina's Beheren",
+          description:
+            "Pas hier de pagina's aan van de website zoals bijv. de content, SEO-instellingen, etc.",
           position: 'right',
         },
       },
@@ -67,7 +71,8 @@ const tours: Record<string, TourConfig> = {
         element: 'a[href*="/admin/collections/media"]',
         popover: {
           title: '🖼️ Media Bibliotheek',
-          description: 'Hier vind je alle geüploade bestanden: voiceover foto\'s, demo\'s, en andere media.',
+          description:
+            "Hier vind je alle geüploade bestanden: voiceover foto's, demo's, en andere media.",
           position: 'right',
         },
       },
@@ -114,8 +119,8 @@ const tours: Record<string, TourConfig> = {
   },
   pageTour: {
     id: 'page-tour',
-    title: 'Pagina\'s Beheren',
-    description: 'Leer hoe je pagina\'s kunt aanpassen',
+    title: "Pagina's Beheren",
+    description: "Leer hoe je pagina's kunt aanpassen",
     steps: [
       {
         element: '.collection-list__header a.btn',
@@ -245,7 +250,7 @@ const tours: Record<string, TourConfig> = {
         element: 'a[href*="/admin/collections/layouts"]',
         popover: {
           title: '🏗️ Layouts',
-          description: 'Beheer de algemene structuur van je pagina\'s (header, footer, etc).',
+          description: "Beheer de algemene structuur van je pagina's (header, footer, etc).",
           position: 'right',
         },
       },
@@ -253,7 +258,7 @@ const tours: Record<string, TourConfig> = {
         element: 'a[href*="/admin/collections/blocks"]',
         popover: {
           title: '🧱 Herbruikbare Blokken',
-          description: 'Maak blokken die je op meerdere pagina\'s kunt gebruiken.',
+          description: "Maak blokken die je op meerdere pagina's kunt gebruiken.",
           position: 'right',
         },
       },
@@ -306,46 +311,46 @@ const tours: Record<string, TourConfig> = {
       },
     ],
   },
-}
+};
 
 // Safe cleanup function
 const safeDestroyDriver = () => {
-  if (globalDriverInstance && isDriverActive) {
+  if (globalDriverInstance) {
     try {
-      globalDriverInstance.destroy()
+      globalDriverInstance.destroy();
     } catch {
       // Silently ignore destroy errors
-    } finally {
-      globalDriverInstance = null
-      isDriverActive = false
     }
   }
-}
+  // Always reset these regardless of driver state
+  globalDriverInstance = null;
+  isDriverActive = false;
+};
 
 export function AdminTours() {
-  const mountedRef = useRef(true)
-  const initTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const mountedRef = useRef(true);
+  const initTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    mountedRef.current = true
+    mountedRef.current = true;
 
     // Check if it's the user's first time
-    const hasSeenTour = localStorage.getItem('14voices_tour_completed')
-    
+    const hasSeenTour = localStorage.getItem('14voices_tour_completed');
+
     if (!hasSeenTour) {
       // Clean up any existing instance first
-      safeDestroyDriver()
+      safeDestroyDriver();
 
       // Wait for page to stabilize
       initTimeoutRef.current = setTimeout(() => {
-        if (!mountedRef.current) return
+        if (!mountedRef.current) return;
 
         try {
           // Ensure we don't have multiple instances
-          if (isDriverActive) return
+          if (isDriverActive) return;
 
-          isDriverActive = true
-          globalDriverInstance = driver({
+          isDriverActive = true;
+          const driverObj = driver({
             showProgress: true,
             showButtons: ['next', 'previous', 'close'],
             steps: tours.firstTime.steps,
@@ -358,60 +363,102 @@ export function AdminTours() {
             disableActiveInteraction: true,
             stagePadding: 8,
             popoverOffset: 12,
+            overlayClickNext: false,
+            onNextClick: (element, step, options) => {
+              // If this is the last step and user clicks "Klaar", destroy the tour
+              if (
+                step.popover &&
+                options.config.steps &&
+                options.config.steps.indexOf(step) === options.config.steps.length - 1
+              ) {
+                safeDestroyDriver();
+                return;
+              }
+              driverObj.moveNext();
+            },
             onDestroyStarted: () => {
-              if (!mountedRef.current) return
-              
+              if (!mountedRef.current) return;
+
               try {
-                localStorage.setItem('14voices_tour_completed', 'true')
+                localStorage.setItem('14voices_tour_completed', 'true');
               } catch {}
-              
+
               // Defer cleanup to next tick
               setTimeout(() => {
-                isDriverActive = false
-                globalDriverInstance = null
-              }, 0)
+                isDriverActive = false;
+                globalDriverInstance = null;
+              }, 0);
             },
-          })
-          
+            onCloseClick: () => {
+              safeDestroyDriver();
+            },
+            onPopoverRender: (popover) => {
+              // Add event listener for clicks outside the popover
+              const handleOutsideClick = (e: MouseEvent) => {
+                const target = e.target as HTMLElement;
+                const isClickInsidePopover = popover.wrapper.contains(target);
+                const isClickOnHighlightedElement = popover.element?.contains(target);
+
+                if (!isClickInsidePopover && !isClickOnHighlightedElement) {
+                  safeDestroyDriver();
+                  document.removeEventListener('click', handleOutsideClick);
+                }
+              };
+
+              // Add slight delay to prevent immediate close from the click that opened the tour
+              setTimeout(() => {
+                document.addEventListener('click', handleOutsideClick);
+              }, 100);
+
+              // Clean up listener when popover is destroyed
+              const originalDestroy = popover.destroy;
+              popover.destroy = () => {
+                document.removeEventListener('click', handleOutsideClick);
+                originalDestroy.call(popover);
+              };
+            },
+          });
+          globalDriverInstance = driverObj;
+
           if (globalDriverInstance && mountedRef.current) {
-            globalDriverInstance.drive()
+            globalDriverInstance.drive();
           }
         } catch {
-          console.error('Error starting tour')
-          safeDestroyDriver()
+          console.error('Error starting tour');
+          safeDestroyDriver();
         }
-      }, 1500)
+      }, 1500);
     }
-    
+
     // Cleanup function
     return () => {
-      mountedRef.current = false
-      
+      mountedRef.current = false;
+
       if (initTimeoutRef.current) {
-        clearTimeout(initTimeoutRef.current)
-        initTimeoutRef.current = null
+        clearTimeout(initTimeoutRef.current);
+        initTimeoutRef.current = null;
       }
-      
+
       // Defer cleanup to avoid React errors
       requestAnimationFrame(() => {
-        safeDestroyDriver()
-      })
-    }
-  }, [])
+        safeDestroyDriver();
+      });
+    };
+  }, []);
 
-  return null
+  return null;
 }
 
 // Function to start specific tours programmatically
 export function startTour(tourName: keyof typeof tours) {
-  const tour = tours[tourName]
-  if (!tour) return
+  const tour = tours[tourName];
+  if (!tour) return;
 
   // Ensure no other tour is active
-  safeDestroyDriver()
+  safeDestroyDriver();
 
   try {
-    isDriverActive = true
+    isDriverActive = true;
     const driverObj = driver({
       showProgress: true,
       showButtons: ['next', 'previous', 'close'],
@@ -425,20 +472,61 @@ export function startTour(tourName: keyof typeof tours) {
       disableActiveInteraction: true,
       stagePadding: 8,
       popoverOffset: 12,
+      overlayClickNext: false,
+      onNextClick: (element, step, options) => {
+        // If this is the last step and user clicks "Klaar", destroy the tour
+        if (
+          step.popover &&
+          options.config.steps &&
+          options.config.steps.indexOf(step) === options.config.steps.length - 1
+        ) {
+          safeDestroyDriver();
+          return;
+        }
+        driverObj.moveNext();
+      },
       onDestroyStarted: () => {
         setTimeout(() => {
-          isDriverActive = false
+          isDriverActive = false;
           if (globalDriverInstance === driverObj) {
-            globalDriverInstance = null
+            globalDriverInstance = null;
           }
-        }, 0)
+        }, 0);
       },
-    })
+      onCloseClick: () => {
+        safeDestroyDriver();
+      },
+      onPopoverRender: (popover) => {
+        // Add event listener for clicks outside the popover
+        const handleOutsideClick = (e: MouseEvent) => {
+          const target = e.target as HTMLElement;
+          const isClickInsidePopover = popover.wrapper.contains(target);
+          const isClickOnHighlightedElement = popover.element?.contains(target);
 
-    globalDriverInstance = driverObj
-    driverObj.drive()
+          if (!isClickInsidePopover && !isClickOnHighlightedElement) {
+            safeDestroyDriver();
+            document.removeEventListener('click', handleOutsideClick);
+          }
+        };
+
+        // Add slight delay to prevent immediate close from the click that opened the tour
+        setTimeout(() => {
+          document.addEventListener('click', handleOutsideClick);
+        }, 100);
+
+        // Clean up listener when popover is destroyed
+        const originalDestroy = popover.destroy;
+        popover.destroy = () => {
+          document.removeEventListener('click', handleOutsideClick);
+          originalDestroy.call(popover);
+        };
+      },
+    });
+
+    globalDriverInstance = driverObj;
+    driverObj.drive();
   } catch {
-    console.error('Failed to start tour')
-    safeDestroyDriver()
+    console.error('Failed to start tour');
+    safeDestroyDriver();
   }
 }

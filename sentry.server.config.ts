@@ -13,10 +13,8 @@ Sentry.init({
   ],
 
   beforeSend(event) {
-    // Log in development
+    // Don't send to Sentry in development unless it's a test
     if (process.env.NODE_ENV === 'development') {
-      console.error('[Sentry Server]', event.exception || event.message);
-      // Don't send to Sentry unless it's a test
       if (!event.message?.includes('Test')) {
         return null;
       }
