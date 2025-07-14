@@ -1,11 +1,6 @@
-// import { getNavigationData, formatNavigation } from '@/lib/navigation'
-import { NavigationBar } from '@/components/sections/NavigationBar'
+import { Navbar } from '@/components/Navbar';
 
 export async function NavigationProvider() {
-  // TODO: Fetch and format navigation data when NavigationBar is updated to accept props
-  // const navigationData = await getNavigationData()
-  // const formattedNav = formatNavigation(navigationData)
-  
-  // For now, return the static NavigationBar
-  return <NavigationBar />
+  // Simple navigation provider using the new Navbar component
+  return <Navbar />;
 }

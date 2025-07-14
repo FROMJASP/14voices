@@ -1,22 +1,22 @@
-import type { CollectionConfig } from 'payload'
-import { formatSlug } from '../utilities/formatSlug'
-import { pageEditorConfig } from '../fields/lexical/pageEditorConfig'
+import type { CollectionConfig } from 'payload';
+import { formatSlug } from '../utilities/formatSlug';
+import { pageEditorConfig } from '../fields/lexical/pageEditorConfig';
 
 const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'status', 'template', 'updatedAt'],
-    listSearchableFields: ['title', 'slug', 'content'],
-    group: 'Site Builder',
+    defaultColumns: ['title', 'slug', 'status', 'updatedAt'],
+    listSearchableFields: ['title', 'slug'],
+    group: 'Content',
     livePreview: {
       url: ({ data }) => `${process.env.NEXT_PUBLIC_SERVER_URL}/${data.slug}`,
     },
   },
   access: {
     read: ({ req: { user } }) => {
-      if (user?.role === 'admin' || user?.role === 'editor') return true
-      
+      if (user?.role === 'admin' || user?.role === 'editor') return true;
+
       // Public can only see published pages
       return {
         _or: [
@@ -31,7 +31,7 @@ const Pages: CollectionConfig = {
             },
           },
         ],
-      }
+      };
     },
     create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
     update: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
@@ -66,26 +66,17 @@ const Pages: CollectionConfig = {
                 description: 'URL path for this page (e.g., "about-us")',
               },
               validate: (value: unknown) => {
-                if (!value) return 'Slug is required'
-                if (typeof value !== 'string') return 'Slug must be a string'
+                if (!value) return 'Slug is required';
+                if (typeof value !== 'string') return 'Slug must be a string';
                 // Prevent reserved routes
-                const reserved = ['api', 'admin', '_next', 'payload']
+                const reserved = ['api', 'admin', '_next', 'payload'];
                 if (reserved.includes(value)) {
-                  return `"${value}" is a reserved route`
+                  return `"${value}" is a reserved route`;
                 }
-                return true
+                return true;
               },
               hooks: {
                 beforeValidate: [formatSlug('title')],
-              },
-            },
-            {
-              name: 'layout',
-              type: 'relationship',
-              relationTo: 'layouts',
-              admin: {
-                position: 'sidebar',
-                description: 'Page layout configuration',
               },
             },
             {
@@ -164,140 +155,356 @@ const Pages: CollectionConfig = {
               ],
             },
             {
-              name: 'blocks',
-              type: 'blocks',
-              label: 'Page Blocks',
-              blocks: [
+              name: 'content',
+              type: 'richText',
+              editor: pageEditorConfig,
+              admin: {
+                description: 'Main page content',
+              },
+            },
+            {
+              name: 'sections',
+              type: 'array',
+              label: 'Page Sections',
+              admin: {
+                description: 'Add content sections to build your page',
+              },
+              fields: [
                 {
-                  slug: 'richText',
-                  fields: [
-                    {
-                      name: 'content',
-                      type: 'richText',
-                      editor: pageEditorConfig,
-                    },
+                  name: 'type',
+                  type: 'select',
+                  required: true,
+                  options: [
+                    { label: 'Rich Text', value: 'richText' },
+                    { label: 'Two Column Layout', value: 'twoColumn' },
+                    { label: 'Call to Action', value: 'cta' },
+                    { label: 'Contact Section', value: 'contact' },
+                    { label: 'Pricing Table', value: 'pricing' },
+                    { label: 'Testimonials', value: 'testimonials' },
+                    { label: 'FAQ', value: 'faq' },
+                    { label: 'Image Gallery', value: 'gallery' },
                   ],
                 },
+                // Rich Text Section
                 {
-                  slug: 'twoColumn',
+                  name: 'richTextContent',
+                  type: 'richText',
+                  editor: pageEditorConfig,
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'richText',
+                  },
+                },
+                // Two Column Section
+                {
+                  name: 'leftColumn',
+                  type: 'richText',
+                  editor: pageEditorConfig,
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'twoColumn',
+                  },
+                },
+                {
+                  name: 'rightColumn',
+                  type: 'richText',
+                  editor: pageEditorConfig,
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'twoColumn',
+                  },
+                },
+                {
+                  name: 'columnRatio',
+                  type: 'select',
+                  defaultValue: '50-50',
+                  options: [
+                    { label: '50/50', value: '50-50' },
+                    { label: '60/40', value: '60-40' },
+                    { label: '40/60', value: '40-60' },
+                    { label: '70/30', value: '70-30' },
+                    { label: '30/70', value: '30-70' },
+                  ],
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'twoColumn',
+                  },
+                },
+                // CTA Section
+                {
+                  name: 'ctaHeading',
+                  type: 'text',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'cta',
+                  },
+                },
+                {
+                  name: 'ctaText',
+                  type: 'textarea',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'cta',
+                  },
+                },
+                {
+                  name: 'ctaButtons',
+                  type: 'array',
+                  maxRows: 2,
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'cta',
+                  },
                   fields: [
                     {
-                      name: 'leftColumn',
-                      type: 'richText',
-                      editor: pageEditorConfig,
+                      name: 'text',
+                      type: 'text',
+                      required: true,
                     },
                     {
-                      name: 'rightColumn',
-                      type: 'richText',
-                      editor: pageEditorConfig,
+                      name: 'link',
+                      type: 'text',
+                      required: true,
                     },
                     {
-                      name: 'columnRatio',
+                      name: 'style',
                       type: 'select',
-                      defaultValue: '50-50',
+                      defaultValue: 'primary',
                       options: [
-                        { label: '50/50', value: '50-50' },
-                        { label: '60/40', value: '60-40' },
-                        { label: '40/60', value: '40-60' },
-                        { label: '70/30', value: '70-30' },
-                        { label: '30/70', value: '30-70' },
+                        { label: 'Primary', value: 'primary' },
+                        { label: 'Secondary', value: 'secondary' },
+                        { label: 'Outline', value: 'outline' },
                       ],
                     },
                   ],
                 },
                 {
-                  slug: 'cta',
+                  name: 'ctaBackgroundColor',
+                  type: 'select',
+                  defaultValue: 'gray',
+                  options: [
+                    { label: 'White', value: 'white' },
+                    { label: 'Gray', value: 'gray' },
+                    { label: 'Primary', value: 'primary' },
+                    { label: 'Dark', value: 'dark' },
+                  ],
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'cta',
+                  },
+                },
+                // Contact Section
+                {
+                  name: 'contactHeading',
+                  type: 'text',
+                  defaultValue: 'Get in Touch',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                  },
+                },
+                {
+                  name: 'contactSubheading',
+                  type: 'textarea',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                  },
+                },
+                {
+                  name: 'showContactForm',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                  },
+                },
+                {
+                  name: 'contactEmail',
+                  type: 'text',
+                  defaultValue: 'casting@14voices.com',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                  },
+                },
+                {
+                  name: 'contactPhone',
+                  type: 'text',
+                  defaultValue: '020-2614825',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                  },
+                },
+                // Pricing Section
+                {
+                  name: 'pricingHeading',
+                  type: 'text',
+                  defaultValue: 'Our Pricing Plans',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'pricing',
+                  },
+                },
+                {
+                  name: 'pricingSubheading',
+                  type: 'textarea',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'pricing',
+                  },
+                },
+                {
+                  name: 'pricingPlans',
+                  type: 'array',
+                  minRows: 1,
+                  maxRows: 4,
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'pricing',
+                  },
                   fields: [
                     {
-                      name: 'heading',
+                      name: 'name',
                       type: 'text',
+                      required: true,
                     },
                     {
-                      name: 'text',
+                      name: 'price',
+                      type: 'text',
+                      required: true,
+                    },
+                    {
+                      name: 'description',
                       type: 'textarea',
                     },
                     {
-                      name: 'buttons',
+                      name: 'features',
                       type: 'array',
-                      maxRows: 2,
                       fields: [
                         {
-                          name: 'text',
+                          name: 'feature',
                           type: 'text',
                           required: true,
-                        },
-                        {
-                          name: 'link',
-                          type: 'text',
-                          required: true,
-                        },
-                        {
-                          name: 'style',
-                          type: 'select',
-                          defaultValue: 'primary',
-                          options: [
-                            { label: 'Primary', value: 'primary' },
-                            { label: 'Secondary', value: 'secondary' },
-                            { label: 'Outline', value: 'outline' },
-                          ],
                         },
                       ],
                     },
                     {
-                      name: 'backgroundColor',
-                      type: 'select',
-                      defaultValue: 'gray',
-                      options: [
-                        { label: 'White', value: 'white' },
-                        { label: 'Gray', value: 'gray' },
-                        { label: 'Primary', value: 'primary' },
-                        { label: 'Dark', value: 'dark' },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  slug: 'reusableBlock',
-                  fields: [
-                    {
-                      name: 'block',
-                      type: 'relationship',
-                      relationTo: 'blocks',
-                      required: true,
-                    },
-                  ],
-                },
-                {
-                  slug: 'section',
-                  fields: [
-                    {
-                      name: 'section',
-                      type: 'relationship',
-                      relationTo: 'sections',
-                      required: true,
-                    },
-                  ],
-                },
-                {
-                  slug: 'form',
-                  fields: [
-                    {
-                      name: 'form',
-                      type: 'relationship',
-                      relationTo: 'forms',
-                      required: true,
-                    },
-                    {
-                      name: 'showTitle',
+                      name: 'highlighted',
                       type: 'checkbox',
-                      defaultValue: true,
+                      defaultValue: false,
                     },
                     {
-                      name: 'showDescription',
-                      type: 'checkbox',
-                      defaultValue: true,
+                      name: 'buttonText',
+                      type: 'text',
+                      defaultValue: 'Get Started',
+                    },
+                    {
+                      name: 'buttonLink',
+                      type: 'text',
+                      defaultValue: '/contact',
                     },
                   ],
+                },
+                // Testimonials Section
+                {
+                  name: 'testimonialsHeading',
+                  type: 'text',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'testimonials',
+                  },
+                },
+                {
+                  name: 'testimonialsSubheading',
+                  type: 'textarea',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'testimonials',
+                  },
+                },
+                {
+                  name: 'testimonialsSource',
+                  type: 'select',
+                  defaultValue: 'featured',
+                  options: [
+                    { label: 'Featured Only', value: 'featured' },
+                    { label: 'Latest', value: 'latest' },
+                    { label: 'Selected', value: 'selected' },
+                  ],
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'testimonials',
+                  },
+                },
+                {
+                  name: 'selectedTestimonials',
+                  type: 'relationship',
+                  relationTo: 'testimonials',
+                  hasMany: true,
+                  admin: {
+                    condition: (data, siblingData) =>
+                      siblingData?.type === 'testimonials' &&
+                      siblingData?.testimonialsSource === 'selected',
+                  },
+                },
+                {
+                  name: 'testimonialsLimit',
+                  type: 'number',
+                  defaultValue: 6,
+                  min: 1,
+                  max: 20,
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'testimonials',
+                  },
+                },
+                // FAQ Section
+                {
+                  name: 'faqHeading',
+                  type: 'text',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'faq',
+                  },
+                },
+                {
+                  name: 'faqSubheading',
+                  type: 'textarea',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'faq',
+                  },
+                },
+                {
+                  name: 'faqs',
+                  type: 'array',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'faq',
+                  },
+                  fields: [
+                    {
+                      name: 'question',
+                      type: 'text',
+                      required: true,
+                    },
+                    {
+                      name: 'answer',
+                      type: 'richText',
+                      editor: pageEditorConfig,
+                      required: true,
+                    },
+                  ],
+                },
+                // Gallery Section
+                {
+                  name: 'galleryHeading',
+                  type: 'text',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'gallery',
+                  },
+                },
+                {
+                  name: 'galleryImages',
+                  type: 'upload',
+                  relationTo: 'media',
+                  hasMany: true,
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'gallery',
+                  },
+                },
+                {
+                  name: 'galleryLayout',
+                  type: 'select',
+                  defaultValue: 'grid',
+                  options: [
+                    { label: 'Grid', value: 'grid' },
+                    { label: 'Masonry', value: 'masonry' },
+                    { label: 'Carousel', value: 'carousel' },
+                  ],
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.type === 'gallery',
+                  },
                 },
               ],
             },
@@ -401,7 +608,7 @@ const Pages: CollectionConfig = {
                   id: {
                     not_equals: id,
                   },
-                }
+                };
               },
             },
             {
@@ -459,12 +666,12 @@ const Pages: CollectionConfig = {
       ({ data, operation }) => {
         // Ensure home page slug stays as 'home'
         if (data.slug === 'home' && operation === 'update') {
-          data.slug = 'home'
+          data.slug = 'home';
         }
-        return data
+        return data;
       },
     ],
   },
-}
+};
 
-export default Pages
+export default Pages;

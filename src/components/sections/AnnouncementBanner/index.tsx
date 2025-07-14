@@ -22,7 +22,7 @@ export async function AnnouncementBanner() {
   return (
     <AnnouncementBannerClient
       enabled={banner.enabled}
-      message={banner.message || ''}
+      message={banner.message}
       linkText={banner.linkText}
       linkUrl={linkUrl}
       dismissible={banner.dismissible}

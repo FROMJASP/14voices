@@ -2,12 +2,7 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { PageRenderer } from '@/components/PageRenderer';
 import type { Page } from '@/payload-types';
-import {
-  NavigationBar,
-  VoiceoverShowcase,
-  Footer,
-  AnnouncementBanner,
-} from '@/components/sections';
+import { VoiceoverShowcase } from '@/components/sections';
 import { UnifiedHero } from '@/components/unified';
 import {
   StemmenSection,
@@ -87,15 +82,12 @@ export default async function HomePage() {
   if (!page) {
     return (
       <>
-        <AnnouncementBanner />
-        <NavigationBar />
         <UnifiedHero variant="page" />
         <VoiceoverShowcase />
         <StemmenSection />
         <PrijzenSection />
         <BlogSection />
         <ContactSection />
-        <Footer />
       </>
     );
   }

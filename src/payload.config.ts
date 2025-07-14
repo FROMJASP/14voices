@@ -25,13 +25,9 @@ import EmailAudiences from './collections/EmailAudiences';
 import EmailContacts from './collections/EmailContacts';
 import BlogPosts from './collections/BlogPosts';
 import Pages from './collections/Pages';
-import Blocks from './collections/Blocks';
-import Layouts from './collections/Layouts';
-import Sections from './collections/Sections';
 import Forms from './collections/Forms';
 import FormSubmissions from './collections/FormSubmissions';
 import Testimonials from './collections/Testimonials';
-import Navigation from './collections/Navigation';
 import { EmailSettings } from './globals/EmailSettings';
 import { SiteSettings } from './globals/SiteSettings';
 import path from 'path';
@@ -96,11 +92,7 @@ export default buildConfig({
     Scripts,
     Invoices,
     BlogPosts,
-    Navigation,
     Pages,
-    Blocks,
-    Layouts,
-    Sections,
     Forms,
     FormSubmissions,
     Testimonials,

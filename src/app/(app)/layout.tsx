@@ -1,18 +1,20 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import { MaintenanceModeWrapper } from "@/components/MaintenanceModeWrapper";
-import "./globals.css";
+import { Geist, Geist_Mono } from 'next/font/google';
+import { MaintenanceModeWrapper } from '@/components/MaintenanceModeWrapper';
+import { GlobalLayout } from '@/components/GlobalLayout';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import './globals.css';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
-export { generateMetadata } from "./metadata";
+export { generateMetadata } from './metadata';
 
 export default function RootLayout({
   children,
@@ -20,13 +22,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nl">
+    <html lang="nl" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
-        <MaintenanceModeWrapper>
-          {children}
-        </MaintenanceModeWrapper>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <MaintenanceModeWrapper>
+            <GlobalLayout>{children}</GlobalLayout>
+          </MaintenanceModeWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );
