@@ -23,7 +23,6 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 const defaultMenuItems = [
-  { label: 'Home', href: '/' },
   { label: 'Voiceovers', href: '#voiceovers' },
   { label: 'Prijzen', href: '#prijzen' },
   { label: 'Blog', href: '#blog' },
@@ -75,7 +74,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
           letter-spacing: 0.02em;
         }
         .font-plus-jakarta {
-          font-family: var(--font-plus-jakarta);
+          font-family: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
         }
       `}</style>
 
@@ -84,10 +83,8 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
         className={`sticky top-0 z-50 ${isScrolled ? 'pt-6' : ''} ${instrumentSerif.variable} ${plusJakarta.variable}`}
       >
         <nav
-          className={`transition-all duration-300 ${
-            isScrolled
-              ? 'mx-auto max-w-5xl rounded-2xl bg-card/95 backdrop-blur-xl shadow-lg border border-border'
-              : 'bg-card/80 backdrop-blur-xl border-b border-border'
+          className={`transition-all duration-300 bg-[#fcf9f5]/95 dark:bg-gray-950/95 backdrop-blur-xl border border-border ${
+            isScrolled ? 'mx-auto max-w-5xl rounded-2xl shadow-lg' : 'border-t-0 border-x-0'
           }`}
         >
           <div className={`${isScrolled ? 'px-6' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'}`}>
@@ -106,7 +103,8 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                   <Link
                     key={index}
                     href={item.href}
-                    className="font-plus-jakarta text-foreground/80 hover:text-foreground dark:text-foreground/70 dark:hover:text-foreground font-medium transition-all relative group cursor-pointer hover:scale-105"
+                    className="text-foreground/80 hover:text-foreground dark:text-foreground/70 dark:hover:text-foreground font-medium transition-all relative group cursor-pointer hover:scale-105"
+                    style={{ fontFamily: 'var(--font-plus-jakarta)' }}
                   >
                     {item.label}
                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary dark:bg-primary group-hover:w-full transition-all duration-300"></span>
@@ -137,7 +135,8 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                 {/* Login */}
                 <Link
                   href="/login"
-                  className="font-plus-jakarta text-foreground/80 hover:text-foreground dark:text-foreground/70 dark:hover:text-foreground font-medium transition-all cursor-pointer hover:scale-105"
+                  className="text-foreground/80 hover:text-foreground dark:text-foreground/70 dark:hover:text-foreground font-medium transition-all cursor-pointer hover:scale-105"
+                  style={{ fontFamily: 'var(--font-plus-jakarta)' }}
                 >
                   Login
                 </Link>
@@ -145,7 +144,8 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                 {/* CTA Button */}
                 <Link
                   href="/demo"
-                  className="font-plus-jakarta relative inline-flex items-center bg-white dark:bg-card text-foreground px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm hover:shadow-md transition-all hover:scale-105 cursor-pointer group"
+                  className="relative inline-flex items-center bg-white dark:bg-card text-foreground px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm hover:shadow-md transition-all hover:scale-105 cursor-pointer group"
+                  style={{ fontFamily: 'var(--font-plus-jakarta)' }}
                 >
                   <span className="font-medium">Hoe het werkt?</span>
                 </Link>
@@ -191,7 +191,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-card shadow-xl z-50 lg:hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-[#fcf9f5] dark:bg-gray-950 shadow-xl z-50 lg:hidden flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-border">
@@ -223,7 +223,8 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                       <Link
                         href={item.href}
                         onClick={() => setIsOpen(false)}
-                        className="font-plus-jakarta block px-4 py-3 rounded-lg text-lg font-medium text-foreground hover:bg-muted transition-all cursor-pointer hover:scale-[1.02]"
+                        className="block px-4 py-3 rounded-lg text-lg font-medium text-foreground hover:bg-muted transition-all cursor-pointer hover:scale-[1.02]"
+                        style={{ fontFamily: 'var(--font-plus-jakarta)' }}
                       >
                         {item.label}
                       </Link>
@@ -287,7 +288,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               transition={{ duration: 0.2 }}
               className="fixed top-20 left-1/2 -translate-x-1/2 w-full max-w-2xl z-[70]"
             >
-              <div className="bg-card border border-border rounded-xl shadow-2xl overflow-hidden">
+              <div className="bg-[#fcf9f5] dark:bg-gray-950 border border-border rounded-xl shadow-2xl overflow-hidden">
                 <div className="p-6">
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />

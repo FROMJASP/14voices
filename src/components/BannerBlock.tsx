@@ -61,10 +61,9 @@ export function BannerBlock({ banner }: BannerBlockProps) {
   };
 
   const bannerStyles = {
-    gradient:
-      'bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 hover:bg-gray-900 dark:hover:bg-gray-50',
-    solid: 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-900 dark:hover:bg-gray-100',
-    subtle: 'bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-900 dark:hover:bg-gray-50',
+    gradient: 'bg-gradient-to-r from-[#f5f0e8] to-[#fcf9f5] dark:from-gray-900 dark:to-gray-950',
+    solid: 'bg-[#f5f0e8] dark:bg-gray-900',
+    subtle: 'bg-[#fcf9f5]/50 dark:bg-gray-950/50',
   };
 
   return (
