@@ -1,86 +1,87 @@
-import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import { getVoiceoverBySlug } from '@/lib/api'
-import { AudioPlayer } from '@/components/AudioPlayer'
-import { DemoPlayer } from '@/components/DemoPlayer'
+import { notFound } from 'next/navigation';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
+import { PriceCalculator } from '@/components/PriceCalculator';
+import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
+import { transformVoiceoverData } from '@/lib/voiceover-utils';
+import { VoiceoverDetailClientNew } from '@/components/VoiceoverDetailClientNew';
 
-export const dynamic = 'force-dynamic'
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const payload = await getPayload({ config: configPromise });
 
-export default async function VoiceoverPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
-  const voiceover = await getVoiceoverBySlug(slug)
+  const result = await payload.find({
+    collection: 'voiceovers',
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+    limit: 1,
+  });
+
+  const voiceover = result.docs[0];
 
   if (!voiceover) {
-    notFound()
+    return {
+      title: 'Voiceover niet gevonden',
+    };
   }
 
-  const primaryDemo = voiceover.demos?.find(demo => demo.isPrimary) || voiceover.demos?.[0]
-  const otherDemos = voiceover.demos?.filter(demo => demo.id !== primaryDemo?.id) || []
+  return {
+    title: `${voiceover.name} - 14voices`,
+    description: voiceover.description || `Professionele voice-over door ${voiceover.name}`,
+  };
+}
+
+export default async function VoiceoverPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const payload = await getPayload({ config: configPromise });
+
+  const result = await payload.find({
+    collection: 'voiceovers',
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+    depth: 2,
+    limit: 1,
+  });
+
+  const voiceover = result.docs[0];
+
+  if (!voiceover) {
+    notFound();
+  }
+
+  // Transform the voiceover data
+  const transformedVoiceover = transformVoiceoverData(voiceover, 0);
+
+  // Pre-selected voiceover data for context
+  const preSelectedVoiceover = {
+    id: voiceover.id,
+    name: voiceover.name,
+    profilePhoto:
+      typeof voiceover.profilePhoto === 'object' ? voiceover.profilePhoto.url : undefined,
+    styleTags: transformedVoiceover.tags,
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1">
-          {voiceover.profilePhoto && (
-            <div className="aspect-square relative overflow-hidden rounded-lg mb-6">
-              <Image
-                src={voiceover.profilePhoto.url}
-                alt={voiceover.profilePhoto.alt || voiceover.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-          )}
-          
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{voiceover.name}</h1>
-          
-          {voiceover.bio && (
-            <p className="text-gray-600 mb-6">{voiceover.bio}</p>
-          )}
-        </div>
+    <VoiceoverProvider initialVoiceover={preSelectedVoiceover}>
+      <div className="min-h-screen">
+        <VoiceoverDetailClientNew voiceover={transformedVoiceover} />
 
-        <div className="lg:col-span-2">
-          {primaryDemo && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Featured Demo</h2>
-              <AudioPlayer
-                src={primaryDemo.audioFile.url}
-                title={primaryDemo.title}
-              />
-              
-              {primaryDemo.tags && primaryDemo.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {primaryDemo.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {otherDemos.length > 0 && (
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">More Demos</h2>
-              <DemoPlayer
-                demos={otherDemos.map(demo => ({
-                  id: demo.id,
-                  title: demo.title,
-                  audioUrl: demo.audioFile.url
-                }))}
-              />
-            </div>
-          )}
-
-          {(!voiceover.demos || voiceover.demos.length === 0) && (
-            <p className="text-gray-500 text-center py-8">No demos available yet.</p>
-          )}
+        {/* Price Calculator Section */}
+        <div className="bg-[#fcf9f5] dark:bg-gray-900 py-20">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+              Bereken je prijs
+            </h2>
+            <PriceCalculator />
+          </div>
         </div>
       </div>
-    </div>
-  )
+    </VoiceoverProvider>
+  );
 }
