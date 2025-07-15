@@ -45,7 +45,7 @@ export function VoiceoverShowcaseClient({
   archiveVoiceovers: initialArchive,
   allTags,
 }: VoiceoverShowcaseClientProps) {
-  const [selectedCategory, setSelectedCategory] = useState('Alle');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeVoiceovers, setActiveVoiceovers] = useState<VoiceoverData[]>([]);
   const [archiveVoiceovers, setArchiveVoiceovers] = useState<VoiceoverData[]>([]);
@@ -62,7 +62,7 @@ export function VoiceoverShowcaseClient({
 
   const filteredVoiceovers = activeVoiceovers.filter((voice) => {
     const matchesCategory =
-      selectedCategory === 'Alle' || voice.tags.some((tag) => tag === selectedCategory);
+      selectedCategories.length === 0 || voice.tags.some((tag) => selectedCategories.includes(tag));
     const matchesSearch =
       searchQuery === '' ||
       voice.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -80,7 +80,17 @@ export function VoiceoverShowcaseClient({
     scrollToPriceCalculator();
   };
 
-  const activeFiltersCount = selectedCategory !== 'Alle' ? 1 : 0;
+  const activeFiltersCount = selectedCategories.length;
+
+  const toggleCategory = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    );
+  };
+
+  const clearAllFilters = () => {
+    setSelectedCategories([]);
+  };
 
   return (
     <section
@@ -192,21 +202,31 @@ export function VoiceoverShowcaseClient({
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                       Filter op stijl
                     </h3>
-                    <button
-                      onClick={() => setShowFilters(false)}
-                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                    >
-                      <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {selectedCategories.length > 0 && (
+                        <button
+                          onClick={clearAllFilters}
+                          className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-3 py-1"
+                        >
+                          Wis alles
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setShowFilters(false)}
+                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      >
+                        <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => setSelectedCategory('Alle')}
+                      onClick={clearAllFilters}
                       className={`px-5 py-3 rounded-xl font-medium transition-all ${
-                        selectedCategory === 'Alle'
+                        selectedCategories.length === 0
                           ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg'
                           : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600'
                       }`}
@@ -221,14 +241,23 @@ export function VoiceoverShowcaseClient({
                         transition={{ delay: index * 0.02 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => setSelectedCategory(tag)}
-                        className={`px-5 py-3 rounded-xl font-medium transition-all ${
-                          selectedCategory === tag
+                        onClick={() => toggleCategory(tag)}
+                        className={`px-5 py-3 rounded-xl font-medium transition-all relative ${
+                          selectedCategories.includes(tag)
                             ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg'
                             : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600'
                         }`}
                       >
                         {tag}
+                        {selectedCategories.includes(tag) && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center"
+                          >
+                            <Check className="w-2.5 h-2.5 text-white" />
+                          </motion.div>
+                        )}
                       </motion.button>
                     ))}
                   </div>
