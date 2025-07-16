@@ -7,7 +7,9 @@ export const shuffleArray = <T>(array: T[]): T[] => {
   return shuffled;
 };
 
-export const formatAvailabilityDate = (voiceover: any): string => {
+import { PayloadVoiceover } from '@/types/voiceover';
+
+export const formatAvailabilityDate = (voiceover: Partial<PayloadVoiceover>): string => {
   if (!voiceover.availability?.isAvailable && voiceover.availability?.unavailableUntil) {
     const date = new Date(voiceover.availability.unavailableUntil);
     return `Beschikbaar vanaf ${date.toLocaleDateString('nl-NL', {
@@ -87,8 +89,8 @@ export const getVoiceoverColor = (index: number): string => {
   return colors[index % colors.length];
 };
 
-export const transformVoiceoverData = (voiceover: any, index: number) => {
-  const styleTags = voiceover.styleTags?.map((tag: any) => getStyleTagLabel(tag)) || [];
+export const transformVoiceoverData = (voiceover: PayloadVoiceover, index: number) => {
+  const styleTags = voiceover.styleTags?.map((tag) => getStyleTagLabel(tag)) || [];
 
   return {
     id: voiceover.id,
@@ -125,7 +127,7 @@ export const transformVoiceoverData = (voiceover: any, index: number) => {
 };
 
 // Sort voiceovers with unavailable ones last
-export const sortVoiceovers = (voiceovers: any[]) => {
+export const sortVoiceovers = <T extends { beschikbaar: boolean }>(voiceovers: T[]) => {
   return voiceovers.sort((a, b) => {
     if (a.beschikbaar && !b.beschikbaar) return -1;
     if (!a.beschikbaar && b.beschikbaar) return 1;

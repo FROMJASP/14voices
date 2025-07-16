@@ -2,6 +2,7 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { VoiceoverShowcaseClient } from './VoiceoverShowcaseClient';
 import { transformVoiceoverData, getStyleTagLabel } from '@/lib/voiceover-utils';
+import { PayloadVoiceover } from '@/types/voiceover';
 
 export async function VoiceoverShowcase() {
   const payload = await getPayload({ config: configPromise });
@@ -32,17 +33,18 @@ export async function VoiceoverShowcase() {
 
   // Transform the data
   const activeVoiceovers = activeResult.docs.map((voiceover, index) =>
-    transformVoiceoverData(voiceover, index)
+    transformVoiceoverData(voiceover as PayloadVoiceover, index)
   );
 
   const archiveVoiceovers = archiveResult.docs.map((voiceover, index) =>
-    transformVoiceoverData(voiceover, index + activeResult.docs.length)
+    transformVoiceoverData(voiceover as PayloadVoiceover, index + activeResult.docs.length)
   );
 
   // Extract all unique tags for filtering
   const allTagsSet = new Set<string>();
   [...activeResult.docs, ...archiveResult.docs].forEach((voiceover) => {
-    voiceover.styleTags?.forEach((tag: any) => {
+    const typedVoiceover = voiceover as PayloadVoiceover;
+    typedVoiceover.styleTags?.forEach((tag) => {
       const label = getStyleTagLabel(tag);
       if (label && label !== 'Custom') {
         allTagsSet.add(label);
