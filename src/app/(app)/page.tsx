@@ -2,7 +2,6 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { PageRenderer } from '@/components/PageRenderer';
 import type { Page } from '@/payload-types';
-import { VoiceoverShowcase } from '@/components/sections';
 import { UnifiedHero } from '@/components/unified';
 import {
   StemmenSection,
@@ -10,6 +9,9 @@ import {
   BlogSection,
   ContactSection,
 } from '@/components/sections/HomepageSections';
+import { PriceCalculator } from '@/components/PriceCalculator';
+import { VoiceoverShowcase } from '@/components/VoiceoverShowcase';
+import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 
 export async function generateMetadata() {
   const payload = await getPayload({ config: configPromise });
@@ -81,16 +83,23 @@ export default async function HomePage() {
   // If no home page exists, show our beautiful landing page
   if (!page) {
     return (
-      <>
+      <VoiceoverProvider>
         <UnifiedHero variant="page" />
         <VoiceoverShowcase />
+        <PriceCalculator />
         <StemmenSection />
         <PrijzenSection />
         <BlogSection />
         <ContactSection />
-      </>
+      </VoiceoverProvider>
     );
   }
 
-  return <PageRenderer page={page} />;
+  return (
+    <VoiceoverProvider>
+      <PageRenderer page={page} />
+      <VoiceoverShowcase />
+      <PriceCalculator />
+    </VoiceoverProvider>
+  );
 }

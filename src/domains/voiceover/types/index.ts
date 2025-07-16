@@ -9,7 +9,7 @@ export interface VoiceoverEntity {
   };
   demos: DemoEntity[];
   status: VoiceoverStatus;
-  group?: GroupEntity;
+  cohort?: CohortEntity;
   styleTags?: StyleTag[];
   availability?: AvailabilityInfo;
   createdAt: Date;
@@ -30,7 +30,7 @@ export interface DemoEntity {
   voiceoverId: string;
 }
 
-export interface GroupEntity {
+export interface CohortEntity {
   id: string;
   name: string;
   slug: string;

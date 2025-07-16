@@ -1,10 +1,10 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
 const Voiceovers: CollectionConfig = {
   slug: 'voiceovers',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['group', 'name', 'status', 'availability', 'styleTags', 'demos'],
+    defaultColumns: ['name', 'status', 'availability', 'styleTags', 'demos', 'cohort'],
     listSearchableFields: ['name', 'description'],
     group: 'Content',
     pagination: {
@@ -33,6 +33,29 @@ const Voiceovers: CollectionConfig = {
       },
     },
     {
+      name: 'slug',
+      type: 'text',
+      required: true,
+      unique: true,
+      admin: {
+        description: 'URL-friendly version of the name',
+        position: 'sidebar',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, data }) => {
+            if (!value && data?.name) {
+              return data.name
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            }
+            return value;
+          },
+        ],
+      },
+    },
+    {
       name: 'description',
       type: 'textarea',
       localized: true,
@@ -50,9 +73,9 @@ const Voiceovers: CollectionConfig = {
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
         if (data?.status === 'active' && !value) {
-          return 'A profile photo is required for active voiceovers'
+          return 'A profile photo is required for active voiceovers';
         }
-        return true
+        return true;
       },
     },
     {
@@ -101,6 +124,13 @@ const Voiceovers: CollectionConfig = {
             { label: 'Stoer', value: 'stoer' },
             { label: 'Warm & Donker', value: 'warm-donker' },
             { label: 'Zakelijk', value: 'zakelijk' },
+            { label: 'Eigentijds', value: 'eigentijds' },
+            { label: 'Gezellig & Genieten', value: 'gezellig-genieten' },
+            { label: 'Helder', value: 'helder' },
+            { label: 'Naturel', value: 'naturel' },
+            { label: 'Urban', value: 'urban' },
+            { label: 'Vernieuwend', value: 'vernieuwend' },
+            { label: 'Vriendelijk & Vrolijk', value: 'vriendelijk-vrolijk' },
             { label: 'Custom', value: 'custom' },
           ],
         },
@@ -123,11 +153,11 @@ const Voiceovers: CollectionConfig = {
         width: '20%',
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
-        const hasAnyDemo = value || data?.commercialsDemo || data?.narrativeDemo
+        const hasAnyDemo = value || data?.commercialsDemo || data?.narrativeDemo;
         if (data?.status === 'active' && !hasAnyDemo) {
-          return 'At least one audio demo is required for active voiceovers'
+          return 'At least one audio demo is required for active voiceovers';
         }
-        return true
+        return true;
       },
     },
     {
@@ -166,11 +196,12 @@ const Voiceovers: CollectionConfig = {
       options: [
         { label: 'Active (Main Page)', value: 'active' },
         { label: 'Draft (Not Ready)', value: 'draft' },
-        { label: 'More Voices', value: 'more-voices' },
+        { label: 'More Voices (uit het archief)', value: 'more-voices' },
         { label: 'Archived', value: 'archived' },
       ],
       admin: {
-        description: 'Controls where this voiceover appears on the website',
+        description:
+          "Controls where this voiceover appears on the website. More Voices (uit het archief) = Deze voiceover wordt getoond in de 'uit het archief' sectie onder de 14 stemmen die in het groot worden getoond",
         width: '15%',
         components: {
           Cell: './components/admin/cells/StatusCell#StatusCell',
@@ -178,15 +209,16 @@ const Voiceovers: CollectionConfig = {
       },
     },
     {
-      name: 'group',
+      name: 'cohort',
       type: 'relationship',
-      relationTo: 'groups',
+      relationTo: 'cohorts',
       hasMany: false,
       admin: {
-        description: 'Optional group/batch this voiceover belongs to',
+        description:
+          'Optional cohort this voiceover belongs to (each 3-6 months we have a new cohort)',
         width: '20%',
         components: {
-          Cell: './components/admin/cells/GroupCell#GroupCell',
+          Cell: './components/admin/cells/CohortCell#CohortCell',
         },
       },
     },
@@ -232,36 +264,36 @@ const Voiceovers: CollectionConfig = {
       ({ data }) => {
         // Auto-reactivate based on availability dates
         if (data?.availability?.unavailableUntil) {
-          const today = new Date()
-          const unavailableUntil = new Date(data.availability.unavailableUntil)
+          const today = new Date();
+          const unavailableUntil = new Date(data.availability.unavailableUntil);
           if (today > unavailableUntil) {
-            data.availability.isAvailable = true
-            data.availability.unavailableFrom = null
-            data.availability.unavailableUntil = null
+            data.availability.isAvailable = true;
+            data.availability.unavailableFrom = null;
+            data.availability.unavailableUntil = null;
           }
         }
-        return data
+        return data;
       },
     ],
     afterRead: [
       async ({ doc, req }) => {
-        // Always populate group if it's just an ID
-        if (doc.group && typeof doc.group === 'string') {
+        // Always populate cohort if it's just an ID
+        if (doc.cohort && typeof doc.cohort === 'string') {
           try {
-            const group = await req.payload.findByID({
-              collection: 'groups',
-              id: doc.group,
-              depth: 0
-            })
-            doc.group = group
+            const cohort = await req.payload.findByID({
+              collection: 'cohorts',
+              id: doc.cohort,
+              depth: 0,
+            });
+            doc.cohort = cohort;
           } catch {
-            // Group might be deleted, leave as is
+            // Cohort might be deleted, leave as is
           }
         }
-        return doc
+        return doc;
       },
     ],
   },
-}
+};
 
-export default Voiceovers
+export default Voiceovers;

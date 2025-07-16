@@ -50,7 +50,7 @@ export default function StatusPage() {
               <Link href="/admin" className="block text-blue-600 hover:underline">
                 → Admin Panel (with Tours)
               </Link>
-              <Link href="/api/voiceovers" className="block text-blue-600 hover:underline">
+              <Link href="/api/public-voiceovers" className="block text-blue-600 hover:underline">
                 → Voiceovers API
               </Link>
             </div>

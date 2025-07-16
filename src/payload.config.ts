@@ -11,7 +11,7 @@ import sharp from 'sharp';
 import Users from './collections/Users';
 import Media from './collections/Media';
 import Voiceovers from './collections/Voiceovers';
-import Groups from './collections/Groups';
+import Cohorts from './collections/Cohorts';
 import Scripts from './collections/Scripts';
 import { Bookings } from './collections/Bookings';
 import Invoices from './collections/Invoices';
@@ -86,7 +86,7 @@ export default buildConfig({
   collections: [
     Users,
     Media, // General media repository
-    Groups,
+    Cohorts,
     Voiceovers,
     Bookings,
     Scripts,

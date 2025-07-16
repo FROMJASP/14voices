@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { ArrowLeft, Play, Pause, Calendar, Check, ChevronRight, User } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useVoiceover, scrollToPriceCalculator } from '@/contexts/VoiceoverContext';
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -170,10 +171,11 @@ export function VoiceoverDetailClientNew({ voiceover }: VoiceoverDetailClientNew
         <div className="absolute inset-0">
           {voiceover.profilePhoto ? (
             <>
-              <img
+              <Image
                 src={voiceover.profilePhoto}
                 alt={voiceover.name}
-                className="absolute inset-0 w-full h-full object-cover filter grayscale brightness-75"
+                fill
+                className="object-cover filter grayscale brightness-75"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
             </>

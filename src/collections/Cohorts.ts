@@ -1,7 +1,7 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
-const Groups: CollectionConfig = {
-  slug: 'groups',
+const Cohorts: CollectionConfig = {
+  slug: 'cohorts',
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'color', 'description', 'createdAt'],
@@ -19,7 +19,7 @@ const Groups: CollectionConfig = {
       type: 'text',
       required: true,
       admin: {
-        description: 'Name of the group (e.g., "November 2025", "Summer Voices")',
+        description: 'Name of the cohort (e.g., "November 2025", "Summer Voices")',
       },
     },
     {
@@ -37,9 +37,9 @@ const Groups: CollectionConfig = {
               return data.name
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '')
+                .replace(/^-+|-+$/g, '');
             }
-            return value
+            return value;
           },
         ],
       },
@@ -62,14 +62,14 @@ const Groups: CollectionConfig = {
         { label: 'Gray', value: 'gray' },
       ],
       admin: {
-        description: 'Color for the group badge',
+        description: 'Color for the cohort badge',
       },
     },
     {
       name: 'description',
       type: 'textarea',
       admin: {
-        description: 'Optional description of this group',
+        description: 'Optional description of this cohort',
       },
     },
     {
@@ -77,10 +77,10 @@ const Groups: CollectionConfig = {
       type: 'checkbox',
       defaultValue: true,
       admin: {
-        description: 'Whether this group is currently active',
+        description: 'Whether this cohort is currently active',
       },
     },
   ],
-}
+};
 
-export default Groups
+export default Cohorts;

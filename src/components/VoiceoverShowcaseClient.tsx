@@ -6,6 +6,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import { ChevronRight, User, Check, Search, SlidersHorizontal, ChevronDown, X } from 'lucide-react';
 import { useVoiceover, scrollToPriceCalculator } from '@/contexts/VoiceoverContext';
 import Link from 'next/link';
+import Image from 'next/image';
 import { shuffleArray, sortVoiceovers } from '@/lib/voiceover-utils';
 import { BeautifulAudioPlayer } from './BeautifulAudioPlayer';
 import { VoiceoverCard } from './VoiceoverCard';
@@ -331,10 +332,11 @@ export function VoiceoverShowcaseClient({
                   <Link href={`/voiceovers/${voice.slug}`} className="cursor-pointer">
                     <div className="w-full aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg mb-3 flex items-center justify-center relative">
                       {voice.profilePhoto ? (
-                        <img
+                        <Image
                           src={voice.profilePhoto}
                           alt={voice.name}
-                          className="w-full h-full object-cover rounded-lg"
+                          fill
+                          className="object-cover rounded-lg"
                         />
                       ) : (
                         <User className="w-16 h-16 text-gray-300 dark:text-gray-600" />

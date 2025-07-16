@@ -262,7 +262,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
           : undefined,
       demos,
       status: payload.status,
-      group: payload.group && typeof payload.group === 'object' ? payload.group : undefined,
+      cohort: payload.cohort && typeof payload.cohort === 'object' ? payload.cohort : undefined,
       styleTags: payload.styleTags,
       availability: payload.availability
         ? {

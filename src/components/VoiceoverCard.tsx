@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Calendar, User } from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const plusJakarta = Plus_Jakarta_Sans({
   weight: ['400', '500', '600', '700', '800'],
@@ -163,10 +164,11 @@ export function VoiceoverCard({ voice, isSelected, onSelect }: VoiceoverCardProp
         <Link href={`/voiceovers/${voice.slug}`} className="absolute inset-0 z-10">
           {/* Full Image */}
           {voice.profilePhoto ? (
-            <img
+            <Image
               src={voice.profilePhoto}
               alt={voice.name}
-              className="absolute inset-0 w-full h-full object-cover filter grayscale brightness-95 group-hover:brightness-105 transition-all duration-500"
+              fill
+              className="object-cover filter grayscale brightness-95 group-hover:brightness-105 transition-all duration-500"
             />
           ) : (
             <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">

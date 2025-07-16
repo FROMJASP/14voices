@@ -33,7 +33,7 @@ export function BeautifulAudioPlayer({
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   const whilePlaying = useCallback(() => {
     if (audioRef.current && !isDragging) {

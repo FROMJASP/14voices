@@ -29,7 +29,7 @@ export function ModernAudioPlayer({
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   // Smooth animation for playhead
   const whilePlaying = useCallback(() => {

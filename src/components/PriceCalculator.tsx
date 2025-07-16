@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import Image from 'next/image';
 import { Check, Info, Calculator, User } from 'lucide-react';
 import { useVoiceover, scrollToVoiceovers } from '@/contexts/VoiceoverContext';
 
@@ -806,12 +807,13 @@ export function PriceCalculator() {
                   Geselecteerde voice-over
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-white/20 flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-white/20 flex-shrink-0 relative">
                     {selectedVoiceover.profilePhoto ? (
-                      <img
+                      <Image
                         src={selectedVoiceover.profilePhoto}
                         alt={selectedVoiceover.name}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

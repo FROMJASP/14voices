@@ -6,7 +6,7 @@ export { StatusCell } from './StatusCell';
 export { AvailabilityCell } from './AvailabilityCell';
 export { ProfilePhotoCell } from './ProfilePhotoCell';
 export { NameCell } from './NameCell';
-export { GroupCell } from './GroupCell';
+export { CohortCell } from './CohortCell';
 export { UserAvatarCell } from './UserAvatarCell';
 export { UserStatusCell } from './UserStatusCell';
 export { UserInfoCell } from './UserInfoCell';
