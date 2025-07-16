@@ -95,7 +95,7 @@ export const transformVoiceoverData = (voiceover: PayloadVoiceover, index: numbe
   return {
     id: voiceover.id,
     name: voiceover.name,
-    slug: voiceover.slug,
+    slug: voiceover.slug || '', // Default to empty string if slug is undefined
     tags: styleTags,
     color: getVoiceoverColor(index),
     beschikbaar: voiceover.availability?.isAvailable !== false,
