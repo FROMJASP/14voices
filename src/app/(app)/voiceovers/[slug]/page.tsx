@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { PriceCalculator } from '@/components/PriceCalculator';
+import { PriceCalculator } from '@/components';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import { VoiceoverDetailClientNew } from '@/components/VoiceoverDetailClientNew';
