@@ -121,8 +121,8 @@ export function VoiceoverShowcaseClient({
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="text-xl text-gray-600 dark:text-gray-400 max-w-lg leading-relaxed"
               >
-                14 in huis getrainde voice-overs voor jouw commercial, documentaire en alles
-                daartussen.
+                14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles
+                daartussenin.
               </motion.p>
             </div>
 
