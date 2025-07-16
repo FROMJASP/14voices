@@ -60,7 +60,7 @@ export default async function VoiceoverPage({ params }: { params: Promise<{ slug
 
   // Pre-selected voiceover data for context
   const preSelectedVoiceover = {
-    id: voiceover.id,
+    id: String(voiceover.id),
     name: voiceover.name,
     profilePhoto:
       typeof voiceover.profilePhoto === 'object' ? voiceover.profilePhoto.url : undefined,
