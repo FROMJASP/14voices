@@ -5,6 +5,7 @@ import { PriceCalculator } from '@/components/PriceCalculator';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import { VoiceoverDetailClientNew } from '@/components/VoiceoverDetailClientNew';
+import type { PayloadVoiceover } from '@/types/voiceover';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -56,7 +57,7 @@ export default async function VoiceoverPage({ params }: { params: Promise<{ slug
   }
 
   // Transform the voiceover data
-  const transformedVoiceover = transformVoiceoverData(voiceover, 0);
+  const transformedVoiceover = transformVoiceoverData(voiceover as PayloadVoiceover, 0);
 
   // Pre-selected voiceover data for context
   const preSelectedVoiceover = {

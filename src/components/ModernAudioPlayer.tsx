@@ -111,32 +111,38 @@ export function ModernAudioPlayer({
     handleProgressChange(e);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) {
-      const progressBar = progressBarRef.current;
-      if (!progressBar) return;
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging) {
+        const progressBar = progressBarRef.current;
+        if (!progressBar) return;
 
-      const rect = progressBar.getBoundingClientRect();
-      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      const newTime = percent * trackDuration;
+        const rect = progressBar.getBoundingClientRect();
+        const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const newTime = percent * trackDuration;
 
-      setCurrentTime(newTime);
-    }
-  };
+        setCurrentTime(newTime);
+      }
+    },
+    [isDragging, trackDuration]
+  );
 
-  const handleMouseUp = (e: MouseEvent) => {
-    if (isDragging && audioRef.current) {
-      const progressBar = progressBarRef.current;
-      if (!progressBar) return;
+  const handleMouseUp = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging && audioRef.current) {
+        const progressBar = progressBarRef.current;
+        if (!progressBar) return;
 
-      const rect = progressBar.getBoundingClientRect();
-      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      const newTime = percent * trackDuration;
+        const rect = progressBar.getBoundingClientRect();
+        const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const newTime = percent * trackDuration;
 
-      audioRef.current.currentTime = newTime;
-      setIsDragging(false);
-    }
-  };
+        audioRef.current.currentTime = newTime;
+        setIsDragging(false);
+      }
+    },
+    [isDragging, trackDuration]
+  );
 
   useEffect(() => {
     if (isDragging) {
@@ -147,7 +153,7 @@ export function ModernAudioPlayer({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, trackDuration]);
+  }, [isDragging, trackDuration, handleMouseMove, handleMouseUp]);
 
   const formatTime = (time: number) => {
     if (isNaN(time)) return '0:00';
