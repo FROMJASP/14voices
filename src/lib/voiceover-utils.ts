@@ -119,7 +119,7 @@ export const transformVoiceoverData = (voiceover: PayloadVoiceover, index: numbe
         url: typeof voiceover.narrativeDemo === 'object' ? voiceover.narrativeDemo.url : '',
         duration: '2:00',
       },
-    ].filter(Boolean),
+    ].filter(Boolean) as { id: string; title: string; url: string; duration: string }[],
     profilePhoto: typeof voiceover.profilePhoto === 'object' ? voiceover.profilePhoto.url : null,
     description: voiceover.description,
     cohort: typeof voiceover.cohort === 'object' ? voiceover.cohort : null,
