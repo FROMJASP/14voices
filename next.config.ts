@@ -6,6 +6,16 @@ const nextConfig: NextConfig = {
   experimental: {
     reactCompiler: false,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/api/media/**',
+      },
+    ],
+  },
 };
 
 const sentryWebpackPluginOptions = {
