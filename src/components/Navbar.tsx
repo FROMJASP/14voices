@@ -76,18 +76,39 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
         .font-plus-jakarta {
           font-family: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
         }
+        /* Remove any gradient overlays or shadows */
+        .sticky::before,
+        .sticky::after {
+          display: none !important;
+        }
       `}</style>
 
       {/* Main Navbar */}
       <div
-        className={`sticky top-0 z-50 ${isScrolled ? 'pt-6' : ''} ${instrumentSerif.variable} ${plusJakarta.variable}`}
+        className={`sticky top-0 z-50 ${isScrolled ? 'pt-6' : 'mt-6'} ${instrumentSerif.variable} ${plusJakarta.variable} transition-all duration-500 ease-in-out`}
+        style={{ boxShadow: 'none' }}
       >
         <nav
-          className={`transition-all duration-300 bg-[#fcf9f5]/95 dark:bg-gray-950/95 backdrop-blur-xl border border-border ${
-            isScrolled ? 'mx-auto max-w-5xl rounded-2xl shadow-lg' : 'border-t-0 border-x-0'
+          className={`relative transition-all duration-500 ease-in-out bg-white dark:bg-gray-950 ${
+            isScrolled ? 'mx-auto max-w-5xl rounded-2xl shadow-lg' : 'shadow-none'
           }`}
+          style={{
+            backdropFilter: 'none',
+            filter: 'none',
+          }}
         >
-          <div className={`${isScrolled ? 'px-6' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'}`}>
+          {/* Border overlay that fades in/out */}
+          <div
+            className={`absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-500 ease-in-out ${
+              isScrolled ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{
+              border: '1px solid rgb(var(--border) / var(--tw-border-opacity))',
+            }}
+          />
+          <div
+            className={`transition-all duration-500 ease-in-out ${isScrolled ? 'px-6' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'}`}
+          >
             <div className="flex items-center justify-between h-16">
               {/* Logo */}
               <Link href="/" className="group">
@@ -191,7 +212,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-[#fcf9f5] dark:bg-gray-950 shadow-xl z-50 lg:hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white dark:bg-gray-950 shadow-xl z-50 lg:hidden flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-border">
@@ -288,7 +309,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               transition={{ duration: 0.2 }}
               className="fixed top-20 left-1/2 -translate-x-1/2 w-full max-w-2xl z-[70]"
             >
-              <div className="bg-[#fcf9f5] dark:bg-gray-950 border border-border rounded-xl shadow-2xl overflow-hidden">
+              <div className="bg-white dark:bg-gray-950 border border-border rounded-xl shadow-2xl overflow-hidden">
                 <div className="p-6">
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
