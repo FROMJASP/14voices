@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
+import { Instrument_Serif, Inter } from 'next/font/google';
 
 const instrumentSerif = Instrument_Serif({
   weight: ['400'],
@@ -15,11 +15,11 @@ const instrumentSerif = Instrument_Serif({
   variable: '--font-instrument-serif',
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   weight: ['400', '500', '600'],
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-plus-jakarta',
+  variable: '--font-inter',
 });
 
 const defaultMenuItems = [
@@ -35,8 +35,6 @@ interface NavbarProps {
 
 export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -52,6 +50,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
 
   useEffect(() => {
     if (isOpen) {
@@ -73,8 +72,8 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
           font-family: var(--font-instrument-serif);
           letter-spacing: 0.02em;
         }
-        .font-plus-jakarta {
-          font-family: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
+        .font-inter {
+          font-family: var(--font-inter), 'Inter', sans-serif;
         }
         /* Remove any gradient overlays or shadows */
         .sticky::before,
@@ -84,80 +83,84 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
       `}</style>
 
       {/* Main Navbar */}
-      <div
-        className={`sticky top-0 z-50 ${isScrolled ? 'pt-6' : 'mt-6'} ${instrumentSerif.variable} ${plusJakarta.variable} transition-all duration-500 ease-in-out`}
-        style={{ boxShadow: 'none' }}
+      <nav
+        className={`sticky top-0 z-50 bg-white dark:bg-background transition-all duration-300 ${isScrolled ? 'border-b border-gray-200 dark:border-border shadow-sm' : ''} ${instrumentSerif.variable} ${inter.variable}`}
       >
-        <nav
-          className={`relative transition-all duration-500 ease-in-out bg-white dark:bg-gray-950 ${
-            isScrolled ? 'mx-auto max-w-5xl rounded-2xl shadow-lg' : 'shadow-none'
-          }`}
-          style={{
-            backdropFilter: 'none',
-            filter: 'none',
-          }}
-        >
-          {/* Border overlay that fades in/out */}
-          <div
-            className={`absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-500 ease-in-out ${
-              isScrolled ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{
-              border: '1px solid rgb(var(--border) / var(--tw-border-opacity))',
-            }}
-          />
-          <div
-            className={`transition-all duration-500 ease-in-out ${isScrolled ? 'px-6' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'}`}
-          >
-            <div className="flex items-center justify-between h-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-20">
               {/* Logo */}
-              <Link href="/" className="group">
+              <Link href="/" className="group flex-shrink-0">
                 <span className="font-instrument-serif">
                   <span className="text-4xl text-primary font-normal">Fourteen</span>{' '}
                   <span className="text-3xl text-foreground italic font-light">Voices</span>
                 </span>
               </Link>
 
-              {/* Desktop Menu */}
-              <div className="hidden lg:flex items-center gap-8">
-                {menuItems.map((item, index) => (
-                  <Link
-                    key={index}
-                    href={item.href}
-                    className="text-foreground/80 hover:text-foreground dark:text-foreground/70 dark:hover:text-foreground font-medium transition-all relative group cursor-pointer hover:scale-105"
-                    style={{ fontFamily: 'var(--font-plus-jakarta)' }}
-                  >
-                    {item.label}
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary dark:bg-primary group-hover:w-full transition-all duration-300"></span>
-                  </Link>
-                ))}
+              {/* Center Navigation */}
+              <div className="hidden lg:flex items-center justify-center flex-1 max-w-2xl mx-16">
+                <nav className="flex items-center gap-12">
+                  {menuItems.map((item, index) => (
+                    <Link
+                      key={index}
+                      href={item.href}
+                      className="text-base text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white font-medium transition-all relative group cursor-pointer"
+                      style={{ fontFamily: 'var(--font-inter)' }}
+                    >
+                      <span className="relative z-10">{item.label}</span>
+                      <span className="absolute inset-x-0 -bottom-1 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center"></span>
+                    </Link>
+                  ))}
+                </nav>
               </div>
 
               {/* Actions */}
-              <div className="hidden lg:flex items-center gap-4">
-                {/* Search */}
-                <button
-                  onClick={() => setShowSearch(true)}
-                  className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors hover:bg-muted/50 cursor-pointer"
-                  aria-label="Search"
-                >
-                  <Search className="w-5 h-5" />
-                </button>
-
+              <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
                 {/* Theme Toggle */}
                 <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 dark:hover:bg-muted transition-all cursor-pointer hover:scale-105"
+                  onClick={(e) => {
+                    const newTheme = theme === 'dark' ? 'light' : 'dark';
+                    
+                    // Check if browser supports View Transitions API
+                    if (!document.startViewTransition) {
+                      setTheme(newTheme);
+                      return;
+                    }
+                    
+                    // Add transitioning class for performance optimizations
+                    document.body.classList.add('transitioning');
+                    
+                    // Get cursor position for dynamic animation origin
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
+                    const y = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+                    
+                    // Set CSS variables for animation origin
+                    document.documentElement.style.setProperty('--transition-origin-x', `${x}%`);
+                    document.documentElement.style.setProperty('--transition-origin-y', `${y}%`);
+                    
+                    // Use View Transitions API for smooth theme change
+                    const transition = document.startViewTransition(() => {
+                      setTheme(newTheme);
+                    });
+                    
+                    // Clean up after transition
+                    transition.finished.finally(() => {
+                      document.body.classList.remove('transitioning');
+                      document.documentElement.style.removeProperty('--transition-origin-x');
+                      document.documentElement.style.removeProperty('--transition-origin-y');
+                    });
+                  }}
+                  className="p-2 rounded-lg text-gray-600 hover:text-gray-900 dark:text-white/90 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-muted transition-all cursor-pointer"
                   aria-label="Toggle theme"
                 >
-                  {theme === 'dark' ? '☀️' : '🌙'}
+                  <span className="text-base">{theme === 'dark' ? '☀️' : '🌙'}</span>
                 </button>
 
                 {/* Login */}
                 <Link
                   href="/login"
-                  className="text-foreground/80 hover:text-foreground dark:text-foreground/70 dark:hover:text-foreground font-medium transition-all cursor-pointer hover:scale-105"
-                  style={{ fontFamily: 'var(--font-plus-jakarta)' }}
+                  className="text-base text-gray-700 hover:text-gray-900 dark:text-white dark:hover:text-white font-medium transition-all cursor-pointer px-4 py-2"
+                  style={{ fontFamily: 'var(--font-inter)' }}
                 >
                   Login
                 </Link>
@@ -165,33 +168,64 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                 {/* CTA Button */}
                 <Link
                   href="/demo"
-                  className="relative inline-flex items-center bg-white dark:bg-card text-foreground px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm hover:shadow-md transition-all hover:scale-105 cursor-pointer group"
-                  style={{ fontFamily: 'var(--font-plus-jakarta)' }}
+                  className="relative inline-flex items-center bg-primary text-gray-900 dark:text-black px-5 py-2.5 rounded-full text-base font-medium transition-all hover:bg-primary/90 hover:shadow-md cursor-pointer"
+                  style={{ fontFamily: 'var(--font-inter)' }}
                 >
-                  <span className="font-medium">Hoe het werkt?</span>
+                  Hoe het werkt?
                 </Link>
               </div>
 
               {/* Mobile Actions */}
               <div className="lg:hidden flex items-center gap-2">
                 <button
-                  onClick={() => setShowSearch(true)}
-                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-all cursor-pointer"
-                  aria-label="Search"
+                  onClick={(e) => {
+                    const newTheme = theme === 'dark' ? 'light' : 'dark';
+                    
+                    // Check if browser supports View Transitions API
+                    if (!document.startViewTransition) {
+                      setTheme(newTheme);
+                      return;
+                    }
+                    
+                    // Add transitioning class for performance optimizations
+                    document.body.classList.add('transitioning');
+                    
+                    // Get cursor position for dynamic animation origin
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
+                    const y = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+                    
+                    // Set CSS variables for animation origin
+                    document.documentElement.style.setProperty('--transition-origin-x', `${x}%`);
+                    document.documentElement.style.setProperty('--transition-origin-y', `${y}%`);
+                    
+                    // Use View Transitions API for smooth theme change
+                    const transition = document.startViewTransition(() => {
+                      setTheme(newTheme);
+                    });
+                    
+                    // Clean up after transition
+                    transition.finished.finally(() => {
+                      document.body.classList.remove('transitioning');
+                      document.documentElement.style.removeProperty('--transition-origin-x');
+                      document.documentElement.style.removeProperty('--transition-origin-y');
+                    });
+                  }}
+                  className="p-2 rounded-lg text-gray-600 hover:text-gray-900 dark:text-white/90 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-muted transition-all cursor-pointer"
+                  aria-label="Toggle theme"
                 >
-                  <Search className="w-5 h-5" />
+                  <span className="text-base">{theme === 'dark' ? '☀️' : '🌙'}</span>
                 </button>
                 <button
                   onClick={() => setIsOpen(!isOpen)}
-                  className="p-2 text-foreground hover:bg-muted/50 rounded-lg transition-all cursor-pointer"
+                  className="p-2 rounded-lg text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
                 >
-                  {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                  {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
               </div>
             </div>
           </div>
         </nav>
-      </div>
 
       {/* Enhanced Mobile Menu */}
       <AnimatePresence>
@@ -212,10 +246,10 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white dark:bg-gray-950 shadow-xl z-50 lg:hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white dark:bg-background shadow-xl z-50 lg:hidden flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-border">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-border">
                 <Link href="/" onClick={() => setIsOpen(false)} className="group">
                   <span className="font-instrument-serif">
                     <span className="text-3xl text-primary font-normal">Fourteen</span>{' '}
@@ -224,10 +258,10 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                 </Link>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-lg hover:bg-muted transition-colors"
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-muted transition-all"
                   aria-label="Close mobile menu"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5 text-gray-600 dark:text-white" />
                 </button>
               </div>
 
@@ -244,8 +278,8 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                       <Link
                         href={item.href}
                         onClick={() => setIsOpen(false)}
-                        className="block px-4 py-3 rounded-lg text-lg font-medium text-foreground hover:bg-muted transition-all cursor-pointer hover:scale-[1.02]"
-                        style={{ fontFamily: 'var(--font-plus-jakarta)' }}
+                        className="block px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-gray-900 dark:text-white dark:hover:text-white hover:bg-gray-100 dark:hover:bg-muted transition-all cursor-pointer"
+                        style={{ fontFamily: 'var(--font-inter)' }}
                       >
                         {item.label}
                       </Link>
@@ -254,11 +288,11 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                 </div>
 
                 {/* CTA Button */}
-                <div className="px-8 py-4">
+                <div className="px-6 py-4">
                   <Link
                     href="/demo"
                     onClick={() => setIsOpen(false)}
-                    className="font-plus-jakarta block w-full text-center bg-white dark:bg-card text-foreground px-6 py-3 rounded-lg font-medium border border-gray-300 dark:border-gray-600 shadow-sm hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+                    className="font-inter block w-full text-center bg-primary text-gray-900 dark:text-black px-6 py-3 rounded-full text-base font-medium hover:bg-primary/90 transition-all cursor-pointer"
                   >
                     Hoe het werkt?
                   </Link>
@@ -266,100 +300,21 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               </div>
 
               {/* Footer */}
-              <div className="p-6 border-t border-border">
-                {/* Theme Toggle */}
-                <button
-                  onClick={() => {
-                    setTheme(theme === 'dark' ? 'light' : 'dark');
-                  }}
-                  className="w-full flex items-center justify-center gap-2 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-all cursor-pointer hover:scale-[1.02]"
+              <div className="p-6 border-t border-gray-200 dark:border-border">
+                {/* Login Button */}
+                <Link
+                  href="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="font-inter block w-full text-center bg-gray-100 hover:bg-gray-200 dark:bg-muted dark:hover:bg-muted/80 text-foreground px-6 py-3 rounded-lg text-base font-medium transition-all cursor-pointer"
                 >
-                  {theme === 'dark' ? '☀️' : '🌙'}
-                  <span className="font-plus-jakarta font-medium text-foreground">
-                    {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                  </span>
-                </button>
+                  Login
+                </Link>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* Search Overlay */}
-      <AnimatePresence>
-        {showSearch && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => {
-                setShowSearch(false);
-                setSearchQuery('');
-              }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
-            />
-
-            {/* Search Modal */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              transition={{ duration: 0.2 }}
-              className="fixed top-20 left-1/2 -translate-x-1/2 w-full max-w-2xl z-[70]"
-            >
-              <div className="bg-white dark:bg-gray-950 border border-border rounded-xl shadow-2xl overflow-hidden">
-                <div className="p-6">
-                  <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Zoek stemmen, talen, of functies..."
-                      className="font-plus-jakarta w-full pl-12 pr-12 py-4 text-lg bg-muted/50 text-foreground placeholder-muted-foreground rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-                      autoFocus
-                    />
-                    <button
-                      onClick={() => {
-                        setShowSearch(false);
-                        setSearchQuery('');
-                      }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  {/* Search Suggestions */}
-                  <div className="mt-4 space-y-2">
-                    <p className="font-plus-jakarta text-sm text-muted-foreground mb-3">
-                      Populaire zoekopdrachten
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        'Nederlandse stemmen',
-                        'Commerciële voice-overs',
-                        'AI stemmen',
-                        'Snelle levering',
-                      ].map((suggestion) => (
-                        <button
-                          key={suggestion}
-                          onClick={() => setSearchQuery(suggestion)}
-                          className="font-plus-jakarta px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 text-foreground rounded-full transition-colors cursor-pointer"
-                        >
-                          {suggestion}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }

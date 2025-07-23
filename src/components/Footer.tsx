@@ -115,7 +115,7 @@ export function Footer({
 
   return (
     <div
-      className={`relative h-full sm:pt-14 pt-8 bg-[#fcf9f5] dark:bg-gray-950 text-foreground ${plusJakarta.variable}`}
+      className={`relative h-full sm:pt-14 pt-8 bg-[#fcf9f5] dark:bg-background text-foreground ${plusJakarta.variable}`}
       ref={container}
     >
       <div className="sm:container px-4 mx-auto">
@@ -123,14 +123,14 @@ export function Footer({
           {/* Newsletter Section */}
           {newsletterEnabled && (
             <div className="flex-1 max-w-lg">
-              <h1 className="font-plus-jakarta md:text-4xl text-2xl font-semibold">
+              <h1 className="font-plus-jakarta md:text-4xl text-2xl font-semibold text-title">
                 Laten we samen iets moois maken
               </h1>
               <div className="pt-2 pb-6">
-                <p className="font-plus-jakarta md:text-2xl text-xl py-4">
+                <p className="font-plus-jakarta md:text-2xl text-xl py-4 text-normal">
                   Schrijf je in voor onze nieuwsbrief*
                 </p>
-                <div className="relative bg-black dark:bg-white flex justify-between items-center border-2 overflow-hidden border-black dark:border-white rounded-full text-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-100 transition-colors md:text-2xl">
+                <div className="relative bg-black dark:bg-white flex justify-between items-center border-2 overflow-hidden border-black dark:border-white rounded-full text-white dark:text-black hover:bg-foreground/90 dark:hover:bg-background/90 transition-colors md:text-2xl">
                   <form
                     onSubmit={(e) => handleNewsLetterData(e)}
                     className="relative z-2 flex w-full h-full"
@@ -138,13 +138,13 @@ export function Footer({
                     <input
                       type="email"
                       name="newsletter_email"
-                      className="font-plus-jakarta flex-1 border-none bg-transparent py-3 px-6 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none"
+                      className="font-plus-jakarta flex-1 border-none bg-transparent py-3 px-6 placeholder-muted-foreground focus:outline-none"
                       placeholder="Jouw email *"
                       required
                     />
                     <button
                       type="submit"
-                      className="px-6 cursor-pointer bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors flex items-center justify-center"
+                      className="px-6 cursor-pointer bg-white dark:bg-black text-black dark:text-white hover:bg-muted dark:hover:bg-muted transition-colors flex items-center justify-center"
                     >
                       <ArrowRight className="w-5 h-5" />
                     </button>
@@ -157,20 +157,20 @@ export function Footer({
           {/* Links Section */}
           <div className="flex gap-10">
             <ul>
-              <li className="font-plus-jakarta text-2xl pb-2 font-semibold">SITEMAP</li>
+              <li className="font-plus-jakarta text-2xl pb-2 font-semibold text-title">SITEMAP</li>
               {sitemapLinks.map((link, index) => (
                 <li
                   key={index}
-                  className="font-plus-jakarta text-xl font-medium hover:text-primary transition-colors"
+                  className="font-plus-jakarta text-xl font-medium text-normal hover:text-primary transition-colors"
                 >
                   <Link href={link.href}>{link.label}</Link>
                 </li>
               ))}
             </ul>
             <ul>
-              <li className="font-plus-jakarta text-2xl pb-2 font-semibold">SOCIAL</li>
+              <li className="font-plus-jakarta text-2xl pb-2 font-semibold text-title">SOCIAL</li>
               {socialLinks.map((link, index) => (
-                <li key={index} className="font-plus-jakarta text-xl font-medium">
+                <li key={index} className="font-plus-jakarta text-xl font-medium text-normal">
                   <a
                     href={link.href}
                     target="_blank"
@@ -187,7 +187,7 @@ export function Footer({
 
         {/* Logo Animation Section */}
         <div
-          className="border-y-2 md:py-4 border-gray-200 dark:border-gray-800 overflow-hidden"
+          className="border-y-2 md:py-4 border-muted dark:border-border overflow-hidden"
           ref={ref}
         >
           <motion.svg
@@ -220,10 +220,10 @@ export function Footer({
 
         {/* Copyright Section */}
         <div className="flex md:flex-row flex-col-reverse gap-3 justify-between py-2">
-          <span className="font-plus-jakarta font-medium">{copyrightText}</span>
+          <span className="font-plus-jakarta font-medium text-normal">{copyrightText}</span>
           <Link
             href="/privacy-policy"
-            className="font-plus-jakarta font-semibold hover:text-primary transition-colors"
+            className="font-plus-jakarta font-semibold text-title hover:text-primary transition-colors"
           >
             Privacy Policy
           </Link>

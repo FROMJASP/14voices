@@ -322,6 +322,93 @@ export const SiteSettings: GlobalConfig = {
           ],
         },
         {
+          label: 'Banner',
+          fields: [
+            {
+              name: 'banner',
+              type: 'group',
+              fields: [
+                {
+                  name: 'enabled',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  label: 'Enable Banner',
+                  admin: {
+                    description: 'Show the announcement banner at the top of the site',
+                  },
+                },
+                {
+                  name: 'message',
+                  type: 'text',
+                  required: true,
+                  defaultValue: '🚀 **14 Nieuwe Stemmen**. Beluister hier wat ze voor jou kunnen betekenen!',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    description: 'Banner message (use **text** for bold/italic styling)',
+                  },
+                },
+                {
+                  name: 'linkType',
+                  type: 'select',
+                  defaultValue: 'custom',
+                  options: [
+                    { label: 'No Link', value: 'none' },
+                    { label: 'Custom URL', value: 'custom' },
+                    { label: 'Internal Page', value: 'page' },
+                  ],
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    description: 'Type of link for the banner',
+                  },
+                },
+                {
+                  name: 'linkUrl',
+                  type: 'text',
+                  admin: {
+                    condition: (data, siblingData) => 
+                      siblingData?.enabled === true && siblingData?.linkType === 'custom',
+                    description: 'Custom URL for the banner link',
+                  },
+                },
+                {
+                  name: 'linkPage',
+                  type: 'relationship',
+                  relationTo: 'pages',
+                  admin: {
+                    condition: (data, siblingData) => 
+                      siblingData?.enabled === true && siblingData?.linkType === 'page',
+                    description: 'Internal page to link to',
+                  },
+                },
+                {
+                  name: 'dismissible',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: 'Allow Dismissing',
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    description: 'Allow users to dismiss the banner',
+                  },
+                },
+                {
+                  name: 'style',
+                  type: 'select',
+                  defaultValue: 'gradient',
+                  options: [
+                    { label: 'Gradient', value: 'gradient' },
+                    { label: 'Solid', value: 'solid' },
+                    { label: 'Subtle', value: 'subtle' },
+                  ],
+                  admin: {
+                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    description: 'Visual style of the banner',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
           label: 'Features',
           fields: [
             {

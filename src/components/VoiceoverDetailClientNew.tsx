@@ -166,7 +166,7 @@ export function VoiceoverDetailClientNew({ voiceover }: VoiceoverDetailClientNew
   return (
     <div className={`${plusJakarta.variable} font-plus-jakarta`}>
       {/* Hero Section with Full Image Background */}
-      <section className="relative min-h-screen bg-black overflow-hidden">
+      <section className="relative min-h-[calc(100vh-4rem)] bg-black overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           {voiceover.profilePhoto ? (
@@ -200,7 +200,7 @@ export function VoiceoverDetailClientNew({ voiceover }: VoiceoverDetailClientNew
         </div>
 
         {/* Content */}
-        <div className="relative z-20 container mx-auto px-4 flex items-end min-h-screen pb-20">
+        <div className="relative z-20 container mx-auto px-4 flex items-end min-h-[calc(100vh-4rem)] pb-20">
           <div className="grid lg:grid-cols-2 gap-12 w-full items-end">
             {/* Left Column - Info */}
             <div>

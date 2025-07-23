@@ -2,16 +2,24 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans, Instrument_Serif } from 'next/font/google';
 import Image from 'next/image';
-import { Check, Info, Calculator, User } from 'lucide-react';
+import { Check, Info, Calculator, User, Video, GraduationCap, Radio, Tv, Globe, Phone, ChevronRight, Sparkles, Shield } from 'lucide-react';
 import { useVoiceover, scrollToVoiceovers } from '@/contexts/VoiceoverContext';
 
 const plusJakarta = Plus_Jakarta_Sans({
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-plus-jakarta',
+});
+
+const instrumentSerif = Instrument_Serif({
+  weight: ['400'],
+  subsets: ['latin'],
+  display: 'swap',
+  style: ['normal', 'italic'],
+  variable: '--font-instrument-serif',
 });
 
 // Type definitions
@@ -39,7 +47,16 @@ interface ProductionType {
   uitzendgebied?: Array<{ name: string; price: number }>;
 }
 
-// Production data
+// Production data with icons
+const productionIcons: Record<string, React.ElementType> = {
+  'Videoproductie': Video,
+  'E-learning': GraduationCap,
+  'Radiocommercial': Radio,
+  'TV Commercial': Tv,
+  'Web Commercial': Globe,
+  'Voice Response': Phone,
+};
+
 const productionData: ProductionType[] = [
   {
     name: 'Videoproductie',
@@ -517,415 +534,561 @@ export function PriceCalculator() {
   return (
     <section
       id="price-calculator"
-      className={`py-16 bg-[#fcf9f5] dark:bg-gray-950 ${plusJakarta.variable}`}
+      className={`py-24 bg-white dark:bg-background ${plusJakarta.variable} ${instrumentSerif.variable} font-plus-jakarta relative overflow-hidden`}
     >
-      <div className="container mx-auto px-4">
+      {/* Background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#18f10905_1px,transparent_1px),linear-gradient(to_bottom,#18f10905_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
+        
+        {/* Floating orbs */}
+        <motion.div
+          className="absolute top-20 right-10 w-64 h-64 bg-[#18f109]/10 rounded-full filter blur-3xl"
+          animate={{
+            y: [0, 30, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-10 w-80 h-80 bg-[#efd243]/10 rounded-full filter blur-3xl"
+          animate={{
+            y: [0, -40, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 5,
+          }}
+        />
+      </div>
+
+      {/* Floating SVG Illustrations */}
+      <div className="hidden xl:block">
+        {/* Left Side - Speech Bubble SVG */}
+        <motion.div 
+          className="absolute left-16 top-32 z-0"
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 5, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <img 
+            src="/undraw_speech_to_text.svg" 
+            alt="Speech illustration" 
+            className="w-64 h-64 opacity-80 dark:opacity-60"
+          />
+        </motion.div>
+
+        {/* Right Side - Dark Podcast SVG */}
+        <motion.div 
+          className="absolute right-16 bottom-32 z-0"
+          animate={{
+            y: [0, 20, 0],
+            rotate: [0, -5, 0],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 3,
+          }}
+        >
+          <img 
+            src="/undraw_podcast_dark.svg" 
+            alt="Podcast illustration" 
+            className="w-56 h-56 opacity-80 dark:opacity-60"
+          />
+        </motion.div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Calculator className="w-8 h-8 text-primary" />
-            <h2 className="font-plus-jakarta text-4xl md:text-5xl font-bold">Prijscalculator</h2>
-          </div>
-          <p className="font-plus-jakarta text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Bereken direct de prijs voor jouw voice-over project. Selecteer het type productie, de
-            lengte en eventuele extra opties.
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+            className="inline-flex items-center gap-2 bg-[#18f109]/10 px-6 py-3 rounded-full mb-6"
+          >
+            <Sparkles className="w-5 h-5 text-[#18f109]" />
+            <span className="text-sm font-semibold text-[#18f109]">Transparante prijzen</span>
+          </motion.div>
+          
+          <h2 className="font-instrument-serif text-5xl sm:text-6xl lg:text-7xl font-normal text-title mb-4">
+            Bereken je <span className="text-[#18f109] italic">investering</span>
+          </h2>
+          <p className="text-lg sm:text-xl text-normal max-w-3xl mx-auto leading-relaxed">
+            Direct inzicht in de kosten voor jouw voice-over project. 
+            Geen verborgen kosten, geen verrassingen.
           </p>
         </motion.div>
 
-        {/* Calculator Grid */}
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
-          {/* Column 1: Production Type */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg"
-          >
-            <h3 className="font-plus-jakarta text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
-              Productiesoort
-            </h3>
+        {/* Calculator Container */}
+        <div className="bg-[#fcf9f5] dark:bg-[#1a1a1a] rounded-t-[4rem] pt-16 pb-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Production Type Selection */}
             <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-3"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="mb-12"
             >
-              {productionData.map((production) => (
-                <motion.label
-                  key={production.name}
-                  variants={itemVariants}
-                  className={`
-                    flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200
-                    ${
-                      selectedProduction === production.name
-                        ? 'bg-primary text-white shadow-md transform scale-105'
-                        : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }
-                  `}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <input
-                    type="radio"
-                    name="production"
-                    value={production.name}
-                    checked={selectedProduction === production.name}
-                    onChange={() => {
-                      setSelectedProduction(production.name);
-                      setSelectedWords(production.itemlistTwo[0].item);
-                      setSelectedOptions(new Set());
-                    }}
-                    className="sr-only"
-                  />
-                  <div className="flex items-center justify-between w-full">
-                    <span className="font-plus-jakarta font-medium">{production.name}</span>
-                    <span className="font-plus-jakarta text-sm font-semibold">
-                      €{production.price}
-                    </span>
-                  </div>
-                </motion.label>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          {/* Column 2: Word Count / Versions */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg"
-          >
-            <h3 className="font-plus-jakarta text-2xl font-semibold mb-2 text-gray-900 dark:text-white">
-              {currentProduction.titleTwo}
-            </h3>
-            {currentProduction.explainText && (
-              <p className="font-plus-jakarta text-sm text-gray-600 dark:text-gray-400 mb-4">
-                {currentProduction.explainText}
-              </p>
-            )}
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-3"
-            >
-              {currentProduction.itemlistTwo.map((item) => (
-                <motion.label
-                  key={item.item}
-                  variants={itemVariants}
-                  className={`
-                    flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200
-                    ${
-                      selectedWords === item.item
-                        ? 'bg-primary text-white shadow-md transform scale-105'
-                        : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }
-                  `}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <input
-                    type="radio"
-                    name="words"
-                    value={item.item}
-                    checked={selectedWords === item.item}
-                    onChange={() => setSelectedWords(item.item)}
-                    className="sr-only"
-                  />
-                  <div className="flex items-center justify-between w-full">
-                    <span className="font-plus-jakarta font-medium">{item.item}</span>
-                    {item.price > 0 && (
-                      <span className="font-plus-jakarta text-sm font-semibold">
-                        +€{item.price}
-                      </span>
-                    )}
-                  </div>
-                </motion.label>
-              ))}
-            </motion.div>
-
-            {/* Region Selection */}
-            {currentProduction.uitzendgebied && (
-              <div className="mt-6">
-                <h4 className="font-plus-jakarta text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-                  Uitzendgebied
-                </h4>
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-3"
-                >
-                  {currentProduction.uitzendgebied.map((region) => (
-                    <motion.label
-                      key={region.name}
-                      variants={itemVariants}
+              <h3 className="text-2xl font-semibold mb-8 text-center">
+                Kies je productiesoort
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {productionData.map((production, index) => {
+                  const Icon = productionIcons[production.name] || Calculator;
+                  return (
+                    <motion.button
+                      key={production.name}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      onClick={() => {
+                        setSelectedProduction(production.name);
+                        setSelectedWords(production.itemlistTwo[0].item);
+                        setSelectedOptions(new Set());
+                      }}
                       className={`
-                        flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200
+                        p-6 rounded-2xl transition-all duration-300 text-center group relative overflow-hidden
                         ${
-                          selectedRegion === region.name
-                            ? 'bg-primary text-white shadow-md transform scale-105'
-                            : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          selectedProduction === production.name
+                            ? 'bg-[#18f109] text-black shadow-xl scale-105'
+                            : 'bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-accent shadow-sm hover:shadow-md'
                         }
                       `}
-                      whileHover={{ scale: 1.02 }}
+                      whileHover={{ y: -5 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <div className="relative z-10">
+                        <Icon className={`w-8 h-8 mx-auto mb-3 transition-transform group-hover:scale-110 ${
+                          selectedProduction === production.name ? 'text-black' : 'text-[#18f109]'
+                        }`} />
+                        <p className="font-medium text-sm mb-2">{production.name}</p>
+                        <p className={`text-lg font-bold ${
+                          selectedProduction === production.name ? 'text-black' : 'text-title'
+                        }`}>
+                          €{production.price}
+                        </p>
+                      </div>
+                      {selectedProduction === production.name && (
+                        <motion.div
+                          className="absolute inset-0 bg-black/5"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            {/* Configuration Grid */}
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Column 1: Word Count / Versions */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="bg-white dark:bg-card rounded-3xl p-8 shadow-sm"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-[#18f109]/10 rounded-xl flex items-center justify-center">
+                    <ChevronRight className="w-6 h-6 text-[#18f109]" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-title">
+                      {currentProduction.titleTwo}
+                    </h3>
+                    {currentProduction.explainText && (
+                      <p className="text-sm text-normal mt-1">
+                        {currentProduction.explainText}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {currentProduction.itemlistTwo.map((item, index) => (
+                    <motion.label
+                      key={item.item}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className={`
+                        flex items-center p-4 rounded-2xl cursor-pointer transition-all duration-200 group
+                        ${
+                          selectedWords === item.item
+                            ? 'bg-[#18f109] text-black shadow-md'
+                            : 'bg-gray-50 dark:bg-muted hover:bg-gray-100 dark:hover:bg-accent'
+                        }
+                      `}
+                      whileHover={{ x: 5 }}
                       whileTap={{ scale: 0.98 }}
                     >
                       <input
                         type="radio"
-                        name="region"
-                        value={region.name}
-                        checked={selectedRegion === region.name}
-                        onChange={() => setSelectedRegion(region.name)}
+                        name="words"
+                        value={item.item}
+                        checked={selectedWords === item.item}
+                        onChange={() => setSelectedWords(item.item)}
                         className="sr-only"
                       />
                       <div className="flex items-center justify-between w-full">
-                        <span className="font-plus-jakarta font-medium capitalize">
-                          {region.name}
-                        </span>
-                        {region.price > 0 && (
-                          <span className="font-plus-jakarta text-sm font-semibold">
-                            +€{region.price}
-                          </span>
-                        )}
+                        <span className="font-medium">{item.item}</span>
+                        <div className="flex items-center gap-2">
+                          {item.price > 0 && (
+                            <span className="font-semibold">+€{item.price}</span>
+                          )}
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                            selectedWords === item.item 
+                              ? 'border-black bg-black' 
+                              : 'border-gray-400 group-hover:border-[#18f109]'
+                          }`}>
+                            {selectedWords === item.item && (
+                              <Check className="w-3 h-3 text-[#18f109]" />
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </motion.label>
                   ))}
-                </motion.div>
-              </div>
-            )}
-          </motion.div>
+                </div>
 
-          {/* Column 3: Extra Options */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg"
-          >
-            <h3 className="font-plus-jakarta text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
-              Extra Opties
-            </h3>
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-3"
-            >
-              {currentProduction.itemlistThree.map((option) => {
-                const isSelected = selectedOptions.has(option.item);
-                const isDisabled = option.dependencies?.some((dep) => !selectedOptions.has(dep));
-
-                return (
-                  <motion.div key={option.item} variants={itemVariants} className="relative">
-                    <label
-                      className={`
-                        flex items-center p-4 rounded-xl cursor-pointer transition-all duration-200
-                        ${
-                          isSelected
-                            ? 'bg-primary text-white shadow-md transform scale-105'
-                            : isDisabled
-                              ? 'bg-gray-50 dark:bg-gray-800 opacity-50 cursor-not-allowed'
-                              : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        }
-                      `}
-                      onMouseEnter={() => setHoveredOption(option.item)}
-                      onMouseLeave={() => setHoveredOption(null)}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => !isDisabled && toggleOption(option.item)}
-                        disabled={isDisabled}
-                        className="sr-only"
-                      />
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`
-                              w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all
-                              ${
-                                isSelected
-                                  ? 'bg-white border-white'
-                                  : 'border-gray-400 dark:border-gray-600'
-                              }
-                            `}
-                          >
-                            {isSelected && <Check className="w-3 h-3 text-primary" />}
-                          </div>
-                          <span className="font-plus-jakarta font-medium">{option.item}</span>
-                          <Info className="w-4 h-4 opacity-60" />
-                        </div>
-                        <span className="font-plus-jakarta text-sm font-semibold">
-                          +€{option.price}
-                        </span>
-                      </div>
-                    </label>
-
-                    {/* Tooltip */}
-                    <AnimatePresence>
-                      {hoveredOption === option.item && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className="absolute left-0 right-0 top-full mt-2 p-3 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg shadow-xl z-10"
+                {/* Region Selection */}
+                {currentProduction.uitzendgebied && (
+                  <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <h4 className="text-lg font-semibold mb-4 text-title">
+                      Uitzendgebied
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {currentProduction.uitzendgebied.map((region, index) => (
+                        <motion.label
+                          key={region.name}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: index * 0.05 }}
+                          className={`
+                            flex items-center justify-center p-4 rounded-2xl cursor-pointer transition-all duration-200
+                            ${
+                              selectedRegion === region.name
+                                ? 'bg-[#18f109] text-black shadow-md'
+                                : 'bg-gray-50 dark:bg-muted hover:bg-gray-100 dark:hover:bg-accent'
+                            }
+                          `}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                         >
-                          <p className="font-plus-jakarta">{option.infoText}</p>
-                          {option.dependencies && (
-                            <p className="font-plus-jakarta mt-2 text-yellow-300">
-                              Vereist: {option.dependencies.join(', ')}
-                            </p>
+                          <input
+                            type="radio"
+                            name="region"
+                            value={region.name}
+                            checked={selectedRegion === region.name}
+                            onChange={() => setSelectedRegion(region.name)}
+                            className="sr-only"
+                          />
+                          <div className="text-center">
+                            <span className="font-medium capitalize block">
+                              {region.name}
+                            </span>
+                            {region.price > 0 && (
+                              <span className="text-sm font-semibold">
+                                +€{region.price}
+                              </span>
+                            )}
+                          </div>
+                        </motion.label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Column 2: Extra Options */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="bg-white dark:bg-card rounded-3xl p-8 shadow-sm"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-[#efd243]/10 rounded-xl flex items-center justify-center">
+                    <Sparkles className="w-6 h-6 text-[#efd243]" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-title">
+                    Extra Opties
+                  </h3>
+                </div>
+
+                <div className="space-y-3">
+                  {currentProduction.itemlistThree.map((option, index) => {
+                    const isSelected = selectedOptions.has(option.item);
+                    const isDisabled = option.dependencies?.some((dep) => !selectedOptions.has(dep));
+
+                    return (
+                      <motion.div 
+                        key={option.item} 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="relative group"
+                      >
+                        <label
+                          className={`
+                            flex items-center p-4 rounded-2xl cursor-pointer transition-all duration-200
+                            ${
+                              isSelected
+                                ? 'bg-[#18f109] text-black shadow-md'
+                                : isDisabled
+                                  ? 'bg-gray-50 dark:bg-gray-800 opacity-50 cursor-not-allowed'
+                                  : 'bg-gray-50 dark:bg-muted hover:bg-gray-100 dark:hover:bg-accent'
+                            }
+                          `}
+                          onMouseEnter={() => setHoveredOption(option.item)}
+                          onMouseLeave={() => setHoveredOption(null)}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => !isDisabled && toggleOption(option.item)}
+                            disabled={isDisabled}
+                            className="sr-only"
+                          />
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={`
+                                  w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all
+                                  ${
+                                    isSelected
+                                      ? 'bg-black border-black'
+                                      : 'border-gray-400 dark:border-gray-600 group-hover:border-[#18f109]'
+                                  }
+                                `}
+                              >
+                                {isSelected && <Check className="w-3 h-3 text-[#18f109]" />}
+                              </div>
+                              <span className="font-medium">{option.item}</span>
+                              <Info className="w-4 h-4 opacity-60" />
+                            </div>
+                            <span className="font-semibold">
+                              +€{option.price}
+                            </span>
+                          </div>
+                        </label>
+
+                        {/* Tooltip */}
+                        <AnimatePresence>
+                          {hoveredOption === option.item && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                              className="absolute left-0 right-0 top-full mt-2 p-4 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-2xl shadow-xl z-10"
+                            >
+                              <p>{option.infoText}</p>
+                              {option.dependencies && (
+                                <p className="mt-2 text-[#18f109] font-semibold">
+                                  Vereist: {option.dependencies.join(', ')}
+                                </p>
+                              )}
+                            </motion.div>
                           )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </motion.div>
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </motion.div>
 
-          {/* Column 4: Total Price */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-primary text-white rounded-2xl p-6 shadow-lg"
-          >
-            <h3 className="font-plus-jakarta text-2xl font-semibold mb-6">Totaalprijs</h3>
+              {/* Column 3: Total Price */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="lg:row-span-2"
+              >
+                <div className="bg-gradient-to-br from-[#18f109] to-[#14c208] rounded-3xl p-8 shadow-xl text-black sticky top-24">
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-12 h-12 bg-black/10 rounded-xl flex items-center justify-center">
+                      <Calculator className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-xl font-semibold">
+                      Totaalprijs
+                    </h3>
+                  </div>
 
-            {/* Selected Voiceover */}
-            {selectedVoiceover ? (
-              <div className="mb-6 pb-4 border-b border-white/20">
-                <p className="font-plus-jakarta text-sm opacity-80 mb-2">
-                  Geselecteerde voice-over
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-white/20 flex-shrink-0 relative">
-                    {selectedVoiceover.profilePhoto ? (
-                      <Image
-                        src={selectedVoiceover.profilePhoto}
-                        alt={selectedVoiceover.name}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-white/60" />
+                  {/* Selected Voiceover */}
+                  {selectedVoiceover ? (
+                    <div className="mb-6 pb-6 border-b border-black/10">
+                      <p className="text-sm opacity-80 mb-3">
+                        Geselecteerde voice-over
+                      </p>
+                      <div className="flex items-center gap-3 bg-black/10 rounded-2xl p-3">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-black/20 flex-shrink-0 relative">
+                          {selectedVoiceover.profilePhoto ? (
+                            <Image
+                              src={selectedVoiceover.profilePhoto}
+                              alt={selectedVoiceover.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <User className="w-6 h-6 text-black/40" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold">{selectedVoiceover.name}</p>
+                          <button
+                            onClick={() => {
+                              clearSelection();
+                              scrollToVoiceovers();
+                            }}
+                            className="text-xs underline opacity-80 hover:opacity-100"
+                          >
+                            Wijzig selectie
+                          </button>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-plus-jakarta font-semibold">{selectedVoiceover.name}</p>
-                    <button
-                      onClick={() => {
-                        clearSelection();
-                        scrollToVoiceovers();
-                      }}
-                      className="font-plus-jakarta text-xs underline opacity-80 hover:opacity-100"
-                    >
-                      Wijzig selectie
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="mb-6 pb-4 border-b border-white/20">
-                <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg p-4">
-                  <p className="font-plus-jakarta text-sm font-medium mb-2">
-                    Selecteer eerst een voice-over
-                  </p>
-                  <button
-                    onClick={scrollToVoiceovers}
-                    className="font-plus-jakarta text-sm underline hover:no-underline"
-                  >
-                    Bekijk beschikbare stemmen
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {/* Summary */}
-              <div className="space-y-2 pb-4 border-b border-white/20">
-                <div className="flex justify-between text-sm">
-                  <span className="font-plus-jakarta">{selectedProduction}</span>
-                  <span className="font-plus-jakarta font-semibold">
-                    €{currentProduction.price}
-                  </span>
-                </div>
-
-                {selectedWords &&
-                  (currentProduction.itemlistTwo.find((item) => item.item === selectedWords)
-                    ?.price ?? 0) > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="font-plus-jakarta">{selectedWords}</span>
-                      <span className="font-plus-jakarta font-semibold">
-                        +€
-                        {
-                          currentProduction.itemlistTwo.find((item) => item.item === selectedWords)
-                            ?.price
-                        }
-                      </span>
+                    </div>
+                  ) : (
+                    <div className="mb-6 pb-6 border-b border-black/10">
+                      <div className="bg-black/10 rounded-2xl p-4">
+                        <p className="text-sm font-medium mb-2">
+                          Selecteer eerst een voice-over
+                        </p>
+                        <button
+                          onClick={scrollToVoiceovers}
+                          className="text-sm underline hover:no-underline font-semibold"
+                        >
+                          Bekijk beschikbare stemmen →
+                        </button>
+                      </div>
                     </div>
                   )}
 
-                {currentProduction.uitzendgebied && selectedRegion !== 'regionaal' && (
-                  <div className="flex justify-between text-sm">
-                    <span className="font-plus-jakarta capitalize">{selectedRegion}</span>
-                    <span className="font-plus-jakarta font-semibold">
-                      +€
-                      {
-                        currentProduction.uitzendgebied.find((r) => r.name === selectedRegion)
-                          ?.price
-                      }
-                    </span>
-                  </div>
-                )}
+                  <div className="space-y-4">
+                    {/* Summary */}
+                    <div className="space-y-3 pb-6 border-b border-black/10">
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium">{selectedProduction}</span>
+                        <span className="font-bold">€{currentProduction.price}</span>
+                      </div>
 
-                {Array.from(selectedOptions).map((option) => {
-                  const optionData = currentProduction.itemlistThree.find(
-                    (item) => item.item === option
-                  );
-                  return (
-                    <div key={option} className="flex justify-between text-sm">
-                      <span className="font-plus-jakarta">{option}</span>
-                      <span className="font-plus-jakarta font-semibold">+€{optionData?.price}</span>
+                      {selectedWords &&
+                        (currentProduction.itemlistTwo.find((item) => item.item === selectedWords)
+                          ?.price ?? 0) > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span className="opacity-80">{selectedWords}</span>
+                            <span className="font-bold">
+                              +€
+                              {
+                                currentProduction.itemlistTwo.find((item) => item.item === selectedWords)
+                                  ?.price
+                              }
+                            </span>
+                          </div>
+                        )}
+
+                      {currentProduction.uitzendgebied && selectedRegion !== 'regionaal' && (
+                        <div className="flex justify-between text-sm">
+                          <span className="opacity-80 capitalize">{selectedRegion}</span>
+                          <span className="font-bold">
+                            +€
+                            {
+                              currentProduction.uitzendgebied.find((r) => r.name === selectedRegion)
+                                ?.price
+                            }
+                          </span>
+                        </div>
+                      )}
+
+                      {Array.from(selectedOptions).map((option) => {
+                        const optionData = currentProduction.itemlistThree.find(
+                          (item) => item.item === option
+                        );
+                        return (
+                          <div key={option} className="flex justify-between text-sm">
+                            <span className="opacity-80">{option}</span>
+                            <span className="font-bold">+€{optionData?.price}</span>
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </div>
 
-              {/* Total */}
-              <motion.div
-                key={calculateTotal}
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="text-center py-4"
-              >
-                <p className="font-plus-jakarta text-sm mb-2">Geschatte prijs</p>
-                <p className="font-plus-jakarta text-5xl font-bold">€{calculateTotal}</p>
-                <p className="font-plus-jakarta text-xs mt-2 opacity-80">Excl. BTW</p>
+                    {/* Total */}
+                    <motion.div
+                      key={calculateTotal}
+                      initial={{ scale: 0.9 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                      className="text-center py-6"
+                    >
+                      <p className="text-sm mb-2 opacity-80">Geschatte prijs</p>
+                      <p className="text-6xl font-bold mb-1">€{calculateTotal}</p>
+                      <p className="text-xs opacity-60">Excl. BTW</p>
+                    </motion.div>
+
+                    {/* CTA */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleBooking}
+                      className="w-full bg-black text-[#18f109] font-semibold py-4 px-6 rounded-2xl hover:bg-black/90 transition-all shadow-lg"
+                    >
+                      Direct boeken
+                    </motion.button>
+
+                    {/* Trust indicators */}
+                    <div className="flex justify-center gap-4 pt-4">
+                      <div className="flex items-center gap-1">
+                        <Check className="w-4 h-4" />
+                        <span className="text-xs font-medium">48u levering</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Shield className="w-4 h-4" />
+                        <span className="text-xs font-medium">100% garantie</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
-
-              {/* CTA */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleBooking}
-                className="w-full bg-white text-primary font-plus-jakarta font-semibold py-4 px-6 rounded-xl hover:bg-gray-100 transition-colors"
-              >
-                Boeken
-              </motion.button>
             </div>
-          </motion.div>
+
+            {/* Additional information */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="mt-12 text-center"
+            >
+              <p className="text-sm text-normal">
+                Heb je vragen over de prijzen? <a href="/contact" className="text-[#18f109] font-semibold hover:underline">Neem contact op</a> voor een persoonlijke offerte.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

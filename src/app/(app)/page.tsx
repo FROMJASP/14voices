@@ -1,17 +1,7 @@
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { PageRenderer } from '@/components/PageRenderer';
 import type { Page } from '@/payload-types';
-import { UnifiedHero } from '@/components/unified';
-import {
-  StemmenSection,
-  PrijzenSection,
-  BlogSection,
-  ContactSection,
-} from '@/components/sections/HomepageSections';
-import { PriceCalculator } from '@/components/PriceCalculator';
-import { VoiceoverShowcase } from '@/components/VoiceoverShowcase';
-import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
+import { VoiceoverSearchSection } from '@/components/VoiceoverSearchSection';
 
 export async function generateMetadata() {
   const payload = await getPayload({ config: configPromise });
@@ -78,28 +68,6 @@ export default async function HomePage() {
     depth: 2,
   });
 
-  const page = pages.docs[0] as Page | undefined;
-
-  // If no home page exists, show our beautiful landing page
-  if (!page) {
-    return (
-      <VoiceoverProvider>
-        <UnifiedHero variant="page" />
-        <VoiceoverShowcase />
-        <PriceCalculator />
-        <StemmenSection />
-        <PrijzenSection />
-        <BlogSection />
-        <ContactSection />
-      </VoiceoverProvider>
-    );
-  }
-
-  return (
-    <VoiceoverProvider>
-      <PageRenderer page={page} />
-      <VoiceoverShowcase />
-      <PriceCalculator />
-    </VoiceoverProvider>
-  );
+  // Show search field design with real voiceovers and price calculator
+  return <VoiceoverSearchSection />;
 }

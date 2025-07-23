@@ -51,6 +51,7 @@ export function VoiceoverShowcaseClient({
   const [activeVoiceovers, setActiveVoiceovers] = useState<VoiceoverData[]>([]);
   const [archiveVoiceovers, setArchiveVoiceovers] = useState<VoiceoverData[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null);
   const { selectedVoiceover, setSelectedVoiceover } = useVoiceover();
 
   // Randomize and sort on mount
@@ -96,97 +97,77 @@ export function VoiceoverShowcaseClient({
   return (
     <section
       id="voiceovers"
-      className={`py-20 bg-[#fcf9f5] dark:bg-gray-900 text-gray-900 dark:text-white ${plusJakarta.variable}`}
+      className={`py-20 bg-[#fcf9f5] dark:bg-[#1a1a1a] text-gray-900 dark:text-white ${plusJakarta.variable}`}
     >
       <div className="container mx-auto px-4">
-        {/* V1 Enhanced Header */}
+        {/* Clean White Inputs Header (Variation 4) */}
         <div className="mb-20">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-end mb-16">
-            {/* Left: Enhanced Title */}
-            <div>
-              <motion.h2
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="font-plus-jakarta text-7xl md:text-8xl font-black leading-[0.85] mb-6"
-              >
-                <span className="text-gray-900 dark:text-white">Vind jouw</span>
-                <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-900 dark:from-gray-300 dark:to-white">
-                  ideale stem
-                </span>
-              </motion.h2>
+          <div className="max-w-5xl mx-auto">
+            {/* Title Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-14"
+            >
+              <h2 className="font-plus-jakarta text-7xl md:text-8xl font-black leading-[0.85] mb-8">
+                <span className="block text-gray-900 dark:text-white">Vind jouw</span>
+                <span className="block text-gray-700 dark:text-gray-300 mt-2">ideale stem</span>
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium">
+                14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles daartussenin.
+              </p>
+            </motion.div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="text-xl text-gray-600 dark:text-gray-400 max-w-lg leading-relaxed"
-              >
-                14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles
-                daartussenin.
-              </motion.p>
-            </div>
-
-            {/* Right: Search & Filter with Better Spacing */}
-            <div className="space-y-5">
-              {/* Search Bar */}
-              <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="relative group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-2xl blur-xl opacity-0 group-hover:opacity-60 transition-opacity duration-500" />
-                <div className="relative">
-                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            {/* Search & Filter Container */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="max-w-3xl mx-auto"
+            >
+              <div className="bg-white dark:bg-gray-800 p-2 rounded-2xl shadow-sm dark:shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row gap-2">
+                {/* Search Input */}
+                <div className="flex-1 relative">
+                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
                   <input
                     type="text"
                     placeholder="Zoek op naam of stijl..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-14 pr-6 py-5 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:outline-none focus:border-gray-900 dark:focus:border-white font-plus-jakarta text-gray-900 dark:text-white placeholder-gray-400 shadow-sm hover:shadow-md transition-all duration-300"
+                    className="w-full pl-14 pr-5 py-4 bg-gray-50 dark:bg-gray-700 rounded-xl focus:outline-none focus:bg-white dark:focus:bg-gray-600 transition-colors font-plus-jakarta text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   />
                 </div>
-              </motion.div>
 
-              {/* Enhanced Filter Button */}
-              <motion.button
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                onClick={() => setShowFilters(!showFilters)}
-                className={`w-full flex items-center justify-between px-6 py-5 rounded-2xl font-semibold transition-all duration-300 ${
-                  showFilters
-                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-xl'
-                    : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:shadow-lg'
-                }`}
-              >
-                <div className="flex items-center gap-3">
+                {/* Filter Button */}
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`px-8 py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 whitespace-nowrap font-semibold ${
+                    showFilters
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg'
+                      : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-black dark:hover:bg-gray-100'
+                  }`}
+                >
                   <SlidersHorizontal className="w-5 h-5" />
                   <span>Filters</span>
                   {activeFiltersCount > 0 && (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="px-2.5 py-0.5 bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm text-xs rounded-full font-medium"
+                      className="px-2 py-0.5 bg-white/20 dark:bg-gray-900/20 text-xs rounded-full"
                     >
                       {activeFiltersCount}
                     </motion.span>
                   )}
-                </div>
-                <motion.div
-                  animate={{ rotate: showFilters ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ChevronDown className="w-5 h-5" />
-                </motion.div>
-              </motion.button>
-            </div>
+                </button>
+              </div>
+            </motion.div>
           </div>
+        </div>
 
-          {/* Expandable Filter Section with Better Design */}
-          <AnimatePresence>
-            {showFilters && (
+        {/* Expandable Filter Section with Better Design */}
+        <AnimatePresence>
+          {showFilters && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
@@ -197,7 +178,7 @@ export function VoiceoverShowcaseClient({
                 <motion.div
                   initial={{ y: -20 }}
                   animate={{ y: 0 }}
-                  className="bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-900/50 rounded-3xl p-8 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50"
+                  className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-8 shadow-sm dark:shadow-xl border border-gray-100 dark:border-gray-700"
                 >
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -221,12 +202,14 @@ export function VoiceoverShowcaseClient({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                  {/* Horizontal scrollable container on mobile, grid on desktop */}
+                  <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
+                    <div className="flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={clearAllFilters}
-                      className={`px-5 py-3 rounded-xl font-medium transition-all ${
+                      className={`px-5 py-3 rounded-xl font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                         selectedCategories.length === 0
                           ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg'
                           : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600'
@@ -243,7 +226,7 @@ export function VoiceoverShowcaseClient({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => toggleCategory(tag)}
-                        className={`px-5 py-3 rounded-xl font-medium transition-all relative ${
+                        className={`px-5 py-3 rounded-xl font-medium transition-all relative whitespace-nowrap flex-shrink-0 ${
                           selectedCategories.includes(tag)
                             ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg'
                             : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600'
@@ -261,6 +244,7 @@ export function VoiceoverShowcaseClient({
                         )}
                       </motion.button>
                     ))}
+                    </div>
                   </div>
 
                   {/* Quick Stats */}
@@ -278,7 +262,6 @@ export function VoiceoverShowcaseClient({
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
 
         {/* Featured Voice Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
@@ -296,6 +279,8 @@ export function VoiceoverShowcaseClient({
                   voice={voice}
                   isSelected={isSelected}
                   onSelect={() => handleSelectVoiceover(voice)}
+                  currentlyPlayingId={currentlyPlayingId}
+                  onPlayingChange={setCurrentlyPlayingId}
                 />
               </motion.div>
             );
