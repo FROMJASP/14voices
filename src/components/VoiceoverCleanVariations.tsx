@@ -1,7 +1,23 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Star, Zap, Shield, ThumbsUp, ExternalLink, MessageSquare, Award, Users, Clock, ChevronRight, Play, Mic, Globe, HeartHandshake, TrendingUp, CheckCircle, Sparkles } from 'lucide-react';
+import {
+  Search,
+  Star,
+  Zap,
+  Shield,
+  ThumbsUp,
+  ExternalLink,
+  MessageSquare,
+  Award,
+  Users,
+  Clock,
+  ChevronRight,
+  Play,
+  Mic,
+  HeartHandshake,
+  CheckCircle,
+} from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { VoiceoverCard } from './VoiceoverCard';
 
@@ -14,21 +30,108 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 // Sample voice data
 const sampleVoices = [
-  { id: '1', name: 'Gina', slug: 'gina', profilePhoto: null, tags: ['Warm', 'Vriendelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '2', name: 'Sophie', slug: 'sophie', profilePhoto: null, tags: ['Helder', 'Professioneel'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '3', name: 'Mark', slug: 'mark', profilePhoto: null, tags: ['Autoriteit', 'Zakelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '4', name: 'Lisa', slug: 'lisa', profilePhoto: null, tags: ['Jong', 'Energiek'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '5', name: 'Tom', slug: 'tom', profilePhoto: null, tags: ['Warm', 'Betrouwbaar'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '6', name: 'Eva', slug: 'eva', profilePhoto: null, tags: ['Urban', 'Modern'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '7', name: 'Jan', slug: 'jan', profilePhoto: null, tags: ['Autoriteit', 'Ervaren'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '8', name: 'Nina', slug: 'nina', profilePhoto: null, tags: ['Helder', 'Vriendelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
+  {
+    id: '1',
+    name: 'Gina',
+    slug: 'gina',
+    profilePhoto: null,
+    tags: ['Warm', 'Vriendelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '2',
+    name: 'Sophie',
+    slug: 'sophie',
+    profilePhoto: null,
+    tags: ['Helder', 'Professioneel'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '3',
+    name: 'Mark',
+    slug: 'mark',
+    profilePhoto: null,
+    tags: ['Autoriteit', 'Zakelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '4',
+    name: 'Lisa',
+    slug: 'lisa',
+    profilePhoto: null,
+    tags: ['Jong', 'Energiek'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '5',
+    name: 'Tom',
+    slug: 'tom',
+    profilePhoto: null,
+    tags: ['Warm', 'Betrouwbaar'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '6',
+    name: 'Eva',
+    slug: 'eva',
+    profilePhoto: null,
+    tags: ['Urban', 'Modern'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '7',
+    name: 'Jan',
+    slug: 'jan',
+    profilePhoto: null,
+    tags: ['Autoriteit', 'Ervaren'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '8',
+    name: 'Nina',
+    slug: 'nina',
+    profilePhoto: null,
+    tags: ['Helder', 'Vriendelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
 ];
 
 // Extended style tags
 const allStyles = [
-  'Warm', 'Vriendelijk', 'Helder', 'Professioneel', 'Autoriteit', 'Zakelijk', 
-  'Jong', 'Energiek', 'Urban', 'Modern', 'Betrouwbaar', 'Ervaren',
-  'Speels', 'Serieus', 'Natuurlijk', 'Karaktervol', 'Diep', 'Licht'
+  'Warm',
+  'Vriendelijk',
+  'Helder',
+  'Professioneel',
+  'Autoriteit',
+  'Zakelijk',
+  'Jong',
+  'Energiek',
+  'Urban',
+  'Modern',
+  'Betrouwbaar',
+  'Ervaren',
+  'Speels',
+  'Serieus',
+  'Natuurlijk',
+  'Karaktervol',
+  'Diep',
+  'Licht',
 ];
 
 export function VoiceoverCleanVariations() {
@@ -36,16 +139,13 @@ export function VoiceoverCleanVariations() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const toggleStyle = (style: string) => {
-    setSelectedStyles(prev => 
-      prev.includes(style) 
-        ? prev.filter(s => s !== style)
-        : [...prev, style]
+    setSelectedStyles((prev) =>
+      prev.includes(style) ? prev.filter((s) => s !== style) : [...prev, style]
     );
   };
 
   return (
     <div className={`${plusJakarta.variable} font-plus-jakarta`}>
-      
       {/* Version 1: Exact Recreation */}
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
         <div className="relative">
@@ -58,7 +158,7 @@ export function VoiceoverCleanVariations() {
                 ))}
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                "Perfecte stem voor onze commercial!"
+                &quot;Perfecte stem voor onze commercial!&quot;
               </p>
               <p className="text-xs text-gray-500 mt-2">- Lisa M.</p>
             </div>
@@ -72,7 +172,7 @@ export function VoiceoverCleanVariations() {
                 ))}
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                "Snelle levering, top kwaliteit!"
+                &quot;Snelle levering, top kwaliteit!&quot;
               </p>
               <p className="text-xs text-gray-500 mt-2">- Peter V.</p>
             </div>
@@ -90,7 +190,8 @@ export function VoiceoverCleanVariations() {
 
             {/* Title */}
             <h1 className="text-5xl lg:text-7xl font-bold text-center text-gray-900 dark:text-white mb-6">
-              Jouw stem,<br />
+              Jouw stem,
+              <br />
               ons vakmanschap
             </h1>
 
@@ -150,7 +251,7 @@ export function VoiceoverCleanVariations() {
 
             {/* Feedback Company Link */}
             <div className="text-center">
-              <a 
+              <a
                 href="https://www.feedbackcompany.com/nl-nl/reviews/fourteen-voices/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -197,9 +298,7 @@ export function VoiceoverCleanVariations() {
             <div className="bg-[#fcf9f5] dark:bg-gray-800 p-6 rounded-2xl shadow-xl max-w-xs">
               <Award className="w-8 h-8 text-[#efd243] mb-3" />
               <p className="font-semibold mb-1">Bekroond</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                4.9/5 op Feedback Company
-              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">4.9/5 op Feedback Company</p>
             </div>
           </div>
 
@@ -208,24 +307,31 @@ export function VoiceoverCleanVariations() {
             {/* Process Steps */}
             <div className="flex items-center justify-center gap-4 mb-8">
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-8 h-8 bg-[#18f109] text-black rounded-full flex items-center justify-center font-semibold">1</span>
+                <span className="w-8 h-8 bg-[#18f109] text-black rounded-full flex items-center justify-center font-semibold">
+                  1
+                </span>
                 <span>Kies je stem</span>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-400" />
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-semibold">2</span>
+                <span className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-semibold">
+                  2
+                </span>
                 <span>Upload script</span>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-400" />
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-semibold">3</span>
+                <span className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-semibold">
+                  3
+                </span>
                 <span>Ontvang audio</span>
               </div>
             </div>
 
             {/* Title */}
             <h1 className="text-5xl lg:text-7xl font-bold text-center text-gray-900 dark:text-white mb-6">
-              De perfecte stem<br />
+              De perfecte stem
+              <br />
               voor elk verhaal
             </h1>
 
@@ -294,8 +400,10 @@ export function VoiceoverCleanVariations() {
         <div className="bg-gray-50 dark:bg-gray-900 py-16">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Beschikbare stemmen</h2>
-              <a 
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Beschikbare stemmen
+              </h2>
+              <a
                 href="https://www.feedbackcompany.com/nl-nl/reviews/fourteen-voices/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -323,11 +431,14 @@ export function VoiceoverCleanVariations() {
         <div className="relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `radial-gradient(circle at 20% 50%, #18f109 0%, transparent 50%),
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `radial-gradient(circle at 20% 50%, #18f109 0%, transparent 50%),
                                radial-gradient(circle at 80% 80%, #efd243 0%, transparent 50%),
-                               radial-gradient(circle at 40% 20%, #ebaa3a 0%, transparent 50%)`
-            }} />
+                               radial-gradient(circle at 40% 20%, #ebaa3a 0%, transparent 50%)`,
+              }}
+            />
           </div>
 
           {/* Animated Stats */}
@@ -360,7 +471,8 @@ export function VoiceoverCleanVariations() {
 
             {/* Title */}
             <h1 className="text-5xl lg:text-7xl font-bold text-center text-gray-900 dark:text-white mb-6">
-              Geef je project<br />
+              Geef je project
+              <br />
               <span className="text-[#18f109]">een stem</span>
             </h1>
 
@@ -401,8 +513,8 @@ export function VoiceoverCleanVariations() {
             <div>
               <div className="text-center mb-4">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {selectedStyles.length > 0 
-                    ? `${selectedStyles.length} stijl(en) geselecteerd` 
+                  {selectedStyles.length > 0
+                    ? `${selectedStyles.length} stijl(en) geselecteerd`
                     : 'Selecteer een of meerdere stijlen'}
                 </p>
               </div>
@@ -429,8 +541,10 @@ export function VoiceoverCleanVariations() {
         <div className="bg-white dark:bg-gray-900 py-16">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Onze stemacteurs</h2>
-              <a 
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Onze stemacteurs
+              </h2>
+              <a
                 href="https://www.feedbackcompany.com/nl-nl/reviews/fourteen-voices/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -464,14 +578,16 @@ export function VoiceoverCleanVariations() {
                 <CheckCircle className="w-4 h-4 text-[#18f109]" />
                 <span className="text-sm font-medium">Marktleider sinds 2015</span>
               </div>
-              
+
               <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-                Jouw stem,<br />
+                Jouw stem,
+                <br />
                 ons vakmanschap
               </h1>
-              
+
               <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
-                250+ professionele stemacteurs voor commercials, documentaires en bedrijfsvideo's.
+                250+ professionele stemacteurs voor commercials, documentaires en
+                bedrijfsvideo&apos;s.
               </p>
 
               {/* Quick Stats */}
@@ -494,7 +610,7 @@ export function VoiceoverCleanVariations() {
                 <button className="px-6 py-3 bg-[#18f109] text-black rounded-xl font-semibold hover:bg-[#18f109]/90 transition-colors">
                   Start project
                 </button>
-                <a 
+                <a
                   href="https://www.feedbackcompany.com/nl-nl/reviews/fourteen-voices/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -510,7 +626,7 @@ export function VoiceoverCleanVariations() {
           <div className="p-12 lg:p-16 flex items-center bg-gray-50 dark:bg-gray-900">
             <div className="w-full">
               <h3 className="text-2xl font-semibold mb-6">Vind jouw perfecte stem</h3>
-              
+
               {/* Search */}
               <div className="relative mb-8">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -523,7 +639,9 @@ export function VoiceoverCleanVariations() {
 
               {/* Recent Reviews */}
               <div className="mb-8">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">RECENTE REVIEWS</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">
+                  RECENTE REVIEWS
+                </p>
                 <div className="space-y-3">
                   <div className="bg-white dark:bg-gray-800 p-4 rounded-xl">
                     <div className="flex gap-1 mb-2">
@@ -532,7 +650,7 @@ export function VoiceoverCleanVariations() {
                       ))}
                     </div>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      "Uitstekende kwaliteit en snelle levering!"
+                      &quot;Uitstekende kwaliteit en snelle levering!&quot;
                     </p>
                     <p className="text-xs text-gray-500 mt-1">- Mark K.</p>
                   </div>
@@ -543,7 +661,7 @@ export function VoiceoverCleanVariations() {
                       ))}
                     </div>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      "Perfecte stem voor onze commercial."
+                      &quot;Perfecte stem voor onze commercial.&quot;
                     </p>
                     <p className="text-xs text-gray-500 mt-1">- Anna B.</p>
                   </div>
@@ -552,7 +670,9 @@ export function VoiceoverCleanVariations() {
 
               {/* Popular Styles */}
               <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">POPULAIRE STIJLEN</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">
+                  POPULAIRE STIJLEN
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {allStyles.slice(0, 8).map((style) => (
                     <button
@@ -599,7 +719,8 @@ export function VoiceoverCleanVariations() {
 
           {/* Title */}
           <h1 className="text-6xl lg:text-8xl font-bold text-center text-gray-900 dark:text-white mb-8">
-            Jouw stem,<br />
+            Jouw stem,
+            <br />
             <span className="bg-gradient-to-r from-[#18f109] to-[#efd243] bg-clip-text text-transparent">
               ons vakmanschap
             </span>
@@ -650,7 +771,9 @@ export function VoiceoverCleanVariations() {
 
           {/* Minimal Style Pills */}
           <div className="text-center mb-8">
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Klik om te filteren op stijl</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+              Klik om te filteren op stijl
+            </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               {allStyles.map((style) => (
                 <button
@@ -670,7 +793,7 @@ export function VoiceoverCleanVariations() {
 
           {/* CTA */}
           <div className="text-center">
-            <a 
+            <a
               href="https://www.feedbackcompany.com/nl-nl/reviews/fourteen-voices/"
               target="_blank"
               rel="noopener noreferrer"

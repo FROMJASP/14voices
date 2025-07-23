@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRef, useEffect } from "react";
-import { Renderer, Program, Triangle, Mesh } from "ogl";
-import "./RippleGrid.css";
+import { useRef, useEffect } from 'react';
+import { Renderer, Program, Triangle, Mesh } from 'ogl';
+import './RippleGrid.css';
 
 type Props = {
   enableRainbow?: boolean;
@@ -21,7 +21,7 @@ type Props = {
 
 const RippleGrid: React.FC<Props> = ({
   enableRainbow = false,
-  gridColor = "#ffffff",
+  gridColor = '#ffffff',
   rippleIntensity = 0.05,
   gridSize = 10.0,
   gridThickness = 15.0,
@@ -37,7 +37,27 @@ const RippleGrid: React.FC<Props> = ({
   const mousePositionRef = useRef({ x: 0.5, y: 0.5 });
   const targetMouseRef = useRef({ x: 0.5, y: 0.5 });
   const mouseInfluenceRef = useRef(0);
-  const uniformsRef = useRef<any>(null);
+  // Define the uniforms type structure
+  type UniformValue<T> = { value: T };
+  type Uniforms = {
+    iTime: UniformValue<number>;
+    iResolution: UniformValue<[number, number]>;
+    enableRainbow: UniformValue<boolean>;
+    gridColor: UniformValue<[number, number, number]>;
+    rippleIntensity: UniformValue<number>;
+    gridSize: UniformValue<number>;
+    gridThickness: UniformValue<number>;
+    fadeDistance: UniformValue<number>;
+    vignetteStrength: UniformValue<number>;
+    glowIntensity: UniformValue<number>;
+    opacity: UniformValue<number>;
+    gridRotation: UniformValue<number>;
+    mouseInteraction: UniformValue<boolean>;
+    mousePosition: UniformValue<[number, number]>;
+    mouseInfluence: UniformValue<number>;
+    mouseInteractionRadius: UniformValue<number>;
+  };
+  const uniformsRef = useRef<Uniforms | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -60,11 +80,11 @@ const RippleGrid: React.FC<Props> = ({
     const gl = renderer.gl;
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.canvas.style.width = "100%";
-    gl.canvas.style.height = "100%";
-    gl.canvas.style.position = "absolute";
-    gl.canvas.style.top = "0";
-    gl.canvas.style.left = "0";
+    gl.canvas.style.width = '100%';
+    gl.canvas.style.height = '100%';
+    gl.canvas.style.position = 'absolute';
+    gl.canvas.style.top = '0';
+    gl.canvas.style.left = '0';
     containerRef.current.appendChild(gl.canvas);
 
     const vert = `
@@ -170,7 +190,7 @@ void main() {
 
     const uniforms = {
       iTime: { value: 0 },
-      iResolution: { value: [1, 1] },
+      iResolution: { value: [1, 1] as [number, number] },
       enableRainbow: { value: enableRainbow },
       gridColor: { value: hexToRgb(gridColor) },
       rippleIntensity: { value: rippleIntensity },
@@ -182,7 +202,7 @@ void main() {
       opacity: { value: opacity },
       gridRotation: { value: gridRotation },
       mouseInteraction: { value: mouseInteraction },
-      mousePosition: { value: [0.5, 0.5] },
+      mousePosition: { value: [0.5, 0.5] as [number, number] },
       mouseInfluence: { value: 0 },
       mouseInteractionRadius: { value: mouseInteractionRadius },
     };
@@ -217,11 +237,13 @@ void main() {
       mouseInfluenceRef.current = 0.0;
     };
 
-    window.addEventListener("resize", resize);
-    if (mouseInteraction) {
-      containerRef.current.addEventListener("mousemove", handleMouseMove);
-      containerRef.current.addEventListener("mouseenter", handleMouseEnter);
-      containerRef.current.addEventListener("mouseleave", handleMouseLeave);
+    const container = containerRef.current;
+
+    window.addEventListener('resize', resize);
+    if (mouseInteraction && container) {
+      container.addEventListener('mousemove', handleMouseMove);
+      container.addEventListener('mouseenter', handleMouseEnter);
+      container.addEventListener('mouseleave', handleMouseLeave);
     }
     resize();
 
@@ -236,13 +258,9 @@ void main() {
 
       const currentInfluence = uniforms.mouseInfluence.value;
       const targetInfluence = mouseInfluenceRef.current;
-      uniforms.mouseInfluence.value +=
-        (targetInfluence - currentInfluence) * 0.05;
+      uniforms.mouseInfluence.value += (targetInfluence - currentInfluence) * 0.05;
 
-      uniforms.mousePosition.value = [
-        mousePositionRef.current.x,
-        mousePositionRef.current.y,
-      ];
+      uniforms.mousePosition.value = [mousePositionRef.current.x, mousePositionRef.current.y];
 
       renderer.render({ scene: mesh });
       requestAnimationFrame(render);
@@ -251,22 +269,29 @@ void main() {
     requestAnimationFrame(render);
 
     return () => {
-      window.removeEventListener("resize", resize);
-      if (mouseInteraction && containerRef.current) {
-        containerRef.current.removeEventListener("mousemove", handleMouseMove);
-        containerRef.current.removeEventListener(
-          "mouseenter",
-          handleMouseEnter
-        );
-        containerRef.current.removeEventListener(
-          "mouseleave",
-          handleMouseLeave
-        );
+      window.removeEventListener('resize', resize);
+      if (mouseInteraction && container) {
+        container.removeEventListener('mousemove', handleMouseMove);
+        container.removeEventListener('mouseenter', handleMouseEnter);
+        container.removeEventListener('mouseleave', handleMouseLeave);
       }
-      renderer.gl.getExtension("WEBGL_lose_context")?.loseContext();
-      containerRef.current?.removeChild(gl.canvas);
+      renderer.gl.getExtension('WEBGL_lose_context')?.loseContext();
+      container?.removeChild(gl.canvas);
     };
-  }, []);
+  }, [
+    enableRainbow,
+    gridColor,
+    rippleIntensity,
+    gridSize,
+    gridThickness,
+    fadeDistance,
+    vignetteStrength,
+    glowIntensity,
+    opacity,
+    gridRotation,
+    mouseInteraction,
+    mouseInteractionRadius,
+  ]);
 
   useEffect(() => {
     if (!uniformsRef.current) return;

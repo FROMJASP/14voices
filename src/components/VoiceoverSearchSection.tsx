@@ -1,7 +1,7 @@
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
-import type { Voiceover as PayloadVoiceover } from '@/payload-types';
+import type { PayloadVoiceover } from '@/types/voiceover';
 import { VoiceoverSearchFieldDesign } from './VoiceoverSearchFieldDesign';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { PriceCalculator } from './PriceCalculator';

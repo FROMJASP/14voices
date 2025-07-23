@@ -71,7 +71,18 @@ export default async function VoiceoverPage({ params }: { params: Promise<{ slug
   return (
     <VoiceoverProvider initialVoiceover={preSelectedVoiceover}>
       <div className="min-h-screen">
-        <VoiceoverDetailClientNew voiceover={transformedVoiceover} />
+        <VoiceoverDetailClientNew
+          voiceover={{
+            ...transformedVoiceover,
+            profilePhoto: transformedVoiceover.profilePhoto?.url || null,
+            demos: transformedVoiceover.demos.map((demo) => ({
+              id: demo.id,
+              title: demo.title,
+              url: demo.audioFile.url,
+              duration: demo.duration || '0:30',
+            })),
+          }}
+        />
 
         {/* Price Calculator Section */}
         <div className="bg-[#fcf9f5] dark:bg-gray-900 py-20">

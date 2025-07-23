@@ -52,22 +52,6 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const payload = await getPayload({ config: configPromise });
-
-  const pages = await payload.find({
-    collection: 'pages',
-    where: {
-      slug: {
-        equals: 'home',
-      },
-      status: {
-        equals: 'published',
-      },
-    },
-    limit: 1,
-    depth: 2,
-  });
-
   // Show search field design with real voiceovers and price calculator
   return <VoiceoverSearchSection />;
 }

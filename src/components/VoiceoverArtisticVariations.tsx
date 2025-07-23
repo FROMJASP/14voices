@@ -1,7 +1,22 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Star, Zap, Shield, ChevronDown, X, Check, ArrowDown, Info, Mic, Radio, Music, Headphones, Activity, Waves } from 'lucide-react';
+import {
+  Search,
+  Star,
+  Zap,
+  Shield,
+  ChevronDown,
+  X,
+  Check,
+  ArrowDown,
+  Info,
+  Mic,
+  Radio,
+  Music,
+  Headphones,
+  Activity,
+} from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { VoiceoverCard } from './VoiceoverCard';
 
@@ -14,21 +29,108 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 // Sample voice data
 const sampleVoices = [
-  { id: '1', name: 'Gina', slug: 'gina', profilePhoto: null, tags: ['Warm', 'Vriendelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '2', name: 'Sophie', slug: 'sophie', profilePhoto: null, tags: ['Helder', 'Professioneel'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '3', name: 'Mark', slug: 'mark', profilePhoto: null, tags: ['Autoriteit', 'Zakelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '4', name: 'Lisa', slug: 'lisa', profilePhoto: null, tags: ['Jong', 'Energiek'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '5', name: 'Tom', slug: 'tom', profilePhoto: null, tags: ['Warm', 'Betrouwbaar'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '6', name: 'Eva', slug: 'eva', profilePhoto: null, tags: ['Urban', 'Modern'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '7', name: 'Jan', slug: 'jan', profilePhoto: null, tags: ['Autoriteit', 'Ervaren'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '8', name: 'Nina', slug: 'nina', profilePhoto: null, tags: ['Helder', 'Vriendelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
+  {
+    id: '1',
+    name: 'Gina',
+    slug: 'gina',
+    profilePhoto: null,
+    tags: ['Warm', 'Vriendelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '2',
+    name: 'Sophie',
+    slug: 'sophie',
+    profilePhoto: null,
+    tags: ['Helder', 'Professioneel'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '3',
+    name: 'Mark',
+    slug: 'mark',
+    profilePhoto: null,
+    tags: ['Autoriteit', 'Zakelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '4',
+    name: 'Lisa',
+    slug: 'lisa',
+    profilePhoto: null,
+    tags: ['Jong', 'Energiek'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '5',
+    name: 'Tom',
+    slug: 'tom',
+    profilePhoto: null,
+    tags: ['Warm', 'Betrouwbaar'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '6',
+    name: 'Eva',
+    slug: 'eva',
+    profilePhoto: null,
+    tags: ['Urban', 'Modern'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '7',
+    name: 'Jan',
+    slug: 'jan',
+    profilePhoto: null,
+    tags: ['Autoriteit', 'Ervaren'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '8',
+    name: 'Nina',
+    slug: 'nina',
+    profilePhoto: null,
+    tags: ['Helder', 'Vriendelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
 ];
 
 // Extended style tags
 const allStyles = [
-  'Warm', 'Vriendelijk', 'Helder', 'Professioneel', 'Autoriteit', 'Zakelijk', 
-  'Jong', 'Energiek', 'Urban', 'Modern', 'Betrouwbaar', 'Ervaren',
-  'Speels', 'Serieus', 'Natuurlijk', 'Karaktervol', 'Diep', 'Licht'
+  'Warm',
+  'Vriendelijk',
+  'Helder',
+  'Professioneel',
+  'Autoriteit',
+  'Zakelijk',
+  'Jong',
+  'Energiek',
+  'Urban',
+  'Modern',
+  'Betrouwbaar',
+  'Ervaren',
+  'Speels',
+  'Serieus',
+  'Natuurlijk',
+  'Karaktervol',
+  'Diep',
+  'Licht',
 ];
 
 export function VoiceoverArtisticVariations() {
@@ -53,9 +155,9 @@ export function VoiceoverArtisticVariations() {
     if (style === 'Alle stijlen') {
       setSelectedStyles(['Alle stijlen']);
     } else {
-      const newStyles = selectedStyles.filter(s => s !== 'Alle stijlen');
+      const newStyles = selectedStyles.filter((s) => s !== 'Alle stijlen');
       if (selectedStyles.includes(style)) {
-        const filtered = newStyles.filter(s => s !== style);
+        const filtered = newStyles.filter((s) => s !== style);
         setSelectedStyles(filtered.length === 0 ? ['Alle stijlen'] : filtered);
       } else {
         setSelectedStyles([...newStyles, style]);
@@ -64,7 +166,7 @@ export function VoiceoverArtisticVariations() {
   };
 
   const removeStyle = (style: string) => {
-    const filtered = selectedStyles.filter(s => s !== style);
+    const filtered = selectedStyles.filter((s) => s !== style);
     setSelectedStyles(filtered.length === 0 ? ['Alle stijlen'] : filtered);
   };
 
@@ -74,7 +176,7 @@ export function VoiceoverArtisticVariations() {
     { id: 2, name: 'Studio Vibes' },
     { id: 3, name: 'Radio Broadcast' },
     { id: 4, name: 'Audio Spectrum' },
-    { id: 5, name: 'Minimal Dots' }
+    { id: 5, name: 'Minimal Dots' },
   ];
 
   return (
@@ -83,7 +185,9 @@ export function VoiceoverArtisticVariations() {
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center gap-4 overflow-x-auto">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">Selecteer variant:</span>
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">
+              Selecteer variant:
+            </span>
             {variations.map((variation) => (
               <button
                 key={variation.id}
@@ -164,24 +268,31 @@ export function VoiceoverArtisticVariations() {
             {/* Process Steps */}
             <div className="flex items-center justify-center gap-4 mb-8">
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-8 h-8 bg-[#18f109] text-black rounded-full flex items-center justify-center font-semibold">1</span>
+                <span className="w-8 h-8 bg-[#18f109] text-black rounded-full flex items-center justify-center font-semibold">
+                  1
+                </span>
                 <span>Boek je stem</span>
               </div>
               <div className="w-8 h-0.5 bg-gray-300 dark:bg-gray-700" />
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-semibold">2</span>
+                <span className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-semibold">
+                  2
+                </span>
                 <span>Upload script</span>
               </div>
               <div className="w-8 h-0.5 bg-gray-300 dark:bg-gray-700" />
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-semibold">3</span>
+                <span className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-semibold">
+                  3
+                </span>
                 <span>Ontvang audio</span>
               </div>
             </div>
 
             {/* Title */}
             <h1 className="text-5xl lg:text-7xl font-bold text-center text-gray-900 dark:text-white mb-6">
-              De perfecte stem<br />
+              De perfecte stem
+              <br />
               voor elk verhaal
             </h1>
 
@@ -197,7 +308,7 @@ export function VoiceoverArtisticVariations() {
                 <span className="font-semibold">&lt;48u levering</span>
               </div>
               <div className="w-px h-6 bg-gray-300 dark:bg-gray-700" />
-              <a 
+              <a
                 href="https://www.feedbackcompany.com/nl-nl/reviews/fourteen-voices/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -215,8 +326,10 @@ export function VoiceoverArtisticVariations() {
 
             {/* CTA Buttons */}
             <div className="flex items-center justify-center gap-4 mb-12">
-              <button 
-                onClick={() => document.getElementById('voiceover-grid')?.scrollIntoView({ behavior: 'smooth' })}
+              <button
+                onClick={() =>
+                  document.getElementById('voiceover-grid')?.scrollIntoView({ behavior: 'smooth' })
+                }
                 className="px-6 py-3 bg-[#18f109] text-black rounded-xl font-semibold hover:bg-[#18f109]/90 transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
               >
                 Bekijk stemmen
@@ -256,11 +369,13 @@ export function VoiceoverArtisticVariations() {
                     }`}
                   >
                     <span className="font-medium">
-                      {selectedStyles.includes('Alle stijlen') 
-                        ? 'Alle stijlen' 
+                      {selectedStyles.includes('Alle stijlen')
+                        ? 'Alle stijlen'
                         : `${selectedStyles.length} stijl(en)`}
                     </span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${showStyleDropdown ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${showStyleDropdown ? 'rotate-180' : ''}`}
+                    />
                   </button>
 
                   {/* Style Dropdown */}
@@ -271,14 +386,15 @@ export function VoiceoverArtisticVariations() {
                           <p className="font-medium text-gray-900 dark:text-white">
                             Filter op stijl
                           </p>
-                          {!selectedStyles.includes('Alle stijlen') && selectedStyles.length > 0 && (
-                            <button
-                              onClick={() => setSelectedStyles(['Alle stijlen'])}
-                              className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                            >
-                              Wis alles
-                            </button>
-                          )}
+                          {!selectedStyles.includes('Alle stijlen') &&
+                            selectedStyles.length > 0 && (
+                              <button
+                                onClick={() => setSelectedStyles(['Alle stijlen'])}
+                                className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                              >
+                                Wis alles
+                              </button>
+                            )}
                         </div>
                         <div className="space-y-1 max-h-80 overflow-y-auto">
                           <button
@@ -290,7 +406,9 @@ export function VoiceoverArtisticVariations() {
                             }`}
                           >
                             <span>Alle stijlen</span>
-                            {selectedStyles.includes('Alle stijlen') && <Check className="w-4 h-4" />}
+                            {selectedStyles.includes('Alle stijlen') && (
+                              <Check className="w-4 h-4" />
+                            )}
                           </button>
                           <div className="h-px bg-gray-200 dark:bg-gray-700 my-2" />
                           {allStyles.map((style) => (
@@ -348,7 +466,6 @@ export function VoiceoverArtisticVariations() {
                   voice={voice}
                   isSelected={false}
                   onSelect={() => {}}
-                  className="h-full"
                 />
               ))}
             </div>
@@ -361,10 +478,13 @@ export function VoiceoverArtisticVariations() {
         <div className="min-h-screen bg-[#fcf9f5] dark:bg-gray-950 relative">
           {/* Studio Equipment Pattern Background */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(24,241,9,0.1) 35px, rgba(24,241,9,0.1) 70px),
-                              repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(239,210,67,0.1) 35px, rgba(239,210,67,0.1) 70px)`
-            }} />
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(24,241,9,0.1) 35px, rgba(24,241,9,0.1) 70px),
+                              repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(239,210,67,0.1) 35px, rgba(239,210,67,0.1) 70px)`,
+              }}
+            />
           </div>
 
           {/* Floating Studio Elements */}
@@ -384,7 +504,10 @@ export function VoiceoverArtisticVariations() {
               <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl">
                 <div className="flex gap-1 mb-2">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className={`w-2 h-16 ${i < 3 ? 'bg-[#18f109]' : i < 4 ? 'bg-[#efd243]' : 'bg-gray-300'} rounded-full`} />
+                    <div
+                      key={i}
+                      className={`w-2 h-16 ${i < 3 ? 'bg-[#18f109]' : i < 4 ? 'bg-[#efd243]' : 'bg-gray-300'} rounded-full`}
+                    />
                   ))}
                 </div>
                 <p className="text-xs text-center">Audio Level</p>
@@ -420,7 +543,7 @@ export function VoiceoverArtisticVariations() {
                   borderColor: i % 2 === 0 ? '#18f109' : '#efd243',
                   borderRadius: '50%',
                   opacity: 0.1 - i * 0.02,
-                  animation: `pulse ${3 + i}s ease-in-out infinite`
+                  animation: `pulse ${3 + i}s ease-in-out infinite`,
                 }}
               />
             ))}
@@ -464,7 +587,7 @@ export function VoiceoverArtisticVariations() {
                 style={{
                   height: `${Math.random() * 200 + 50}px`,
                   animation: `spectrum ${Math.random() * 2 + 1}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 2}s`
+                  animationDelay: `${Math.random() * 2}s`,
                 }}
               />
             ))}
@@ -477,7 +600,10 @@ export function VoiceoverArtisticVariations() {
                 <p className="text-xs mb-2">FREQUENCY ANALYZER</p>
                 <div className="grid grid-cols-8 gap-1">
                   {[...Array(32)].map((_, i) => (
-                    <div key={i} className={`w-2 h-2 ${Math.random() > 0.5 ? 'bg-[#18f109]' : 'bg-[#18f109]/30'}`} />
+                    <div
+                      key={i}
+                      className={`w-2 h-2 ${Math.random() > 0.5 ? 'bg-[#18f109]' : 'bg-[#18f109]/30'}`}
+                    />
                   ))}
                 </div>
               </div>
@@ -494,13 +620,13 @@ export function VoiceoverArtisticVariations() {
         <div className="min-h-screen bg-[#fcf9f5] dark:bg-gray-950 relative">
           {/* Dot Pattern Background */}
           <div className="absolute inset-0">
-            <div 
+            <div
               className="absolute inset-0 opacity-20"
               style={{
                 backgroundImage: `radial-gradient(circle, #18f109 1px, transparent 1px),
                                 radial-gradient(circle, #efd243 1px, transparent 1px)`,
                 backgroundSize: '50px 50px, 50px 50px',
-                backgroundPosition: '0 0, 25px 25px'
+                backgroundPosition: '0 0, 25px 25px',
               }}
             />
           </div>
@@ -515,10 +641,12 @@ export function VoiceoverArtisticVariations() {
                   left: `${20 + (i % 3) * 30}%`,
                   top: `${20 + Math.floor(i / 3) * 40}%`,
                   animation: `float ${4 + i}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.5}s`
+                  animationDelay: `${i * 0.5}s`,
                 }}
               >
-                <div className={`w-4 h-4 rounded-full ${i % 3 === 0 ? 'bg-[#18f109]' : i % 3 === 1 ? 'bg-[#efd243]' : 'bg-[#ebaa3a]'}`} />
+                <div
+                  className={`w-4 h-4 rounded-full ${i % 3 === 0 ? 'bg-[#18f109]' : i % 3 === 1 ? 'bg-[#efd243]' : 'bg-[#ebaa3a]'}`}
+                />
               </div>
             ))}
           </div>
@@ -530,20 +658,42 @@ export function VoiceoverArtisticVariations() {
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
         }
         @keyframes float-delayed {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-30px); }
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-30px);
+          }
         }
         @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 0.1; }
-          50% { transform: scale(1.05); opacity: 0.15; }
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 0.1;
+          }
+          50% {
+            transform: scale(1.05);
+            opacity: 0.15;
+          }
         }
         @keyframes spectrum {
-          0%, 100% { transform: scaleY(0.5); }
-          50% { transform: scaleY(1); }
+          0%,
+          100% {
+            transform: scaleY(0.5);
+          }
+          50% {
+            transform: scaleY(1);
+          }
         }
         .animate-float {
           animation: float 4s ease-in-out infinite;

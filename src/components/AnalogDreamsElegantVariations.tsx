@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
 import { ArrowRight, Volume2, Sparkles, Radio, Mic2, AudioLines, Waves } from 'lucide-react';
 
@@ -31,18 +31,18 @@ const generateFilmGrain = (density: number = 0.8) => {
   canvas.width = 300;
   canvas.height = 300;
   const ctx = canvas.getContext('2d')!;
-  
+
   // Create grain pattern
   for (let i = 0; i < 15000 * density; i++) {
     const x = Math.random() * 300;
     const y = Math.random() * 300;
     const alpha = Math.random() * 0.4;
     const size = Math.random() * 0.8;
-    
+
     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
     ctx.fillRect(x, y, size, size);
   }
-  
+
   // Add occasional scratches
   for (let i = 0; i < 3; i++) {
     ctx.strokeStyle = `rgba(255, 255, 255, ${Math.random() * 0.1})`;
@@ -52,7 +52,7 @@ const generateFilmGrain = (density: number = 0.8) => {
     ctx.lineTo(Math.random() * 300, 300);
     ctx.stroke();
   }
-  
+
   return canvas.toDataURL();
 };
 
@@ -61,7 +61,8 @@ const variations = [
     id: 'editorial-voice',
     title: 'Editorial Voice',
     tagline: 'Where stories find their perfect tone',
-    description: 'Craft narratives that resonate. Professional voice artistry meets editorial excellence in every word delivered.',
+    description:
+      'Craft narratives that resonate. Professional voice artistry meets editorial excellence in every word delivered.',
     cta: 'Begin Your Story',
     icon: Mic2,
     colors: {
@@ -69,22 +70,23 @@ const variations = [
         bg: 'from-[#f5f0e8] via-[#fcf9f5] to-[#f5f0e8]',
         accent: '#212121',
         text: '#212121',
-        muted: '#666666'
+        muted: '#666666',
       },
       dark: {
         bg: 'from-gray-900 via-black to-gray-900',
         accent: '#18f109',
         text: '#ffffff',
-        muted: '#999999'
-      }
+        muted: '#999999',
+      },
     },
-    noise: { layers: 2, density: 0.6 }
+    noise: { layers: 2, density: 0.6 },
   },
   {
     id: 'sonic-architecture',
     title: 'Sonic Architecture',
     tagline: 'Building soundscapes, layer by layer',
-    description: 'Engineer audio experiences with precision. Every voice becomes a building block in your sonic masterpiece.',
+    description:
+      'Engineer audio experiences with precision. Every voice becomes a building block in your sonic masterpiece.',
     cta: 'Construct Sound',
     icon: AudioLines,
     colors: {
@@ -92,22 +94,23 @@ const variations = [
         bg: 'from-slate-100 via-gray-50 to-slate-100',
         accent: '#1a1a1a',
         text: '#1a1a1a',
-        muted: '#71717a'
+        muted: '#71717a',
       },
       dark: {
         bg: 'from-slate-950 via-gray-950 to-slate-950',
         accent: '#60a5fa',
         text: '#f1f5f9',
-        muted: '#94a3b8'
-      }
+        muted: '#94a3b8',
+      },
     },
-    noise: { layers: 3, density: 0.4 }
+    noise: { layers: 3, density: 0.4 },
   },
   {
     id: 'vintage-broadcast',
     title: 'Vintage Broadcast',
     tagline: 'Classic warmth, modern clarity',
-    description: 'Channel the golden age of radio with contemporary quality. Timeless voices for modern audiences.',
+    description:
+      'Channel the golden age of radio with contemporary quality. Timeless voices for modern audiences.',
     cta: 'On Air Now',
     icon: Radio,
     colors: {
@@ -115,22 +118,23 @@ const variations = [
         bg: 'from-amber-50 via-orange-50 to-amber-50',
         accent: '#d97706',
         text: '#451a03',
-        muted: '#92400e'
+        muted: '#92400e',
       },
       dark: {
         bg: 'from-amber-950 via-orange-950 to-amber-950',
         accent: '#fbbf24',
         text: '#fef3c7',
-        muted: '#f59e0b'
-      }
+        muted: '#f59e0b',
+      },
     },
-    noise: { layers: 4, density: 0.8 }
+    noise: { layers: 4, density: 0.8 },
   },
   {
     id: 'fluid-expression',
     title: 'Fluid Expression',
     tagline: 'Voices that flow like water',
-    description: 'Let your message cascade through perfect vocal delivery. Natural, flowing, unforgettable.',
+    description:
+      'Let your message cascade through perfect vocal delivery. Natural, flowing, unforgettable.',
     cta: 'Flow Forward',
     icon: Waves,
     colors: {
@@ -138,22 +142,23 @@ const variations = [
         bg: 'from-cyan-50 via-blue-50 to-indigo-50',
         accent: '#0891b2',
         text: '#083344',
-        muted: '#0e7490'
+        muted: '#0e7490',
       },
       dark: {
         bg: 'from-cyan-950 via-blue-950 to-indigo-950',
         accent: '#22d3ee',
         text: '#cffafe',
-        muted: '#06b6d4'
-      }
+        muted: '#06b6d4',
+      },
     },
-    noise: { layers: 2, density: 0.5 }
+    noise: { layers: 2, density: 0.5 },
   },
   {
     id: 'premium-delivery',
     title: 'Premium Delivery',
     tagline: 'Excellence in every syllable',
-    description: 'Elevate your brand with voices that command attention. Premium quality, delivered with precision.',
+    description:
+      'Elevate your brand with voices that command attention. Premium quality, delivered with precision.',
     cta: 'Experience Premium',
     icon: Sparkles,
     colors: {
@@ -161,17 +166,17 @@ const variations = [
         bg: 'from-purple-50 via-pink-50 to-purple-50',
         accent: '#9333ea',
         text: '#3b0764',
-        muted: '#7c3aed'
+        muted: '#7c3aed',
       },
       dark: {
         bg: 'from-purple-950 via-pink-950 to-purple-950',
         accent: '#d946ef',
         text: '#fae8ff',
-        muted: '#c026d3'
-      }
+        muted: '#c026d3',
+      },
     },
-    noise: { layers: 3, density: 0.3 }
-  }
+    noise: { layers: 3, density: 0.3 },
+  },
 ];
 
 export function AnalogDreamsElegantVariations() {
@@ -180,7 +185,7 @@ export function AnalogDreamsElegantVariations() {
   const containerRef = useRef<HTMLDivElement>(null);
   const grainCanvasRef = useRef<HTMLCanvasElement>(null);
   const { scrollY } = useScroll();
-  
+
   const variation = variations[currentVariation];
   const colors = variation.colors[theme];
   const Icon = variation.icon;
@@ -194,10 +199,10 @@ export function AnalogDreamsElegantVariations() {
     if (!grainCanvasRef.current) return;
     const ctx = grainCanvasRef.current.getContext('2d')!;
     const grain = generateFilmGrain(variation.noise.density);
-    
+
     const animate = () => {
       ctx.clearRect(0, 0, 300, 300);
-      
+
       // Animated grain
       const img = new Image();
       img.onload = () => {
@@ -205,15 +210,18 @@ export function AnalogDreamsElegantVariations() {
         ctx.drawImage(img, Math.random() * 10 - 5, Math.random() * 10 - 5);
       };
       img.src = grain;
-      
+
       requestAnimationFrame(animate);
     };
-    
+
     animate();
   }, [variation.noise.density, theme]);
 
   return (
-    <div ref={containerRef} className={`${instrumentSerif.variable} ${plusJakarta.variable} min-h-screen relative overflow-hidden transition-all duration-1000 bg-gradient-to-br ${colors.bg}`}>
+    <div
+      ref={containerRef}
+      className={`${instrumentSerif.variable} ${plusJakarta.variable} min-h-screen relative overflow-hidden transition-all duration-1000 bg-gradient-to-br ${colors.bg}`}
+    >
       {/* Theme & Variation Controls */}
       <div className="fixed top-6 right-6 z-50 flex items-center gap-4">
         <div className="flex gap-2 bg-white/10 dark:bg-black/10 backdrop-blur-md rounded-full p-1">
@@ -222,12 +230,12 @@ export function AnalogDreamsElegantVariations() {
               key={idx}
               onClick={() => setCurrentVariation(idx)}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                idx === currentVariation 
-                  ? `bg-[${colors.accent}] w-8` 
+                idx === currentVariation
+                  ? `bg-[${colors.accent}] w-8`
                   : 'bg-gray-400/50 hover:bg-gray-400'
               }`}
               style={{
-                backgroundColor: idx === currentVariation ? colors.accent : undefined
+                backgroundColor: idx === currentVariation ? colors.accent : undefined,
               }}
             />
           ))}
@@ -237,7 +245,7 @@ export function AnalogDreamsElegantVariations() {
           className="px-4 py-2 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105"
           style={{
             backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-            color: colors.text
+            color: colors.text,
           }}
         >
           {theme === 'dark' ? '☀️' : '🌙'}
@@ -245,10 +253,7 @@ export function AnalogDreamsElegantVariations() {
       </div>
 
       {/* Multi-layer Perlin Noise */}
-      <motion.div 
-        className="absolute inset-0 pointer-events-none"
-        style={{ y: noiseY }}
-      >
+      <motion.div className="absolute inset-0 pointer-events-none" style={{ y: noiseY }}>
         {Array.from({ length: variation.noise.layers }).map((_, i) => (
           <div
             key={i}
@@ -277,7 +282,7 @@ export function AnalogDreamsElegantVariations() {
       />
 
       {/* Main Content */}
-      <motion.div 
+      <motion.div
         className="relative z-10 min-h-screen flex items-center justify-center px-6 sm:px-12 lg:px-20"
         style={{ y: contentY }}
       >
@@ -286,22 +291,19 @@ export function AnalogDreamsElegantVariations() {
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 1, type: "spring", stiffness: 100 }}
+            transition={{ duration: 1, type: 'spring', stiffness: 100 }}
             className="mb-8"
           >
-            <div 
+            <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto"
               style={{ backgroundColor: colors.accent + '20' }}
             >
-              <Icon 
-                className="w-10 h-10" 
-                style={{ color: colors.accent }}
-              />
+              <Icon className="w-10 h-10" style={{ color: colors.accent }} />
             </div>
           </motion.div>
 
           {/* Main Title - Inspired by Footer SVG animation */}
-          <motion.h1 
+          <motion.h1
             className="font-instrument-serif text-6xl sm:text-7xl lg:text-8xl text-center mb-4"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -317,16 +319,14 @@ export function AnalogDreamsElegantVariations() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="relative mb-12 overflow-hidden rounded-2xl mx-auto max-w-2xl"
           >
-            <div 
+            <div
               className="px-8 py-4 text-center transition-all duration-300 backdrop-blur-sm"
               style={{
-                backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                backgroundColor:
+                  theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
               }}
             >
-              <p 
-                className="font-plus-jakarta text-2xl italic"
-                style={{ color: colors.muted }}
-              >
+              <p className="font-plus-jakarta text-2xl italic" style={{ color: colors.muted }}>
                 {variation.tagline}
               </p>
             </div>
@@ -375,7 +375,7 @@ export function AnalogDreamsElegantVariations() {
                   filter: 'blur(20px)',
                 }}
               />
-              
+
               <span className="relative flex items-center gap-3">
                 <Volume2 className="w-5 h-5" />
                 {variation.cta}
@@ -385,7 +385,7 @@ export function AnalogDreamsElegantVariations() {
           </motion.div>
 
           {/* Animated Steps - Liquid Morph inspired */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1 }}
@@ -410,10 +410,7 @@ export function AnalogDreamsElegantVariations() {
                     backgroundColor: idx === 0 ? colors.accent : colors.muted + '40',
                   }}
                 />
-                <span 
-                  className="font-plus-jakarta text-sm"
-                  style={{ color: colors.muted }}
-                >
+                <span className="font-plus-jakarta text-sm" style={{ color: colors.muted }}>
                   {step}
                 </span>
               </motion.div>

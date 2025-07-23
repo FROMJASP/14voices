@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus_Jakarta_Sans } from 'next/font/google';
-import { ChevronRight, User, Check, Search, SlidersHorizontal, ChevronDown, X } from 'lucide-react';
+import { ChevronRight, User, Check, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useVoiceover, scrollToPriceCalculator } from '@/contexts/VoiceoverContext';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -115,7 +115,8 @@ export function VoiceoverShowcaseClient({
                 <span className="block text-gray-700 dark:text-gray-300 mt-2">ideale stem</span>
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium">
-                14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles daartussenin.
+                14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles
+                daartussenin.
               </p>
             </motion.div>
 
@@ -168,43 +169,43 @@ export function VoiceoverShowcaseClient({
         {/* Expandable Filter Section with Better Design */}
         <AnimatePresence>
           {showFilters && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
+              className="overflow-hidden"
+            >
               <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.4, ease: 'easeInOut' }}
-                className="overflow-hidden"
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-8 shadow-sm dark:shadow-xl border border-gray-100 dark:border-gray-700"
               >
-                <motion.div
-                  initial={{ y: -20 }}
-                  animate={{ y: 0 }}
-                  className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-8 shadow-sm dark:shadow-xl border border-gray-100 dark:border-gray-700"
-                >
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      Filter op stijl
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      {selectedCategories.length > 0 && (
-                        <button
-                          onClick={clearAllFilters}
-                          className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-3 py-1"
-                        >
-                          Wis alles
-                        </button>
-                      )}
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Filter op stijl
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    {selectedCategories.length > 0 && (
                       <button
-                        onClick={() => setShowFilters(false)}
-                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                        onClick={clearAllFilters}
+                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors px-3 py-1"
                       >
-                        <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        Wis alles
                       </button>
-                    </div>
+                    )}
+                    <button
+                      onClick={() => setShowFilters(false)}
+                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                    >
+                      <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    </button>
                   </div>
+                </div>
 
-                  {/* Horizontal scrollable container on mobile, grid on desktop */}
-                  <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
-                    <div className="flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+                {/* Horizontal scrollable container on mobile, grid on desktop */}
+                <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
+                  <div className="flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -244,24 +245,24 @@ export function VoiceoverShowcaseClient({
                         )}
                       </motion.button>
                     ))}
-                    </div>
                   </div>
+                </div>
 
-                  {/* Quick Stats */}
-                  <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex gap-8">
-                    <div>
-                      <p className="text-2xl font-bold text-gray-900 dark:text-white">14</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Stemmen</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-gray-900 dark:text-white">12</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Categorieën</p>
-                    </div>
+                {/* Quick Stats */}
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex gap-8">
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">14</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Stemmen</p>
                   </div>
-                </motion.div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">12</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Categorieën</p>
+                  </div>
+                </div>
               </motion.div>
-            )}
-          </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Featured Voice Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">

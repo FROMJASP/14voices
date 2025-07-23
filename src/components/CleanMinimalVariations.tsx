@@ -2,7 +2,17 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, ChevronRight, Zap, Star, Shield, ArrowRight, Headphones, Mic, Check, Info } from 'lucide-react';
+import {
+  ChevronRight,
+  Zap,
+  Star,
+  Shield,
+  ArrowRight,
+  Headphones,
+  Mic,
+  Check,
+  Info,
+} from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import gsap from 'gsap';
 
@@ -25,7 +35,9 @@ export default function CleanMinimalVariations() {
   ];
 
   return (
-    <div className={`${plusJakarta.variable} font-plus-jakarta min-h-screen bg-gray-50 dark:bg-gray-950`}>
+    <div
+      className={`${plusJakarta.variable} font-plus-jakarta min-h-screen bg-gray-50 dark:bg-gray-950`}
+    >
       {/* Navigation */}
       <div className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -66,7 +78,7 @@ export default function CleanMinimalVariations() {
 function VoiceCards() {
   return (
     <>
-      <motion.div 
+      <motion.div
         className="absolute right-20 top-1/2 -translate-y-1/2 hidden xl:block"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -74,7 +86,7 @@ function VoiceCards() {
       >
         <div className="relative">
           {/* Audio Waveform Animation */}
-          <motion.div 
+          <motion.div
             className="absolute -top-20 left-1/2 -translate-x-1/2 flex items-center gap-1"
             animate={{ opacity: [0.3, 0.7, 0.3] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -95,7 +107,7 @@ function VoiceCards() {
             ))}
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="bg-white dark:bg-white/10 backdrop-blur-xl rounded-2xl p-6 w-64 transform rotate-3 shadow-xl"
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 3, repeat: Infinity }}
@@ -113,7 +125,7 @@ function VoiceCards() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="bg-white dark:bg-white/10 backdrop-blur-xl rounded-2xl p-6 w-64 transform -rotate-2 mt-4 -ml-8 shadow-xl"
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
@@ -148,72 +160,95 @@ function AnimatedSteps() {
       const tl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
 
       // Step animations
-      tl.to(".step-1", {
+      tl.to('.step-1', {
         scale: 1.1,
         duration: 0.3,
-        ease: "power2.out"
+        ease: 'power2.out',
       })
-      .to(".step-1 .step-circle", {
-        backgroundColor: "#18f109",
-        color: "#000",
-        duration: 0.3,
-      }, "<")
-      .to(".step-1", {
-        scale: 1,
-        duration: 0.3,
-      }, "+=0.5")
-      
-      .to(".step-2", {
-        scale: 1.1,
-        duration: 0.3,
-        ease: "power2.out"
-      })
-      .to(".step-2 .step-circle", {
-        backgroundColor: "#18f109",
-        color: "#000",
-        duration: 0.3,
-      }, "<")
-      .to(".step-2", {
-        scale: 1,
-        duration: 0.3,
-      }, "+=0.5")
-      
-      .to(".step-3", {
-        scale: 1.1,
-        duration: 0.3,
-        ease: "power2.out"
-      })
-      .to(".step-3 .step-circle", {
-        backgroundColor: "#18f109",
-        color: "#000",
-        duration: 0.3,
-      }, "<")
-      .to(".step-3", {
-        scale: 1,
-        duration: 0.3,
-      }, "+=0.5")
-      
-      // Show checkmark
-      .to(checkRef.current, {
-        scale: 1,
-        opacity: 1,
-        duration: 0.5,
-        ease: "back.out(1.7)"
-      })
-      .to(checkRef.current, {
-        scale: 0,
-        opacity: 0,
-        duration: 0.3,
-        delay: 1
-      })
-      
-      // Reset all steps
-      .to(".step-circle", {
-        backgroundColor: "#e5e7eb",
-        color: "#6b7280",
-        duration: 0.5,
-      });
+        .to(
+          '.step-1 .step-circle',
+          {
+            backgroundColor: '#18f109',
+            color: '#000',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          '.step-1',
+          {
+            scale: 1,
+            duration: 0.3,
+          },
+          '+=0.5'
+        )
 
+        .to('.step-2', {
+          scale: 1.1,
+          duration: 0.3,
+          ease: 'power2.out',
+        })
+        .to(
+          '.step-2 .step-circle',
+          {
+            backgroundColor: '#18f109',
+            color: '#000',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          '.step-2',
+          {
+            scale: 1,
+            duration: 0.3,
+          },
+          '+=0.5'
+        )
+
+        .to('.step-3', {
+          scale: 1.1,
+          duration: 0.3,
+          ease: 'power2.out',
+        })
+        .to(
+          '.step-3 .step-circle',
+          {
+            backgroundColor: '#18f109',
+            color: '#000',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          '.step-3',
+          {
+            scale: 1,
+            duration: 0.3,
+          },
+          '+=0.5'
+        )
+
+        // Show checkmark
+        .to(checkRef.current, {
+          scale: 1,
+          opacity: 1,
+          duration: 0.5,
+          ease: 'back.out(1.7)',
+        })
+        .to(checkRef.current, {
+          scale: 0,
+          opacity: 0,
+          duration: 0.3,
+          delay: 1,
+        })
+
+        // Reset all steps
+        .to('.step-circle', {
+          backgroundColor: '#e5e7eb',
+          color: '#6b7280',
+          duration: 0.5,
+        });
     }, stepsRef);
 
     return () => ctx.revert();
@@ -221,34 +256,40 @@ function AnimatedSteps() {
 
   return (
     <div ref={stepsRef} className="relative mb-8">
-      <motion.div 
+      <motion.div
         className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3"
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
       >
         <div className="step-1 flex items-center gap-2">
-          <span className="step-circle w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">1</span>
+          <span className="step-circle w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">
+            1
+          </span>
           <span className="text-gray-800 dark:text-gray-300 font-medium">Kies je stem</span>
         </div>
-        
+
         <ChevronRight className="hidden sm:block text-gray-400 dark:text-gray-600" />
-        
+
         <div className="step-2 flex items-center gap-2">
-          <span className="step-circle w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">2</span>
+          <span className="step-circle w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">
+            2
+          </span>
           <span className="text-gray-600 dark:text-gray-400 font-medium">Upload script</span>
         </div>
-        
+
         <ChevronRight className="hidden sm:block text-gray-400 dark:text-gray-600" />
-        
+
         <div className="step-3 flex items-center gap-2">
-          <span className="step-circle w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">3</span>
+          <span className="step-circle w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">
+            3
+          </span>
           <span className="text-gray-600 dark:text-gray-400 font-medium">Ontvang audio</span>
         </div>
       </motion.div>
-      
+
       {/* Checkmark - positioned to the right of all steps */}
-      <div 
+      <div
         ref={checkRef}
         className="absolute right-0 sm:right-[-60px] top-0 w-12 h-12 bg-[#18f109] rounded-full flex items-center justify-center opacity-0 scale-0 shadow-lg"
       >
@@ -262,7 +303,7 @@ function AnimatedSteps() {
 function SoftGradient() {
   return (
     <div className="relative min-h-screen p-4 sm:p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-3xl overflow-hidden shadow-2xl"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -279,7 +320,7 @@ function SoftGradient() {
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
           />
           <motion.div
@@ -291,7 +332,7 @@ function SoftGradient() {
             transition={{
               duration: 12,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 2,
             }}
           />
@@ -303,7 +344,7 @@ function SoftGradient() {
             <AnimatedSteps />
 
             {/* Title */}
-            <motion.h1 
+            <motion.h1
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-8xl font-bold text-gray-900 dark:text-white mb-6"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -312,29 +353,31 @@ function SoftGradient() {
               <span className="block">Jouw merk</span>
               <span className="block relative">
                 <span className="text-[#18f109]">verdient</span>
-                <motion.div 
+                <motion.div
                   className="absolute bottom-0 left-0 h-1 bg-[#18f109]"
                   initial={{ width: 0 }}
                   animate={{ width: '100%' }}
                   transition={{ delay: 0.6, duration: 0.8 }}
                 />
               </span>
-              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">een stem die raakt</span>
+              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">
+                een stem die raakt
+              </span>
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTAs */}
-            <motion.div 
+            <motion.div
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -351,7 +394,7 @@ function SoftGradient() {
             </motion.div>
 
             {/* Stats */}
-            <motion.div 
+            <motion.div
               className="flex flex-wrap items-center gap-4 sm:gap-6 mt-12"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -359,15 +402,21 @@ function SoftGradient() {
             >
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-[#18f109]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">&lt;48u geleverd</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  &lt;48u geleverd
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-[#efd243] fill-current" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">9.1/10 klantbeoordeling</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  9.1/10 klantbeoordeling
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-[#ebaa3a]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">100% tevredenheid</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  100% tevredenheid
+                </span>
               </div>
             </motion.div>
           </div>
@@ -384,7 +433,7 @@ function SoftGradient() {
 function PureWhite() {
   return (
     <div className="relative min-h-screen p-4 sm:p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -401,7 +450,7 @@ function PureWhite() {
             <AnimatedSteps />
 
             {/* Title */}
-            <motion.h1 
+            <motion.h1
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-8xl font-bold text-gray-900 dark:text-white mb-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -409,22 +458,24 @@ function PureWhite() {
             >
               <span className="block">Jouw merk</span>
               <span className="block text-[#18f109]">verdient</span>
-              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">een stem die raakt</span>
+              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">
+                een stem die raakt
+              </span>
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTAs */}
-            <motion.div 
+            <motion.div
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -441,7 +492,7 @@ function PureWhite() {
             </motion.div>
 
             {/* Stats */}
-            <motion.div 
+            <motion.div
               className="flex flex-wrap items-center gap-4 sm:gap-6 mt-12"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -449,15 +500,21 @@ function PureWhite() {
             >
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-[#18f109]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">&lt;48u geleverd</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  &lt;48u geleverd
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-[#efd243] fill-current" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">9.1/10 klantbeoordeling</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  9.1/10 klantbeoordeling
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-[#ebaa3a]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">100% tevredenheid</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  100% tevredenheid
+                </span>
               </div>
             </motion.div>
           </div>
@@ -474,13 +531,13 @@ function PureWhite() {
 function LightShadows() {
   return (
     <div className="relative min-h-screen p-4 sm:p-8 lg:p-16 bg-gray-50 dark:bg-gray-950">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-white dark:bg-gray-900 rounded-3xl overflow-hidden"
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
         style={{
-          boxShadow: '0 20px 70px -10px rgba(0, 0, 0, 0.1), 0 10px 30px -5px rgba(0, 0, 0, 0.05)'
+          boxShadow: '0 20px 70px -10px rgba(0, 0, 0, 0.1), 0 10px 30px -5px rgba(0, 0, 0, 0.05)',
         }}
       >
         {/* Shadow Elements */}
@@ -489,7 +546,7 @@ function LightShadows() {
             className="absolute top-40 left-1/4 w-64 h-64 bg-[#18f109]/10 rounded-full"
             style={{
               boxShadow: '0 10px 40px rgba(24, 241, 9, 0.1)',
-              filter: 'blur(40px)'
+              filter: 'blur(40px)',
             }}
             animate={{
               y: [0, -20, 0],
@@ -497,14 +554,14 @@ function LightShadows() {
             transition={{
               duration: 8,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
           />
           <motion.div
             className="absolute bottom-40 right-1/4 w-48 h-48 bg-[#efd243]/10 rounded-full"
             style={{
               boxShadow: '0 10px 40px rgba(239, 210, 67, 0.1)',
-              filter: 'blur(40px)'
+              filter: 'blur(40px)',
             }}
             animate={{
               y: [0, 20, 0],
@@ -512,7 +569,7 @@ function LightShadows() {
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 1,
             }}
           />
@@ -524,7 +581,7 @@ function LightShadows() {
             <AnimatedSteps />
 
             {/* Title */}
-            <motion.h1 
+            <motion.h1
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-8xl font-bold text-gray-900 dark:text-white mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -532,35 +589,37 @@ function LightShadows() {
             >
               <span className="block">Jouw merk</span>
               <span className="block text-[#18f109] drop-shadow-lg">verdient</span>
-              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">een stem die raakt</span>
+              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">
+                een stem die raakt
+              </span>
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTAs with shadows */}
-            <motion.div 
+            <motion.div
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <button 
+              <button
                 className="px-6 sm:px-8 py-3 sm:py-4 bg-[#18f109] text-black rounded-2xl font-bold hover:bg-[#18f109]/90 transition-all transform hover:scale-105"
                 style={{ boxShadow: '0 10px 30px -5px rgba(24, 241, 9, 0.3)' }}
               >
                 Ontdek onze stemmen
                 <ArrowRight className="inline-block ml-2" />
               </button>
-              <button 
+              <button
                 className="px-6 sm:px-8 py-3 sm:py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
                 style={{ boxShadow: '0 5px 20px -5px rgba(0, 0, 0, 0.1)' }}
               >
@@ -570,7 +629,7 @@ function LightShadows() {
             </motion.div>
 
             {/* Stats with subtle shadows */}
-            <motion.div 
+            <motion.div
               className="flex flex-wrap items-center gap-4 sm:gap-6 mt-12"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -578,15 +637,21 @@ function LightShadows() {
             >
               <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
                 <Zap className="w-5 h-5 text-[#18f109]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">&lt;48u geleverd</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  &lt;48u geleverd
+                </span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
                 <Star className="w-5 h-5 text-[#efd243] fill-current" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">9.1/10 klantbeoordeling</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  9.1/10 klantbeoordeling
+                </span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
                 <Shield className="w-5 h-5 text-[#ebaa3a]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">100% tevredenheid</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  100% tevredenheid
+                </span>
               </div>
             </motion.div>
           </div>
@@ -603,7 +668,7 @@ function LightShadows() {
 function AccentColors() {
   return (
     <div className="relative min-h-screen p-4 sm:p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-800"
         initial={{ opacity: 0, rotate: -0.5 }}
         animate={{ opacity: 1, rotate: 0 }}
@@ -613,7 +678,7 @@ function AccentColors() {
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-[#18f109] to-[#efd243]" />
           <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-[#18f109] via-[#efd243] to-[#ebaa3a]" />
-          
+
           <motion.div
             className="absolute top-20 right-20 w-4 h-4 bg-[#18f109] rounded-full"
             animate={{
@@ -623,7 +688,7 @@ function AccentColors() {
             transition={{
               duration: 3,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
           />
           <motion.div
@@ -635,7 +700,7 @@ function AccentColors() {
             transition={{
               duration: 4,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 1,
             }}
           />
@@ -647,7 +712,7 @@ function AccentColors() {
             <AnimatedSteps />
 
             {/* Title with accent underline */}
-            <motion.h1 
+            <motion.h1
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-8xl font-bold text-gray-900 dark:text-white mb-6"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -656,29 +721,31 @@ function AccentColors() {
               <span className="block">Jouw merk</span>
               <span className="block relative">
                 <span className="text-[#18f109]">verdient</span>
-                <motion.div 
+                <motion.div
                   className="absolute bottom-0 left-0 h-1 bg-[#18f109]"
                   initial={{ width: 0 }}
                   animate={{ width: '100%' }}
                   transition={{ delay: 0.6, duration: 0.8 }}
                 />
               </span>
-              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">een stem die raakt</span>
+              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">
+                een stem die raakt
+              </span>
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTAs with accent borders */}
-            <motion.div 
+            <motion.div
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -698,7 +765,7 @@ function AccentColors() {
             </motion.div>
 
             {/* Stats with accent colors */}
-            <motion.div 
+            <motion.div
               className="flex flex-wrap items-center gap-4 sm:gap-6 mt-12"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -706,15 +773,21 @@ function AccentColors() {
             >
               <div className="flex items-center gap-2 border-l-4 border-[#18f109] pl-3">
                 <Zap className="w-5 h-5 text-[#18f109]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">&lt;48u geleverd</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  &lt;48u geleverd
+                </span>
               </div>
               <div className="flex items-center gap-2 border-l-4 border-[#efd243] pl-3">
                 <Star className="w-5 h-5 text-[#efd243] fill-current" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">9.1/10 klantbeoordeling</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  9.1/10 klantbeoordeling
+                </span>
               </div>
               <div className="flex items-center gap-2 border-l-4 border-[#ebaa3a] pl-3">
                 <Shield className="w-5 h-5 text-[#ebaa3a]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">100% tevredenheid</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  100% tevredenheid
+                </span>
               </div>
             </motion.div>
           </div>
@@ -731,7 +804,7 @@ function AccentColors() {
 function GeometricMinimal() {
   return (
     <div className="relative min-h-screen p-4 sm:p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-white dark:bg-gray-900 rounded-none overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -740,17 +813,17 @@ function GeometricMinimal() {
         {/* Geometric Background */}
         <div className="absolute inset-0">
           {/* Grid pattern */}
-          <div 
+          <div
             className="absolute inset-0 opacity-5 dark:opacity-10"
             style={{
               backgroundImage: `
                 linear-gradient(to right, #18f109 1px, transparent 1px),
                 linear-gradient(to bottom, #18f109 1px, transparent 1px)
               `,
-              backgroundSize: '40px 40px'
+              backgroundSize: '40px 40px',
             }}
           />
-          
+
           {/* Geometric shapes */}
           <motion.div
             className="absolute top-20 right-1/4 w-32 h-32 border-2 border-[#18f109]/20 transform rotate-45"
@@ -760,7 +833,7 @@ function GeometricMinimal() {
             transition={{
               duration: 20,
               repeat: Infinity,
-              ease: "linear",
+              ease: 'linear',
             }}
           />
           <motion.div
@@ -771,7 +844,7 @@ function GeometricMinimal() {
             transition={{
               duration: 15,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
           />
           <div className="absolute top-1/2 right-10 w-0 h-0 border-l-[30px] border-l-transparent border-r-[30px] border-r-transparent border-b-[50px] border-b-[#18f109]/10" />
@@ -783,7 +856,7 @@ function GeometricMinimal() {
             <AnimatedSteps />
 
             {/* Title with geometric accent */}
-            <motion.h1 
+            <motion.h1
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-8xl font-bold text-gray-900 dark:text-white mb-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -794,7 +867,9 @@ function GeometricMinimal() {
                 <div className="absolute -left-4 top-0 w-2 h-full bg-[#18f109]" />
               </span>
               <span className="block text-[#18f109]">verdient</span>
-              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">een stem die raakt</span>
+              <span className="block text-2xl sm:text-3xl lg:text-4xl xl:text-6xl mt-2">
+                een stem die raakt
+              </span>
             </motion.h1>
 
             {/* Description with geometric container */}
@@ -805,14 +880,14 @@ function GeometricMinimal() {
               transition={{ delay: 0.4 }}
             >
               <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-lg relative z-10">
-                Professionele voice-overs die jouw boodschap versterken. 
-                Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+                Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+                e-learning modules - binnen 48 uur perfect ingesproken.
               </p>
               <div className="absolute -top-2 -left-2 w-20 h-20 border border-[#18f109]/20" />
             </motion.div>
 
             {/* CTAs with geometric style */}
-            <motion.div 
+            <motion.div
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -831,7 +906,7 @@ function GeometricMinimal() {
             </motion.div>
 
             {/* Stats with geometric elements */}
-            <motion.div 
+            <motion.div
               className="flex flex-wrap items-center gap-4 sm:gap-6 mt-12"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -840,17 +915,23 @@ function GeometricMinimal() {
               <div className="flex items-center gap-2 relative">
                 <div className="absolute -left-2 -top-2 w-4 h-4 border border-[#18f109]/30" />
                 <Zap className="w-5 h-5 text-[#18f109]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">&lt;48u geleverd</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  &lt;48u geleverd
+                </span>
               </div>
               <div className="flex items-center gap-2 relative">
                 <div className="absolute -left-2 -top-2 w-4 h-4 bg-[#efd243]/10" />
                 <Star className="w-5 h-5 text-[#efd243] fill-current" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">9.1/10 klantbeoordeling</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  9.1/10 klantbeoordeling
+                </span>
               </div>
               <div className="flex items-center gap-2 relative">
                 <div className="absolute -left-2 -top-2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-[#ebaa3a]/20" />
                 <Shield className="w-5 h-5 text-[#ebaa3a]" />
-                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">100% tevredenheid</span>
+                <span className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base">
+                  100% tevredenheid
+                </span>
               </div>
             </motion.div>
           </div>

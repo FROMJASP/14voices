@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Play, Star, Clock } from 'lucide-react';
 
 interface Demo {
@@ -28,7 +29,12 @@ interface VoiceoverCardLargeProps {
   className?: string;
 }
 
-export function VoiceoverCardLarge({ voice, isSelected, onSelect, className = '' }: VoiceoverCardLargeProps) {
+export function VoiceoverCardLarge({
+  voice,
+  isSelected,
+  onSelect,
+  className = '',
+}: VoiceoverCardLargeProps) {
   return (
     <div
       onClick={() => onSelect(voice.id)}
@@ -39,11 +45,7 @@ export function VoiceoverCardLarge({ voice, isSelected, onSelect, className = ''
       {/* Profile Image */}
       <div className="aspect-[4/3] relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600">
         {voice.profilePhoto ? (
-          <img 
-            src={voice.profilePhoto} 
-            alt={voice.name}
-            className="w-full h-full object-cover"
-          />
+          <Image src={voice.profilePhoto} alt={voice.name} fill className="object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <span className="text-5xl lg:text-6xl font-bold text-gray-400 dark:text-gray-500">
@@ -51,7 +53,7 @@ export function VoiceoverCardLarge({ voice, isSelected, onSelect, className = ''
             </span>
           </div>
         )}
-        
+
         {/* Play Button Overlay */}
         <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center">
           <button className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg transform scale-0 hover:scale-100 transition-transform">
@@ -69,9 +71,7 @@ export function VoiceoverCardLarge({ voice, isSelected, onSelect, className = ''
 
       {/* Content */}
       <div className="p-5">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-          {voice.name}
-        </h3>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">{voice.name}</h3>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">

@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Star, Zap, Shield, ChevronDown, X, Check, ArrowDown } from 'lucide-react';
+import { Search, ChevronDown, X, Check } from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { VoiceoverCard } from './VoiceoverCard';
 import { motion } from 'motion/react';
-import { BlurFade } from './magicui/blur-fade';
-import { FloatingParticles } from './magicui/floating-particles';
-import { TextReveal } from './magicui/text-reveal';
+
 import HeroSection from './HeroSection';
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -19,21 +17,108 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 // Sample voice data
 const sampleVoices = [
-  { id: '1', name: 'Gina', slug: 'gina', profilePhoto: null, tags: ['Warm', 'Vriendelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '2', name: 'Sophie', slug: 'sophie', profilePhoto: null, tags: ['Helder', 'Professioneel'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '3', name: 'Mark', slug: 'mark', profilePhoto: null, tags: ['Autoriteit', 'Zakelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '4', name: 'Lisa', slug: 'lisa', profilePhoto: null, tags: ['Jong', 'Energiek'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '5', name: 'Tom', slug: 'tom', profilePhoto: null, tags: ['Warm', 'Betrouwbaar'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '6', name: 'Eva', slug: 'eva', profilePhoto: null, tags: ['Urban', 'Modern'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '7', name: 'Jan', slug: 'jan', profilePhoto: null, tags: ['Autoriteit', 'Ervaren'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
-  { id: '8', name: 'Nina', slug: 'nina', profilePhoto: null, tags: ['Helder', 'Vriendelijk'], beschikbaar: true, availabilityText: 'Direct beschikbaar', demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }] },
+  {
+    id: '1',
+    name: 'Gina',
+    slug: 'gina',
+    profilePhoto: null,
+    tags: ['Warm', 'Vriendelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '2',
+    name: 'Sophie',
+    slug: 'sophie',
+    profilePhoto: null,
+    tags: ['Helder', 'Professioneel'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '3',
+    name: 'Mark',
+    slug: 'mark',
+    profilePhoto: null,
+    tags: ['Autoriteit', 'Zakelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '4',
+    name: 'Lisa',
+    slug: 'lisa',
+    profilePhoto: null,
+    tags: ['Jong', 'Energiek'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '5',
+    name: 'Tom',
+    slug: 'tom',
+    profilePhoto: null,
+    tags: ['Warm', 'Betrouwbaar'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '6',
+    name: 'Eva',
+    slug: 'eva',
+    profilePhoto: null,
+    tags: ['Urban', 'Modern'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '7',
+    name: 'Jan',
+    slug: 'jan',
+    profilePhoto: null,
+    tags: ['Autoriteit', 'Ervaren'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
+  {
+    id: '8',
+    name: 'Nina',
+    slug: 'nina',
+    profilePhoto: null,
+    tags: ['Helder', 'Vriendelijk'],
+    beschikbaar: true,
+    availabilityText: 'Direct beschikbaar',
+    demos: [{ id: '1', title: 'Commercial', url: '#', duration: '0:30' }],
+  },
 ];
 
 // Extended style tags
 const allStyles = [
-  'Warm', 'Vriendelijk', 'Helder', 'Professioneel', 'Autoriteit', 'Zakelijk', 
-  'Jong', 'Energiek', 'Urban', 'Modern', 'Betrouwbaar', 'Ervaren',
-  'Speels', 'Serieus', 'Natuurlijk', 'Karaktervol', 'Diep', 'Licht'
+  'Warm',
+  'Vriendelijk',
+  'Helder',
+  'Professioneel',
+  'Autoriteit',
+  'Zakelijk',
+  'Jong',
+  'Energiek',
+  'Urban',
+  'Modern',
+  'Betrouwbaar',
+  'Ervaren',
+  'Speels',
+  'Serieus',
+  'Natuurlijk',
+  'Karaktervol',
+  'Diep',
+  'Licht',
 ];
 
 export function HomepageVoiceover() {
@@ -57,9 +142,9 @@ export function HomepageVoiceover() {
     if (style === 'Alle stijlen') {
       setSelectedStyles(['Alle stijlen']);
     } else {
-      const newStyles = selectedStyles.filter(s => s !== 'Alle stijlen');
+      const newStyles = selectedStyles.filter((s) => s !== 'Alle stijlen');
       if (selectedStyles.includes(style)) {
-        const filtered = newStyles.filter(s => s !== style);
+        const filtered = newStyles.filter((s) => s !== style);
         setSelectedStyles(filtered.length === 0 ? ['Alle stijlen'] : filtered);
       } else {
         setSelectedStyles([...newStyles, style]);
@@ -68,7 +153,7 @@ export function HomepageVoiceover() {
   };
 
   const removeStyle = (style: string) => {
-    const filtered = selectedStyles.filter(s => s !== style);
+    const filtered = selectedStyles.filter((s) => s !== style);
     setSelectedStyles(filtered.length === 0 ? ['Alle stijlen'] : filtered);
   };
 
@@ -78,12 +163,12 @@ export function HomepageVoiceover() {
       <HeroSection />
 
       {/* Voiceover Section */}
-      <motion.div 
-        id="voiceover-section" 
+      <motion.div
+        id="voiceover-section"
         className="relative bg-white dark:bg-gray-900"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.8 }}
       >
         {/* Menu Bar with Search */}
@@ -113,11 +198,13 @@ export function HomepageVoiceover() {
                   }`}
                 >
                   <span className="font-medium">
-                    {selectedStyles.includes('Alle stijlen') 
-                      ? 'Alle stijlen' 
+                    {selectedStyles.includes('Alle stijlen')
+                      ? 'Alle stijlen'
                       : `${selectedStyles.length} stijl(en)`}
                   </span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${showStyleDropdown ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${showStyleDropdown ? 'rotate-180' : ''}`}
+                  />
                 </button>
 
                 {/* Style Dropdown */}
@@ -125,9 +212,7 @@ export function HomepageVoiceover() {
                   <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          Filter op stijl
-                        </p>
+                        <p className="font-medium text-gray-900 dark:text-white">Filter op stijl</p>
                         {!selectedStyles.includes('Alle stijlen') && selectedStyles.length > 0 && (
                           <button
                             onClick={() => setSelectedStyles(['Alle stijlen'])}
@@ -198,19 +283,19 @@ export function HomepageVoiceover() {
 
         {/* Voice Grid */}
         <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8">
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, margin: '-50px' }}
             variants={{
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
                 transition: {
-                  staggerChildren: 0.1
-                }
-              }
+                  staggerChildren: 0.1,
+                },
+              },
             }}
           >
             {sampleVoices.map((voice) => (
@@ -218,16 +303,11 @@ export function HomepageVoiceover() {
                 key={voice.id}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0 }
+                  visible: { opacity: 1, y: 0 },
                 }}
                 transition={{ duration: 0.5 }}
               >
-                <VoiceoverCard
-                  voice={voice}
-                  isSelected={false}
-                  onSelect={() => {}}
-                  className="h-full"
-                />
+                <VoiceoverCard voice={voice} isSelected={false} onSelect={() => {}} />
               </motion.div>
             ))}
           </motion.div>

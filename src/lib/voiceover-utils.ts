@@ -7,7 +7,7 @@ export const shuffleArray = <T>(array: T[]): T[] => {
   return shuffled;
 };
 
-import { PayloadVoiceover } from '@/types/voiceover';
+import { PayloadVoiceover, TransformedVoiceover, VoiceoverDemo } from '@/types/voiceover';
 
 export const formatAvailabilityDate = (voiceover: Partial<PayloadVoiceover>): string => {
   if (!voiceover.availability?.isAvailable && voiceover.availability?.unavailableUntil) {
@@ -89,13 +89,22 @@ export const getVoiceoverColor = (index: number): string => {
   return colors[index % colors.length];
 };
 
-export const transformVoiceoverData = (voiceover: PayloadVoiceover, index: number) => {
+export const transformVoiceoverData = (
+  voiceover: PayloadVoiceover,
+  index: number
+): TransformedVoiceover & {
+  tags: string[];
+  color: string;
+  beschikbaar: boolean;
+  availabilityText: string;
+} => {
   const styleTags = voiceover.styleTags?.map((tag) => getStyleTagLabel(tag)) || [];
 
   return {
     id: voiceover.id,
     name: voiceover.name,
     slug: voiceover.slug || '', // Default to empty string if slug is undefined
+    status: voiceover.status,
     tags: styleTags,
     color: getVoiceoverColor(index),
     beschikbaar: voiceover.availability?.isAvailable !== false,
@@ -104,25 +113,59 @@ export const transformVoiceoverData = (voiceover: PayloadVoiceover, index: numbe
       voiceover.fullDemoReel && {
         id: `${voiceover.id}-reel`,
         title: 'Demo Reel',
-        url: typeof voiceover.fullDemoReel === 'object' ? voiceover.fullDemoReel.url : '',
+        demoType: 'reel' as const,
+        audioFile: {
+          url: typeof voiceover.fullDemoReel === 'object' ? voiceover.fullDemoReel.url : '',
+          filename:
+            typeof voiceover.fullDemoReel === 'object' ? voiceover.fullDemoReel.filename : '',
+        },
         duration: '1:30',
+        voiceover: {
+          id: voiceover.id,
+          name: voiceover.name,
+          slug: voiceover.slug || '',
+        },
       },
       voiceover.commercialsDemo && {
         id: `${voiceover.id}-commercials`,
         title: 'Commercials Demo',
-        url: typeof voiceover.commercialsDemo === 'object' ? voiceover.commercialsDemo.url : '',
+        demoType: 'commercials' as const,
+        audioFile: {
+          url: typeof voiceover.commercialsDemo === 'object' ? voiceover.commercialsDemo.url : '',
+          filename:
+            typeof voiceover.commercialsDemo === 'object' ? voiceover.commercialsDemo.filename : '',
+        },
         duration: '0:45',
+        voiceover: {
+          id: voiceover.id,
+          name: voiceover.name,
+          slug: voiceover.slug || '',
+        },
       },
       voiceover.narrativeDemo && {
         id: `${voiceover.id}-narrative`,
         title: 'Narratieve Demo',
-        url: typeof voiceover.narrativeDemo === 'object' ? voiceover.narrativeDemo.url : '',
+        demoType: 'narrations' as const,
+        audioFile: {
+          url: typeof voiceover.narrativeDemo === 'object' ? voiceover.narrativeDemo.url : '',
+          filename:
+            typeof voiceover.narrativeDemo === 'object' ? voiceover.narrativeDemo.filename : '',
+        },
         duration: '2:00',
+        voiceover: {
+          id: voiceover.id,
+          name: voiceover.name,
+          slug: voiceover.slug || '',
+        },
       },
-    ].filter(Boolean) as { id: string; title: string; url: string; duration: string }[],
-    profilePhoto: typeof voiceover.profilePhoto === 'object' ? voiceover.profilePhoto.url : null,
-    description: voiceover.description,
-    cohort: typeof voiceover.cohort === 'object' ? voiceover.cohort : null,
+    ].filter(Boolean) as VoiceoverDemo[],
+    profilePhoto:
+      typeof voiceover.profilePhoto === 'object' && voiceover.profilePhoto
+        ? { url: voiceover.profilePhoto.url, alt: voiceover.profilePhoto.alt }
+        : undefined,
+    bio: voiceover.description,
+    cohort: typeof voiceover.cohort === 'object' ? voiceover.cohort : undefined,
+    styleTags: voiceover.styleTags,
   };
 };
 

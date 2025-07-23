@@ -1,13 +1,68 @@
 import React from 'react';
 import type { Page } from '@/payload-types';
 
+// Define section type union for all possible section types
+type PageSection = {
+  type:
+    | 'richText'
+    | 'twoColumn'
+    | 'cta'
+    | 'contact'
+    | 'pricing'
+    | 'testimonials'
+    | 'faq'
+    | 'gallery';
+  // Rich Text Section
+  richTextContent?: unknown;
+  // Two Column Section
+  leftColumn?: unknown;
+  rightColumn?: unknown;
+  columnRatio?: '50-50' | '60-40' | '40-60' | '70-30' | '30-70';
+  // CTA Section
+  ctaHeading?: string;
+  ctaText?: string;
+  ctaButtons?: Array<{
+    text: string;
+    link: string;
+    style: 'primary' | 'secondary' | 'outline';
+  }>;
+  ctaBackgroundColor?: 'white' | 'gray' | 'primary' | 'dark';
+  // Contact Section
+  contactHeading?: string;
+  contactSubheading?: string;
+  showContactForm?: boolean;
+  contactEmail?: string;
+  contactPhone?: string;
+  // Pricing Section
+  pricingHeading?: string;
+  pricingSubheading?: string;
+  pricingPlans?: Array<{
+    name: string;
+    price: string;
+    description?: string;
+    features?: Array<{ feature: string }>;
+    highlighted?: boolean;
+    buttonText: string;
+    buttonLink: string;
+  }>;
+  // Testimonials Section
+  testimonialsHeading?: string;
+  testimonialsSubheading?: string;
+  // FAQ Section
+  faqHeading?: string;
+  faqSubheading?: string;
+  faqs?: Array<{
+    question: string;
+    answer?: unknown;
+  }>;
+  // Gallery Section
+  galleryHeading?: string;
+};
+
 interface PageRendererProps {
   page: Page & {
     content?: unknown;
-    sections?: Array<{
-      type: string;
-      [key: string]: any; // Temporarily using any to fix build
-    }>;
+    sections?: PageSection[];
   };
 }
 

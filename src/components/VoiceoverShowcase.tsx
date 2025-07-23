@@ -54,10 +54,24 @@ export async function VoiceoverShowcase() {
 
   const allTags = Array.from(allTagsSet).sort();
 
+  // Transform voiceovers to match VoiceoverData interface
+  const transformToVoiceoverData = (voiceovers: typeof activeVoiceovers) => {
+    return voiceovers.map((v) => ({
+      ...v,
+      profilePhoto: v.profilePhoto?.url || null,
+      demos: v.demos.map((demo) => ({
+        id: demo.id,
+        title: demo.title,
+        url: demo.audioFile.url,
+        duration: demo.duration || '0:30',
+      })),
+    }));
+  };
+
   return (
     <VoiceoverShowcaseClient
-      activeVoiceovers={activeVoiceovers}
-      archiveVoiceovers={archiveVoiceovers}
+      activeVoiceovers={transformToVoiceoverData(activeVoiceovers)}
+      archiveVoiceovers={transformToVoiceoverData(archiveVoiceovers)}
       allTags={allTags}
     />
   );

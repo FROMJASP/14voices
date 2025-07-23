@@ -25,7 +25,9 @@ export default function AsymmetricSplitVariations() {
   ];
 
   return (
-    <div className={`${plusJakarta.variable} font-plus-jakarta min-h-screen bg-gray-50 dark:bg-gray-950`}>
+    <div
+      className={`${plusJakarta.variable} font-plus-jakarta min-h-screen bg-gray-50 dark:bg-gray-950`}
+    >
       {/* Navigation */}
       <div className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -66,7 +68,7 @@ export default function AsymmetricSplitVariations() {
 function CleanMinimal() {
   return (
     <div className="relative min-h-screen p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-3xl overflow-hidden shadow-2xl"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -84,7 +86,7 @@ function CleanMinimal() {
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
           />
           <motion.div
@@ -96,7 +98,7 @@ function CleanMinimal() {
             transition={{
               duration: 12,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 2,
             }}
           />
@@ -106,30 +108,36 @@ function CleanMinimal() {
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-2xl ml-16 lg:ml-24">
             {/* Process Steps */}
-            <motion.div 
+            <motion.div
               className="flex items-center gap-3 mb-8 flex-wrap"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-[#18f109] text-black rounded-full flex items-center justify-center font-bold">1</span>
+                <span className="w-10 h-10 bg-[#18f109] text-black rounded-full flex items-center justify-center font-bold">
+                  1
+                </span>
                 <span className="text-gray-800 dark:text-gray-300 font-medium">Kies je stem</span>
               </div>
               <ChevronRight className="text-gray-400 dark:text-gray-600" />
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">2</span>
+                <span className="w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">
+                  2
+                </span>
                 <span className="text-gray-600 dark:text-gray-400 font-medium">Upload script</span>
               </div>
               <ChevronRight className="text-gray-400 dark:text-gray-600" />
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">3</span>
+                <span className="w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">
+                  3
+                </span>
                 <span className="text-gray-600 dark:text-gray-400 font-medium">Ontvang audio</span>
               </div>
             </motion.div>
 
             {/* Title */}
-            <motion.h1 
+            <motion.h1
               className="text-6xl lg:text-8xl font-bold text-gray-900 dark:text-white mb-6"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -141,31 +149,31 @@ function CleanMinimal() {
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTA */}
-            <motion.div 
+            <motion.div
               className="flex items-center gap-4 flex-wrap"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
             >
               <button className="px-8 py-4 bg-[#18f109] text-black rounded-2xl font-bold hover:bg-[#18f109]/90 transition-all transform hover:scale-105">
-                Luister demo's
+                Luister demo&apos;s
                 <ArrowRight className="inline-block ml-2" />
               </button>
             </motion.div>
 
             {/* Stats */}
-            <motion.div 
+            <motion.div
               className="flex items-center gap-6 mt-12 flex-wrap"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -173,15 +181,21 @@ function CleanMinimal() {
             >
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-[#18f109]" />
-                <span className="text-gray-800 dark:text-white font-semibold">&lt;48u geleverd</span>
+                <span className="text-gray-800 dark:text-white font-semibold">
+                  &lt;48u geleverd
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-[#efd243] fill-current" />
-                <span className="text-gray-800 dark:text-white font-semibold">9.1/10 klantbeoordeling</span>
+                <span className="text-gray-800 dark:text-white font-semibold">
+                  9.1/10 klantbeoordeling
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-[#ebaa3a]" />
-                <span className="text-gray-800 dark:text-white font-semibold">100% tevredenheid</span>
+                <span className="text-gray-800 dark:text-white font-semibold">
+                  100% tevredenheid
+                </span>
               </div>
             </motion.div>
           </div>
@@ -209,100 +223,159 @@ function GSAPSteps() {
       tl.to(step1Ref.current, {
         scale: 1.2,
         duration: 0.5,
-        ease: "power2.out"
+        ease: 'power2.out',
       })
-      .to(step1Ref.current?.querySelector('.step-circle'), {
-        backgroundColor: "#18f109",
-        duration: 0.3,
-      }, "<")
-      .to(step1Ref.current?.querySelector('.step-text'), {
-        color: "#18f109",
-        fontWeight: "700",
-        duration: 0.3,
-      }, "<")
-      .to(step1Ref.current, {
-        scale: 1,
-        duration: 0.5,
-        ease: "power2.in"
-      }, "+=0.5")
+        .to(
+          step1Ref.current?.querySelector('.step-circle') || {},
+          {
+            backgroundColor: '#18f109',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          step1Ref.current?.querySelector('.step-text') || {},
+          {
+            color: '#18f109',
+            fontWeight: '700',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          step1Ref.current,
+          {
+            scale: 1,
+            duration: 0.5,
+            ease: 'power2.in',
+          },
+          '+=0.5'
+        )
 
-      // Arrow 1 animation
-      .to(".arrow-1", {
-        opacity: 1,
-        scale: 1.2,
-        duration: 0.3,
-      })
-      .to(".arrow-1", {
-        opacity: 0.3,
-        scale: 1,
-        duration: 0.3,
-      }, "+=0.2")
+        // Arrow 1 animation
+        .to('.arrow-1', {
+          opacity: 1,
+          scale: 1.2,
+          duration: 0.3,
+        })
+        .to(
+          '.arrow-1',
+          {
+            opacity: 0.3,
+            scale: 1,
+            duration: 0.3,
+          },
+          '+=0.2'
+        )
 
-      // Step 2 emphasis
-      .to(step2Ref.current, {
-        scale: 1.2,
-        duration: 0.5,
-        ease: "power2.out"
-      })
-      .to(step2Ref.current?.querySelector('.step-circle'), {
-        backgroundColor: "#18f109",
-        duration: 0.3,
-      }, "<")
-      .to(step2Ref.current?.querySelector('.step-text'), {
-        color: "#18f109",
-        fontWeight: "700",
-        duration: 0.3,
-      }, "<")
-      .to(step2Ref.current, {
-        scale: 1,
-        duration: 0.5,
-        ease: "power2.in"
-      }, "+=0.5")
+        // Step 2 emphasis
+        .to(step2Ref.current, {
+          scale: 1.2,
+          duration: 0.5,
+          ease: 'power2.out',
+        })
+        .to(
+          step2Ref.current?.querySelector('.step-circle') || {},
+          {
+            backgroundColor: '#18f109',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          step2Ref.current?.querySelector('.step-text') || {},
+          {
+            color: '#18f109',
+            fontWeight: '700',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          step2Ref.current,
+          {
+            scale: 1,
+            duration: 0.5,
+            ease: 'power2.in',
+          },
+          '+=0.5'
+        )
 
-      // Arrow 2 animation
-      .to(".arrow-2", {
-        opacity: 1,
-        scale: 1.2,
-        duration: 0.3,
-      })
-      .to(".arrow-2", {
-        opacity: 0.3,
-        scale: 1,
-        duration: 0.3,
-      }, "+=0.2")
+        // Arrow 2 animation
+        .to('.arrow-2', {
+          opacity: 1,
+          scale: 1.2,
+          duration: 0.3,
+        })
+        .to(
+          '.arrow-2',
+          {
+            opacity: 0.3,
+            scale: 1,
+            duration: 0.3,
+          },
+          '+=0.2'
+        )
 
-      // Step 3 emphasis
-      .to(step3Ref.current, {
-        scale: 1.2,
-        duration: 0.5,
-        ease: "power2.out"
-      })
-      .to(step3Ref.current?.querySelector('.step-circle'), {
-        backgroundColor: "#18f109",
-        duration: 0.3,
-      }, "<")
-      .to(step3Ref.current?.querySelector('.step-text'), {
-        color: "#18f109",
-        fontWeight: "700",
-        duration: 0.3,
-      }, "<")
-      .to(step3Ref.current, {
-        scale: 1,
-        duration: 0.5,
-        ease: "power2.in"
-      }, "+=0.5")
+        // Step 3 emphasis
+        .to(step3Ref.current, {
+          scale: 1.2,
+          duration: 0.5,
+          ease: 'power2.out',
+        })
+        .to(
+          step3Ref.current?.querySelector('.step-circle') || {},
+          {
+            backgroundColor: '#18f109',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          step3Ref.current?.querySelector('.step-text') || {},
+          {
+            color: '#18f109',
+            fontWeight: '700',
+            duration: 0.3,
+          },
+          '<'
+        )
+        .to(
+          step3Ref.current,
+          {
+            scale: 1,
+            duration: 0.5,
+            ease: 'power2.in',
+          },
+          '+=0.5'
+        )
 
-      // Reset all
-      .to([step1Ref.current?.querySelector('.step-circle'), step2Ref.current?.querySelector('.step-circle'), step3Ref.current?.querySelector('.step-circle')], {
-        backgroundColor: "#e5e7eb",
-        duration: 0.5,
-      }, "+=0.5")
-      .to([step1Ref.current?.querySelector('.step-text'), step2Ref.current?.querySelector('.step-text'), step3Ref.current?.querySelector('.step-text')], {
-        color: "#6b7280",
-        fontWeight: "500",
-        duration: 0.5,
-      }, "<");
-
+        // Reset all
+        .to(
+          [
+            step1Ref.current?.querySelector('.step-circle'),
+            step2Ref.current?.querySelector('.step-circle'),
+            step3Ref.current?.querySelector('.step-circle'),
+          ],
+          {
+            backgroundColor: '#e5e7eb',
+            duration: 0.5,
+          },
+          '+=0.5'
+        )
+        .to(
+          [
+            step1Ref.current?.querySelector('.step-text'),
+            step2Ref.current?.querySelector('.step-text'),
+            step3Ref.current?.querySelector('.step-text'),
+          ],
+          {
+            color: '#6b7280',
+            fontWeight: '500',
+            duration: 0.5,
+          },
+          '<'
+        );
     }, stepsRef);
 
     return () => ctx.revert();
@@ -310,7 +383,7 @@ function GSAPSteps() {
 
   return (
     <div className="relative min-h-screen p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-black rounded-3xl overflow-hidden"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -319,7 +392,7 @@ function GSAPSteps() {
         {/* Animated Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-[#18f109]/5 to-transparent" />
-          
+
           {/* GSAP animated circles */}
           <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-[#18f109]/20 rounded-full filter blur-3xl gsap-circle-1" />
           <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-[#efd243]/20 rounded-full filter blur-3xl gsap-circle-2" />
@@ -331,27 +404,39 @@ function GSAPSteps() {
             {/* GSAP Animated Steps */}
             <div ref={stepsRef} className="flex items-center gap-3 mb-8 flex-wrap">
               <div ref={step1Ref} className="flex items-center gap-2">
-                <span className="step-circle w-12 h-12 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold text-lg">1</span>
-                <span className="step-text text-gray-600 dark:text-gray-400 font-medium text-lg">Kies je stem</span>
+                <span className="step-circle w-12 h-12 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold text-lg">
+                  1
+                </span>
+                <span className="step-text text-gray-600 dark:text-gray-400 font-medium text-lg">
+                  Kies je stem
+                </span>
               </div>
-              
+
               <ChevronRight className="arrow-1 text-gray-400 dark:text-gray-600 opacity-30" />
 
               <div ref={step2Ref} className="flex items-center gap-2">
-                <span className="step-circle w-12 h-12 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold text-lg">2</span>
-                <span className="step-text text-gray-600 dark:text-gray-400 font-medium text-lg">Upload script</span>
+                <span className="step-circle w-12 h-12 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold text-lg">
+                  2
+                </span>
+                <span className="step-text text-gray-600 dark:text-gray-400 font-medium text-lg">
+                  Upload script
+                </span>
               </div>
 
               <ChevronRight className="arrow-2 text-gray-400 dark:text-gray-600 opacity-30" />
 
               <div ref={step3Ref} className="flex items-center gap-2">
-                <span className="step-circle w-12 h-12 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold text-lg">3</span>
-                <span className="step-text text-gray-600 dark:text-gray-400 font-medium text-lg">Ontvang audio</span>
+                <span className="step-circle w-12 h-12 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full flex items-center justify-center font-bold text-lg">
+                  3
+                </span>
+                <span className="step-text text-gray-600 dark:text-gray-400 font-medium text-lg">
+                  Ontvang audio
+                </span>
               </div>
             </div>
 
             {/* Title */}
-            <motion.h1 
+            <motion.h1
               className="text-6xl lg:text-8xl font-bold text-gray-900 dark:text-white mb-6"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -363,24 +448,24 @@ function GSAPSteps() {
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTA */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
             >
               <button className="px-8 py-4 bg-[#18f109] text-black rounded-2xl font-bold hover:bg-[#18f109]/90 transition-all transform hover:scale-105">
-                Luister demo's
+                Luister demo&apos;s
                 <Play className="inline-block ml-2 w-4 h-4" />
               </button>
             </motion.div>
@@ -395,7 +480,7 @@ function GSAPSteps() {
 function ModernGradient() {
   return (
     <div className="relative min-h-screen p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-gradient-to-br from-purple-900 via-pink-800 to-orange-700 rounded-3xl overflow-hidden"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -421,7 +506,7 @@ function ModernGradient() {
                 duration: 5 + Math.random() * 5,
                 repeat: Infinity,
                 delay: Math.random() * 5,
-                ease: "easeInOut",
+                ease: 'easeInOut',
               }}
             />
           ))}
@@ -434,59 +519,67 @@ function ModernGradient() {
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-2xl ml-16 lg:ml-24">
             {/* Steps with glass effect */}
-            <motion.div 
+            <motion.div
               className="flex items-center gap-3 mb-8 flex-wrap bg-white/10 backdrop-blur-md rounded-2xl p-4 inline-flex"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-white text-purple-900 rounded-full flex items-center justify-center font-bold">1</span>
+                <span className="w-10 h-10 bg-white text-purple-900 rounded-full flex items-center justify-center font-bold">
+                  1
+                </span>
                 <span className="text-white font-medium">Kies je stem</span>
               </div>
               <ChevronRight className="text-white/60" />
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-white/20 text-white rounded-full flex items-center justify-center font-bold">2</span>
+                <span className="w-10 h-10 bg-white/20 text-white rounded-full flex items-center justify-center font-bold">
+                  2
+                </span>
                 <span className="text-white/80 font-medium">Upload script</span>
               </div>
               <ChevronRight className="text-white/60" />
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-white/20 text-white rounded-full flex items-center justify-center font-bold">3</span>
+                <span className="w-10 h-10 bg-white/20 text-white rounded-full flex items-center justify-center font-bold">
+                  3
+                </span>
                 <span className="text-white/80 font-medium">Ontvang audio</span>
               </div>
             </motion.div>
 
             {/* Title */}
-            <motion.h1 
+            <motion.h1
               className="text-6xl lg:text-8xl font-bold text-white mb-6"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
               <span className="block">Jouw merk</span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-400">verdient</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-400">
+                verdient
+              </span>
               <span className="block text-4xl lg:text-6xl mt-2">een stem die raakt</span>
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-xl text-white/90 mb-8 max-w-lg"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTA */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
             >
               <button className="px-8 py-4 bg-white text-purple-900 rounded-2xl font-bold hover:bg-white/90 transition-all transform hover:scale-105 shadow-2xl">
-                Luister demo's
+                Luister demo&apos;s
                 <Headphones className="inline-block ml-2 w-4 h-4" />
               </button>
             </motion.div>
@@ -501,7 +594,7 @@ function ModernGradient() {
 function DarkNeon() {
   return (
     <div className="relative min-h-screen p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         className="relative h-[90vh] bg-black rounded-3xl overflow-hidden border border-[#18f109]/20"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -509,7 +602,7 @@ function DarkNeon() {
       >
         {/* Neon Grid Background */}
         <div className="absolute inset-0">
-          <div 
+          <div
             className="absolute inset-0"
             style={{
               backgroundImage: `
@@ -519,7 +612,7 @@ function DarkNeon() {
               backgroundSize: '50px 50px',
             }}
           />
-          
+
           {/* Neon glow effects */}
           <motion.div
             className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#18f109]/20 rounded-full filter blur-[100px]"
@@ -530,7 +623,7 @@ function DarkNeon() {
             transition={{
               duration: 4,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
           />
           <motion.div
@@ -542,7 +635,7 @@ function DarkNeon() {
             transition={{
               duration: 5,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 1,
             }}
           />
@@ -552,59 +645,67 @@ function DarkNeon() {
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-2xl ml-16 lg:ml-24">
             {/* Neon Steps */}
-            <motion.div 
+            <motion.div
               className="flex items-center gap-3 mb-8 flex-wrap"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-[#18f109] text-black rounded-full flex items-center justify-center font-bold shadow-[0_0_20px_rgba(24,241,9,0.5)]">1</span>
+                <span className="w-10 h-10 bg-[#18f109] text-black rounded-full flex items-center justify-center font-bold shadow-[0_0_20px_rgba(24,241,9,0.5)]">
+                  1
+                </span>
                 <span className="text-[#18f109] font-medium">Kies je stem</span>
               </div>
               <ChevronRight className="text-[#18f109]/50" />
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-gray-900 border border-gray-700 text-gray-400 rounded-full flex items-center justify-center font-bold">2</span>
+                <span className="w-10 h-10 bg-gray-900 border border-gray-700 text-gray-400 rounded-full flex items-center justify-center font-bold">
+                  2
+                </span>
                 <span className="text-gray-400 font-medium">Upload script</span>
               </div>
               <ChevronRight className="text-gray-600" />
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-gray-900 border border-gray-700 text-gray-400 rounded-full flex items-center justify-center font-bold">3</span>
+                <span className="w-10 h-10 bg-gray-900 border border-gray-700 text-gray-400 rounded-full flex items-center justify-center font-bold">
+                  3
+                </span>
                 <span className="text-gray-400 font-medium">Ontvang audio</span>
               </div>
             </motion.div>
 
             {/* Title with neon effect */}
-            <motion.h1 
+            <motion.h1
               className="text-6xl lg:text-8xl font-bold text-white mb-6"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
               <span className="block">Jouw merk</span>
-              <span className="block text-[#18f109] drop-shadow-[0_0_30px_rgba(24,241,9,0.5)]">verdient</span>
+              <span className="block text-[#18f109] drop-shadow-[0_0_30px_rgba(24,241,9,0.5)]">
+                verdient
+              </span>
               <span className="block text-4xl lg:text-6xl mt-2">een stem die raakt</span>
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-xl text-gray-300 mb-8 max-w-lg"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTA with neon */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
             >
               <button className="px-8 py-4 bg-[#18f109] text-black rounded-2xl font-bold hover:bg-[#18f109]/90 transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(24,241,9,0.5)]">
-                Luister demo's
+                Luister demo&apos;s
                 <Mic className="inline-block ml-2 w-4 h-4" />
               </button>
             </motion.div>
@@ -624,27 +725,26 @@ function GeometricFlow() {
 
     const ctx = gsap.context(() => {
       // Animate geometric shapes
-      gsap.to(".geo-shape-1", {
+      gsap.to('.geo-shape-1', {
         rotation: 360,
         duration: 20,
         repeat: -1,
-        ease: "none"
+        ease: 'none',
       });
 
-      gsap.to(".geo-shape-2", {
+      gsap.to('.geo-shape-2', {
         rotation: -360,
         duration: 30,
         repeat: -1,
-        ease: "none"
+        ease: 'none',
       });
 
-      gsap.to(".geo-shape-3", {
-        y: [0, -50, 0],
+      gsap.to('.geo-shape-3', {
+        keyframes: [{ y: 0 }, { y: -50 }, { y: 0 }],
         duration: 5,
         repeat: -1,
-        ease: "power1.inOut"
+        ease: 'power1.inOut',
       });
-
     }, geometricRef);
 
     return () => ctx.revert();
@@ -652,7 +752,7 @@ function GeometricFlow() {
 
   return (
     <div className="relative min-h-screen p-8 lg:p-16">
-      <motion.div 
+      <motion.div
         ref={geometricRef}
         className="relative h-[90vh] bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 rounded-3xl overflow-hidden"
         initial={{ opacity: 0, scale: 0.95 }}
@@ -665,11 +765,11 @@ function GeometricFlow() {
           <div className="absolute top-20 right-20 w-64 h-64 geo-shape-1">
             <div className="w-full h-full border-4 border-white/20 rounded-3xl transform rotate-45" />
           </div>
-          
+
           <div className="absolute bottom-20 left-20 w-48 h-48 geo-shape-2">
             <div className="w-full h-full border-4 border-[#18f109]/30 rounded-full" />
           </div>
-          
+
           <div className="absolute top-1/2 right-1/3 w-32 h-32 geo-shape-3">
             <div className="w-full h-full bg-[#efd243]/20 transform rotate-45" />
           </div>
@@ -685,7 +785,7 @@ function GeometricFlow() {
               strokeWidth="1"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
             />
             <motion.line
               x1="50%"
@@ -696,7 +796,7 @@ function GeometricFlow() {
               strokeWidth="1"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 3, repeat: Infinity, repeatType: "reverse", delay: 1 }}
+              transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse', delay: 1 }}
             />
           </svg>
         </div>
@@ -705,59 +805,67 @@ function GeometricFlow() {
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-2xl ml-16 lg:ml-24">
             {/* Geometric Steps */}
-            <motion.div 
+            <motion.div
               className="flex items-center gap-3 mb-8 flex-wrap"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-white text-purple-900 rounded-lg transform rotate-3 flex items-center justify-center font-bold">1</span>
+                <span className="w-10 h-10 bg-white text-purple-900 rounded-lg transform rotate-3 flex items-center justify-center font-bold">
+                  1
+                </span>
                 <span className="text-white font-medium">Kies je stem</span>
               </div>
               <ChevronRight className="text-white/60" />
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-white/20 text-white rounded-lg transform -rotate-3 flex items-center justify-center font-bold">2</span>
+                <span className="w-10 h-10 bg-white/20 text-white rounded-lg transform -rotate-3 flex items-center justify-center font-bold">
+                  2
+                </span>
                 <span className="text-white/80 font-medium">Upload script</span>
               </div>
               <ChevronRight className="text-white/60" />
               <div className="flex items-center gap-2">
-                <span className="w-10 h-10 bg-white/20 text-white rounded-lg transform rotate-3 flex items-center justify-center font-bold">3</span>
+                <span className="w-10 h-10 bg-white/20 text-white rounded-lg transform rotate-3 flex items-center justify-center font-bold">
+                  3
+                </span>
                 <span className="text-white/80 font-medium">Ontvang audio</span>
               </div>
             </motion.div>
 
             {/* Title */}
-            <motion.h1 
+            <motion.h1
               className="text-6xl lg:text-8xl font-bold text-white mb-6"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
               <span className="block">Jouw merk</span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#18f109] to-[#efd243]">verdient</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#18f109] to-[#efd243]">
+                verdient
+              </span>
               <span className="block text-4xl lg:text-6xl mt-2">een stem die raakt</span>
             </motion.h1>
 
             {/* Description */}
-            <motion.p 
+            <motion.p
               className="text-xl text-white/90 mb-8 max-w-lg"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Professionele voice-overs die jouw boodschap versterken. 
-              Van radio commercials tot e-learning modules - binnen 48 uur perfect ingesproken.
+              Professionele voice-overs die jouw boodschap versterken. Van radio commercials tot
+              e-learning modules - binnen 48 uur perfect ingesproken.
             </motion.p>
 
             {/* CTA */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
             >
               <button className="px-8 py-4 bg-gradient-to-r from-[#18f109] to-[#efd243] text-black rounded-2xl font-bold hover:scale-105 transition-all transform">
-                Luister demo's
+                Luister demo&apos;s
                 <ArrowRight className="inline-block ml-2 w-4 h-4" />
               </button>
             </motion.div>

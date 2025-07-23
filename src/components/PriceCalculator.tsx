@@ -4,7 +4,22 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus_Jakarta_Sans, Instrument_Serif } from 'next/font/google';
 import Image from 'next/image';
-import { Check, Info, Calculator, User, Video, GraduationCap, Radio, Tv, Globe, Phone, ChevronRight, Sparkles, Shield } from 'lucide-react';
+import Link from 'next/link';
+import {
+  Check,
+  Info,
+  Calculator,
+  User,
+  Video,
+  GraduationCap,
+  Radio,
+  Tv,
+  Globe,
+  Phone,
+  ChevronRight,
+  Sparkles,
+  Shield,
+} from 'lucide-react';
 import { useVoiceover, scrollToVoiceovers } from '@/contexts/VoiceoverContext';
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -49,9 +64,9 @@ interface ProductionType {
 
 // Production data with icons
 const productionIcons: Record<string, React.ElementType> = {
-  'Videoproductie': Video,
+  Videoproductie: Video,
   'E-learning': GraduationCap,
-  'Radiocommercial': Radio,
+  Radiocommercial: Radio,
   'TV Commercial': Tv,
   'Web Commercial': Globe,
   'Voice Response': Phone,
@@ -499,29 +514,6 @@ export function PriceCalculator() {
     setSelectedOptions(newOptions);
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        type: 'spring',
-        damping: 20,
-        stiffness: 300,
-      },
-    },
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-      },
-    },
-  };
-
   const handleBooking = () => {
     if (!selectedVoiceover) {
       scrollToVoiceovers();
@@ -540,7 +532,7 @@ export function PriceCalculator() {
       <div className="absolute inset-0 pointer-events-none">
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#18f10905_1px,transparent_1px),linear-gradient(to_bottom,#18f10905_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
-        
+
         {/* Floating orbs */}
         <motion.div
           className="absolute top-20 right-10 w-64 h-64 bg-[#18f109]/10 rounded-full filter blur-3xl"
@@ -551,7 +543,7 @@ export function PriceCalculator() {
           transition={{
             duration: 20,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
         <motion.div
@@ -563,7 +555,7 @@ export function PriceCalculator() {
           transition={{
             duration: 25,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
             delay: 5,
           }}
         />
@@ -572,7 +564,7 @@ export function PriceCalculator() {
       {/* Floating SVG Illustrations */}
       <div className="hidden xl:block">
         {/* Left Side - Speech Bubble SVG */}
-        <motion.div 
+        <motion.div
           className="absolute left-16 top-32 z-0"
           animate={{
             y: [0, -20, 0],
@@ -581,18 +573,20 @@ export function PriceCalculator() {
           transition={{
             duration: 15,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         >
-          <img 
-            src="/undraw_speech_to_text.svg" 
-            alt="Speech illustration" 
+          <Image
+            src="/undraw_speech_to_text.svg"
+            alt="Speech illustration"
+            width={256}
+            height={256}
             className="w-64 h-64 opacity-80 dark:opacity-60"
           />
         </motion.div>
 
         {/* Right Side - Dark Podcast SVG */}
-        <motion.div 
+        <motion.div
           className="absolute right-16 bottom-32 z-0"
           animate={{
             y: [0, 20, 0],
@@ -601,13 +595,15 @@ export function PriceCalculator() {
           transition={{
             duration: 18,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
             delay: 3,
           }}
         >
-          <img 
-            src="/undraw_podcast_dark.svg" 
-            alt="Podcast illustration" 
+          <Image
+            src="/undraw_podcast_dark.svg"
+            alt="Podcast illustration"
+            width={224}
+            height={224}
             className="w-56 h-56 opacity-80 dark:opacity-60"
           />
         </motion.div>
@@ -624,19 +620,19 @@ export function PriceCalculator() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+            transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
             className="inline-flex items-center gap-2 bg-[#18f109]/10 px-6 py-3 rounded-full mb-6"
           >
             <Sparkles className="w-5 h-5 text-[#18f109]" />
             <span className="text-sm font-semibold text-[#18f109]">Transparante prijzen</span>
           </motion.div>
-          
+
           <h2 className="font-instrument-serif text-5xl sm:text-6xl lg:text-7xl font-normal text-title mb-4">
             Bereken je <span className="text-[#18f109] italic">investering</span>
           </h2>
           <p className="text-lg sm:text-xl text-normal max-w-3xl mx-auto leading-relaxed">
-            Direct inzicht in de kosten voor jouw voice-over project. 
-            Geen verborgen kosten, geen verrassingen.
+            Direct inzicht in de kosten voor jouw voice-over project. Geen verborgen kosten, geen
+            verrassingen.
           </p>
         </motion.div>
 
@@ -650,9 +646,7 @@ export function PriceCalculator() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mb-12"
             >
-              <h3 className="text-2xl font-semibold mb-8 text-center">
-                Kies je productiesoort
-              </h3>
+              <h3 className="text-2xl font-semibold mb-8 text-center">Kies je productiesoort</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {productionData.map((production, index) => {
                   const Icon = productionIcons[production.name] || Calculator;
@@ -679,13 +673,17 @@ export function PriceCalculator() {
                       whileTap={{ scale: 0.95 }}
                     >
                       <div className="relative z-10">
-                        <Icon className={`w-8 h-8 mx-auto mb-3 transition-transform group-hover:scale-110 ${
-                          selectedProduction === production.name ? 'text-black' : 'text-[#18f109]'
-                        }`} />
+                        <Icon
+                          className={`w-8 h-8 mx-auto mb-3 transition-transform group-hover:scale-110 ${
+                            selectedProduction === production.name ? 'text-black' : 'text-[#18f109]'
+                          }`}
+                        />
                         <p className="font-medium text-sm mb-2">{production.name}</p>
-                        <p className={`text-lg font-bold ${
-                          selectedProduction === production.name ? 'text-black' : 'text-title'
-                        }`}>
+                        <p
+                          className={`text-lg font-bold ${
+                            selectedProduction === production.name ? 'text-black' : 'text-title'
+                          }`}
+                        >
                           €{production.price}
                         </p>
                       </div>
@@ -694,7 +692,7 @@ export function PriceCalculator() {
                           className="absolute inset-0 bg-black/5"
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
-                          transition={{ type: "spring", stiffness: 300 }}
+                          transition={{ type: 'spring', stiffness: 300 }}
                         />
                       )}
                     </motion.button>
@@ -721,9 +719,7 @@ export function PriceCalculator() {
                       {currentProduction.titleTwo}
                     </h3>
                     {currentProduction.explainText && (
-                      <p className="text-sm text-normal mt-1">
-                        {currentProduction.explainText}
-                      </p>
+                      <p className="text-sm text-normal mt-1">{currentProduction.explainText}</p>
                     )}
                   </div>
                 </div>
@@ -757,14 +753,14 @@ export function PriceCalculator() {
                       <div className="flex items-center justify-between w-full">
                         <span className="font-medium">{item.item}</span>
                         <div className="flex items-center gap-2">
-                          {item.price > 0 && (
-                            <span className="font-semibold">+€{item.price}</span>
-                          )}
-                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                            selectedWords === item.item 
-                              ? 'border-black bg-black' 
-                              : 'border-gray-400 group-hover:border-[#18f109]'
-                          }`}>
+                          {item.price > 0 && <span className="font-semibold">+€{item.price}</span>}
+                          <div
+                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                              selectedWords === item.item
+                                ? 'border-black bg-black'
+                                : 'border-gray-400 group-hover:border-[#18f109]'
+                            }`}
+                          >
                             {selectedWords === item.item && (
                               <Check className="w-3 h-3 text-[#18f109]" />
                             )}
@@ -778,9 +774,7 @@ export function PriceCalculator() {
                 {/* Region Selection */}
                 {currentProduction.uitzendgebied && (
                   <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-                    <h4 className="text-lg font-semibold mb-4 text-title">
-                      Uitzendgebied
-                    </h4>
+                    <h4 className="text-lg font-semibold mb-4 text-title">Uitzendgebied</h4>
                     <div className="grid grid-cols-2 gap-3">
                       {currentProduction.uitzendgebied.map((region, index) => (
                         <motion.label
@@ -808,13 +802,9 @@ export function PriceCalculator() {
                             className="sr-only"
                           />
                           <div className="text-center">
-                            <span className="font-medium capitalize block">
-                              {region.name}
-                            </span>
+                            <span className="font-medium capitalize block">{region.name}</span>
                             {region.price > 0 && (
-                              <span className="text-sm font-semibold">
-                                +€{region.price}
-                              </span>
+                              <span className="text-sm font-semibold">+€{region.price}</span>
                             )}
                           </div>
                         </motion.label>
@@ -835,19 +825,19 @@ export function PriceCalculator() {
                   <div className="w-12 h-12 bg-[#efd243]/10 rounded-xl flex items-center justify-center">
                     <Sparkles className="w-6 h-6 text-[#efd243]" />
                   </div>
-                  <h3 className="text-xl font-semibold text-title">
-                    Extra Opties
-                  </h3>
+                  <h3 className="text-xl font-semibold text-title">Extra Opties</h3>
                 </div>
 
                 <div className="space-y-3">
                   {currentProduction.itemlistThree.map((option, index) => {
                     const isSelected = selectedOptions.has(option.item);
-                    const isDisabled = option.dependencies?.some((dep) => !selectedOptions.has(dep));
+                    const isDisabled = option.dependencies?.some(
+                      (dep) => !selectedOptions.has(dep)
+                    );
 
                     return (
-                      <motion.div 
-                        key={option.item} 
+                      <motion.div
+                        key={option.item}
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
@@ -891,9 +881,7 @@ export function PriceCalculator() {
                               <span className="font-medium">{option.item}</span>
                               <Info className="w-4 h-4 opacity-60" />
                             </div>
-                            <span className="font-semibold">
-                              +€{option.price}
-                            </span>
+                            <span className="font-semibold">+€{option.price}</span>
                           </div>
                         </label>
 
@@ -933,17 +921,13 @@ export function PriceCalculator() {
                     <div className="w-12 h-12 bg-black/10 rounded-xl flex items-center justify-center">
                       <Calculator className="w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-semibold">
-                      Totaalprijs
-                    </h3>
+                    <h3 className="text-xl font-semibold">Totaalprijs</h3>
                   </div>
 
                   {/* Selected Voiceover */}
                   {selectedVoiceover ? (
                     <div className="mb-6 pb-6 border-b border-black/10">
-                      <p className="text-sm opacity-80 mb-3">
-                        Geselecteerde voice-over
-                      </p>
+                      <p className="text-sm opacity-80 mb-3">Geselecteerde voice-over</p>
                       <div className="flex items-center gap-3 bg-black/10 rounded-2xl p-3">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-black/20 flex-shrink-0 relative">
                           {selectedVoiceover.profilePhoto ? (
@@ -976,9 +960,7 @@ export function PriceCalculator() {
                   ) : (
                     <div className="mb-6 pb-6 border-b border-black/10">
                       <div className="bg-black/10 rounded-2xl p-4">
-                        <p className="text-sm font-medium mb-2">
-                          Selecteer eerst een voice-over
-                        </p>
+                        <p className="text-sm font-medium mb-2">Selecteer eerst een voice-over</p>
                         <button
                           onClick={scrollToVoiceovers}
                           className="text-sm underline hover:no-underline font-semibold"
@@ -1005,8 +987,9 @@ export function PriceCalculator() {
                             <span className="font-bold">
                               +€
                               {
-                                currentProduction.itemlistTwo.find((item) => item.item === selectedWords)
-                                  ?.price
+                                currentProduction.itemlistTwo.find(
+                                  (item) => item.item === selectedWords
+                                )?.price
                               }
                             </span>
                           </div>
@@ -1085,7 +1068,11 @@ export function PriceCalculator() {
               className="mt-12 text-center"
             >
               <p className="text-sm text-normal">
-                Heb je vragen over de prijzen? <a href="/contact" className="text-[#18f109] font-semibold hover:underline">Neem contact op</a> voor een persoonlijke offerte.
+                Heb je vragen over de prijzen?{' '}
+                <Link href="/contact" className="text-[#18f109] font-semibold hover:underline">
+                  Neem contact op
+                </Link>{' '}
+                voor een persoonlijke offerte.
               </p>
             </motion.div>
           </div>
