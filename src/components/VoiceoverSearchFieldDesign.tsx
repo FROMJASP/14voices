@@ -304,7 +304,7 @@ export function VoiceoverSearchFieldDesign({ voiceovers }: VoiceoverSearchFieldD
       </div>
 
       {/* Tabs Section */}
-      <div className="sticky top-0 z-40 bg-[#fcf9f5] dark:bg-[#1a1a1a] border-b border-border rounded-t-[8rem]">
+      <div className="sticky top-0 z-40 bg-[#fcf9f5] dark:bg-[#1a1a1a] border-b border-border">
         <div className="w-full overflow-x-auto scrollbar-hide">
           <div className="px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
             <div className="flex items-center gap-2 py-4 md:justify-center">
