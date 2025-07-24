@@ -10,6 +10,7 @@ import {
   VoiceoverStatus,
 } from '../types';
 import { PayloadVoiceover } from '@/types/voiceover';
+import { makeMediaUrlRelative } from '@/lib/media-utils';
 
 export interface IVoiceoverRepository {
   findAll(params: VoiceoverQueryParams): Promise<PaginatedResult<VoiceoverEntity>>;
@@ -209,7 +210,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         title: 'Full Demo Reel',
         demoType: 'reel',
         audioFile: {
-          url: payload.fullDemoReel.url || '',
+          url: makeMediaUrlRelative(payload.fullDemoReel.url || ''),
           filename: payload.fullDemoReel.filename || '',
           mimeType: payload.fullDemoReel.mimeType,
         },
@@ -224,7 +225,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         title: 'Commercials Demo',
         demoType: 'commercials',
         audioFile: {
-          url: payload.commercialsDemo.url || '',
+          url: makeMediaUrlRelative(payload.commercialsDemo.url || ''),
           filename: payload.commercialsDemo.filename || '',
           mimeType: payload.commercialsDemo.mimeType,
         },
@@ -239,7 +240,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         title: 'Narrative Demo',
         demoType: 'narrations',
         audioFile: {
-          url: payload.narrativeDemo.url || '',
+          url: makeMediaUrlRelative(payload.narrativeDemo.url || ''),
           filename: payload.narrativeDemo.filename || '',
           mimeType: payload.narrativeDemo.mimeType,
         },
@@ -256,7 +257,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
       profilePhoto:
         payload.profilePhoto && typeof payload.profilePhoto === 'object'
           ? {
-              url: payload.profilePhoto.url || '',
+              url: makeMediaUrlRelative(payload.profilePhoto.url || ''),
               alt: payload.name,
             }
           : undefined,

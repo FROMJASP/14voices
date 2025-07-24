@@ -1,48 +1,51 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, Mic, Clock, CheckCircle2, XCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { BlurFade } from '@/components/magicui/blur-fade'
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Pause, Mic, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { BlurFade } from '@/components/magicui/blur-fade';
+import { makeMediaUrlRelative } from '@/lib/media-utils';
 // Temporary type definition until payload-types.ts is regenerated
 interface Voiceover {
-  id: string
-  name: string
-  description?: string
-  profilePhoto?: {
-    url: string
-    alt?: string
-  } | string
-  status?: string
+  id: string;
+  name: string;
+  description?: string;
+  profilePhoto?:
+    | {
+        url: string;
+        alt?: string;
+      }
+    | string;
+  status?: string;
   styleTags?: Array<{
-    tag: string
-    customTag?: string
-  }>
+    tag: string;
+    customTag?: string;
+  }>;
   availability?: {
-    isAvailable?: boolean
-  }
+    isAvailable?: boolean;
+  };
 }
 
 interface VoiceoverWithDemo extends Voiceover {
   demos?: Array<{
-    id: string
-    title: string
+    id: string;
+    title: string;
     audioFile: {
-      url: string
-    }
-    duration?: string
-    isPrimary?: boolean
-  }>
+      url: string;
+    };
+    duration?: string;
+    isPrimary?: boolean;
+  }>;
 }
 
 export function VoiceoverShowcase() {
-  const [voiceovers, setVoiceovers] = useState<VoiceoverWithDemo[]>([])
-  const [loading, setLoading] = useState(true)
-  const [selectedTag, setSelectedTag] = useState<string>('all')
-  const [playingId, setPlayingId] = useState<string | null>(null)
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null)
+  const [voiceovers, setVoiceovers] = useState<VoiceoverWithDemo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedTag, setSelectedTag] = useState<string>('all');
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
   // Available style tags
   const styleTags = [
@@ -53,57 +56,60 @@ export function VoiceoverShowcase() {
     { label: 'Stoer', value: 'stoer' },
     { label: 'Warm & Donker', value: 'warm-donker' },
     { label: 'Zakelijk', value: 'zakelijk' },
-  ]
+  ];
 
   useEffect(() => {
-    fetchVoiceovers()
-  }, [])
+    fetchVoiceovers();
+  }, []);
 
   const fetchVoiceovers = async () => {
     try {
-      const response = await fetch('/api/voiceovers?depth=2&where[status][equals]=active')
-      const data = await response.json()
-      setVoiceovers(data.docs || [])
+      const response = await fetch('/api/voiceovers?depth=2&where[status][equals]=active');
+      const data = await response.json();
+      setVoiceovers(data.docs || []);
     } catch (error) {
-      console.error('Error fetching voiceovers:', error)
+      console.error('Error fetching voiceovers:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handlePlayPause = (voiceoverId: string, audioUrl: string) => {
     if (playingId === voiceoverId) {
-      currentAudio?.pause()
-      setPlayingId(null)
-      setCurrentAudio(null)
+      currentAudio?.pause();
+      setPlayingId(null);
+      setCurrentAudio(null);
     } else {
       if (currentAudio) {
-        currentAudio.pause()
+        currentAudio.pause();
       }
-      const audio = new Audio(audioUrl)
-      audio.play()
+      const audio = new Audio(audioUrl);
+      audio.play();
       audio.onended = () => {
-        setPlayingId(null)
-        setCurrentAudio(null)
-      }
-      setCurrentAudio(audio)
-      setPlayingId(voiceoverId)
+        setPlayingId(null);
+        setCurrentAudio(null);
+      };
+      setCurrentAudio(audio);
+      setPlayingId(voiceoverId);
     }
-  }
+  };
 
-  const filteredVoiceovers = voiceovers.filter(voiceover => {
-    if (selectedTag === 'all') return true
-    return voiceover.styleTags?.some(tag => 
-      tag.tag === selectedTag || tag.customTag === selectedTag
-    )
-  })
+  const filteredVoiceovers = voiceovers.filter((voiceover) => {
+    if (selectedTag === 'all') return true;
+    return voiceover.styleTags?.some(
+      (tag) => tag.tag === selectedTag || tag.customTag === selectedTag
+    );
+  });
 
   const getStyleTagLabel = (voiceover: VoiceoverWithDemo) => {
-    const tags = voiceover.styleTags?.map(tag => 
-      tag.tag === 'custom' ? tag.customTag : styleTags.find(t => t.value === tag.tag)?.label
-    ).filter(Boolean).slice(0, 3)
-    return tags?.join(' • ') || ''
-  }
+    const tags = voiceover.styleTags
+      ?.map((tag) =>
+        tag.tag === 'custom' ? tag.customTag : styleTags.find((t) => t.value === tag.tag)?.label
+      )
+      .filter(Boolean)
+      .slice(0, 3);
+    return tags?.join(' • ') || '';
+  };
 
   if (loading) {
     return (
@@ -120,7 +126,7 @@ export function VoiceoverShowcase() {
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -147,10 +153,10 @@ export function VoiceoverShowcase() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedTag(tag.value)}
                 className={cn(
-                  "px-6 py-2 rounded-full font-medium transition-all duration-200",
+                  'px-6 py-2 rounded-full font-medium transition-all duration-200',
                   selectedTag === tag.value
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
-                    : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
                 )}
               >
                 {tag.label}
@@ -170,9 +176,9 @@ export function VoiceoverShowcase() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredVoiceovers.map((voiceover, index) => {
-              const primaryDemo = voiceover.demos?.find(d => d.isPrimary) || voiceover.demos?.[0]
-              const isPlaying = playingId === voiceover.id
-              const isAvailable = voiceover.availability?.isAvailable !== false
+              const primaryDemo = voiceover.demos?.find((d) => d.isPrimary) || voiceover.demos?.[0];
+              const isPlaying = playingId === voiceover.id;
+              const isAvailable = voiceover.availability?.isAvailable !== false;
 
               return (
                 <BlurFade key={voiceover.id} delay={0.1 * index} inView>
@@ -182,9 +188,11 @@ export function VoiceoverShowcase() {
                   >
                     {/* Profile photo */}
                     <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20">
-                      {voiceover.profilePhoto && typeof voiceover.profilePhoto === 'object' && 'url' in voiceover.profilePhoto ? (
+                      {voiceover.profilePhoto &&
+                      typeof voiceover.profilePhoto === 'object' &&
+                      'url' in voiceover.profilePhoto ? (
                         <Image
-                          src={voiceover.profilePhoto.url}
+                          src={makeMediaUrlRelative(voiceover.profilePhoto.url)}
                           alt={voiceover.profilePhoto.alt || voiceover.name}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -194,14 +202,19 @@ export function VoiceoverShowcase() {
                           <Mic className="w-24 h-24 text-slate-300 dark:text-slate-700" />
                         </div>
                       )}
-                      
+
                       {/* Overlay gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
+
                       {/* Play button overlay */}
                       {primaryDemo && (
                         <button
-                          onClick={() => handlePlayPause(voiceover.id, primaryDemo.audioFile.url)}
+                          onClick={() =>
+                            handlePlayPause(
+                              voiceover.id,
+                              makeMediaUrlRelative(primaryDemo.audioFile.url)
+                            )
+                          }
                           className="absolute bottom-4 right-4 w-14 h-14 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg transform translate-y-20 group-hover:translate-y-0 transition-transform duration-300"
                         >
                           {isPlaying ? (
@@ -213,12 +226,12 @@ export function VoiceoverShowcase() {
                       )}
 
                       {/* Availability badge */}
-                      <div className={cn(
-                        "absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1",
-                        isAvailable 
-                          ? "bg-green-500/90 text-white" 
-                          : "bg-red-500/90 text-white"
-                      )}>
+                      <div
+                        className={cn(
+                          'absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1',
+                          isAvailable ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'
+                        )}
+                      >
                         {isAvailable ? (
                           <>
                             <CheckCircle2 className="w-4 h-4" />
@@ -238,7 +251,7 @@ export function VoiceoverShowcase() {
                       <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
                         {voiceover.name}
                       </h3>
-                      
+
                       {/* Style tags */}
                       <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-3">
                         {getStyleTagLabel(voiceover)}
@@ -269,7 +282,7 @@ export function VoiceoverShowcase() {
                     </div>
                   </motion.div>
                 </BlurFade>
-              )
+              );
             })}
           </motion.div>
         </AnimatePresence>
@@ -285,5 +298,5 @@ export function VoiceoverShowcase() {
         )}
       </div>
     </section>
-  )
+  );
 }

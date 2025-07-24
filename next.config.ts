@@ -39,6 +39,11 @@ const nextConfig: NextConfig = {
         hostname: '*.vercel.app',
         pathname: '/api/media/**',
       },
+      {
+        protocol: 'https',
+        hostname: '14voices.fromjasp.com',
+        pathname: '/api/media/**',
+      },
     ],
   },
 };

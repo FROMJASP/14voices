@@ -8,6 +8,7 @@ export const shuffleArray = <T>(array: T[]): T[] => {
 };
 
 import { PayloadVoiceover, TransformedVoiceover, VoiceoverDemo } from '@/types/voiceover';
+import { makeMediaUrlRelative } from '@/lib/media-utils';
 
 export const formatAvailabilityDate = (voiceover: Partial<PayloadVoiceover>): string => {
   if (!voiceover.availability?.isAvailable && voiceover.availability?.unavailableUntil) {
@@ -115,7 +116,10 @@ export const transformVoiceoverData = (
         title: 'Demo Reel',
         demoType: 'reel' as const,
         audioFile: {
-          url: typeof voiceover.fullDemoReel === 'object' ? voiceover.fullDemoReel.url : '',
+          url:
+            typeof voiceover.fullDemoReel === 'object'
+              ? makeMediaUrlRelative(voiceover.fullDemoReel.url)
+              : '',
           filename:
             typeof voiceover.fullDemoReel === 'object' ? voiceover.fullDemoReel.filename : '',
         },
@@ -131,7 +135,10 @@ export const transformVoiceoverData = (
         title: 'Commercials Demo',
         demoType: 'commercials' as const,
         audioFile: {
-          url: typeof voiceover.commercialsDemo === 'object' ? voiceover.commercialsDemo.url : '',
+          url:
+            typeof voiceover.commercialsDemo === 'object'
+              ? makeMediaUrlRelative(voiceover.commercialsDemo.url)
+              : '',
           filename:
             typeof voiceover.commercialsDemo === 'object' ? voiceover.commercialsDemo.filename : '',
         },
@@ -147,7 +154,10 @@ export const transformVoiceoverData = (
         title: 'Narratieve Demo',
         demoType: 'narrations' as const,
         audioFile: {
-          url: typeof voiceover.narrativeDemo === 'object' ? voiceover.narrativeDemo.url : '',
+          url:
+            typeof voiceover.narrativeDemo === 'object'
+              ? makeMediaUrlRelative(voiceover.narrativeDemo.url)
+              : '',
           filename:
             typeof voiceover.narrativeDemo === 'object' ? voiceover.narrativeDemo.filename : '',
         },
@@ -162,7 +172,7 @@ export const transformVoiceoverData = (
     profilePhoto:
       typeof voiceover.profilePhoto === 'object' && voiceover.profilePhoto
         ? {
-            url: voiceover.profilePhoto.url || '',
+            url: makeMediaUrlRelative(voiceover.profilePhoto.url || ''),
             alt: voiceover.profilePhoto.alt || voiceover.name,
           }
         : undefined,
