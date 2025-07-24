@@ -256,7 +256,7 @@ export function VoiceoverSearchFieldDesign({ voiceovers }: VoiceoverSearchFieldD
                   'project',
                   'commercial',
                   'bedrijfsvideo',
-                  'audio tour',
+                  'audiotour',
                   'serie of film',
                   'verhaal',
                   'instructievideo',
