@@ -161,7 +161,10 @@ export const transformVoiceoverData = (
     ].filter(Boolean) as VoiceoverDemo[],
     profilePhoto:
       typeof voiceover.profilePhoto === 'object' && voiceover.profilePhoto
-        ? { url: voiceover.profilePhoto.url, alt: voiceover.profilePhoto.alt }
+        ? {
+            url: voiceover.profilePhoto.url || '',
+            alt: voiceover.profilePhoto.alt || voiceover.name,
+          }
         : undefined,
     bio: voiceover.description,
     cohort: typeof voiceover.cohort === 'object' ? voiceover.cohort : undefined,

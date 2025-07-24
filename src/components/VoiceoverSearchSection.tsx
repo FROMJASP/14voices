@@ -17,7 +17,7 @@ export async function VoiceoverSearchSection() {
         equals: 'active',
       },
     },
-    depth: 2,
+    depth: 3,
     limit: 100,
   });
 
