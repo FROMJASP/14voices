@@ -14,6 +14,31 @@ const nextConfig: NextConfig = {
         port: '3000',
         pathname: '/api/media/**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.vercel-storage.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '14voices.com',
+        pathname: '/api/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.14voices.com',
+        pathname: '/api/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.vercel.app',
+        pathname: '/api/media/**',
+      },
     ],
   },
 };
