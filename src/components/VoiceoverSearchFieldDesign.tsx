@@ -15,6 +15,9 @@ import {
   Mic,
   Flame,
   Sun,
+  Leaf,
+  Rocket,
+  Mountain,
 } from 'lucide-react';
 import { Plus_Jakarta_Sans, Instrument_Serif } from 'next/font/google';
 import { VoiceoverCard } from './VoiceoverCard';
@@ -51,10 +54,11 @@ const styleIcons: Record<string, React.ElementType> = {
   'Vriendelijk & Vrolijk': Smile,
   'Warm & Donker': Heart,
   Zakelijk: Briefcase,
-  Energiek: Zap,
-  Verhalend: Mic,
-  Modern: Star,
-  Betrouwbaar: Users,
+  Eigentijds: Star,
+  'Gezellig & Genieten': Users,
+  Naturel: Leaf,
+  Vernieuwend: Rocket,
+  Stoer: Mountain,
 };
 
 export function VoiceoverSearchFieldDesign({ voiceovers }: VoiceoverSearchFieldDesignProps) {
@@ -75,7 +79,7 @@ export function VoiceoverSearchFieldDesign({ voiceovers }: VoiceoverSearchFieldD
   const allStyles = useMemo(() => {
     const tags = new Set<string>();
     voiceovers.forEach((voice) => {
-      voice.styleTags?.forEach(({ tag, customTag }) => tags.add(customTag || tag));
+      voice.tags?.forEach((tag) => tags.add(tag));
     });
     return Array.from(tags).sort();
   }, [voiceovers]);
@@ -364,7 +368,7 @@ export function VoiceoverSearchFieldDesign({ voiceovers }: VoiceoverSearchFieldD
                 <VoiceoverCard
                   voice={{
                     ...voice,
-                    tags: voice.styleTags?.map(({ tag, customTag }) => customTag || tag) || [],
+                    tags: voice.tags || [],
                     beschikbaar: true,
                     availabilityText: 'Direct beschikbaar',
                     demos:
