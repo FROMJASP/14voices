@@ -41,7 +41,12 @@ const instrumentSerif = Instrument_Serif({
 });
 
 interface VoiceoverSearchFieldDesignProps {
-  voiceovers: TransformedVoiceover[];
+  voiceovers: (TransformedVoiceover & {
+    tags: string[];
+    color: string;
+    beschikbaar: boolean;
+    availabilityText: string;
+  })[];
 }
 
 // Icon mapping for style tags
