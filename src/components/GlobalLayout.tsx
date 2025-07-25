@@ -1,6 +1,7 @@
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { BannerBlock } from './BannerBlock';
+import { ClientFaviconUpdater } from './ClientFaviconUpdater';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 
@@ -12,7 +13,7 @@ interface GlobalLayoutProps {
 export async function GlobalLayout({ children, showBanner = true }: GlobalLayoutProps) {
   // Fetch banner settings from Payload
   const payload = await getPayload({ config: configPromise });
-  
+
   let bannerData = {
     enabled: false,
     message: '',
@@ -39,7 +40,7 @@ export async function GlobalLayout({ children, showBanner = true }: GlobalLayout
         dismissible: banner.dismissible !== false,
         style: banner.style || 'gradient',
       };
-      
+
       console.log('Banner data processed:', bannerData);
 
       // Handle page relationship for linkUrl
@@ -60,6 +61,9 @@ export async function GlobalLayout({ children, showBanner = true }: GlobalLayout
 
   return (
     <>
+      {/* Client-side favicon updater with cache-busting */}
+      <ClientFaviconUpdater />
+
       {/* Simple, clean layout with navbar, optional banner, content, and footer */}
       <div className="min-h-screen flex flex-col">
         {/* Banner */}
