@@ -4,7 +4,7 @@ import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 import { VoiceoverSearchFieldDesign } from './VoiceoverSearchFieldDesign';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
-import { PriceCalculator } from './PriceCalculator';
+import { UnifiedPriceCalculator } from './UnifiedPriceCalculator';
 
 export async function VoiceoverSearchSection() {
   const payload = await getPayload({ config: configPromise });
@@ -29,7 +29,7 @@ export async function VoiceoverSearchSection() {
   return (
     <VoiceoverProvider>
       <VoiceoverSearchFieldDesign voiceovers={voiceovers} />
-      <PriceCalculator />
+      <UnifiedPriceCalculator />
     </VoiceoverProvider>
   );
 }

@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Sparkles,
   Shield,
+  X,
 } from 'lucide-react';
 import { useVoiceover, scrollToVoiceovers } from '@/contexts/VoiceoverContext';
 
@@ -53,6 +54,7 @@ interface ExtraOption {
 interface ProductionType {
   name: string;
   price: number;
+  description: string;
   titleOne: string;
   titleTwo: string;
   itemlistTwo: PriceItem[];
@@ -66,7 +68,7 @@ interface ProductionType {
 const productionIcons: Record<string, React.ElementType> = {
   Videoproductie: Video,
   'E-learning': GraduationCap,
-  Radiocommercial: Radio,
+  Radiospot: Radio,
   'TV Commercial': Tv,
   'Web Commercial': Globe,
   'Voice Response': Phone,
@@ -76,6 +78,7 @@ const productionData: ProductionType[] = [
   {
     name: 'Videoproductie',
     price: 175,
+    description: 'Videoproducties zijn video\'s die intern worden gebruikt, bijvoorbeeld als bedrijfsfilm, of extern via de website of sociale media — zonder inzet van advertentiebudget. Wordt de video ingezet als betaalde advertentie, kies dan voor de categorie \'Web Commercial\'.',
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal woorden',
     itemlistTwo: [
@@ -136,6 +139,7 @@ const productionData: ProductionType[] = [
   {
     name: 'E-learning',
     price: 200,
+    description: 'E-learning video\'s worden ingezet voor educatieve doeleinden, zoals interne trainingen, onboarding of instructie voor medewerkers of klanten. Deze video\'s zijn bedoeld voor gebruik binnen een leeromgeving of platform, zonder commerciële doeleinden. Wanneer de video primair wordt ingezet als promotie of werving, kies dan voor de categorie \'Web Commercial\'.',
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal woorden',
     itemlistTwo: [
@@ -194,8 +198,9 @@ const productionData: ProductionType[] = [
     ],
   },
   {
-    name: 'Radiocommercial',
+    name: 'Radiospot',
     price: 150,
+    description: 'Radiospots zijn audioboodschappen die worden uitgezonden via radio of streamingdiensten met als doel een product, dienst of merk te promoten. Deze producties zijn specifiek bedoeld voor commerciële doeleinden en worden verspreid met inzet van mediabudget.',
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal versies',
     explainText:
@@ -256,6 +261,7 @@ const productionData: ProductionType[] = [
   {
     name: 'TV Commercial',
     price: 250,
+    description: 'TV Commercials zijn videoproducties die worden uitgezonden via televisie of videoplatforms met inzet van mediabudget. Ze zijn gericht op een breed publiek en bedoeld om merkbekendheid te vergroten of een product of dienst te promoten. Let op: vergeet niet te specificeren of de commercial regionaal of nationaal uitgezonden wordt.',
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal versies',
     explainText:
@@ -322,6 +328,7 @@ const productionData: ProductionType[] = [
   {
     name: 'Web Commercial',
     price: 400,
+    description: 'Web Commercials zijn online video\'s die worden ingezet als advertentie op platforms zoals YouTube, Instagram, Facebook of LinkedIn, met gebruik van advertentiebudget. Ze zijn gericht op het promoten van een product, dienst of merk bij een specifieke doelgroep.',
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal versies',
     explainText:
@@ -388,6 +395,7 @@ const productionData: ProductionType[] = [
   {
     name: 'Voice Response',
     price: 150,
+    description: 'Voice Response betreft ingesproken teksten voor automatische telefoonsystemen, zoals keuzemenu\'s, welkomstboodschappen, voicemails of wachtrijen. Deze opnames zorgen voor een professionele en consistente telefonische klantbeleving.',
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal woorden',
     itemlistTwo: [
@@ -447,13 +455,84 @@ const productionData: ProductionType[] = [
   },
 ];
 
+// Pricing formula for word-based productions
+const calculateWordPrice = (words: number, productionType: string): number => {
+  // Base rates per word for each production type
+  const rates = {
+    'Videoproductie': {
+      base: 0,
+      tiers: [
+        { max: 250, rate: 0 },
+        { max: 500, rate: 0.20 },
+        { max: 1000, rate: 0.30 },
+        { max: 1500, rate: 0.45 },
+        { max: Infinity, rate: 0.23 } // Progressive discount for 1500+
+      ]
+    },
+    'E-learning': {
+      base: 0,
+      tiers: [
+        { max: 500, rate: 0 },
+        { max: 1000, rate: 0.20 },
+        { max: 1500, rate: 0.35 },
+        { max: 2000, rate: 0.50 },
+        { max: Infinity, rate: 0.20 } // Progressive discount for 2000+
+      ]
+    },
+    'Voice Response': {
+      base: 0,
+      tiers: [
+        { max: 500, rate: 0 },
+        { max: 1000, rate: 0.20 },
+        { max: 1500, rate: 0.35 },
+        { max: 2000, rate: 0.50 },
+        { max: Infinity, rate: 0.20 } // Progressive discount for 2000+
+      ]
+    }
+  };
+
+  const productionRates = rates[productionType as keyof typeof rates];
+  if (!productionRates) return 0;
+
+  let totalPrice = 0;
+  let remainingWords = words;
+  let previousMax = 0;
+
+  for (const tier of productionRates.tiers) {
+    if (remainingWords <= 0) break;
+    
+    const wordsInThisTier = Math.min(remainingWords, tier.max - previousMax);
+    totalPrice += wordsInThisTier * tier.rate;
+    remainingWords -= wordsInThisTier;
+    previousMax = tier.max;
+  }
+
+  return Math.round(totalPrice);
+};
+
 export function PriceCalculator() {
   const [selectedProduction, setSelectedProduction] = useState(productionData[0].name);
   const [selectedWords, setSelectedWords] = useState(productionData[0].itemlistTwo[0].item);
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
   const [selectedRegion, setSelectedRegion] = useState<string>('regionaal');
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
+  const [hoveredProduction, setHoveredProduction] = useState<string | null>(null);
+  const [expandedProduction, setExpandedProduction] = useState<string | null>(null);
+  const [customWordCount, setCustomWordCount] = useState<string>('');
+  const [showPricingDrawer, setShowPricingDrawer] = useState(false);
   const { selectedVoiceover, clearSelection } = useVoiceover();
+
+  // Prevent body scroll when modal is open
+  React.useEffect(() => {
+    if (showPricingDrawer) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }
+  }, [showPricingDrawer]);
 
   const currentProduction = useMemo(
     () => productionData.find((prod) => prod.name === selectedProduction) || productionData[0],
@@ -463,9 +542,37 @@ export function PriceCalculator() {
   const calculateTotal = useMemo(() => {
     let total = currentProduction.price;
 
+    // Check if this is a word-based production type
+    const wordBasedTypes = ['Videoproductie', 'E-learning', 'Voice Response'];
+    const isWordBased = wordBasedTypes.includes(currentProduction.name);
+
     // Add word/version price
-    const wordItem = currentProduction.itemlistTwo.find((item) => item.item === selectedWords);
-    if (wordItem) total += wordItem.price;
+    if (isWordBased && selectedWords === '1500+' && customWordCount) {
+      // Use custom word count calculation
+      const words = parseInt(customWordCount);
+      if (!isNaN(words) && words > 0) {
+        // Always calculate price, even if below 1500
+        total += calculateWordPrice(Math.max(words, 1501), currentProduction.name);
+      } else {
+        // Fall back to default 1500+ price if invalid
+        const wordItem = currentProduction.itemlistTwo.find((item) => item.item === selectedWords);
+        if (wordItem) total += wordItem.price;
+      }
+    } else if (isWordBased && selectedWords === '2000+' && customWordCount) {
+      // For E-learning and Voice Response
+      const words = parseInt(customWordCount);
+      if (!isNaN(words) && words > 0) {
+        // Always calculate price, even if below 2000
+        total += calculateWordPrice(Math.max(words, 2001), currentProduction.name);
+      } else {
+        const wordItem = currentProduction.itemlistTwo.find((item) => item.item === selectedWords);
+        if (wordItem) total += wordItem.price;
+      }
+    } else {
+      // Use standard pricing
+      const wordItem = currentProduction.itemlistTwo.find((item) => item.item === selectedWords);
+      if (wordItem) total += wordItem.price;
+    }
 
     // Add selected options
     selectedOptions.forEach((option) => {
@@ -482,7 +589,7 @@ export function PriceCalculator() {
     }
 
     return total;
-  }, [currentProduction, selectedWords, selectedOptions, selectedRegion]);
+  }, [currentProduction, selectedWords, selectedOptions, selectedRegion, customWordCount]);
 
   const toggleOption = (option: string) => {
     const optionData = currentProduction.itemlistThree.find((item) => item.item === option);
@@ -609,36 +716,50 @@ export function PriceCalculator() {
         </motion.div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+      {/* Main Container with unified background */}
+      <div className="bg-[#fcf9f5] dark:bg-[#1a1a1a] rounded-3xl mx-4 sm:mx-6 lg:mx-8 overflow-hidden relative">
+        {/* Decorative Elements for the entire container */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Subtle grid pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#18f10908_1px,transparent_1px),linear-gradient(to_bottom,#18f10908_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-30" />
+          
+          {/* Gradient orbs */}
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#18f109]/15 rounded-full filter blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#efd243]/10 rounded-full filter blur-3xl" />
+        </div>
+
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8">
+          {/* Header Section */}
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="inline-flex items-center gap-2 bg-[#18f109]/10 px-6 py-3 rounded-full mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="pt-16 pb-12 text-center"
           >
-            <Sparkles className="w-5 h-5 text-[#18f109]" />
-            <span className="text-sm font-semibold text-[#18f109]">Transparante prijzen</span>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
+              className="inline-flex items-center gap-2 bg-white/60 dark:bg-black/20 backdrop-blur-sm px-6 py-3 rounded-full mb-8 shadow-sm"
+            >
+              <Sparkles className="w-5 h-5 text-[#18f109]" />
+              <span className="text-sm font-semibold text-[#18f109]">Transparante prijzen</span>
+            </motion.div>
+
+            <h2 className="font-instrument-serif text-5xl sm:text-6xl lg:text-7xl font-normal text-title mb-6">
+              Bereken je <span className="text-[#18f109] italic">investering</span>
+            </h2>
+            <p className="text-lg sm:text-xl text-normal max-w-3xl mx-auto leading-relaxed">
+              Direct inzicht in de kosten voor jouw voice-over project. Geen verborgen kosten, geen
+              verrassingen.
+            </p>
           </motion.div>
 
-          <h2 className="font-instrument-serif text-5xl sm:text-6xl lg:text-7xl font-normal text-title mb-4">
-            Bereken je <span className="text-[#18f109] italic">investering</span>
-          </h2>
-          <p className="text-lg sm:text-xl text-normal max-w-3xl mx-auto leading-relaxed">
-            Direct inzicht in de kosten voor jouw voice-over project. Geen verborgen kosten, geen
-            verrassingen.
-          </p>
-        </motion.div>
+          {/* Divider line */}
+          <div className="w-full h-px bg-gray-200 dark:bg-gray-700/50 mb-16" />
 
-        {/* Calculator Container */}
-        <div className="bg-[#fcf9f5] dark:bg-[#1a1a1a] rounded-t-[4rem] pt-16 pb-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          {/* Calculator Content */}
+          <div className="pb-20">
             {/* Production Type Selection */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -650,52 +771,102 @@ export function PriceCalculator() {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {productionData.map((production, index) => {
                   const Icon = productionIcons[production.name] || Calculator;
+                  const isExpanded = expandedProduction === production.name;
+                  
                   return (
-                    <motion.button
+                    <motion.div
                       key={production.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => {
-                        setSelectedProduction(production.name);
-                        setSelectedWords(production.itemlistTwo[0].item);
-                        setSelectedOptions(new Set());
-                      }}
-                      className={`
-                        p-6 rounded-2xl transition-all duration-300 text-center group relative overflow-hidden
-                        ${
-                          selectedProduction === production.name
-                            ? 'bg-[#18f109] text-black shadow-xl scale-105'
-                            : 'bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-accent shadow-sm hover:shadow-md'
-                        }
-                      `}
-                      whileHover={{ y: -5 }}
-                      whileTap={{ scale: 0.95 }}
+                      className="relative group"
+                      onMouseEnter={() => setHoveredProduction(production.name)}
+                      onMouseLeave={() => setHoveredProduction(null)}
                     >
-                      <div className="relative z-10">
-                        <Icon
-                          className={`w-8 h-8 mx-auto mb-3 transition-transform group-hover:scale-110 ${
-                            selectedProduction === production.name ? 'text-black' : 'text-[#18f109]'
-                          }`}
-                        />
-                        <p className="font-medium text-sm mb-2">{production.name}</p>
-                        <p
-                          className={`text-lg font-bold ${
-                            selectedProduction === production.name ? 'text-black' : 'text-title'
-                          }`}
-                        >
-                          €{production.price}
-                        </p>
-                      </div>
-                      {selectedProduction === production.name && (
-                        <motion.div
-                          className="absolute inset-0 bg-black/5"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ type: 'spring', stiffness: 300 }}
-                        />
-                      )}
-                    </motion.button>
+                      <motion.button
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        onClick={() => {
+                          setSelectedProduction(production.name);
+                          setSelectedWords(production.itemlistTwo[0].item);
+                          setSelectedOptions(new Set());
+                          setCustomWordCount('');
+                        }}
+                        className={`
+                          p-6 rounded-2xl transition-all duration-300 text-center group relative overflow-hidden w-full
+                          ${
+                            selectedProduction === production.name
+                              ? 'bg-[#18f109] text-black shadow-xl scale-105'
+                              : 'bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-accent shadow-sm hover:shadow-md'
+                          }
+                        `}
+                        whileHover={{ y: -5 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <div className="relative z-10">
+                          <Icon
+                            className={`w-8 h-8 mx-auto mb-3 transition-transform group-hover:scale-110 ${
+                              selectedProduction === production.name ? 'text-black' : 'text-[#18f109]'
+                            }`}
+                          />
+                          <p className="font-medium text-sm mb-2 flex items-center justify-center gap-1">
+                            {production.name}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedProduction(isExpanded ? null : production.name);
+                              }}
+                              className="p-1 -m-1 rounded-full hover:bg-black/10 transition-colors"
+                            >
+                              <Info className="w-3 h-3 opacity-60" />
+                            </button>
+                          </p>
+                          <p
+                            className={`text-lg font-bold ${
+                              selectedProduction === production.name ? 'text-black' : 'text-title'
+                            }`}
+                          >
+                            €{production.price}
+                          </p>
+                        </div>
+                        {selectedProduction === production.name && (
+                          <motion.div
+                            className="absolute inset-0 bg-black/5"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 300 }}
+                          />
+                        )}
+                      </motion.button>
+                      
+                      {/* Desktop Tooltip (hover) */}
+                      <AnimatePresence>
+                        {hoveredProduction === production.name && !isExpanded && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            className="absolute left-0 right-0 top-full mt-2 p-4 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-2xl shadow-xl z-20 min-w-[240px] hidden lg:block"
+                          >
+                            <p className="leading-relaxed">{production.description}</p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      
+                      {/* Mobile/Tablet Expandable (tap) */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="absolute left-0 right-0 top-full mt-2 overflow-hidden lg:hidden z-20"
+                          >
+                            <div className="p-4 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-2xl shadow-xl">
+                              <p className="leading-relaxed">{production.description}</p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -725,50 +896,139 @@ export function PriceCalculator() {
                 </div>
 
                 <div className="space-y-3">
-                  {currentProduction.itemlistTwo.map((item, index) => (
-                    <motion.label
-                      key={item.item}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className={`
-                        flex items-center p-4 rounded-2xl cursor-pointer transition-all duration-200 group
-                        ${
-                          selectedWords === item.item
-                            ? 'bg-[#18f109] text-black shadow-md'
-                            : 'bg-gray-50 dark:bg-muted hover:bg-gray-100 dark:hover:bg-accent'
-                        }
-                      `}
-                      whileHover={{ x: 5 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <input
-                        type="radio"
-                        name="words"
-                        value={item.item}
-                        checked={selectedWords === item.item}
-                        onChange={() => setSelectedWords(item.item)}
-                        className="sr-only"
-                      />
-                      <div className="flex items-center justify-between w-full">
-                        <span className="font-medium">{item.item}</span>
-                        <div className="flex items-center gap-2">
-                          {item.price > 0 && <span className="font-semibold">+€{item.price}</span>}
-                          <div
-                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                  {currentProduction.itemlistTwo.map((item, index) => {
+                    const isLastOption = index === currentProduction.itemlistTwo.length - 1;
+                    const isWordBased = ['Videoproductie', 'E-learning', 'Voice Response'].includes(currentProduction.name);
+                    const showCustomInput = isWordBased && isLastOption && selectedWords === item.item;
+                    
+                    return (
+                      <div key={item.item} className="space-y-2">
+                        <motion.label
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className={`
+                            flex items-center p-4 rounded-2xl cursor-pointer transition-all duration-200 group
+                            ${
                               selectedWords === item.item
-                                ? 'border-black bg-black'
-                                : 'border-gray-400 group-hover:border-[#18f109]'
-                            }`}
-                          >
-                            {selectedWords === item.item && (
-                              <Check className="w-3 h-3 text-[#18f109]" />
-                            )}
+                                ? 'bg-[#18f109] text-black shadow-md'
+                                : 'bg-gray-50 dark:bg-muted hover:bg-gray-100 dark:hover:bg-accent'
+                            }
+                          `}
+                          whileHover={{ x: 5 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <input
+                            type="radio"
+                            name="words"
+                            value={item.item}
+                            checked={selectedWords === item.item}
+                            onChange={() => {
+                              setSelectedWords(item.item);
+                              if (!isLastOption) setCustomWordCount('');
+                            }}
+                            className="sr-only"
+                          />
+                          <div className="flex items-center justify-between w-full">
+                            <span className="font-medium">{item.item}</span>
+                            <div className="flex items-center gap-2">
+                              {item.price > 0 && !showCustomInput && <span className="font-semibold">+€{item.price}</span>}
+                              {showCustomInput && customWordCount && (
+                                <span className="font-semibold">
+                                  +€{(() => {
+                                    const words = parseInt(customWordCount) || 0;
+                                    const minWords = item.item === '1500+' ? 1501 : 2001;
+                                    return calculateWordPrice(Math.max(words, minWords), currentProduction.name);
+                                  })()}
+                                </span>
+                              )}
+                              <div
+                                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                                  selectedWords === item.item
+                                    ? 'border-black bg-black'
+                                    : 'border-gray-400 group-hover:border-[#18f109]'
+                                }`}
+                              >
+                                {selectedWords === item.item && (
+                                  <Check className="w-3 h-3 text-[#18f109]" />
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        </motion.label>
+                        
+                        {/* Custom word count input */}
+                        <AnimatePresence>
+                          {showCustomInput && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="px-4 pb-2">
+                                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                  Voer het exacte aantal woorden in:
+                                </label>
+                                <input
+                                  type="number"
+                                  min={isLastOption && item.item === '1500+' ? 1501 : 2001}
+                                  value={customWordCount}
+                                  onChange={(e) => setCustomWordCount(e.target.value)}
+                                  placeholder={`Bijv. ${isLastOption && item.item === '1500+' ? '2000' : '2500'}`}
+                                  className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#18f109] focus:border-transparent"
+                                />
+                                {customWordCount && parseInt(customWordCount) > 0 && (
+                                  <div className="mt-2 space-y-2">
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                                      {(() => {
+                                        const words = parseInt(customWordCount);
+                                        const minWords = item.item === '1500+' ? 1501 : 2001;
+                                        const actualWords = Math.max(words, minWords);
+                                        const price = calculateWordPrice(actualWords, currentProduction.name);
+                                        
+                                        if (words < minWords) {
+                                          // Find the appropriate tier for this word count
+                                          const appropriateTier = currentProduction.itemlistTwo.find((tier, idx) => {
+                                            const [min, max] = tier.item.split(' - ').map(s => parseInt(s.replace('+', '')) || 0);
+                                            return words >= min && (max === 0 || words <= max);
+                                          });
+                                          
+                                          return (
+                                            <div className="bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200 p-3 rounded-lg">
+                                              <p className="font-medium mb-1">Let op:</p>
+                                              <p>Voor {words} woorden kun je beter de optie "{appropriateTier?.item || '0 - 250'}" selecteren.</p>
+                                              <p className="mt-1">Deze optie heeft een minimum van {minWords} woorden (€{price}).</p>
+                                            </div>
+                                          );
+                                        } else {
+                                          return (
+                                            <>
+                                              <p>Prijs per woord: €{(price / words).toFixed(4)}</p>
+                                              <p className="text-xs">Totaal voor {words} woorden: €{price}</p>
+                                            </>
+                                          );
+                                        }
+                                      })()}
+                                    </div>
+                                    
+                                    {/* Pricing explanation button */}
+                                    <button
+                                      onClick={() => setShowPricingDrawer(true)}
+                                      className="text-xs text-[#18f109] hover:text-[#14c208] transition-colors flex items-center gap-1"
+                                    >
+                                      <Info className="w-3 h-3" />
+                                      Hoe berekenen we de prijs?
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
-                    </motion.label>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Region Selection */}
@@ -1065,7 +1325,7 @@ export function PriceCalculator() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="mt-12 text-center"
+              className="mt-12 text-center pb-8"
             >
               <p className="text-sm text-normal">
                 Heb je vragen over de prijzen?{' '}
@@ -1078,6 +1338,262 @@ export function PriceCalculator() {
           </div>
         </div>
       </div>
+
+      {/* Pricing Calculation Modal */}
+      <AnimatePresence>
+        {showPricingDrawer && (
+          <div 
+            className="fixed inset-0 z-[100]"
+            style={{ 
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1rem'
+            }}
+          >
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowPricingDrawer(false)}
+              className="absolute inset-0 bg-black/50"
+              style={{ position: 'absolute', inset: 0 }}
+            />
+            
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-gray-900 flex flex-col"
+              style={{ 
+                position: 'relative',
+                zIndex: 10,
+                maxWidth: '672px',
+                width: '90vw'
+              }}>
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+                  <h3 className="text-xl font-semibold">
+                    Prijsberekening: {currentProduction.name}
+                  </h3>
+                  <button
+                    onClick={() => setShowPricingDrawer(false)}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                {/* Content */}
+                <div className="p-6 overflow-y-auto flex-1">
+                  {['Videoproductie', 'E-learning', 'Voice Response'].includes(currentProduction.name) ? (
+                    <div className="space-y-6">
+                      {/* Pricing table */}
+                      <div>
+                        <h4 className="font-medium mb-3">Prijzen per woordaantal</h4>
+                        <div className="space-y-2">
+                          {currentProduction.name === 'Videoproductie' && (
+                            <>
+                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                                <span>0 - 250 woorden</span>
+                                <span className="font-medium">Gratis</span>
+                              </div>
+                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                                <span>250 - 500 woorden</span>
+                                <span className="font-medium">€0,20 per woord</span>
+                              </div>
+                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                                <span>500 - 1000 woorden</span>
+                                <span className="font-medium">€0,30 per woord</span>
+                              </div>
+                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                                <span>1000 - 1500 woorden</span>
+                                <span className="font-medium">€0,45 per woord</span>
+                              </div>
+                              <div className="flex justify-between py-2 text-[#18f109] font-semibold">
+                                <span>1500+ woorden</span>
+                                <span>€0,23 per woord ✨</span>
+                              </div>
+                            </>
+                          )}
+                          {(currentProduction.name === 'E-learning' || currentProduction.name === 'Voice Response') && (
+                            <>
+                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                                <span>0 - 500 woorden</span>
+                                <span className="font-medium">Gratis</span>
+                              </div>
+                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                                <span>500 - 1000 woorden</span>
+                                <span className="font-medium">€0,20 per woord</span>
+                              </div>
+                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                                <span>1000 - 1500 woorden</span>
+                                <span className="font-medium">€0,35 per woord</span>
+                              </div>
+                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                                <span>1500 - 2000 woorden</span>
+                                <span className="font-medium">€0,50 per woord</span>
+                              </div>
+                              <div className="flex justify-between py-2 text-[#18f109] font-semibold">
+                                <span>2000+ woorden</span>
+                                <span>€0,20 per woord ✨</span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Formula example */}
+                      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                        <h4 className="font-medium mb-3">
+                          {customWordCount && parseInt(customWordCount) > 0 
+                            ? `Berekening voor ${parseInt(customWordCount)} woorden:`
+                            : 'Rekenvoorbeeld voor 2500 woorden:'}
+                        </h4>
+                        <div className="space-y-1 text-sm font-mono">
+                          {(() => {
+                            const wordCount = customWordCount && parseInt(customWordCount) > 0 
+                              ? parseInt(customWordCount) 
+                              : 2500;
+                            
+                            if (currentProduction.name === 'Videoproductie') {
+                              const calculations = [];
+                              let remaining = wordCount;
+                              let total = 0;
+                              
+                              // 0-250 free
+                              if (remaining > 0) {
+                                const words = Math.min(remaining, 250);
+                                calculations.push(<div key="1">Eerste {words} woorden: €0</div>);
+                                remaining -= words;
+                              }
+                              
+                              // 250-500 @ €0.20
+                              if (remaining > 0) {
+                                const words = Math.min(remaining, 250);
+                                const cost = words * 0.20;
+                                total += cost;
+                                calculations.push(<div key="2">{words} woorden × €0,20 = €{cost.toFixed(0)}</div>);
+                                remaining -= words;
+                              }
+                              
+                              // 500-1000 @ €0.30
+                              if (remaining > 0) {
+                                const words = Math.min(remaining, 500);
+                                const cost = words * 0.30;
+                                total += cost;
+                                calculations.push(<div key="3">{words} woorden × €0,30 = €{cost.toFixed(0)}</div>);
+                                remaining -= words;
+                              }
+                              
+                              // 1000-1500 @ €0.45
+                              if (remaining > 0) {
+                                const words = Math.min(remaining, 500);
+                                const cost = words * 0.45;
+                                total += cost;
+                                calculations.push(<div key="4">{words} woorden × €0,45 = €{cost.toFixed(0)}</div>);
+                                remaining -= words;
+                              }
+                              
+                              // 1500+ @ €0.23
+                              if (remaining > 0) {
+                                const cost = remaining * 0.23;
+                                total += cost;
+                                calculations.push(
+                                  <div key="5" className="text-[#18f109]">
+                                    {remaining} woorden × €0,23 = €{cost.toFixed(0)}
+                                  </div>
+                                );
+                              }
+                              
+                              calculations.push(
+                                <div key="total" className="pt-2 border-t border-gray-300 dark:border-gray-700 font-bold">
+                                  Totaal: €{total.toFixed(0)}
+                                </div>
+                              );
+                              
+                              return calculations;
+                            } else {
+                              // E-learning / Voice Response
+                              const calculations = [];
+                              let remaining = wordCount;
+                              let total = 0;
+                              
+                              // 0-500 free
+                              if (remaining > 0) {
+                                const words = Math.min(remaining, 500);
+                                calculations.push(<div key="1">Eerste {words} woorden: €0</div>);
+                                remaining -= words;
+                              }
+                              
+                              // 500-1000 @ €0.20
+                              if (remaining > 0) {
+                                const words = Math.min(remaining, 500);
+                                const cost = words * 0.20;
+                                total += cost;
+                                calculations.push(<div key="2">{words} woorden × €0,20 = €{cost.toFixed(0)}</div>);
+                                remaining -= words;
+                              }
+                              
+                              // 1000-1500 @ €0.35
+                              if (remaining > 0) {
+                                const words = Math.min(remaining, 500);
+                                const cost = words * 0.35;
+                                total += cost;
+                                calculations.push(<div key="3">{words} woorden × €0,35 = €{cost.toFixed(0)}</div>);
+                                remaining -= words;
+                              }
+                              
+                              // 1500-2000 @ €0.50
+                              if (remaining > 0) {
+                                const words = Math.min(remaining, 500);
+                                const cost = words * 0.50;
+                                total += cost;
+                                calculations.push(<div key="4">{words} woorden × €0,50 = €{cost.toFixed(0)}</div>);
+                                remaining -= words;
+                              }
+                              
+                              // 2000+ @ €0.20
+                              if (remaining > 0) {
+                                const cost = remaining * 0.20;
+                                total += cost;
+                                calculations.push(
+                                  <div key="5" className="text-[#18f109]">
+                                    {remaining} woorden × €0,20 = €{cost.toFixed(0)}
+                                  </div>
+                                );
+                              }
+                              
+                              calculations.push(
+                                <div key="total" className="pt-2 border-t border-gray-300 dark:border-gray-700 font-bold">
+                                  Totaal: €{total.toFixed(0)}
+                                </div>
+                              );
+                              
+                              return calculations;
+                            }
+                          })()}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-center py-8 text-gray-500">
+                      Deze productiesoort wordt berekend op basis van aantal versies.
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
