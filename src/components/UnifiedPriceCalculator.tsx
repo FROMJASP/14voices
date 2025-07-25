@@ -736,7 +736,7 @@ export function UnifiedPriceCalculator() {
               Weet wat je <span className="text-primary italic">betaalt</span>
             </h2>
             <p className="text-lg sm:text-xl text-foreground max-w-3xl mx-auto leading-relaxed">
-              Bereken de prijs voor jouw productie en boek jouw stem.
+              Bereken de prijs voor je productie en boek jouw stem.
             </p>
           </motion.div>
 
