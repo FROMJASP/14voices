@@ -180,6 +180,7 @@ export function VoiceoverSearchFieldDesign({ voiceovers }: VoiceoverSearchFieldD
 
   return (
     <div
+      id="voiceover-showcase"
       className={`min-h-screen bg-white dark:bg-background ${plusJakarta.variable} ${instrumentSerif.variable} font-plus-jakarta`}
     >
       <div className="relative">
