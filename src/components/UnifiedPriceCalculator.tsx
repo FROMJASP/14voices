@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus_Jakarta_Sans, Instrument_Serif } from 'next/font/google';
 import Link from 'next/link';
 import { Check, Info, Plus } from 'lucide-react';
-import { useVoiceover, scrollToVoiceovers } from '@/contexts/VoiceoverContext';
+import { useVoiceover } from '@/contexts/VoiceoverContext';
 import { useCart } from '@/contexts/CartContext';
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -520,8 +520,8 @@ export function UnifiedPriceCalculator() {
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [customWordCount, setCustomWordCount] = useState('');
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
-  const [showProductionAlert, setShowProductionAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
+  // const [showProductionAlert, setShowProductionAlert] = useState(false);
+  // const [alertMessage, setAlertMessage] = useState('');
 
   const currentProduction = selectedProduction !== null ? productionData[selectedProduction] : null;
 
@@ -715,68 +715,7 @@ export function UnifiedPriceCalculator() {
     setSelectedOptions(newOptions);
   };
 
-  // const handleBooking = () => {
-  // Check production selection
-  if (selectedProduction === null) {
-    setAlertMessage('Kies eerst een productiesoort voordat je kunt boeken');
-    setShowProductionAlert(true);
-    setTimeout(() => setShowProductionAlert(false), 3000);
-    const productionSection = document.getElementById('price-calculator');
-    if (productionSection) {
-      productionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    return;
-  }
-
-  // Check word/version selection
-  if (!selectedWords) {
-    setAlertMessage(
-      `Selecteer het aantal ${currentProduction?.name === 'Radiospots' || currentProduction?.name === 'TV Commercial' || currentProduction?.name === 'Web Commercial' ? 'versies' : 'woorden'} voor je productie`
-    );
-    setShowProductionAlert(true);
-    setTimeout(() => setShowProductionAlert(false), 3000);
-    return;
-  }
-
-  // Check custom word count for last option
-  const isLastOption =
-    currentProduction &&
-    selectedWords === currentProduction.itemlistTwo[currentProduction.itemlistTwo.length - 1].item;
-  if (isLastOption && (!customWordCount || parseInt(customWordCount) <= 0)) {
-    setAlertMessage('Vul het exacte aantal woorden in');
-    setShowProductionAlert(true);
-    setTimeout(() => setShowProductionAlert(false), 3000);
-    return;
-  }
-
-  // Check uitzendgebied for commercials
-  if (currentProduction?.uitzendgebied && !selectedRegion) {
-    setAlertMessage('Selecteer eerst een uitzendgebied voor je commercial');
-    setShowProductionAlert(true);
-    setTimeout(() => setShowProductionAlert(false), 3000);
-    return;
-  }
-
-  // Check voiceover selection
-  if (!selectedVoiceover) {
-    setAlertMessage('Je hebt nog geen stem gekozen voor je productie');
-    setShowProductionAlert(true);
-    setTimeout(() => setShowProductionAlert(false), 3000);
-    scrollToVoiceovers();
-    return;
-  }
-
-  // All validations passed - proceed with booking
-  console.log('Booking with:', {
-    selectedVoiceover,
-    selectedProduction,
-    selectedWords,
-    selectedRegion,
-    selectedOptions,
-    customWordCount,
-    total: calculateTotal,
-  });
-  // };
+  // Removed handleBooking function - validation logic moved elsewhere
 
   return (
     <>
@@ -872,8 +811,8 @@ export function UnifiedPriceCalculator() {
             </p>
           </motion.div>
 
-          {/* Production Selection Alert */}
-          <AnimatePresence>
+          {/* Production Selection Alert - temporarily disabled */}
+          {/* <AnimatePresence>
             {showProductionAlert && (
               <motion.div
                 initial={{ opacity: 0, y: -20, scale: 0.95 }}
@@ -887,7 +826,7 @@ export function UnifiedPriceCalculator() {
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
 
           {/* Calculator Content */}
           <div className="space-y-12">
