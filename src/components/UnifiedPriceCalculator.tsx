@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Check, Info, Plus } from 'lucide-react';
 import { useVoiceover } from '@/contexts/VoiceoverContext';
 import { useCart } from '@/contexts/CartContext';
+import { ProductionAccordion } from './ProductionAccordion';
 
 const plusJakarta = Plus_Jakarta_Sans({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -48,16 +49,6 @@ interface ProductionType {
   explainText?: string;
   uitzendgebied?: Array<{ name: string; price: number }>;
 }
-
-// Production emojis
-const productionEmojis: Record<string, string> = {
-  Videoproductie: '🎬',
-  'E-learning': '📚',
-  Radiospots: '📻',
-  'TV Commercial': '📺',
-  'Web Commercial': '🌐',
-  'Voice Response': '📞',
-};
 
 const productionData: ProductionType[] = [
   {
@@ -830,170 +821,92 @@ export function UnifiedPriceCalculator() {
 
           {/* Calculator Content */}
           <div className="space-y-12">
-            {/* Step 1: Production Type Selection */}
+            {/* Step 1: Production Type Selection with integrated configuration */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <h3 className="text-2xl font-semibold mb-8 flex items-center gap-3">
-                <span className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-black font-bold">
-                  1
-                </span>
-                Kies je productie
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 items-stretch">
-                {productionData.map((type, index) => {
-                  return (
-                    <motion.div
-                      key={type.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05, type: 'spring', stiffness: 100 }}
-                      onClick={() => {
-                        setSelectedProduction(index);
-                        setSelectedWords(null); // Don't auto-select
-                        setSelectedOptions(new Set());
-                        setCustomWordCount('');
-                        setSelectedRegion(null);
-                      }}
-                      className="relative group cursor-pointer"
-                    >
-                      {/* Mobile: Fixed height card */}
-                      <div className="sm:hidden">
-                        <motion.div
-                          className={`relative rounded-2xl transition-all duration-300 h-28 flex ${
-                            selectedProduction === index
-                              ? 'bg-gradient-to-r from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 border-2 border-primary shadow-lg shadow-primary/20'
-                              : 'bg-[#fcf9f5] dark:bg-card border border-border'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3 p-4 w-full">
-                            {/* Left: Icon */}
-                            <div
-                              className={`text-4xl flex-shrink-0 transition-transform duration-300 ${
-                                selectedProduction === index ? 'scale-110' : ''
-                              }`}
-                            >
-                              {productionEmojis[type.name]}
-                            </div>
+              <ProductionAccordion
+                onSelect={(data) => {
+                  setSelectedProduction(data.productionIndex);
+                  setSelectedWords(data.selectedWords);
+                  setSelectedOptions(data.selectedOptions);
+                  setCustomWordCount(data.customWordCount);
+                  setSelectedRegion(data.selectedRegion);
 
-                            {/* Center: Content */}
-                            <div className="flex-1 min-w-0 h-full flex flex-col justify-center">
-                              <h3 className="text-base font-semibold text-foreground">
-                                {type.name}
-                              </h3>
-                              <p className="text-sm text-muted-foreground line-clamp-2 leading-snug mt-1">
-                                {type.description}
-                              </p>
-                            </div>
+                  // Update cart
+                  const production = productionData[data.productionIndex];
+                  setProductionName(production.name);
+                  setWordCount(data.selectedWords || '');
+                  setRegion(data.selectedRegion || '');
+                  setExtras(Array.from(data.selectedOptions));
+                  setCartTotal(data.total);
 
-                            {/* Right: Price */}
-                            <div className="flex-shrink-0 text-right">
-                              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                                vanaf
-                              </p>
-                              <div className="flex items-baseline gap-0.5">
-                                <span className="text-xl font-bold text-foreground">
-                                  €{type.price}
-                                </span>
-                                <span className="text-xs text-muted-foreground">,-</span>
-                              </div>
-                            </div>
+                  // Update cart items
+                  const items = [];
+                  items.push({
+                    id: 'production',
+                    name: production.name,
+                    price: production.price,
+                    details: [],
+                  });
 
-                            {/* Selection indicator */}
-                            {selectedProduction === index && (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="absolute -top-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center"
-                              >
-                                <Check className="w-4 h-4 text-black" />
-                              </motion.div>
-                            )}
-                          </div>
-                        </motion.div>
-                      </div>
+                  if (data.selectedWords) {
+                    const wordItem = production.itemlistTwo.find(
+                      (item) => item.item === data.selectedWords
+                    );
+                    if (wordItem && wordItem.price > 0) {
+                      items.push({
+                        id: 'words',
+                        name: `${production.titleTwo}: ${data.selectedWords}`,
+                        price: wordItem.price,
+                        details: [],
+                      });
+                    }
+                  }
 
-                      {/* Tablet/Desktop: Fixed height card design */}
-                      <div className="hidden sm:block h-full">
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className={`relative h-full p-6 rounded-3xl transition-all duration-300 flex flex-col ${
-                            selectedProduction === index
-                              ? 'bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 border-2 border-primary shadow-lg shadow-primary/20'
-                              : 'bg-[#fcf9f5] dark:bg-card border border-border hover:border-primary/50 hover:shadow-md hover:bg-gradient-to-br hover:from-[#fcf9f5] hover:to-primary/5 dark:hover:from-card dark:hover:to-primary/10'
-                          }`}
-                          style={{ minHeight: '320px' }}
-                        >
-                          {/* Selection indicator */}
-                          <AnimatePresence>
-                            {selectedProduction === index && (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                exit={{ scale: 0 }}
-                                className="absolute -top-2 -right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center z-10"
-                              >
-                                <Check className="w-5 h-5 text-black" />
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                  data.selectedOptions.forEach((option) => {
+                    const optionItem = production.itemlistThree.find(
+                      (item) => item.item === option
+                    );
+                    if (optionItem) {
+                      items.push({
+                        id: option,
+                        name: option,
+                        price: optionItem.price,
+                        details: [],
+                      });
+                    }
+                  });
 
-                          {/* Icon and Title */}
-                          <div className="flex-shrink-0">
-                            <div
-                              className={`text-5xl mb-3 transition-transform duration-300 ${
-                                selectedProduction === index ? 'scale-110' : 'group-hover:scale-110'
-                              }`}
-                            >
-                              {productionEmojis[type.name]}
-                            </div>
-                            <h3 className="text-lg font-semibold text-foreground mb-3">
-                              {type.name}
-                            </h3>
-                          </div>
+                  if (data.selectedRegion && production.uitzendgebied) {
+                    const regionItem = production.uitzendgebied.find(
+                      (item) => item.name === data.selectedRegion
+                    );
+                    if (regionItem && regionItem.price > 0) {
+                      items.push({
+                        id: 'region',
+                        name: `Uitzendgebied: ${data.selectedRegion}`,
+                        price: regionItem.price,
+                        details: [],
+                      });
+                    }
+                  }
 
-                          {/* Description area with fixed height */}
-                          <div className="flex-1 min-h-0 mb-4">
-                            <div className="h-full overflow-y-auto custom-scrollbar">
-                              <p className="text-sm text-muted-foreground leading-relaxed pr-2">
-                                {type.description}
-                              </p>
-                            </div>
-                          </div>
+                  setCartItems(items);
+                  setCartItemCount(items.length);
 
-                          {/* Price - always at bottom */}
-                          <div className="flex-shrink-0 pt-3 border-t border-border/50">
-                            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
-                              vanaf
-                            </p>
-                            <div className="flex items-baseline gap-1">
-                              <span className="text-3xl font-bold text-foreground">
-                                €{type.price}
-                              </span>
-                              <span className="text-sm text-muted-foreground">,- </span>
-                            </div>
-                          </div>
-
-                          {/* Hover effect line */}
-                          <motion.div
-                            className="absolute bottom-0 left-6 right-6 h-0.5 bg-primary"
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: selectedProduction === index ? 1 : 0 }}
-                            transition={{ duration: 0.3 }}
-                          />
-                        </motion.div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
+                  if (selectedVoiceover) {
+                    setSelectedVoiceover(selectedVoiceover);
+                  }
+                }}
+                selectedProduction={selectedProduction}
+              />
             </motion.div>
 
-            {/* Step 2: Word Count Selection */}
-            {currentProduction && (
+            {/* Steps 2 and 3 are now integrated in ProductionSelectorEnhanced */}
+            {false && currentProduction && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
