@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus_Jakarta_Sans, Instrument_Serif } from 'next/font/google';
 import Link from 'next/link';
-import { Check, Info, User, ChevronRight, Sparkles, Shield, Plus } from 'lucide-react';
+import { Check, Info, Plus } from 'lucide-react';
 import { useVoiceover, scrollToVoiceovers } from '@/contexts/VoiceoverContext';
+import { useCart } from '@/contexts/CartContext';
 
 const plusJakarta = Plus_Jakarta_Sans({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -503,6 +504,16 @@ const calculateWordPrice = (words: number, productionType: string): number => {
 
 export function UnifiedPriceCalculator() {
   const { selectedVoiceover } = useVoiceover();
+  const {
+    setCartItemCount,
+    setCartItems,
+    setCartTotal,
+    setProductionName,
+    setWordCount,
+    setRegion,
+    setExtras,
+    setSelectedVoiceover,
+  } = useCart();
   const [selectedProduction, setSelectedProduction] = useState<number | null>(null);
   const [selectedWords, setSelectedWords] = useState<string | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
@@ -550,6 +561,128 @@ export function UnifiedPriceCalculator() {
     return total;
   }, [currentProduction, selectedWords, selectedOptions, selectedRegion, customWordCount]);
 
+  // Prepare cart items for FloatingCart
+  const cartItems = useMemo(() => {
+    const items = [];
+
+    if (currentProduction) {
+      // Add production type
+      items.push({
+        id: 'production',
+        name: currentProduction.name,
+        price: currentProduction.price,
+        details: [],
+      });
+
+      // Add word count price if applicable
+      if (selectedWords) {
+        const isLastOption =
+          selectedWords ===
+          currentProduction.itemlistTwo[currentProduction.itemlistTwo.length - 1].item;
+        if (isLastOption && customWordCount && parseInt(customWordCount) > 0) {
+          const minWords = selectedWords === '1500+' ? 1501 : 2001;
+          const words = Math.max(parseInt(customWordCount), minWords);
+          const wordPrice = calculateWordPrice(words, currentProduction.name);
+          if (wordPrice > 0) {
+            items.push({
+              id: 'words',
+              name: `Extra woorden (${words} woorden)`,
+              price: wordPrice,
+              details: [],
+            });
+          }
+        } else {
+          const wordItem = currentProduction.itemlistTwo.find(
+            (item) => item.item === selectedWords
+          );
+          if (wordItem && wordItem.price > 0) {
+            items.push({
+              id: 'words',
+              name: `${selectedWords} ${currentProduction.name === 'Radiospots' || currentProduction.name === 'TV Commercial' || currentProduction.name === 'Web Commercial' ? 'versies' : 'woorden'}`,
+              price: wordItem.price,
+              details: [],
+            });
+          }
+        }
+      }
+
+      // Add region price if applicable
+      if (currentProduction.uitzendgebied && selectedRegion) {
+        const regionItem = currentProduction.uitzendgebied.find(
+          (item) => item.name === selectedRegion
+        );
+        if (regionItem && regionItem.price > 0) {
+          items.push({
+            id: 'region',
+            name: `Uitzendgebied: ${selectedRegion}`,
+            price: regionItem.price,
+            details: [],
+          });
+        }
+      }
+    }
+
+    // Add extra options to items
+    if (currentProduction) {
+      selectedOptions.forEach((option) => {
+        const optionItem = currentProduction.itemlistThree.find((item) => item.item === option);
+        if (optionItem) {
+          items.push({
+            id: `option-${option}`,
+            name: option,
+            price: optionItem.price,
+            details: [],
+          });
+        }
+      });
+    }
+
+    return items;
+  }, [currentProduction, selectedWords, selectedRegion, customWordCount, selectedOptions]);
+
+  // Update cart context
+  useEffect(() => {
+    const itemCount =
+      cartItems.length + (selectedVoiceover ? 1 : 0) + Array.from(selectedOptions).length;
+    setCartItemCount(itemCount);
+    setCartItems(cartItems);
+    setCartTotal(calculateTotal);
+    setProductionName(currentProduction?.name);
+    setWordCount(
+      selectedWords
+        ? `${selectedWords} ${currentProduction?.name === 'Radiospots' || currentProduction?.name === 'TV Commercial' || currentProduction?.name === 'Web Commercial' ? 'versies' : 'woorden'}`
+        : undefined
+    );
+    setRegion(selectedRegion || undefined);
+    setExtras(Array.from(selectedOptions));
+    setSelectedVoiceover(
+      selectedVoiceover
+        ? {
+            name: selectedVoiceover.name,
+            profilePhoto: selectedVoiceover.profilePhoto,
+          }
+        : undefined
+    );
+  }, [
+    cartItems,
+    selectedVoiceover,
+    selectedOptions,
+    setCartItemCount,
+    setCartItems,
+    setCartTotal,
+    setProductionName,
+    setWordCount,
+    setRegion,
+    setExtras,
+    setSelectedVoiceover,
+    calculateTotal,
+    currentProduction,
+    selectedWords,
+    selectedRegion,
+  ]);
+
+  // Removed auto-open drawer - now using hover preview instead
+
   const toggleOption = (option: string) => {
     if (!currentProduction) return;
 
@@ -582,69 +715,68 @@ export function UnifiedPriceCalculator() {
     setSelectedOptions(newOptions);
   };
 
-  const handleBooking = () => {
-    // Check production selection
-    if (selectedProduction === null) {
-      setAlertMessage('Kies eerst een productiesoort voordat je kunt boeken');
-      setShowProductionAlert(true);
-      setTimeout(() => setShowProductionAlert(false), 3000);
-      const productionSection = document.getElementById('price-calculator');
-      if (productionSection) {
-        productionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      return;
+  // const handleBooking = () => {
+  // Check production selection
+  if (selectedProduction === null) {
+    setAlertMessage('Kies eerst een productiesoort voordat je kunt boeken');
+    setShowProductionAlert(true);
+    setTimeout(() => setShowProductionAlert(false), 3000);
+    const productionSection = document.getElementById('price-calculator');
+    if (productionSection) {
+      productionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    return;
+  }
 
-    // Check word/version selection
-    if (!selectedWords) {
-      setAlertMessage(
-        `Selecteer het aantal ${currentProduction?.name === 'Radiospots' || currentProduction?.name === 'TV Commercial' || currentProduction?.name === 'Web Commercial' ? 'versies' : 'woorden'} voor je productie`
-      );
-      setShowProductionAlert(true);
-      setTimeout(() => setShowProductionAlert(false), 3000);
-      return;
-    }
+  // Check word/version selection
+  if (!selectedWords) {
+    setAlertMessage(
+      `Selecteer het aantal ${currentProduction?.name === 'Radiospots' || currentProduction?.name === 'TV Commercial' || currentProduction?.name === 'Web Commercial' ? 'versies' : 'woorden'} voor je productie`
+    );
+    setShowProductionAlert(true);
+    setTimeout(() => setShowProductionAlert(false), 3000);
+    return;
+  }
 
-    // Check custom word count for last option
-    const isLastOption =
-      currentProduction &&
-      selectedWords ===
-        currentProduction.itemlistTwo[currentProduction.itemlistTwo.length - 1].item;
-    if (isLastOption && (!customWordCount || parseInt(customWordCount) <= 0)) {
-      setAlertMessage('Vul het exacte aantal woorden in');
-      setShowProductionAlert(true);
-      setTimeout(() => setShowProductionAlert(false), 3000);
-      return;
-    }
+  // Check custom word count for last option
+  const isLastOption =
+    currentProduction &&
+    selectedWords === currentProduction.itemlistTwo[currentProduction.itemlistTwo.length - 1].item;
+  if (isLastOption && (!customWordCount || parseInt(customWordCount) <= 0)) {
+    setAlertMessage('Vul het exacte aantal woorden in');
+    setShowProductionAlert(true);
+    setTimeout(() => setShowProductionAlert(false), 3000);
+    return;
+  }
 
-    // Check uitzendgebied for commercials
-    if (currentProduction?.uitzendgebied && !selectedRegion) {
-      setAlertMessage('Selecteer eerst een uitzendgebied voor je commercial');
-      setShowProductionAlert(true);
-      setTimeout(() => setShowProductionAlert(false), 3000);
-      return;
-    }
+  // Check uitzendgebied for commercials
+  if (currentProduction?.uitzendgebied && !selectedRegion) {
+    setAlertMessage('Selecteer eerst een uitzendgebied voor je commercial');
+    setShowProductionAlert(true);
+    setTimeout(() => setShowProductionAlert(false), 3000);
+    return;
+  }
 
-    // Check voiceover selection
-    if (!selectedVoiceover) {
-      setAlertMessage('Je hebt nog geen stem gekozen voor je productie');
-      setShowProductionAlert(true);
-      setTimeout(() => setShowProductionAlert(false), 3000);
-      scrollToVoiceovers();
-      return;
-    }
+  // Check voiceover selection
+  if (!selectedVoiceover) {
+    setAlertMessage('Je hebt nog geen stem gekozen voor je productie');
+    setShowProductionAlert(true);
+    setTimeout(() => setShowProductionAlert(false), 3000);
+    scrollToVoiceovers();
+    return;
+  }
 
-    // All validations passed - proceed with booking
-    console.log('Booking with:', {
-      selectedVoiceover,
-      selectedProduction,
-      selectedWords,
-      selectedRegion,
-      selectedOptions,
-      customWordCount,
-      total: calculateTotal,
-    });
-  };
+  // All validations passed - proceed with booking
+  console.log('Booking with:', {
+    selectedVoiceover,
+    selectedProduction,
+    selectedWords,
+    selectedRegion,
+    selectedOptions,
+    customWordCount,
+    total: calculateTotal,
+  });
+  // };
 
   return (
     <>
@@ -1160,130 +1292,23 @@ export function UnifiedPriceCalculator() {
             )}
           </div>
 
-          {/* Fixed Bottom Bar for Mobile - Total Price */}
-          <div className="fixed bottom-0 left-0 right-0 bg-[#fcf9f5] dark:bg-background border-t border-border p-4 md:hidden z-40">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm text-muted-foreground">Totaalprijs</p>
-                <p className="text-2xl font-bold">€{calculateTotal}</p>
-                {!selectedVoiceover && (
-                  <button
-                    onClick={scrollToVoiceovers}
-                    className="text-xs text-muted-foreground flex items-center gap-1.5 mt-1 group cursor-pointer"
-                  >
-                    <div className="w-5 h-5 rounded-full border border-dashed border-muted-foreground/50 flex items-center justify-center">
-                      <User className="w-3 h-3" />
-                    </div>
-                    <span className="group-hover:text-primary transition-colors">
-                      Kies een stem
-                    </span>
-                  </button>
-                )}
-              </div>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={handleBooking}
-                className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold flex items-center gap-2"
-              >
-                Nu boeken
-                <ChevronRight className="w-4 h-4" />
-              </motion.button>
-            </div>
+          {/* Contact for custom quote */}
+          <div className="text-center mt-12">
+            <p className="text-sm text-muted-foreground">
+              Heb je vragen over de prijzen?{' '}
+              <Link href="/contact" className="text-primary font-medium hover:underline">
+                Neem contact op
+              </Link>{' '}
+              voor een persoonlijke offerte.
+            </p>
           </div>
-
-          {/* Desktop Sticky Total */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="hidden md:block mt-12"
-          >
-            <div className="bg-[#fcf9f5] dark:bg-card rounded-2xl p-8 border border-border shadow-lg max-w-2xl mx-auto">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-2xl font-semibold mb-2">Totaalprijs</h3>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-primary">€{calculateTotal}</span>
-                    <span className="text-sm text-muted-foreground">excl. BTW</span>
-                  </div>
-                  <div className="mt-4 flex items-center gap-3">
-                    {selectedVoiceover ? (
-                      <>
-                        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                          <User className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Gekozen stem</p>
-                          <p className="font-medium text-foreground">
-                            {selectedVoiceover.voiceoverNaam}
-                          </p>
-                        </div>
-                      </>
-                    ) : (
-                      <button
-                        onClick={scrollToVoiceovers}
-                        className="flex items-center gap-3 hover:opacity-80 transition-opacity group cursor-pointer"
-                      >
-                        <div className="w-12 h-12 rounded-full border-2 border-dashed border-muted-foreground/50 flex items-center justify-center group-hover:border-primary transition-colors">
-                          <User className="w-6 h-6 text-muted-foreground/50 group-hover:text-primary transition-colors" />
-                        </div>
-                        <div className="text-left">
-                          <p className="text-sm text-muted-foreground">
-                            Je hebt nog geen stem gekozen
-                          </p>
-                          <p className="text-xs text-primary font-medium flex items-center gap-1">
-                            Kies een voice-over
-                            <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                          </p>
-                        </div>
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  whileHover={{ scale: 1.05 }}
-                  onClick={handleBooking}
-                  className="bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold text-lg flex items-center gap-2"
-                >
-                  Nu boeken
-                  <ChevronRight className="w-5 h-5" />
-                </motion.button>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="flex items-center justify-center gap-6 mt-6 pt-6 border-t border-border">
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Check className="w-4 h-4 text-primary" />
-                  <span>Snelle levering</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Shield className="w-4 h-4 text-primary" />
-                  <span>Veilig betalen</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  <span>Top kwaliteit</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact for custom quote */}
-            <div className="text-center mt-6">
-              <p className="text-sm text-muted-foreground">
-                Heb je vragen over de prijzen?{' '}
-                <Link href="/contact" className="text-primary font-medium hover:underline">
-                  Neem contact op
-                </Link>{' '}
-                voor een persoonlijke offerte.
-              </p>
-            </div>
-          </motion.div>
 
           {/* Add extra spacing for mobile fixed bottom bar */}
           <div className="h-24 md:hidden" />
         </div>
       </section>
+
+      {/* Cart Drawer removed - using hover preview in navbar instead */}
     </>
   );
 }

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { MaintenanceModeWrapper } from '@/components/MaintenanceModeWrapper';
 import { GlobalLayout } from '@/components/GlobalLayout';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { CartProvider } from '@/contexts/CartContext';
 import './globals.css';
 
 const geistSans = Geist({
@@ -28,9 +29,11 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <MaintenanceModeWrapper>
-            <GlobalLayout>{children}</GlobalLayout>
-          </MaintenanceModeWrapper>
+          <CartProvider>
+            <MaintenanceModeWrapper>
+              <GlobalLayout>{children}</GlobalLayout>
+            </MaintenanceModeWrapper>
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -6,6 +6,8 @@ import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { Instrument_Serif, Inter } from 'next/font/google';
+import { useCart } from '@/contexts/CartContext';
+import { CartButton } from '@/components/CartButton';
 
 const instrumentSerif = Instrument_Serif({
   weight: ['400'],
@@ -38,6 +40,16 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const {
+    cartItemCount,
+    cartItems,
+    cartTotal,
+    productionName,
+    wordCount,
+    region,
+    extras,
+    selectedVoiceover,
+  } = useCart();
 
   useEffect(() => {
     setMounted(true);
@@ -83,7 +95,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
 
       {/* Main Navbar */}
       <nav
-        className={`sticky top-0 z-50 bg-white dark:bg-background transition-all duration-300 ${isScrolled ? 'border-b border-gray-200 dark:border-border shadow-sm' : ''} ${instrumentSerif.variable} ${inter.variable}`}
+        className={`sticky top-0 z-[100] bg-white dark:bg-background transition-all duration-300 ${isScrolled ? 'border-b border-gray-200 dark:border-border shadow-sm' : ''} ${instrumentSerif.variable} ${inter.variable}`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -155,6 +167,18 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                 <span className="text-base">{theme === 'dark' ? '☀️' : '🌙'}</span>
               </button>
 
+              {/* Cart Icon with Preview */}
+              <CartButton
+                cartItemCount={cartItemCount}
+                cartItems={cartItems}
+                cartTotal={cartTotal}
+                productionName={productionName}
+                wordCount={wordCount}
+                region={region}
+                extras={extras}
+                selectedVoiceover={selectedVoiceover}
+              />
+
               {/* Login */}
               <Link
                 href="/login"
@@ -215,6 +239,19 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               >
                 <span className="text-base">{theme === 'dark' ? '☀️' : '🌙'}</span>
               </button>
+
+              {/* Cart Icon Mobile with Preview */}
+              <CartButton
+                cartItemCount={cartItemCount}
+                cartItems={cartItems}
+                cartTotal={cartTotal}
+                productionName={productionName}
+                wordCount={wordCount}
+                region={region}
+                extras={extras}
+                selectedVoiceover={selectedVoiceover}
+              />
+
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-lg text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
@@ -236,7 +273,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[98] lg:hidden"
             />
 
             {/* Menu Panel */}
@@ -245,7 +282,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white dark:bg-background shadow-xl z-50 lg:hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white dark:bg-background shadow-xl z-[99] lg:hidden flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-border">
