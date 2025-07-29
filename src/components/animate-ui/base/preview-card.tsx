@@ -145,13 +145,14 @@ export function PreviewCardTrigger({ render }: PreviewCardTriggerProps) {
     }
   };
 
-  return React.cloneElement(render as React.ReactElement<any>, {
+  return React.cloneElement(render, {
     ref: triggerRef,
     onMouseEnter: handleMouseEnter,
     onMouseLeave: handleMouseLeave,
     onMouseMove: handleMouseMove,
     onClick: handleClick,
-  });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
 }
 
 export function PreviewCardContent({
@@ -258,7 +259,7 @@ export function PreviewCardContent({
       window.removeEventListener('scroll', handleScroll, true);
       document.removeEventListener('scroll', handleScroll, true);
     };
-  }, [isOpen, side, sideOffset, align, alignOffset]);
+  }, [isOpen, side, sideOffset, align, alignOffset, triggerRef]);
 
   const handleMouseEnter = () => {
     if (!isMobile) {

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus_Jakarta_Sans, Instrument_Serif } from 'next/font/google';
 import { ChevronDown, Check, ShoppingCart, Users, Mic, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useVoiceover } from '@/contexts/VoiceoverContext';
 import { useCart } from '@/contexts/CartContext';
@@ -651,10 +652,12 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                       {selectedVoiceover ? (
                         <div className="flex items-center gap-3">
                           {selectedVoiceover.profilePhoto && (
-                            <img
+                            <Image
                               src={selectedVoiceover.profilePhoto}
                               alt={selectedVoiceover.name}
-                              className="w-10 h-10 rounded-full object-cover"
+                              width={40}
+                              height={40}
+                              className="rounded-full object-cover"
                             />
                           )}
                           <div className="text-left">
@@ -705,10 +708,12 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                               }`}
                             >
                               {voice.profilePhoto && (
-                                <img
+                                <Image
                                   src={voice.profilePhoto.url}
                                   alt={voice.profilePhoto.alt || voice.name}
-                                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                                  width={40}
+                                  height={40}
+                                  className="rounded-full object-cover flex-shrink-0"
                                 />
                               )}
                               <div className="flex-1 text-left">

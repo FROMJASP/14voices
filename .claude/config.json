@@ -1,0 +1,30 @@
+{
+  "projectName": "14voices",
+  "autoReadFiles": [".claude/CLAUDE.md", ".claude/RULES.md"],
+  "firstAction": "ALWAYS read CLAUDE.md before responding to any request",
+  "agentSystem": {
+    "enabled": true,
+    "requireAgentProposal": true,
+    "agents": {
+      "debugger": "Bug fixes, build errors, linting issues",
+      "ui-designer": "Visual design and component implementation",
+      "ux-designer": "User experience and interaction design",
+      "code-reviewer": "Security and best practices validation",
+      "database-optimizer": "Query optimization and schema design",
+      "test-runner": "QA strategy and test execution",
+      "deployment-engineer": "Build and deployment management",
+      "api-engineer": "API design and payment integration",
+      "security-engineer": "Security audits and compliance",
+      "performance-engineer": "Performance optimization",
+      "product-manager": "Feature planning and requirements",
+      "workflow-coordinator": "Orchestrates team collaboration"
+    }
+  },
+  "reminders": [
+    "Check CLAUDE.md for the automatic agent system",
+    "Propose appropriate agent(s) before starting work",
+    "Use BUN only (never npm/yarn/pnpm)",
+    "No 'any' types in TypeScript",
+    "Check for existing components before creating new ones"
+  ]
+}

@@ -418,8 +418,8 @@ interface ProductionDetailProps {
 export function ProductionDetail({ productionIndex, onAddToCart, onBack }: ProductionDetailProps) {
   const [selectedWords, setSelectedWords] = useState<string | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const [customWordCount, setCustomWordCount] = useState('');
+  const [selectedRegion] = useState<string | null>(null);
+  const [customWordCount] = useState('');
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 

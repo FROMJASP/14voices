@@ -118,8 +118,6 @@ export function ProductionCards({ onSelect, selectedProduction }: ProductionCard
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, type: 'spring', stiffness: 100 }}
-            onMouseEnter={() => setHoveredCard(index)}
-            onMouseLeave={() => setHoveredCard(null)}
             onClick={() => onSelect(index)}
             className="relative group cursor-pointer"
           >

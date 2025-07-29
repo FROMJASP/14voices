@@ -781,11 +781,7 @@ export function UnifiedPriceCalculator() {
                     Klik op een productie om te bestellen
                   </p>
                 </div>
-                <ProductionGrid
-                  onSelect={(index) => {
-                    setSelectedProduction(index);
-                  }}
-                />
+                <ProductionGrid />
               </motion.div>
             ) : (
               <ProductionDetail

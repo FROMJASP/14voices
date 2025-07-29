@@ -30,8 +30,6 @@ interface ProductionType {
   accentColor: string;
 }
 
-interface ProductionGridProps {}
-
 const productionData: ProductionType[] = [
   {
     name: 'Videoproductie',
@@ -93,7 +91,7 @@ const productionSlugs = [
   'voice-response',
 ];
 
-export function ProductionGrid({}: ProductionGridProps) {
+export function ProductionGrid() {
   return (
     <div className={`${plusJakarta.variable} ${instrumentSerif.variable} font-plus-jakarta`}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
