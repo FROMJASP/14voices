@@ -78,7 +78,8 @@ const productionData: ProductionType[] = [
   {
     name: 'Videoproductie',
     price: 175,
-    description: 'Videoproducties zijn video\'s die intern worden gebruikt, bijvoorbeeld als bedrijfsfilm, of extern via de website of sociale media — zonder inzet van advertentiebudget. Wordt de video ingezet als betaalde advertentie, kies dan voor de categorie \'Web Commercial\'.',
+    description:
+      "Videoproducties zijn video's die intern worden gebruikt, bijvoorbeeld als bedrijfsfilm, of extern via de website of sociale media — zonder inzet van advertentiebudget. Wordt de video ingezet als betaalde advertentie, kies dan voor de categorie 'Web Commercial'.",
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal woorden',
     itemlistTwo: [
@@ -139,7 +140,8 @@ const productionData: ProductionType[] = [
   {
     name: 'E-learning',
     price: 200,
-    description: 'E-learning video\'s worden ingezet voor educatieve doeleinden, zoals interne trainingen, onboarding of instructie voor medewerkers of klanten. Deze video\'s zijn bedoeld voor gebruik binnen een leeromgeving of platform, zonder commerciële doeleinden. Wanneer de video primair wordt ingezet als promotie of werving, kies dan voor de categorie \'Web Commercial\'.',
+    description:
+      "E-learning video's worden ingezet voor educatieve doeleinden, zoals interne trainingen, onboarding of instructie voor medewerkers of klanten. Deze video's zijn bedoeld voor gebruik binnen een leeromgeving of platform, zonder commerciële doeleinden. Wanneer de video primair wordt ingezet als promotie of werving, kies dan voor de categorie 'Web Commercial'.",
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal woorden',
     itemlistTwo: [
@@ -200,7 +202,8 @@ const productionData: ProductionType[] = [
   {
     name: 'Radiospot',
     price: 150,
-    description: 'Radiospots zijn audioboodschappen die worden uitgezonden via radio of streamingdiensten met als doel een product, dienst of merk te promoten. Deze producties zijn specifiek bedoeld voor commerciële doeleinden en worden verspreid met inzet van mediabudget.',
+    description:
+      'Radiospots zijn audioboodschappen die worden uitgezonden via radio of streamingdiensten met als doel een product, dienst of merk te promoten. Deze producties zijn specifiek bedoeld voor commerciële doeleinden en worden verspreid met inzet van mediabudget.',
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal versies',
     explainText:
@@ -261,7 +264,8 @@ const productionData: ProductionType[] = [
   {
     name: 'TV Commercial',
     price: 250,
-    description: 'TV Commercials zijn videoproducties die worden uitgezonden via televisie of videoplatforms met inzet van mediabudget. Ze zijn gericht op een breed publiek en bedoeld om merkbekendheid te vergroten of een product of dienst te promoten. Let op: vergeet niet te specificeren of de commercial regionaal of nationaal uitgezonden wordt.',
+    description:
+      'TV Commercials zijn videoproducties die worden uitgezonden via televisie of videoplatforms met inzet van mediabudget. Ze zijn gericht op een breed publiek en bedoeld om merkbekendheid te vergroten of een product of dienst te promoten. Let op: vergeet niet te specificeren of de commercial regionaal of nationaal uitgezonden wordt.',
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal versies',
     explainText:
@@ -328,7 +332,8 @@ const productionData: ProductionType[] = [
   {
     name: 'Web Commercial',
     price: 400,
-    description: 'Web Commercials zijn online video\'s die worden ingezet als advertentie op platforms zoals YouTube, Instagram, Facebook of LinkedIn, met gebruik van advertentiebudget. Ze zijn gericht op het promoten van een product, dienst of merk bij een specifieke doelgroep.',
+    description:
+      "Web Commercials zijn online video's die worden ingezet als advertentie op platforms zoals YouTube, Instagram, Facebook of LinkedIn, met gebruik van advertentiebudget. Ze zijn gericht op het promoten van een product, dienst of merk bij een specifieke doelgroep.",
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal versies',
     explainText:
@@ -395,7 +400,8 @@ const productionData: ProductionType[] = [
   {
     name: 'Voice Response',
     price: 150,
-    description: 'Voice Response betreft ingesproken teksten voor automatische telefoonsystemen, zoals keuzemenu\'s, welkomstboodschappen, voicemails of wachtrijen. Deze opnames zorgen voor een professionele en consistente telefonische klantbeleving.',
+    description:
+      "Voice Response betreft ingesproken teksten voor automatische telefoonsystemen, zoals keuzemenu's, welkomstboodschappen, voicemails of wachtrijen. Deze opnames zorgen voor een professionele en consistente telefonische klantbeleving.",
     titleOne: 'Productiesoort',
     titleTwo: 'Aantal woorden',
     itemlistTwo: [
@@ -459,36 +465,36 @@ const productionData: ProductionType[] = [
 const calculateWordPrice = (words: number, productionType: string): number => {
   // Base rates per word for each production type
   const rates = {
-    'Videoproductie': {
+    Videoproductie: {
       base: 0,
       tiers: [
         { max: 250, rate: 0 },
-        { max: 500, rate: 0.20 },
-        { max: 1000, rate: 0.30 },
+        { max: 500, rate: 0.2 },
+        { max: 1000, rate: 0.3 },
         { max: 1500, rate: 0.45 },
-        { max: Infinity, rate: 0.23 } // Progressive discount for 1500+
-      ]
+        { max: Infinity, rate: 0.23 }, // Progressive discount for 1500+
+      ],
     },
     'E-learning': {
       base: 0,
       tiers: [
         { max: 500, rate: 0 },
-        { max: 1000, rate: 0.20 },
+        { max: 1000, rate: 0.2 },
         { max: 1500, rate: 0.35 },
-        { max: 2000, rate: 0.50 },
-        { max: Infinity, rate: 0.20 } // Progressive discount for 2000+
-      ]
+        { max: 2000, rate: 0.5 },
+        { max: Infinity, rate: 0.2 }, // Progressive discount for 2000+
+      ],
     },
     'Voice Response': {
       base: 0,
       tiers: [
         { max: 500, rate: 0 },
-        { max: 1000, rate: 0.20 },
+        { max: 1000, rate: 0.2 },
         { max: 1500, rate: 0.35 },
-        { max: 2000, rate: 0.50 },
-        { max: Infinity, rate: 0.20 } // Progressive discount for 2000+
-      ]
-    }
+        { max: 2000, rate: 0.5 },
+        { max: Infinity, rate: 0.2 }, // Progressive discount for 2000+
+      ],
+    },
   };
 
   const productionRates = rates[productionType as keyof typeof rates];
@@ -500,7 +506,7 @@ const calculateWordPrice = (words: number, productionType: string): number => {
 
   for (const tier of productionRates.tiers) {
     if (remainingWords <= 0) break;
-    
+
     const wordsInThisTier = Math.min(remainingWords, tier.max - previousMax);
     totalPrice += wordsInThisTier * tier.rate;
     remainingWords -= wordsInThisTier;
@@ -527,7 +533,7 @@ export function PriceCalculator() {
     if (showPricingDrawer) {
       const originalStyle = window.getComputedStyle(document.body).overflow;
       document.body.style.overflow = 'hidden';
-      
+
       return () => {
         document.body.style.overflow = originalStyle;
       };
@@ -722,7 +728,7 @@ export function PriceCalculator() {
         <div className="absolute inset-0 pointer-events-none">
           {/* Subtle grid pattern */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#18f10908_1px,transparent_1px),linear-gradient(to_bottom,#18f10908_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-30" />
-          
+
           {/* Gradient orbs */}
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#18f109]/15 rounded-full filter blur-3xl" />
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#efd243]/10 rounded-full filter blur-3xl" />
@@ -772,7 +778,7 @@ export function PriceCalculator() {
                 {productionData.map((production, index) => {
                   const Icon = productionIcons[production.name] || Calculator;
                   const isExpanded = expandedProduction === production.name;
-                  
+
                   return (
                     <motion.div
                       key={production.name}
@@ -804,7 +810,9 @@ export function PriceCalculator() {
                         <div className="relative z-10">
                           <Icon
                             className={`w-8 h-8 mx-auto mb-3 transition-transform group-hover:scale-110 ${
-                              selectedProduction === production.name ? 'text-black' : 'text-[#18f109]'
+                              selectedProduction === production.name
+                                ? 'text-black'
+                                : 'text-[#18f109]'
                             }`}
                           />
                           <p className="font-medium text-sm mb-2 flex items-center justify-center gap-1">
@@ -836,7 +844,7 @@ export function PriceCalculator() {
                           />
                         )}
                       </motion.button>
-                      
+
                       {/* Desktop Tooltip (hover) */}
                       <AnimatePresence>
                         {hoveredProduction === production.name && !isExpanded && (
@@ -850,7 +858,7 @@ export function PriceCalculator() {
                           </motion.div>
                         )}
                       </AnimatePresence>
-                      
+
                       {/* Mobile/Tablet Expandable (tap) */}
                       <AnimatePresence>
                         {isExpanded && (
@@ -898,9 +906,12 @@ export function PriceCalculator() {
                 <div className="space-y-3">
                   {currentProduction.itemlistTwo.map((item, index) => {
                     const isLastOption = index === currentProduction.itemlistTwo.length - 1;
-                    const isWordBased = ['Videoproductie', 'E-learning', 'Voice Response'].includes(currentProduction.name);
-                    const showCustomInput = isWordBased && isLastOption && selectedWords === item.item;
-                    
+                    const isWordBased = ['Videoproductie', 'E-learning', 'Voice Response'].includes(
+                      currentProduction.name
+                    );
+                    const showCustomInput =
+                      isWordBased && isLastOption && selectedWords === item.item;
+
                     return (
                       <div key={item.item} className="space-y-2">
                         <motion.label
@@ -932,13 +943,19 @@ export function PriceCalculator() {
                           <div className="flex items-center justify-between w-full">
                             <span className="font-medium">{item.item}</span>
                             <div className="flex items-center gap-2">
-                              {item.price > 0 && !showCustomInput && <span className="font-semibold">+€{item.price}</span>}
+                              {item.price > 0 && !showCustomInput && (
+                                <span className="font-semibold">+€{item.price}</span>
+                              )}
                               {showCustomInput && customWordCount && (
                                 <span className="font-semibold">
-                                  +€{(() => {
+                                  +€
+                                  {(() => {
                                     const words = parseInt(customWordCount) || 0;
                                     const minWords = item.item === '1500+' ? 1501 : 2001;
-                                    return calculateWordPrice(Math.max(words, minWords), currentProduction.name);
+                                    return calculateWordPrice(
+                                      Math.max(words, minWords),
+                                      currentProduction.name
+                                    );
                                   })()}
                                 </span>
                               )}
@@ -956,7 +973,7 @@ export function PriceCalculator() {
                             </div>
                           </div>
                         </motion.label>
-                        
+
                         {/* Custom word count input */}
                         <AnimatePresence>
                           {showCustomInput && (
@@ -985,33 +1002,47 @@ export function PriceCalculator() {
                                         const words = parseInt(customWordCount);
                                         const minWords = item.item === '1500+' ? 1501 : 2001;
                                         const actualWords = Math.max(words, minWords);
-                                        const price = calculateWordPrice(actualWords, currentProduction.name);
-                                        
+                                        const price = calculateWordPrice(
+                                          actualWords,
+                                          currentProduction.name
+                                        );
+
                                         if (words < minWords) {
                                           // Find the appropriate tier for this word count
-                                          const appropriateTier = currentProduction.itemlistTwo.find((tier, idx) => {
-                                            const [min, max] = tier.item.split(' - ').map(s => parseInt(s.replace('+', '')) || 0);
-                                            return words >= min && (max === 0 || words <= max);
-                                          });
-                                          
+                                          const appropriateTier =
+                                            currentProduction.itemlistTwo.find((tier) => {
+                                              const [min, max] = tier.item
+                                                .split(' - ')
+                                                .map((s) => parseInt(s.replace('+', '')) || 0);
+                                              return words >= min && (max === 0 || words <= max);
+                                            });
+
                                           return (
                                             <div className="bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200 p-3 rounded-lg">
                                               <p className="font-medium mb-1">Let op:</p>
-                                              <p>Voor {words} woorden kun je beter de optie "{appropriateTier?.item || '0 - 250'}" selecteren.</p>
-                                              <p className="mt-1">Deze optie heeft een minimum van {minWords} woorden (€{price}).</p>
+                                              <p>
+                                                Voor {words} woorden kun je beter de optie &quot;
+                                                {appropriateTier?.item || '0 - 250'}&quot; selecteren.
+                                              </p>
+                                              <p className="mt-1">
+                                                Deze optie heeft een minimum van {minWords} woorden
+                                                (€{price}).
+                                              </p>
                                             </div>
                                           );
                                         } else {
                                           return (
                                             <>
                                               <p>Prijs per woord: €{(price / words).toFixed(4)}</p>
-                                              <p className="text-xs">Totaal voor {words} woorden: €{price}</p>
+                                              <p className="text-xs">
+                                                Totaal voor {words} woorden: €{price}
+                                              </p>
                                             </>
                                           );
                                         }
                                       })()}
                                     </div>
-                                    
+
                                     {/* Pricing explanation button */}
                                     <button
                                       onClick={() => setShowPricingDrawer(true)}
@@ -1342,9 +1373,9 @@ export function PriceCalculator() {
       {/* Pricing Calculation Modal */}
       <AnimatePresence>
         {showPricingDrawer && (
-          <div 
+          <div
             className="fixed inset-0 z-[100]"
-            style={{ 
+            style={{
               position: 'fixed',
               top: 0,
               left: 0,
@@ -1353,7 +1384,7 @@ export function PriceCalculator() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '1rem'
+              padding: '1rem',
             }}
           >
             {/* Backdrop */}
@@ -1365,7 +1396,7 @@ export function PriceCalculator() {
               className="absolute inset-0 bg-black/50"
               style={{ position: 'absolute', inset: 0 }}
             />
-            
+
             {/* Modal */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1373,224 +1404,257 @@ export function PriceCalculator() {
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.2 }}
               className="relative w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-gray-900 flex flex-col"
-              style={{ 
+              style={{
                 position: 'relative',
                 zIndex: 10,
                 maxWidth: '672px',
-                width: '90vw'
-              }}>
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-                  <h3 className="text-xl font-semibold">
-                    Prijsberekening: {currentProduction.name}
-                  </h3>
-                  <button
-                    onClick={() => setShowPricingDrawer(false)}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-                
-                {/* Content */}
-                <div className="p-6 overflow-y-auto flex-1">
-                  {['Videoproductie', 'E-learning', 'Voice Response'].includes(currentProduction.name) ? (
-                    <div className="space-y-6">
-                      {/* Pricing table */}
-                      <div>
-                        <h4 className="font-medium mb-3">Prijzen per woordaantal</h4>
-                        <div className="space-y-2">
-                          {currentProduction.name === 'Videoproductie' && (
-                            <>
-                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
-                                <span>0 - 250 woorden</span>
-                                <span className="font-medium">Gratis</span>
-                              </div>
-                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
-                                <span>250 - 500 woorden</span>
-                                <span className="font-medium">€0,20 per woord</span>
-                              </div>
-                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
-                                <span>500 - 1000 woorden</span>
-                                <span className="font-medium">€0,30 per woord</span>
-                              </div>
-                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
-                                <span>1000 - 1500 woorden</span>
-                                <span className="font-medium">€0,45 per woord</span>
-                              </div>
-                              <div className="flex justify-between py-2 text-[#18f109] font-semibold">
-                                <span>1500+ woorden</span>
-                                <span>€0,23 per woord ✨</span>
-                              </div>
-                            </>
-                          )}
-                          {(currentProduction.name === 'E-learning' || currentProduction.name === 'Voice Response') && (
-                            <>
-                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
-                                <span>0 - 500 woorden</span>
-                                <span className="font-medium">Gratis</span>
-                              </div>
-                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
-                                <span>500 - 1000 woorden</span>
-                                <span className="font-medium">€0,20 per woord</span>
-                              </div>
-                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
-                                <span>1000 - 1500 woorden</span>
-                                <span className="font-medium">€0,35 per woord</span>
-                              </div>
-                              <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
-                                <span>1500 - 2000 woorden</span>
-                                <span className="font-medium">€0,50 per woord</span>
-                              </div>
-                              <div className="flex justify-between py-2 text-[#18f109] font-semibold">
-                                <span>2000+ woorden</span>
-                                <span>€0,20 per woord ✨</span>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Formula example */}
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                        <h4 className="font-medium mb-3">
-                          {customWordCount && parseInt(customWordCount) > 0 
-                            ? `Berekening voor ${parseInt(customWordCount)} woorden:`
-                            : 'Rekenvoorbeeld voor 2500 woorden:'}
-                        </h4>
-                        <div className="space-y-1 text-sm font-mono">
-                          {(() => {
-                            const wordCount = customWordCount && parseInt(customWordCount) > 0 
-                              ? parseInt(customWordCount) 
-                              : 2500;
-                            
-                            if (currentProduction.name === 'Videoproductie') {
-                              const calculations = [];
-                              let remaining = wordCount;
-                              let total = 0;
-                              
-                              // 0-250 free
-                              if (remaining > 0) {
-                                const words = Math.min(remaining, 250);
-                                calculations.push(<div key="1">Eerste {words} woorden: €0</div>);
-                                remaining -= words;
-                              }
-                              
-                              // 250-500 @ €0.20
-                              if (remaining > 0) {
-                                const words = Math.min(remaining, 250);
-                                const cost = words * 0.20;
-                                total += cost;
-                                calculations.push(<div key="2">{words} woorden × €0,20 = €{cost.toFixed(0)}</div>);
-                                remaining -= words;
-                              }
-                              
-                              // 500-1000 @ €0.30
-                              if (remaining > 0) {
-                                const words = Math.min(remaining, 500);
-                                const cost = words * 0.30;
-                                total += cost;
-                                calculations.push(<div key="3">{words} woorden × €0,30 = €{cost.toFixed(0)}</div>);
-                                remaining -= words;
-                              }
-                              
-                              // 1000-1500 @ €0.45
-                              if (remaining > 0) {
-                                const words = Math.min(remaining, 500);
-                                const cost = words * 0.45;
-                                total += cost;
-                                calculations.push(<div key="4">{words} woorden × €0,45 = €{cost.toFixed(0)}</div>);
-                                remaining -= words;
-                              }
-                              
-                              // 1500+ @ €0.23
-                              if (remaining > 0) {
-                                const cost = remaining * 0.23;
-                                total += cost;
-                                calculations.push(
-                                  <div key="5" className="text-[#18f109]">
-                                    {remaining} woorden × €0,23 = €{cost.toFixed(0)}
-                                  </div>
-                                );
-                              }
-                              
-                              calculations.push(
-                                <div key="total" className="pt-2 border-t border-gray-300 dark:border-gray-700 font-bold">
-                                  Totaal: €{total.toFixed(0)}
-                                </div>
-                              );
-                              
-                              return calculations;
-                            } else {
-                              // E-learning / Voice Response
-                              const calculations = [];
-                              let remaining = wordCount;
-                              let total = 0;
-                              
-                              // 0-500 free
-                              if (remaining > 0) {
-                                const words = Math.min(remaining, 500);
-                                calculations.push(<div key="1">Eerste {words} woorden: €0</div>);
-                                remaining -= words;
-                              }
-                              
-                              // 500-1000 @ €0.20
-                              if (remaining > 0) {
-                                const words = Math.min(remaining, 500);
-                                const cost = words * 0.20;
-                                total += cost;
-                                calculations.push(<div key="2">{words} woorden × €0,20 = €{cost.toFixed(0)}</div>);
-                                remaining -= words;
-                              }
-                              
-                              // 1000-1500 @ €0.35
-                              if (remaining > 0) {
-                                const words = Math.min(remaining, 500);
-                                const cost = words * 0.35;
-                                total += cost;
-                                calculations.push(<div key="3">{words} woorden × €0,35 = €{cost.toFixed(0)}</div>);
-                                remaining -= words;
-                              }
-                              
-                              // 1500-2000 @ €0.50
-                              if (remaining > 0) {
-                                const words = Math.min(remaining, 500);
-                                const cost = words * 0.50;
-                                total += cost;
-                                calculations.push(<div key="4">{words} woorden × €0,50 = €{cost.toFixed(0)}</div>);
-                                remaining -= words;
-                              }
-                              
-                              // 2000+ @ €0.20
-                              if (remaining > 0) {
-                                const cost = remaining * 0.20;
-                                total += cost;
-                                calculations.push(
-                                  <div key="5" className="text-[#18f109]">
-                                    {remaining} woorden × €0,20 = €{cost.toFixed(0)}
-                                  </div>
-                                );
-                              }
-                              
-                              calculations.push(
-                                <div key="total" className="pt-2 border-t border-gray-300 dark:border-gray-700 font-bold">
-                                  Totaal: €{total.toFixed(0)}
-                                </div>
-                              );
-                              
-                              return calculations;
-                            }
-                          })()}
-                        </div>
+                width: '90vw',
+              }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+                <h3 className="text-xl font-semibold">Prijsberekening: {currentProduction.name}</h3>
+                <button
+                  onClick={() => setShowPricingDrawer(false)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 overflow-y-auto flex-1">
+                {['Videoproductie', 'E-learning', 'Voice Response'].includes(
+                  currentProduction.name
+                ) ? (
+                  <div className="space-y-6">
+                    {/* Pricing table */}
+                    <div>
+                      <h4 className="font-medium mb-3">Prijzen per woordaantal</h4>
+                      <div className="space-y-2">
+                        {currentProduction.name === 'Videoproductie' && (
+                          <>
+                            <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                              <span>0 - 250 woorden</span>
+                              <span className="font-medium">Gratis</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                              <span>250 - 500 woorden</span>
+                              <span className="font-medium">€0,20 per woord</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                              <span>500 - 1000 woorden</span>
+                              <span className="font-medium">€0,30 per woord</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                              <span>1000 - 1500 woorden</span>
+                              <span className="font-medium">€0,45 per woord</span>
+                            </div>
+                            <div className="flex justify-between py-2 text-[#18f109] font-semibold">
+                              <span>1500+ woorden</span>
+                              <span>€0,23 per woord ✨</span>
+                            </div>
+                          </>
+                        )}
+                        {(currentProduction.name === 'E-learning' ||
+                          currentProduction.name === 'Voice Response') && (
+                          <>
+                            <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                              <span>0 - 500 woorden</span>
+                              <span className="font-medium">Gratis</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                              <span>500 - 1000 woorden</span>
+                              <span className="font-medium">€0,20 per woord</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                              <span>1000 - 1500 woorden</span>
+                              <span className="font-medium">€0,35 per woord</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                              <span>1500 - 2000 woorden</span>
+                              <span className="font-medium">€0,50 per woord</span>
+                            </div>
+                            <div className="flex justify-between py-2 text-[#18f109] font-semibold">
+                              <span>2000+ woorden</span>
+                              <span>€0,20 per woord ✨</span>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
-                  ) : (
-                    <p className="text-center py-8 text-gray-500">
-                      Deze productiesoort wordt berekend op basis van aantal versies.
-                    </p>
-                  )}
-                </div>
-              </motion.div>
+
+                    {/* Formula example */}
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                      <h4 className="font-medium mb-3">
+                        {customWordCount && parseInt(customWordCount) > 0
+                          ? `Berekening voor ${parseInt(customWordCount)} woorden:`
+                          : 'Rekenvoorbeeld voor 2500 woorden:'}
+                      </h4>
+                      <div className="space-y-1 text-sm font-mono">
+                        {(() => {
+                          const wordCount =
+                            customWordCount && parseInt(customWordCount) > 0
+                              ? parseInt(customWordCount)
+                              : 2500;
+
+                          if (currentProduction.name === 'Videoproductie') {
+                            const calculations = [];
+                            let remaining = wordCount;
+                            let total = 0;
+
+                            // 0-250 free
+                            if (remaining > 0) {
+                              const words = Math.min(remaining, 250);
+                              calculations.push(<div key="1">Eerste {words} woorden: €0</div>);
+                              remaining -= words;
+                            }
+
+                            // 250-500 @ €0.20
+                            if (remaining > 0) {
+                              const words = Math.min(remaining, 250);
+                              const cost = words * 0.2;
+                              total += cost;
+                              calculations.push(
+                                <div key="2">
+                                  {words} woorden × €0,20 = €{cost.toFixed(0)}
+                                </div>
+                              );
+                              remaining -= words;
+                            }
+
+                            // 500-1000 @ €0.30
+                            if (remaining > 0) {
+                              const words = Math.min(remaining, 500);
+                              const cost = words * 0.3;
+                              total += cost;
+                              calculations.push(
+                                <div key="3">
+                                  {words} woorden × €0,30 = €{cost.toFixed(0)}
+                                </div>
+                              );
+                              remaining -= words;
+                            }
+
+                            // 1000-1500 @ €0.45
+                            if (remaining > 0) {
+                              const words = Math.min(remaining, 500);
+                              const cost = words * 0.45;
+                              total += cost;
+                              calculations.push(
+                                <div key="4">
+                                  {words} woorden × €0,45 = €{cost.toFixed(0)}
+                                </div>
+                              );
+                              remaining -= words;
+                            }
+
+                            // 1500+ @ €0.23
+                            if (remaining > 0) {
+                              const cost = remaining * 0.23;
+                              total += cost;
+                              calculations.push(
+                                <div key="5" className="text-[#18f109]">
+                                  {remaining} woorden × €0,23 = €{cost.toFixed(0)}
+                                </div>
+                              );
+                            }
+
+                            calculations.push(
+                              <div
+                                key="total"
+                                className="pt-2 border-t border-gray-300 dark:border-gray-700 font-bold"
+                              >
+                                Totaal: €{total.toFixed(0)}
+                              </div>
+                            );
+
+                            return calculations;
+                          } else {
+                            // E-learning / Voice Response
+                            const calculations = [];
+                            let remaining = wordCount;
+                            let total = 0;
+
+                            // 0-500 free
+                            if (remaining > 0) {
+                              const words = Math.min(remaining, 500);
+                              calculations.push(<div key="1">Eerste {words} woorden: €0</div>);
+                              remaining -= words;
+                            }
+
+                            // 500-1000 @ €0.20
+                            if (remaining > 0) {
+                              const words = Math.min(remaining, 500);
+                              const cost = words * 0.2;
+                              total += cost;
+                              calculations.push(
+                                <div key="2">
+                                  {words} woorden × €0,20 = €{cost.toFixed(0)}
+                                </div>
+                              );
+                              remaining -= words;
+                            }
+
+                            // 1000-1500 @ €0.35
+                            if (remaining > 0) {
+                              const words = Math.min(remaining, 500);
+                              const cost = words * 0.35;
+                              total += cost;
+                              calculations.push(
+                                <div key="3">
+                                  {words} woorden × €0,35 = €{cost.toFixed(0)}
+                                </div>
+                              );
+                              remaining -= words;
+                            }
+
+                            // 1500-2000 @ €0.50
+                            if (remaining > 0) {
+                              const words = Math.min(remaining, 500);
+                              const cost = words * 0.5;
+                              total += cost;
+                              calculations.push(
+                                <div key="4">
+                                  {words} woorden × €0,50 = €{cost.toFixed(0)}
+                                </div>
+                              );
+                              remaining -= words;
+                            }
+
+                            // 2000+ @ €0.20
+                            if (remaining > 0) {
+                              const cost = remaining * 0.2;
+                              total += cost;
+                              calculations.push(
+                                <div key="5" className="text-[#18f109]">
+                                  {remaining} woorden × €0,20 = €{cost.toFixed(0)}
+                                </div>
+                              );
+                            }
+
+                            calculations.push(
+                              <div
+                                key="total"
+                                className="pt-2 border-t border-gray-300 dark:border-gray-700 font-bold"
+                              >
+                                Totaal: €{total.toFixed(0)}
+                              </div>
+                            );
+
+                            return calculations;
+                          }
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-center py-8 text-gray-500">
+                    Deze productiesoort wordt berekend op basis van aantal versies.
+                  </p>
+                )}
+              </div>
+            </motion.div>
           </div>
         )}
       </AnimatePresence>

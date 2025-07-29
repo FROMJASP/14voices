@@ -1,4 +1,4 @@
-import type { Payload } from 'payload'
+import type { Payload } from 'payload';
 
 export async function seedLayouts(payload: Payload) {
   try {
@@ -6,11 +6,11 @@ export async function seedLayouts(payload: Payload) {
     const existingLayouts = await payload.find({
       collection: 'layouts',
       limit: 1,
-    })
+    });
 
     if (existingLayouts.docs.length > 0) {
-      console.log('ℹ️  Layouts already exist, skipping seed')
-      return existingLayouts.docs[0]
+      console.log('ℹ️  Layouts already exist, skipping seed');
+      return existingLayouts.docs[0];
     }
 
     // Create the default layout with a beautiful footer
@@ -34,7 +34,8 @@ export async function seedLayouts(payload: Payload) {
         footer: {
           style: 'multi-column',
           showLogo: true,
-          description: 'Professional voice-over services for commercials, narration, e-learning, and more. Bringing your scripts to life with the perfect voice.',
+          description:
+            'Professional voice-over services for commercials, narration, e-learning, and more. Bringing your scripts to life with the perfect voice.',
           copyrightText: '© {year} {siteName}. All rights reserved.',
           navigationColumns: [
             {
@@ -143,7 +144,8 @@ export async function seedLayouts(payload: Payload) {
           newsletter: {
             enabled: true,
             title: 'Stay Connected',
-            description: 'Get voice-over tips, industry news, and exclusive offers delivered to your inbox.',
+            description:
+              'Get voice-over tips, industry news, and exclusive offers delivered to your inbox.',
             placeholder: 'Enter your email address',
             buttonText: 'Subscribe',
           },
@@ -180,9 +182,9 @@ export async function seedLayouts(payload: Payload) {
           footerPadding: 'medium',
         },
       },
-    })
+    });
 
-    console.log('✅ Default layout created successfully')
+    console.log('✅ Default layout created successfully');
 
     // Create a minimal layout option as well
     await payload.create({
@@ -235,13 +237,13 @@ export async function seedLayouts(payload: Payload) {
           footerPadding: 'small',
         },
       },
-    })
+    });
 
-    console.log('✅ Minimal layout created successfully')
+    console.log('✅ Minimal layout created successfully');
 
-    return defaultLayout
+    return defaultLayout;
   } catch (error) {
-    console.error('❌ Error creating layouts:', error)
-    throw error
+    console.error('❌ Error creating layouts:', error);
+    throw error;
   }
 }

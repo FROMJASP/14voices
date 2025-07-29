@@ -1,19 +1,19 @@
-import { Mail } from 'lucide-react'
+import { Mail } from 'lucide-react';
 
 interface MaintenanceModeProps {
-  title?: string
-  message?: string
-  contactLabel?: string
-  contactEmail?: string
-  showContactEmail?: boolean
+  title?: string;
+  message?: string;
+  contactLabel?: string;
+  contactEmail?: string;
+  showContactEmail?: boolean;
 }
 
-export function MaintenanceMode({ 
+export function MaintenanceMode({
   title,
-  message, 
+  message,
   contactLabel,
   contactEmail,
-  showContactEmail = true
+  showContactEmail = true,
 }: MaintenanceModeProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
@@ -41,21 +41,17 @@ export function MaintenanceMode({
               />
             </svg>
           </div>
-          
-          <h1 className="text-4xl font-bold mb-4">
-            {title || "We zijn zo terug!"}
-          </h1>
-          
+
+          <h1 className="text-4xl font-bold mb-4">{title || 'We zijn zo terug!'}</h1>
+
           <div className="text-lg text-white/70 max-w-md mx-auto">
-            {message || "We voeren momenteel gepland onderhoud uit. We zijn zo weer online."}
+            {message || 'We voeren momenteel gepland onderhoud uit. We zijn zo weer online.'}
           </div>
         </div>
 
         {showContactEmail && contactEmail && (
           <div className="mt-8 pt-8 border-t border-white/10">
-            <p className="text-sm text-white/50 mb-2">
-              {contactLabel || 'Contact nodig?'}
-            </p>
+            <p className="text-sm text-white/50 mb-2">{contactLabel || 'Contact nodig?'}</p>
             <a
               href={`mailto:${contactEmail}`}
               className="inline-flex items-center gap-2 text-white hover:underline"
@@ -67,5 +63,5 @@ export function MaintenanceMode({
         )}
       </div>
     </div>
-  )
+  );
 }

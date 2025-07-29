@@ -1,98 +1,101 @@
-import { Payload } from 'payload'
-import { Resend } from 'resend'
-import { renderEmailTemplate } from './renderer'
+import { Payload } from 'payload';
+import { Resend } from 'resend';
+import { renderEmailTemplate } from './renderer';
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface BatchEmailJob {
-  id: string
+  id: string;
   recipient: {
-    id: string
-    email: string
-    name?: string
-  }
+    id: string;
+    email: string;
+    name?: string;
+  };
   template: {
-    id: string
-    key: string
-  }
+    id: string;
+    key: string;
+  };
   sequence?: {
-    id: string
-    key: string
-  }
-  variables?: Record<string, string | number | boolean>
+    id: string;
+    key: string;
+  };
+  variables?: Record<string, string | number | boolean>;
 }
 
 interface BatchResult {
-  successful: string[]
+  successful: string[];
   failed: Array<{
-    jobId: string
-    error: string
-  }>
-  totalProcessed: number
-  duration: number
+    jobId: string;
+    error: string;
+  }>;
+  totalProcessed: number;
+  duration: number;
 }
 
 export class EmailBatchProcessor {
-  private payload: Payload
-  private batchSize: number
-  private maxRetries: number
-  private concurrency: number
+  private payload: Payload;
+  private batchSize: number;
+  private maxRetries: number;
+  private concurrency: number;
 
-  constructor(payload: Payload, options?: {
-    batchSize?: number
-    maxRetries?: number
-    concurrency?: number
-  }) {
-    this.payload = payload
-    this.batchSize = options?.batchSize || 100
-    this.maxRetries = options?.maxRetries || 3
-    this.concurrency = options?.concurrency || 10
+  constructor(
+    payload: Payload,
+    options?: {
+      batchSize?: number;
+      maxRetries?: number;
+      concurrency?: number;
+    }
+  ) {
+    this.payload = payload;
+    this.batchSize = options?.batchSize || 100;
+    this.maxRetries = options?.maxRetries || 3;
+    this.concurrency = options?.concurrency || 10;
   }
 
   async processBatch(limit: number = 1000): Promise<BatchResult> {
-    const startTime = Date.now()
+    const startTime = Date.now();
     const result: BatchResult = {
       successful: [],
       failed: [],
       totalProcessed: 0,
-      duration: 0
-    }
+      duration: 0,
+    };
 
     try {
-      const batches = Math.ceil(limit / this.batchSize)
-      
+      const batches = Math.ceil(limit / this.batchSize);
+
       for (let i = 0; i < batches; i++) {
-        const offset = i * this.batchSize
-        const batchLimit = Math.min(this.batchSize, limit - offset)
-        
-        const jobs = await this.fetchDueJobs(batchLimit, offset)
-        
-        if (jobs.length === 0) break
-        
-        await this.markJobsAsProcessing(jobs.map(j => j.id))
-        
-        const batchResults = await this.processBatchConcurrently(jobs)
-        
-        result.successful.push(...batchResults.successful)
-        result.failed.push(...batchResults.failed)
-        result.totalProcessed += jobs.length
-        
-        await this.updateJobStatuses(batchResults)
-        
-        if (jobs.length < batchLimit) break
+        const offset = i * this.batchSize;
+        const batchLimit = Math.min(this.batchSize, limit - offset);
+
+        const jobs = await this.fetchDueJobs(batchLimit, offset);
+
+        if (jobs.length === 0) break;
+
+        await this.markJobsAsProcessing(jobs.map((j) => j.id));
+
+        const batchResults = await this.processBatchConcurrently(jobs);
+
+        result.successful.push(...batchResults.successful);
+        result.failed.push(...batchResults.failed);
+        result.totalProcessed += jobs.length;
+
+        await this.updateJobStatuses(batchResults);
+
+        if (jobs.length < batchLimit) break;
       }
     } catch (error) {
-      console.error('Batch processing error:', error)
+      console.error('Batch processing error:', error);
     } finally {
-      result.duration = Date.now() - startTime
+      result.duration = Date.now() - startTime;
     }
 
-    return result
+    return result;
   }
 
   private async fetchDueJobs(limit: number, offset: number = 0): Promise<BatchEmailJob[]> {
-    const now = new Date()
-    
+    const now = new Date();
+
     const response = await this.payload.find({
       collection: 'email-jobs',
       where: {
@@ -110,13 +113,13 @@ export class EmailBatchProcessor {
       page: Math.floor(offset / limit) + 1,
       depth: 2,
       sort: 'scheduledFor',
-    })
+    });
 
-    return response.docs as unknown as BatchEmailJob[]
+    return response.docs as unknown as BatchEmailJob[];
   }
 
   private async markJobsAsProcessing(jobIds: string[]): Promise<void> {
-    const updatePromises = jobIds.map(id => 
+    const updatePromises = jobIds.map((id) =>
       this.payload.update({
         collection: 'email-jobs',
         id,
@@ -124,20 +127,20 @@ export class EmailBatchProcessor {
           status: 'processing',
         },
       })
-    )
+    );
 
-    await Promise.all(updatePromises)
+    await Promise.all(updatePromises);
   }
 
   private async processBatchConcurrently(jobs: BatchEmailJob[]): Promise<{
-    successful: string[]
-    failed: Array<{ jobId: string; error: string }>
+    successful: string[];
+    failed: Array<{ jobId: string; error: string }>;
   }> {
-    const successful: string[] = []
-    const failed: Array<{ jobId: string; error: string }> = []
-    
-    const chunks = this.chunkArray(jobs, this.concurrency)
-    
+    const successful: string[] = [];
+    const failed: Array<{ jobId: string; error: string }> = [];
+
+    const chunks = this.chunkArray(jobs, this.concurrency);
+
     for (const chunk of chunks) {
       const promises = chunk.map(async (job) => {
         try {
@@ -149,10 +152,10 @@ export class EmailBatchProcessor {
               name: job.recipient.name,
             },
             payload: this.payload,
-          })
+          });
 
           const emailData = {
-            from: fromEmail 
+            from: fromEmail
               ? `${fromName || '14voices'} <${fromEmail}>`
               : `14voices <noreply@14voices.com>`,
             to: job.recipient.email,
@@ -160,13 +163,15 @@ export class EmailBatchProcessor {
             html,
             text,
             ...(replyTo && { replyTo }),
-            tags: job.sequence ? [{ name: `sequence:${job.sequence.key}`, value: `sequence:${job.sequence.key}` }] : [],
-          }
+            tags: job.sequence
+              ? [{ name: `sequence:${job.sequence.key}`, value: `sequence:${job.sequence.key}` }]
+              : [],
+          };
 
-          const result = await resend.emails.send(emailData)
+          const result = await resend.emails.send(emailData);
 
           if (result.error) {
-            throw new Error(result.error.message)
+            throw new Error(result.error.message);
           }
 
           await this.createEmailLog({
@@ -174,30 +179,30 @@ export class EmailBatchProcessor {
             templateKey: job.template.key,
             subject,
             resendId: result.data?.id || '',
-          })
+          });
 
-          successful.push(job.id)
+          successful.push(job.id);
         } catch (error) {
           failed.push({
             jobId: job.id,
             error: error instanceof Error ? error.message : String(error),
-          })
+          });
         }
-      })
+      });
 
-      await Promise.all(promises)
+      await Promise.all(promises);
     }
 
-    return { successful, failed }
+    return { successful, failed };
   }
 
   private async updateJobStatuses(results: {
-    successful: string[]
-    failed: Array<{ jobId: string; error: string }>
+    successful: string[];
+    failed: Array<{ jobId: string; error: string }>;
   }): Promise<void> {
-    const now = new Date()
-    
-    const successPromises = results.successful.map(id =>
+    const now = new Date();
+
+    const successPromises = results.successful.map((id) =>
       this.payload.update({
         collection: 'email-jobs',
         id,
@@ -206,14 +211,14 @@ export class EmailBatchProcessor {
           lastAttempt: now,
         },
       })
-    )
+    );
 
     const failPromises = results.failed.map(async ({ jobId, error }) => {
       const job = await this.payload.findByID({
         collection: 'email-jobs',
         id: jobId,
-      })
-      
+      });
+
       return this.payload.update({
         collection: 'email-jobs',
         id: jobId,
@@ -223,17 +228,17 @@ export class EmailBatchProcessor {
           error: error,
           attempts: (job.attempts || 0) + 1,
         },
-      })
-    })
+      });
+    });
 
-    await Promise.all([...successPromises, ...failPromises])
+    await Promise.all([...successPromises, ...failPromises]);
   }
 
   private async createEmailLog(data: {
-    recipient: string
-    templateKey: string
-    subject: string
-    resendId: string
+    recipient: string;
+    templateKey: string;
+    subject: string;
+    resendId: string;
   }): Promise<void> {
     await this.payload.create({
       collection: 'email-logs',
@@ -246,25 +251,25 @@ export class EmailBatchProcessor {
         sentAt: new Date(),
         resendId: data.resendId,
       },
-    })
+    });
   }
 
   private chunkArray<T>(array: T[], size: number): T[][] {
-    const chunks: T[][] = []
+    const chunks: T[][] = [];
     for (let i = 0; i < array.length; i += size) {
-      chunks.push(array.slice(i, i + size))
+      chunks.push(array.slice(i, i + size));
     }
-    return chunks
+    return chunks;
   }
 
   async retryFailedJobs(limit: number = 100): Promise<BatchResult> {
-    const startTime = Date.now()
+    const startTime = Date.now();
     const result: BatchResult = {
       successful: [],
       failed: [],
       totalProcessed: 0,
       duration: 0,
-    }
+    };
 
     try {
       const failedJobs = await this.payload.find({
@@ -279,14 +284,14 @@ export class EmailBatchProcessor {
         },
         limit,
         depth: 2,
-      })
+      });
 
       if (failedJobs.docs.length === 0) {
-        return result
+        return result;
       }
 
       await Promise.all(
-        failedJobs.docs.map(job => 
+        failedJobs.docs.map((job) =>
           this.payload.update({
             collection: 'email-jobs',
             id: job.id,
@@ -296,20 +301,20 @@ export class EmailBatchProcessor {
             },
           })
         )
-      )
+      );
 
-      return await this.processBatch(failedJobs.docs.length)
+      return await this.processBatch(failedJobs.docs.length);
     } finally {
-      result.duration = Date.now() - startTime
+      result.duration = Date.now() - startTime;
     }
   }
 
   async getQueueStats(): Promise<{
-    scheduled: number
-    processing: number
-    failed: number
-    sent: number
-    cancelled: number
+    scheduled: number;
+    processing: number;
+    failed: number;
+    sent: number;
+    cancelled: number;
   }> {
     const result = {
       scheduled: 0,
@@ -317,11 +322,17 @@ export class EmailBatchProcessor {
       failed: 0,
       sent: 0,
       cancelled: 0,
-    }
+    };
 
     // Query for each status type
-    const statuses: Array<keyof typeof result> = ['scheduled', 'processing', 'failed', 'sent', 'cancelled']
-    
+    const statuses: Array<keyof typeof result> = [
+      'scheduled',
+      'processing',
+      'failed',
+      'sent',
+      'cancelled',
+    ];
+
     await Promise.all(
       statuses.map(async (status) => {
         const count = await this.payload.count({
@@ -331,17 +342,17 @@ export class EmailBatchProcessor {
               equals: status,
             },
           },
-        })
-        result[status] = count.totalDocs
+        });
+        result[status] = count.totalDocs;
       })
-    )
+    );
 
-    return result
+    return result;
   }
 
   async cleanupOldJobs(daysToKeep: number = 30): Promise<number> {
-    const cutoffDate = new Date()
-    cutoffDate.setDate(cutoffDate.getDate() - daysToKeep)
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
 
     // Find old jobs
     const oldJobs = await this.payload.find({
@@ -361,24 +372,24 @@ export class EmailBatchProcessor {
         ],
       },
       limit: 1000,
-    })
+    });
 
     // Delete them one by one
-    let deletedCount = 0
+    let deletedCount = 0;
     await Promise.all(
       oldJobs.docs.map(async (job) => {
         try {
           await this.payload.delete({
             collection: 'email-jobs',
             id: job.id,
-          })
-          deletedCount++
+          });
+          deletedCount++;
         } catch (error) {
-          console.error(`Failed to delete job ${job.id}:`, error)
+          console.error(`Failed to delete job ${job.id}:`, error);
         }
       })
-    )
+    );
 
-    return deletedCount
+    return deletedCount;
   }
 }

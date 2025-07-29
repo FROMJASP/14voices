@@ -18,7 +18,7 @@ import {
   SuperscriptFeature,
   SubscriptFeature,
   HorizontalRuleFeature,
-} from '@payloadcms/richtext-lexical'
+} from '@payloadcms/richtext-lexical';
 
 export const blogEditorConfig = lexicalEditor({
   features: ({ defaultFeatures }) => [
@@ -165,4 +165,4 @@ export const blogEditorConfig = lexicalEditor({
       ],
     }),
   ],
-})
+});

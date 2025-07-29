@@ -1,38 +1,38 @@
-import dotenv from 'dotenv'
-import path from 'path'
-import { getPayload } from 'payload'
+import dotenv from 'dotenv';
+import path from 'path';
+import { getPayload } from 'payload';
 
 // Load environment variables first
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
-dotenv.config({ path: path.resolve(process.cwd(), '.env') })
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-console.log('🔍 Environment check:')
-console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing')
-console.log('   POSTGRES_URL:', process.env.POSTGRES_URL ? '✓ Set' : '✗ Missing')
-console.log('')
+console.log('🔍 Environment check:');
+console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing');
+console.log('   POSTGRES_URL:', process.env.POSTGRES_URL ? '✓ Set' : '✗ Missing');
+console.log('');
 
 async function runSeed() {
   // Dynamically import the config AFTER env vars are loaded
-  const configModule = await import('../payload.config')
-  const config = configModule.default
+  const configModule = await import('../payload.config');
+  const config = configModule.default;
 
   // Import seed functions
-  const { seedSiteSettings } = await import('./site-settings')
-  const { seedLayouts } = await import('./layouts')
-  const { seedPages } = await import('./pages')
-  const { seedVoiceovers } = await import('./voiceovers')
-  const { seedNavigation } = await import('./navigation')
+  const { seedSiteSettings } = await import('./site-settings');
+  const { seedLayouts } = await import('./layouts');
+  const { seedPages } = await import('./pages');
+  const { seedVoiceovers } = await import('./voiceovers');
+  const { seedNavigation } = await import('./navigation');
 
-  const payload = await getPayload({ config })
+  const payload = await getPayload({ config });
 
   try {
-    console.log('🌱 Starting database seed...\n')
+    console.log('🌱 Starting database seed...\n');
 
     // 1. Create admin user if needed
     const existingUsers = await payload.find({
       collection: 'users',
       limit: 1,
-    })
+    });
 
     if (existingUsers.docs.length === 0) {
       const adminUser = await payload.create({
@@ -43,51 +43,51 @@ async function runSeed() {
           name: 'Admin User',
           role: 'admin',
         },
-      })
+      });
 
-      console.log('✅ Admin user created:', adminUser.email)
-      console.log('⚠️  IMPORTANT: Change the password after first login!\n')
+      console.log('✅ Admin user created:', adminUser.email);
+      console.log('⚠️  IMPORTANT: Change the password after first login!\n');
     } else {
-      console.log('ℹ️  Users already exist, skipping user seed\n')
+      console.log('ℹ️  Users already exist, skipping user seed\n');
     }
 
     // 2. Create site settings
-    console.log('📋 Setting up site configuration...')
-    await seedSiteSettings(payload)
-    console.log('')
+    console.log('📋 Setting up site configuration...');
+    await seedSiteSettings(payload);
+    console.log('');
 
     // 3. Create layouts with beautiful footer
-    console.log('🎨 Creating layouts with footer...')
-    await seedLayouts(payload)
-    console.log('')
+    console.log('🎨 Creating layouts with footer...');
+    await seedLayouts(payload);
+    console.log('');
 
     // 4. Create sample pages
-    console.log('📄 Creating sample pages...')
-    await seedPages(payload)
-    console.log('')
+    console.log('📄 Creating sample pages...');
+    await seedPages(payload);
+    console.log('');
 
     // 5. Create voiceovers
-    console.log('🎤 Creating voiceovers...')
-    await seedVoiceovers(payload)
-    console.log('')
+    console.log('🎤 Creating voiceovers...');
+    await seedVoiceovers(payload);
+    console.log('');
 
     // 6. Create navigation
-    console.log('🧭 Setting up navigation...')
-    await seedNavigation(payload)
-    console.log('')
+    console.log('🧭 Setting up navigation...');
+    await seedNavigation(payload);
+    console.log('');
 
-    console.log('✨ Database seed completed successfully!')
-    console.log('\n🚀 You can now:')
-    console.log('   - Log in to the admin panel with the credentials above')
-    console.log('   - View the default layout with a beautiful footer')
-    console.log('   - Customize the footer in Site Builder → Layouts')
-    console.log('   - Create new pages using the default layout')
-    
-    process.exit(0)
+    console.log('✨ Database seed completed successfully!');
+    console.log('\n🚀 You can now:');
+    console.log('   - Log in to the admin panel with the credentials above');
+    console.log('   - View the default layout with a beautiful footer');
+    console.log('   - Customize the footer in Site Builder → Layouts');
+    console.log('   - Create new pages using the default layout');
+
+    process.exit(0);
   } catch (error) {
-    console.error('\n❌ Error seeding database:', error)
-    process.exit(1)
+    console.error('\n❌ Error seeding database:', error);
+    process.exit(1);
   }
 }
 
-runSeed()
+runSeed();

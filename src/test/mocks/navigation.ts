@@ -3,7 +3,7 @@ export const mockNavItems = [
   { label: 'Onze Stemmen', href: '/voiceovers' },
   { label: 'Over Ons', href: '/over-ons' },
   { label: 'Contact', href: '/contact' },
-]
+];
 
 export const mockLanguages = {
   nl: {
@@ -16,23 +16,23 @@ export const mockLanguages = {
     name: 'English',
     switchText: 'Wissel naar Nederlands',
   },
-}
+};
 
 export const createMockScrollEvent = (scrollY: number) => {
-  window.scrollY = scrollY
-  window.dispatchEvent(new Event('scroll'))
-}
+  window.scrollY = scrollY;
+  window.dispatchEvent(new Event('scroll'));
+};
 
 export const waitForScrollEffect = async (expectedClassName: string, container: HTMLElement) => {
   return new Promise<void>((resolve) => {
     const checkClass = () => {
-      const nav = container.querySelector('nav')
+      const nav = container.querySelector('nav');
       if (nav?.className.includes(expectedClassName)) {
-        resolve()
+        resolve();
       } else {
-        requestAnimationFrame(checkClass)
+        requestAnimationFrame(checkClass);
       }
-    }
-    checkClass()
-  })
-}
+    };
+    checkClass();
+  });
+};

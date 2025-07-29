@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { UnifiedAudioPlayer } from './unified/UnifiedAudioPlayer'
+import { UnifiedAudioPlayer } from './unified/UnifiedAudioPlayer';
 
 interface DemoPlayerProps {
   demos: Array<{
-    id: string
-    title: string
-    audioUrl: string
-  }>
-  className?: string
+    id: string;
+    title: string;
+    audioUrl: string;
+  }>;
+  className?: string;
 }
 
 export function DemoPlayer({ demos, className = '' }: DemoPlayerProps) {
-  if (!demos || demos.length === 0) return null
+  if (!demos || demos.length === 0) return null;
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -25,5 +25,5 @@ export function DemoPlayer({ demos, className = '' }: DemoPlayerProps) {
         />
       ))}
     </div>
-  )
+  );
 }

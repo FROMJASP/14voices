@@ -1,4 +1,4 @@
-import { GlobalConfig } from 'payload'
+import { GlobalConfig } from 'payload';
 
 export const EmailSettings: GlobalConfig = {
   slug: 'email-settings',
@@ -123,7 +123,8 @@ export const EmailSettings: GlobalConfig = {
             {
               name: 'unsubscribeText',
               type: 'textarea',
-              defaultValue: 'You received this email because you signed up for 14voices. If you no longer wish to receive emails from us, you can unsubscribe at any time.',
+              defaultValue:
+                'You received this email because you signed up for 14voices. If you no longer wish to receive emails from us, you can unsubscribe at any time.',
             },
           ],
         },
@@ -163,4 +164,4 @@ export const EmailSettings: GlobalConfig = {
       ],
     },
   ],
-}
+};

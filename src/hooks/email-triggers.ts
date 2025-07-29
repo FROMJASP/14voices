@@ -1,11 +1,7 @@
-import { CollectionAfterChangeHook } from 'payload'
-import { triggerEmailSequence } from '@/lib/email/sequences'
+import { CollectionAfterChangeHook } from 'payload';
+import { triggerEmailSequence } from '@/lib/email/sequences';
 
-export const afterUserCreate: CollectionAfterChangeHook = async ({
-  doc,
-  req,
-  operation,
-}) => {
+export const afterUserCreate: CollectionAfterChangeHook = async ({ doc, req, operation }) => {
   if (operation === 'create' && doc.email) {
     try {
       await triggerEmailSequence({
@@ -16,28 +12,24 @@ export const afterUserCreate: CollectionAfterChangeHook = async ({
           userEmail: doc.email,
         },
         payload: req.payload,
-      })
+      });
     } catch (error) {
-      console.error('Failed to trigger user onboarding sequence:', error)
+      console.error('Failed to trigger user onboarding sequence:', error);
     }
   }
-}
+};
 
-export const afterBookingCreate: CollectionAfterChangeHook = async ({
-  doc,
-  req,
-  operation,
-}) => {
+export const afterBookingCreate: CollectionAfterChangeHook = async ({ doc, req, operation }) => {
   if (operation === 'create' && doc.customer) {
     try {
       const user = await req.payload.findByID({
         collection: 'users',
         id: doc.customer,
-      })
-      
+      });
+
       if (user && !user.emailPreferences?.unsubscribed) {
-        const { sendEmail } = await import('@/lib/email/renderer')
-        
+        const { sendEmail } = await import('@/lib/email/renderer');
+
         await sendEmail({
           templateKey: 'booking-confirmation',
           recipient: {
@@ -50,13 +42,13 @@ export const afterBookingCreate: CollectionAfterChangeHook = async ({
             voiceoverName: doc.voiceover?.name,
           },
           payload: req.payload,
-        })
+        });
       }
     } catch (error) {
-      console.error('Failed to send booking confirmation:', error)
+      console.error('Failed to send booking confirmation:', error);
     }
   }
-}
+};
 
 export const afterScriptUpload: CollectionAfterChangeHook = async ({
   doc,
@@ -70,11 +62,11 @@ export const afterScriptUpload: CollectionAfterChangeHook = async ({
         collection: 'bookings',
         id: doc.booking,
         depth: 2,
-      })
-      
+      });
+
       if (booking?.user && !booking.user.emailPreferences?.unsubscribed) {
-        const { sendEmail } = await import('@/lib/email/renderer')
-        
+        const { sendEmail } = await import('@/lib/email/renderer');
+
         await sendEmail({
           templateKey: 'script-received',
           recipient: {
@@ -86,10 +78,10 @@ export const afterScriptUpload: CollectionAfterChangeHook = async ({
             voiceoverName: booking.voiceover?.name,
           },
           payload: req.payload,
-        })
+        });
       }
     } catch (error) {
-      console.error('Failed to send script received email:', error)
+      console.error('Failed to send script received email:', error);
     }
   }
-}
+};

@@ -8,11 +8,7 @@ export const sampleVoiceovers = [
       nl: 'Warme, vriendelijke stem perfect voor commercials en bedrijfsfilms. Gespecialiseerd in natuurlijke, conversationele voice-overs.',
       en: 'Warm, friendly voice perfect for commercials and corporate videos. Specialized in natural, conversational voice-overs.',
     },
-    styleTags: [
-      { tag: 'warm-donker' },
-      { tag: 'zakelijk' },
-      { tag: 'kwaliteit' },
-    ],
+    styleTags: [{ tag: 'warm-donker' }, { tag: 'zakelijk' }, { tag: 'kwaliteit' }],
     status: 'active',
     availability: {
       isAvailable: true,
@@ -27,11 +23,7 @@ export const sampleVoiceovers = [
       nl: 'Krachtige, autoritaire stem met jarenlange ervaring. Ideaal voor serieuze documentaires en zakelijke presentaties.',
       en: 'Powerful, authoritative voice with years of experience. Ideal for serious documentaries and business presentations.',
     },
-    styleTags: [
-      { tag: 'autoriteit' },
-      { tag: 'zakelijk' },
-      { tag: 'stoer' },
-    ],
+    styleTags: [{ tag: 'autoriteit' }, { tag: 'zakelijk' }, { tag: 'stoer' }],
     status: 'active',
     availability: {
       isAvailable: true,
@@ -83,17 +75,13 @@ export const sampleVoiceovers = [
       en: 'Lisa Vermeer',
     },
     description: {
-      nl: 'Heldere, professionele stem voor e-learning en instructievideo\'s. Duidelijke articulatie en prettig tempo.',
+      nl: "Heldere, professionele stem voor e-learning en instructievideo's. Duidelijke articulatie en prettig tempo.",
       en: 'Clear, professional voice for e-learning and instructional videos. Clear articulation and pleasant pace.',
     },
-    styleTags: [
-      { tag: 'zakelijk' },
-      { tag: 'kwaliteit' },
-      { tag: 'jeugdig-fris' },
-    ],
+    styleTags: [{ tag: 'zakelijk' }, { tag: 'kwaliteit' }, { tag: 'jeugdig-fris' }],
     status: 'more-voices',
     availability: {
       isAvailable: true,
     },
   },
-]
+];

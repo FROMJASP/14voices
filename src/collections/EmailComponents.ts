@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig } from 'payload';
 
 export const EmailComponents: CollectionConfig = {
   slug: 'email-components',
@@ -65,6 +65,6 @@ export const EmailComponents: CollectionConfig = {
       ],
     },
   ],
-}
+};
 
-export default EmailComponents
+export default EmailComponents;

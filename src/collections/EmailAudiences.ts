@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig } from 'payload';
 
 export const EmailAudiences: CollectionConfig = {
   slug: 'email-audiences',
@@ -147,9 +147,8 @@ export const EmailAudiences: CollectionConfig = {
               name: 'value',
               type: 'text',
               admin: {
-                condition: (data, siblingData) => 
-                  siblingData?.operator !== 'is_empty' && 
-                  siblingData?.operator !== 'is_not_empty',
+                condition: (data, siblingData) =>
+                  siblingData?.operator !== 'is_empty' && siblingData?.operator !== 'is_not_empty',
               },
             },
             {
@@ -275,10 +274,10 @@ export const EmailAudiences: CollectionConfig = {
           // TODO: Sync with Resend Audiences API
           // This will be implemented in the API routes
         }
-        return doc
+        return doc;
       },
     ],
   },
-}
+};
 
-export default EmailAudiences
+export default EmailAudiences;

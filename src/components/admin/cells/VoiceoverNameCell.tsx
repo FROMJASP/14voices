@@ -1,23 +1,25 @@
-'use client'
+'use client';
 
-import React from 'react'
-import type { DefaultCellComponentProps } from 'payload'
-import Link from 'next/link'
+import React from 'react';
+import type { DefaultCellComponentProps } from 'payload';
+import Link from 'next/link';
 
 export const VoiceoverNameCell: React.FC<DefaultCellComponentProps> = ({ rowData, cellData }) => {
-  const name = cellData || rowData?.name || 'Unnamed'
-  const id = rowData?.id
-  
-  
+  const name = cellData || rowData?.name || 'Unnamed';
+  const id = rowData?.id;
+
   // The profilePhoto might be in different locations based on how data is structured
-  const profilePhoto = rowData?.profilePhoto
-  
+  const profilePhoto = rowData?.profilePhoto;
+
   // Check various possible URL locations
-  const photoUrl = profilePhoto?.url || 
-                   profilePhoto?.thumbnailURL || 
-                   profilePhoto?.sizes?.thumbnail?.url ||
-                   (typeof profilePhoto === 'object' && profilePhoto?.filename ? `/media/${profilePhoto.filename}` : null)
-  
+  const photoUrl =
+    profilePhoto?.url ||
+    profilePhoto?.thumbnailURL ||
+    profilePhoto?.sizes?.thumbnail?.url ||
+    (typeof profilePhoto === 'object' && profilePhoto?.filename
+      ? `/media/${profilePhoto.filename}`
+      : null);
+
   const content = (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       {photoUrl ? (
@@ -34,10 +36,10 @@ export const VoiceoverNameCell: React.FC<DefaultCellComponentProps> = ({ rowData
           }}
           onError={(e) => {
             // Hide image and show fallback on error
-            const img = e.currentTarget
-            const fallback = img.nextElementSibling as HTMLElement
-            img.style.display = 'none'
-            if (fallback) fallback.style.display = 'flex'
+            const img = e.currentTarget;
+            const fallback = img.nextElementSibling as HTMLElement;
+            img.style.display = 'none';
+            if (fallback) fallback.style.display = 'flex';
           }}
         />
       ) : null}
@@ -59,16 +61,19 @@ export const VoiceoverNameCell: React.FC<DefaultCellComponentProps> = ({ rowData
       </div>
       <span style={{ fontWeight: '500' }}>{name}</span>
     </div>
-  )
+  );
 
   // Wrap in a Link to make it clickable
   if (id) {
     return (
-      <Link href={`/admin/collections/voiceovers/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <Link
+        href={`/admin/collections/voiceovers/${id}`}
+        style={{ textDecoration: 'none', color: 'inherit' }}
+      >
         {content}
       </Link>
-    )
+    );
   }
 
-  return content
-}
+  return content;
+};

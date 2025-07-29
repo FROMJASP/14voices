@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig } from 'payload';
 
 export const EmailContacts: CollectionConfig = {
   slug: 'email-contacts',
@@ -309,15 +309,15 @@ export const EmailContacts: CollectionConfig = {
     beforeChange: [
       async ({ data, operation }) => {
         if (data.firstName && data.lastName && !data.customFields?.fullName) {
-          if (!data.customFields) data.customFields = {}
-          data.customFields.fullName = `${data.firstName} ${data.lastName}`
+          if (!data.customFields) data.customFields = {};
+          data.customFields.fullName = `${data.firstName} ${data.lastName}`;
         }
-        
+
         if (operation === 'update' && data.subscribed === false && !data.unsubscribedAt) {
-          data.unsubscribedAt = new Date()
+          data.unsubscribedAt = new Date();
         }
-        
-        return data
+
+        return data;
       },
     ],
     afterChange: [
@@ -325,10 +325,10 @@ export const EmailContacts: CollectionConfig = {
         if (operation === 'create' || operation === 'update') {
           // TODO: Sync with Resend Contacts API
         }
-        return doc
+        return doc;
       },
     ],
   },
-}
+};
 
-export default EmailContacts
+export default EmailContacts;

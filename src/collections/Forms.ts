@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
 const Forms: CollectionConfig = {
   slug: 'forms',
@@ -9,13 +9,13 @@ const Forms: CollectionConfig = {
   },
   access: {
     read: ({ req: { user } }) => {
-      if (user?.role === 'admin' || user?.role === 'editor') return true
+      if (user?.role === 'admin' || user?.role === 'editor') return true;
       // Public can read forms for submission
       return {
         status: {
           equals: 'active',
         },
-      }
+      };
     },
     create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
     update: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
@@ -112,9 +112,9 @@ const Forms: CollectionConfig = {
                   name: 'label',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => 
-                      siblingData?.fieldType !== 'hidden' && 
-                      siblingData?.fieldType !== 'heading' && 
+                    condition: (data, siblingData) =>
+                      siblingData?.fieldType !== 'hidden' &&
+                      siblingData?.fieldType !== 'heading' &&
                       siblingData?.fieldType !== 'paragraph',
                     description: 'Label shown to users',
                   },
@@ -123,16 +123,18 @@ const Forms: CollectionConfig = {
                   name: 'placeholder',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => 
-                      ['text', 'email', 'tel', 'number', 'textarea'].includes(siblingData?.fieldType),
+                    condition: (data, siblingData) =>
+                      ['text', 'email', 'tel', 'number', 'textarea'].includes(
+                        siblingData?.fieldType
+                      ),
                   },
                 },
                 {
                   name: 'helpText',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => 
-                      siblingData?.fieldType !== 'heading' && 
+                    condition: (data, siblingData) =>
+                      siblingData?.fieldType !== 'heading' &&
                       siblingData?.fieldType !== 'paragraph',
                     description: 'Help text shown below the field',
                   },
@@ -142,9 +144,9 @@ const Forms: CollectionConfig = {
                   type: 'checkbox',
                   defaultValue: false,
                   admin: {
-                    condition: (data, siblingData) => 
-                      siblingData?.fieldType !== 'hidden' && 
-                      siblingData?.fieldType !== 'heading' && 
+                    condition: (data, siblingData) =>
+                      siblingData?.fieldType !== 'hidden' &&
+                      siblingData?.fieldType !== 'heading' &&
                       siblingData?.fieldType !== 'paragraph',
                   },
                 },
@@ -152,15 +154,17 @@ const Forms: CollectionConfig = {
                   name: 'validation',
                   type: 'group',
                   admin: {
-                    condition: (data, siblingData) => 
-                      ['text', 'email', 'tel', 'number', 'textarea'].includes(siblingData?.fieldType),
+                    condition: (data, siblingData) =>
+                      ['text', 'email', 'tel', 'number', 'textarea'].includes(
+                        siblingData?.fieldType
+                      ),
                   },
                   fields: [
                     {
                       name: 'minLength',
                       type: 'number',
                       admin: {
-                        condition: (data, siblingData) => 
+                        condition: (data, siblingData) =>
                           ['text', 'textarea'].includes(siblingData?.fieldType),
                       },
                     },
@@ -168,7 +172,7 @@ const Forms: CollectionConfig = {
                       name: 'maxLength',
                       type: 'number',
                       admin: {
-                        condition: (data, siblingData) => 
+                        condition: (data, siblingData) =>
                           ['text', 'textarea'].includes(siblingData?.fieldType),
                       },
                     },
@@ -176,16 +180,14 @@ const Forms: CollectionConfig = {
                       name: 'min',
                       type: 'number',
                       admin: {
-                        condition: (data, siblingData) => 
-                          siblingData?.fieldType === 'number',
+                        condition: (data, siblingData) => siblingData?.fieldType === 'number',
                       },
                     },
                     {
                       name: 'max',
                       type: 'number',
                       admin: {
-                        condition: (data, siblingData) => 
-                          siblingData?.fieldType === 'number',
+                        condition: (data, siblingData) => siblingData?.fieldType === 'number',
                       },
                     },
                     {
@@ -208,7 +210,7 @@ const Forms: CollectionConfig = {
                   name: 'options',
                   type: 'array',
                   admin: {
-                    condition: (data, siblingData) => 
+                    condition: (data, siblingData) =>
                       ['select', 'radio', 'checkboxGroup'].includes(siblingData?.fieldType),
                   },
                   fields: [
@@ -228,9 +230,9 @@ const Forms: CollectionConfig = {
                   name: 'defaultValue',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => 
-                      siblingData?.fieldType !== 'file' && 
-                      siblingData?.fieldType !== 'heading' && 
+                    condition: (data, siblingData) =>
+                      siblingData?.fieldType !== 'file' &&
+                      siblingData?.fieldType !== 'heading' &&
                       siblingData?.fieldType !== 'paragraph',
                   },
                 },
@@ -238,8 +240,8 @@ const Forms: CollectionConfig = {
                   name: 'content',
                   type: 'textarea',
                   admin: {
-                    condition: (data, siblingData) => 
-                      siblingData?.fieldType === 'heading' || 
+                    condition: (data, siblingData) =>
+                      siblingData?.fieldType === 'heading' ||
                       siblingData?.fieldType === 'paragraph',
                     description: 'Content for heading or paragraph',
                   },
@@ -305,7 +307,7 @@ const Forms: CollectionConfig = {
                           name: 'value',
                           type: 'text',
                           admin: {
-                            condition: (data, siblingData) => 
+                            condition: (data, siblingData) =>
                               !['is_empty', 'is_not_empty'].includes(siblingData?.operator),
                           },
                         },
@@ -549,36 +551,36 @@ const Forms: CollectionConfig = {
       path: '/submit',
       method: 'post',
       handler: async (req) => {
-        const body = req.json ? await req.json() : {}
-        const { formId, data } = body
-        
+        const body = req.json ? await req.json() : {};
+        const { formId, data } = body;
+
         if (!formId || !data) {
-          return Response.json({ error: 'Missing form ID or data' }, { status: 400 })
+          return Response.json({ error: 'Missing form ID or data' }, { status: 400 });
         }
-        
+
         try {
           // Get form configuration
           const form = await req.payload.findByID({
             collection: 'forms',
             id: formId,
-          })
-          
+          });
+
           if (!form || form.status !== 'active') {
-            return Response.json({ error: 'Form not found or inactive' }, { status: 404 })
+            return Response.json({ error: 'Form not found or inactive' }, { status: 404 });
           }
-          
+
           // Validate required fields
-          const errors: Record<string, string> = {}
+          const errors: Record<string, string> = {};
           for (const field of form.fields) {
             if (field.required && !data[field.name]) {
-              errors[field.name] = `${field.label || field.name} is required`
+              errors[field.name] = `${field.label || field.name} is required`;
             }
           }
-          
+
           if (Object.keys(errors).length > 0) {
-            return Response.json({ errors }, { status: 400 })
+            return Response.json({ errors }, { status: 400 });
           }
-          
+
           // Save submission if enabled
           if (form.settings?.saveSubmissions) {
             await req.payload.create({
@@ -588,8 +590,8 @@ const Forms: CollectionConfig = {
                 data,
                 submittedAt: new Date().toISOString(),
               },
-            })
-            
+            });
+
             // Increment submission count
             await req.payload.update({
               collection: 'forms',
@@ -597,29 +599,32 @@ const Forms: CollectionConfig = {
               data: {
                 submissions: (form.submissions || 0) + 1,
               },
-            })
+            });
           }
-          
+
           // Send email notifications if enabled
           if (form.settings?.emailNotifications?.enabled) {
             // Email notification logic here
           }
-          
-          return Response.json({ 
+
+          return Response.json({
             success: true,
             message: form.settings?.successMessage || 'Form submitted successfully',
             redirectUrl: form.settings?.redirectUrl,
-          })
+          });
         } catch (error) {
-          console.error('Form submission error:', error)
-          return Response.json({ 
-            error: 'Failed to submit form',
-            message: 'An error occurred',
-          }, { status: 500 })
+          console.error('Form submission error:', error);
+          return Response.json(
+            {
+              error: 'Failed to submit form',
+              message: 'An error occurred',
+            },
+            { status: 500 }
+          );
         }
       },
     },
   ],
-}
+};
 
-export default Forms
+export default Forms;

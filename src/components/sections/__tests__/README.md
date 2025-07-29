@@ -3,10 +3,12 @@
 ## Test Structure
 
 ### Files
+
 - `NavigationBar.test.tsx` - Main test suite with comprehensive tests
 - `NavigationBar.tdd-example.test.tsx` - TDD examples for new features (skipped by default)
 
 ### Test Utilities
+
 - `/src/test/setup.ts` - Global test setup (mocks, DOM polyfills)
 - `/src/test/utils.tsx` - Common test utilities and custom render functions
 - `/src/test/mocks/navigation.ts` - Mock data and helpers for navigation tests
@@ -30,6 +32,7 @@ npm run test:coverage
 ## Test Coverage
 
 Current test coverage includes:
+
 - Component rendering
 - Scroll behavior and style changes
 - Mobile menu interactions
@@ -49,15 +52,16 @@ Current test coverage includes:
 ## Writing New Tests
 
 Example test structure:
+
 ```typescript
 describe('Feature Name', () => {
   it('should do something specific', async () => {
     // Arrange
     render(<NavigationBar />)
-    
+
     // Act
     await user.click(screen.getByRole('button'))
-    
+
     // Assert
     expect(screen.getByText('Expected')).toBeInTheDocument()
   })
@@ -67,43 +71,47 @@ describe('Feature Name', () => {
 ## Common Patterns
 
 ### Finding Elements
+
 ```typescript
 // By role (preferred)
-screen.getByRole('button', { name: /submit/i })
+screen.getByRole('button', { name: /submit/i });
 
 // By text
-screen.getByText('14voices')
+screen.getByText('14voices');
 
 // By test id (last resort)
-screen.getByTestId('navigation-menu')
+screen.getByTestId('navigation-menu');
 ```
 
 ### User Interactions
+
 ```typescript
 // Click
-await user.click(element)
+await user.click(element);
 
 // Type
-await user.type(input, 'text')
+await user.type(input, 'text');
 
 // Keyboard
-await user.keyboard('{Escape}')
+await user.keyboard('{Escape}');
 ```
 
 ### Waiting for Changes
+
 ```typescript
 // Wait for element
-await screen.findByText('Loading...')
+await screen.findByText('Loading...');
 
 // Wait for condition
 await waitFor(() => {
-  expect(element).toHaveClass('active')
-})
+  expect(element).toHaveClass('active');
+});
 ```
 
 ## Mocking
 
 ### Next.js Components
+
 ```typescript
 vi.mock('next/link', () => ({
   default: ({ children, href, ...props }) => (
@@ -113,6 +121,7 @@ vi.mock('next/link', () => ({
 ```
 
 ### Framer Motion
+
 ```typescript
 vi.mock('framer-motion', () => ({
   motion: {

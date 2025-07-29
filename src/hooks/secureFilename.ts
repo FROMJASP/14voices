@@ -1,59 +1,66 @@
-import crypto from 'crypto'
+import crypto from 'crypto';
 
 export const generateSecureFilename = (originalFilename: string, userId: string): string => {
-  const ext = originalFilename.split('.').pop()
-  const hash = crypto.createHash('sha256')
+  const ext = originalFilename.split('.').pop();
+  const hash = crypto
+    .createHash('sha256')
     .update(`${userId}-${Date.now()}-${Math.random()}`)
     .digest('hex')
-    .substring(0, 16)
-  
-  return `${hash}.${ext}`
-}
+    .substring(0, 16);
+
+  return `${hash}.${ext}`;
+};
 
 interface BeforeUploadHookParams {
   args?: {
-    data?: Record<string, unknown>
+    data?: Record<string, unknown>;
     req?: {
       file?: {
-        name: string
-        filename?: string
-      }
+        name: string;
+        filename?: string;
+      };
       user?: {
-        id: string
-      }
-    }
-  }
+        id: string;
+      };
+    };
+  };
   req: {
     file?: {
-      name: string
-      filename?: string
-    }
+      name: string;
+      filename?: string;
+    };
     user?: {
-      id: string
-    }
-  }
-  operation: string
-  collection?: unknown
-  context?: unknown
+      id: string;
+    };
+  };
+  operation: string;
+  collection?: unknown;
+  context?: unknown;
 }
 
-export const beforeUploadHook = async ({ args, req, operation }: BeforeUploadHookParams): Promise<BeforeUploadHookParams['args'] | { data: Record<string, unknown> }> => {
-  const data = args?.data || {}
-  const file = args?.req?.file || req?.file
-  
+export const beforeUploadHook = async ({
+  args,
+  req,
+  operation,
+}: BeforeUploadHookParams): Promise<
+  BeforeUploadHookParams['args'] | { data: Record<string, unknown> }
+> => {
+  const data = args?.data || {};
+  const file = args?.req?.file || req?.file;
+
   if (operation === 'create' && file) {
-    const userId = args?.req?.user?.id || req?.user?.id || 'anonymous'
-    const secureFilename = generateSecureFilename(file.name, userId)
-    
+    const userId = args?.req?.user?.id || req?.user?.id || 'anonymous';
+    const secureFilename = generateSecureFilename(file.name, userId);
+
     // Store original filename in data for reference
-    data.originalFilename = file.name
-    
+    data.originalFilename = file.name;
+
     // Update the file object with secure filename
-    file.name = secureFilename
+    file.name = secureFilename;
     if (file.filename !== undefined) {
-      file.filename = secureFilename
+      file.filename = secureFilename;
     }
   }
-  
-  return args || { data }
-}
+
+  return args || { data };
+};

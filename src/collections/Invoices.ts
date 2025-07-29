@@ -1,4 +1,4 @@
-import type { CollectionConfig, Access } from 'payload'
+import type { CollectionConfig, Access } from 'payload';
 
 const Invoices: CollectionConfig = {
   slug: 'invoices',
@@ -13,18 +13,15 @@ const Invoices: CollectionConfig = {
   },
   access: {
     read: (({ req: { user } }) => {
-      if (!user) return false
-      
+      if (!user) return false;
+
       // Admins can read all invoices
-      if (user.role === 'admin') return true
-      
+      if (user.role === 'admin') return true;
+
       // Users can read invoices where they are the client or provider
       return {
-        or: [
-          { client: { equals: user.id } },
-          { provider: { equals: user.id } },
-        ],
-      }
+        or: [{ client: { equals: user.id } }, { provider: { equals: user.id } }],
+      };
     }) as Access,
     create: ({ req: { user } }) => user?.role === 'admin',
     update: ({ req: { user } }) => user?.role === 'admin',
@@ -189,17 +186,17 @@ const Invoices: CollectionConfig = {
     beforeOperation: [
       async ({ args, operation }) => {
         if (operation === 'create' && args.req?.file) {
-          const file = args.req.file
-          
+          const file = args.req.file;
+
           // Enforce file size limit
           if (file.size > 5000000) {
-            throw new Error('Invoice files must be less than 5MB')
+            throw new Error('Invoice files must be less than 5MB');
           }
         }
-        
+
         // Auto-generate invoice number if not provided
         if (operation === 'create' && !args.data?.invoiceNumber) {
-          const year = new Date().getFullYear()
+          const year = new Date().getFullYear();
           const count = await args.req.payload.count({
             collection: 'invoices',
             where: {
@@ -207,11 +204,11 @@ const Invoices: CollectionConfig = {
                 contains: `INV-${year}`,
               },
             },
-          })
-          args.data.invoiceNumber = `INV-${year}-${String(count + 1).padStart(3, '0')}`
+          });
+          args.data.invoiceNumber = `INV-${year}-${String(count + 1).padStart(3, '0')}`;
         }
-        
-        return args
+
+        return args;
       },
     ],
     afterRead: [
@@ -222,13 +219,13 @@ const Invoices: CollectionConfig = {
             collection: 'invoices',
             id: doc.id,
             data: { status: 'viewed' },
-          })
+          });
         }
-        
-        return doc
+
+        return doc;
       },
     ],
   },
-}
+};
 
-export default Invoices
+export default Invoices;

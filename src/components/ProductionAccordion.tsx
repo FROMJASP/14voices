@@ -650,7 +650,7 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
               {/* Production Header - Always Visible */}
               <motion.button
                 onClick={() => handleProductionClick(index)}
-                className={`w-full p-4 transition-all duration-200 cursor-pointer ${
+                className={`relative w-full h-20 transition-all duration-200 cursor-pointer overflow-hidden ${
                   expandedIndex === index
                     ? 'bg-white dark:bg-card shadow-lg'
                     : 'bg-muted/50 hover:bg-muted hover:shadow-md'
@@ -664,20 +664,51 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                 whileHover={{ x: expandedIndex !== index ? 4 : 0 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 text-left">
-                    <h4 className="font-semibold text-foreground mb-1">{production.name}</h4>
-                    <p className="text-sm text-muted-foreground">vanaf €{production.price}</p>
+                {/* Full Background Video */}
+                <div className="absolute inset-0">
+                  <video
+                    ref={(el) => {
+                      if (el) {
+                        el.playbackRate = 0.5; // Slow down playback
+                        el.play().catch(() => {});
+
+                        // Implement back-and-forth loop
+                        let forward = true;
+                        el.addEventListener('timeupdate', () => {
+                          if (forward && el.currentTime >= el.duration - 0.1) {
+                            forward = false;
+                            el.playbackRate = -0.5;
+                          } else if (!forward && el.currentTime <= 0.1) {
+                            forward = true;
+                            el.playbackRate = 0.5;
+                          }
+                        });
+                      }
+                    }}
+                    src={production.videoUrl}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    muted
+                    playsInline
+                    autoPlay
+                  />
+                  {/* Gradient Overlay */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3), ${production.color}40)`,
+                    }}
+                  />
+                </div>
+
+                {/* Content on top of video */}
+                <div className="relative z-10 flex items-center justify-between px-4 py-4">
+                  <div className="text-left">
+                    <h4 className="font-semibold text-white mb-1">{production.name}</h4>
+                    <p className="text-sm text-white/80">vanaf €{production.price}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     {selectedProduction === index && expandedIndex !== index && (
-                      <span
-                        className="text-sm font-medium px-3 py-1 rounded-full"
-                        style={{
-                          backgroundColor: `${production.color}20`,
-                          color: production.color,
-                        }}
-                      >
+                      <span className="text-sm font-medium px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white">
                         Geselecteerd
                       </span>
                     )}
@@ -685,7 +716,7 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                       animate={{ rotate: expandedIndex === index ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                      <ChevronDown className="w-5 h-5 text-white" />
                     </motion.div>
                   </div>
                 </div>
@@ -777,7 +808,7 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                           </div>
 
                           {/* Dropdown */}
-                          <div className="relative mb-4">
+                          <div className="mb-4">
                             <button
                               onClick={() => setDropdownOpen(!dropdownOpen)}
                               className="w-full p-4 rounded-lg border-2 border-border hover:border-muted-foreground transition-all flex items-center justify-between cursor-pointer"
@@ -793,10 +824,11 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                             <AnimatePresence>
                               {dropdownOpen && (
                                 <motion.div
-                                  initial={{ opacity: 0, y: -10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -10 }}
-                                  className="absolute z-10 w-full mt-2 bg-white dark:bg-card border border-border rounded-lg shadow-lg overflow-hidden"
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="mt-2 bg-white dark:bg-card border border-border rounded-lg shadow-lg overflow-hidden"
                                 >
                                   {currentProduction.itemlistTwo.map((item) => (
                                     <button
@@ -809,7 +841,7 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                                     >
                                       <span>{item.item}</span>
                                       <span className="text-sm text-muted-foreground">
-                                        {item.price > 0 ? `+€${item.price}` : 'Inclusief'}
+                                        +€{item.price}
                                       </span>
                                     </button>
                                   ))}
@@ -863,7 +895,7 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                                   >
                                     <p className="font-medium text-sm capitalize">{region.name}</p>
                                     <p className="text-xs text-muted-foreground">
-                                      {region.price > 0 ? `+€${region.price}` : 'Inclusief'}
+                                      +€{region.price}
                                     </p>
                                   </motion.button>
                                 ))}
@@ -908,8 +940,8 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                             </h3>
                           </div>
 
-                          {/* Options Grid */}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                          {/* Options List */}
+                          <div className="space-y-2 mb-6">
                             {currentProduction.itemlistThree.map((option) => {
                               const isSelected = selectedOptions.has(option.item);
                               const isDisabled = option.dependencies?.some(
@@ -919,16 +951,16 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                               return (
                                 <motion.div
                                   key={option.item}
-                                  className={`relative ${isDisabled ? 'opacity-50' : ''}`}
-                                  whileHover={!isDisabled ? { scale: 1.02 } : {}}
-                                  whileTap={!isDisabled ? { scale: 0.98 } : {}}
+                                  className={`${isDisabled ? 'opacity-50' : ''}`}
+                                  whileHover={!isDisabled ? { scale: 1.01 } : {}}
+                                  whileTap={!isDisabled ? { scale: 0.99 } : {}}
                                 >
                                   <button
                                     onClick={() => !isDisabled && handleOptionToggle(option.item)}
                                     onMouseEnter={() => setHoveredOption(option.item)}
                                     onMouseLeave={() => setHoveredOption(null)}
                                     disabled={isDisabled}
-                                    className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                                    className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
                                       isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
                                     } ${
                                       isSelected
@@ -942,27 +974,66 @@ export function ProductionAccordion({ onSelect, selectedProduction }: Production
                                         : undefined,
                                     }}
                                   >
-                                    <div className="flex items-center justify-between mb-1">
-                                      <p className="font-medium">{option.item}</p>
-                                      <Info className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                    <div className="flex items-center justify-between gap-3">
+                                      <div className="flex items-center gap-3 flex-1">
+                                        <div
+                                          className={`w-4 h-4 rounded-full border-2 flex-shrink-0 transition-all ${
+                                            isSelected ? 'border-current' : 'border-gray-300'
+                                          }`}
+                                          style={{
+                                            borderColor: isSelected
+                                              ? currentProduction.color
+                                              : undefined,
+                                            backgroundColor: isSelected
+                                              ? currentProduction.color
+                                              : undefined,
+                                          }}
+                                        >
+                                          {isSelected && (
+                                            <svg
+                                              className="w-full h-full p-0.5"
+                                              viewBox="0 0 20 20"
+                                              fill="none"
+                                            >
+                                              <path
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                fill="currentColor"
+                                                className="text-black"
+                                              />
+                                            </svg>
+                                          )}
+                                        </div>
+                                        <p className="font-medium text-sm">{option.item}</p>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          className="text-sm font-medium"
+                                          style={{
+                                            color: isSelected ? currentProduction.color : undefined,
+                                          }}
+                                        >
+                                          +€{option.price}
+                                        </span>
+                                        <Info className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                      </div>
                                     </div>
-                                    <p className="text-sm text-muted-foreground">
-                                      +€{option.price}
-                                    </p>
+
+                                    {/* Dependencies inline */}
+                                    {option.dependencies && (
+                                      <p className="text-xs text-muted-foreground mt-1 ml-7 italic">
+                                        Vereist: {option.dependencies.join(', ')}
+                                      </p>
+                                    )}
                                   </button>
 
+                                  {/* Tooltip on hover/click for mobile */}
                                   {hoveredOption === option.item && (
                                     <motion.div
                                       initial={{ opacity: 0, y: -5 }}
                                       animate={{ opacity: 1, y: 0 }}
-                                      className="absolute z-10 p-3 bg-black text-white text-sm rounded-lg mt-1 max-w-xs"
+                                      className="absolute z-10 p-3 bg-black text-white text-xs rounded-lg mt-1 mx-2 max-w-[calc(100%-1rem)]"
                                     >
                                       {option.infoText}
-                                      {option.dependencies && (
-                                        <p className="text-xs mt-2 text-gray-300">
-                                          Vereist: {option.dependencies.join(', ')}
-                                        </p>
-                                      )}
                                     </motion.div>
                                   )}
                                 </motion.div>

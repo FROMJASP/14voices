@@ -341,7 +341,8 @@ export const SiteSettings: GlobalConfig = {
                   name: 'message',
                   type: 'text',
                   required: true,
-                  defaultValue: '🚀 **14 Nieuwe Stemmen**. Beluister hier wat ze voor jou kunnen betekenen!',
+                  defaultValue:
+                    '🚀 **14 Nieuwe Stemmen**. Beluister hier wat ze voor jou kunnen betekenen!',
                   admin: {
                     condition: (data, siblingData) => siblingData?.enabled === true,
                     description: 'Banner message (use **text** for bold/italic styling)',
@@ -365,7 +366,7 @@ export const SiteSettings: GlobalConfig = {
                   name: 'linkUrl',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => 
+                    condition: (data, siblingData) =>
                       siblingData?.enabled === true && siblingData?.linkType === 'custom',
                     description: 'Custom URL for the banner link',
                   },
@@ -375,7 +376,7 @@ export const SiteSettings: GlobalConfig = {
                   type: 'relationship',
                   relationTo: 'pages',
                   admin: {
-                    condition: (data, siblingData) => 
+                    condition: (data, siblingData) =>
                       siblingData?.enabled === true && siblingData?.linkType === 'page',
                     description: 'Internal page to link to',
                   },

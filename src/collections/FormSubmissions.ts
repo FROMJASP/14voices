@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
 const FormSubmissions: CollectionConfig = {
   slug: 'form-submissions',
@@ -96,10 +96,10 @@ const FormSubmissions: CollectionConfig = {
     afterChange: [
       async ({ doc }) => {
         // Future hook implementations can go here
-        return doc
+        return doc;
       },
     ],
   },
-}
+};
 
-export default FormSubmissions
+export default FormSubmissions;

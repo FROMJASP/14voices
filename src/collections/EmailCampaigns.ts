@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig } from 'payload';
 
 export const EmailCampaigns: CollectionConfig = {
   slug: 'email-campaigns',
@@ -308,12 +308,12 @@ export const EmailCampaigns: CollectionConfig = {
     beforeChange: [
       async ({ data, operation }) => {
         if (operation === 'create') {
-          data.createdBy = data.createdBy || 'system'
+          data.createdBy = data.createdBy || 'system';
         }
-        return data
+        return data;
       },
     ],
   },
-}
+};
 
-export default EmailCampaigns
+export default EmailCampaigns;

@@ -1,11 +1,11 @@
 interface SidebarProps {
-  config: { 
-    style?: string; 
-    items?: Array<{ label: string; url: string }>; 
+  config: {
+    style?: string;
+    items?: Array<{ label: string; url: string }>;
     widgets?: Array<{ type: string }>;
     width?: string;
     sticky?: boolean;
-  }
+  };
 }
 
 export function Sidebar({ config }: SidebarProps) {
@@ -13,10 +13,12 @@ export function Sidebar({ config }: SidebarProps) {
     narrow: 'w-[250px]',
     medium: 'w-[300px]',
     wide: 'w-[350px]',
-  }
+  };
 
   return (
-    <aside className={`sidebar ${widthClasses[config?.width as keyof typeof widthClasses] || 'w-[300px]'} ${config?.sticky ? 'sticky top-4' : ''}`}>
+    <aside
+      className={`sidebar ${widthClasses[config?.width as keyof typeof widthClasses] || 'w-[300px]'} ${config?.sticky ? 'sticky top-4' : ''}`}
+    >
       {/* Sidebar widgets will go here */}
       <div className="space-y-6">
         {config?.widgets?.map((widget, index) => (
@@ -26,5 +28,5 @@ export function Sidebar({ config }: SidebarProps) {
         ))}
       </div>
     </aside>
-  )
+  );
 }

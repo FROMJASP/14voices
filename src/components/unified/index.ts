@@ -1,2 +1,2 @@
-export { UnifiedHero } from './UnifiedHero'
-export { UnifiedCTA } from './UnifiedCTA'
+export { UnifiedHero } from './UnifiedHero';
+export { UnifiedCTA } from './UnifiedCTA';

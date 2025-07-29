@@ -1,5 +1,5 @@
 interface HeaderProps {
-  config: { style?: string; title?: string }
+  config: { style?: string; title?: string };
 }
 
 export function Header({ config }: HeaderProps) {
@@ -12,5 +12,5 @@ export function Header({ config }: HeaderProps) {
         </div>
       </div>
     </header>
-  )
+  );
 }

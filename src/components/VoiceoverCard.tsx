@@ -47,7 +47,13 @@ const springValues: SpringOptions = {
   mass: 2,
 };
 
-export function VoiceoverCard({ voice, isSelected, onSelect, currentlyPlayingId, onPlayingChange }: VoiceoverCardProps) {
+export function VoiceoverCard({
+  voice,
+  isSelected,
+  onSelect,
+  currentlyPlayingId,
+  onPlayingChange,
+}: VoiceoverCardProps) {
   const [activeDemo, setActiveDemo] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -238,14 +244,14 @@ export function VoiceoverCard({ voice, isSelected, onSelect, currentlyPlayingId,
   };
 
   return (
-    <div 
+    <div
       className={`${plusJakarta.variable} font-plus-jakarta group h-full tilted-card-figure`}
       ref={cardRef}
       onMouseMove={handleCardMouseMove}
       onMouseEnter={handleCardMouseEnter}
       onMouseLeave={handleCardMouseLeave}
     >
-      <motion.div 
+      <motion.div
         className="tilted-card-inner w-full h-full"
         style={{
           rotateX,
@@ -309,7 +315,7 @@ export function VoiceoverCard({ voice, isSelected, onSelect, currentlyPlayingId,
                   </span>
                 ))}
               </div>
-              
+
               <h1 className="font-plus-jakarta text-7xl font-black text-white leading-[0.85]">
                 {voice.name}
               </h1>
@@ -319,117 +325,117 @@ export function VoiceoverCard({ voice, isSelected, onSelect, currentlyPlayingId,
             <div className="bg-black/40 backdrop-blur-xl border-t border-white/10">
               <div className="p-5">
                 <div className="flex items-center justify-between gap-4">
-                {/* Circular Play Button */}
-                <motion.button
-                  onClick={handlePlayClick}
-                  className="relative flex-shrink-0"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
-                    {showPlayer && isPlaying ? (
-                      <Pause size={24} className="text-white" />
-                    ) : (
-                      <Play size={24} className="text-white ml-0.5" />
+                  {/* Circular Play Button */}
+                  <motion.button
+                    onClick={handlePlayClick}
+                    className="relative flex-shrink-0"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
+                      {showPlayer && isPlaying ? (
+                        <Pause size={24} className="text-white" />
+                      ) : (
+                        <Play size={24} className="text-white ml-0.5" />
+                      )}
+                    </div>
+                  </motion.button>
+
+                  {/* Demo Info - Now with better spacing */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-medium truncate">
+                      {voice.demos[activeDemo].title}
+                    </p>
+                    {!isSelected && (
+                      <p className="text-white/70 text-xs">Klik om demo te beluisteren</p>
                     )}
                   </div>
-                </motion.button>
 
-                {/* Demo Info - Now with better spacing */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">
-                    {voice.demos[activeDemo].title}
-                  </p>
-                  {!isSelected && (
-                    <p className="text-white/70 text-xs">Klik om demo te beluisteren</p>
+                  {/* Book Button - Only for Available */}
+                  {voice.beschikbaar && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onSelect();
+                      }}
+                      className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-all flex-shrink-0 ${
+                        isSelected
+                          ? 'bg-green-500 text-white'
+                          : 'bg-white text-foreground hover:bg-accent'
+                      }`}
+                    >
+                      {isSelected ? 'Ga verder' : 'Boeken'}
+                    </motion.button>
                   )}
                 </div>
 
-                {/* Book Button - Only for Available */}
-                {voice.beschikbaar && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onSelect();
-                    }}
-                    className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-all flex-shrink-0 ${
-                      isSelected
-                        ? 'bg-green-500 text-white'
-                        : 'bg-white text-foreground hover:bg-accent'
-                    }`}
-                  >
-                    {isSelected ? 'Ga verder' : 'Boeken'}
-                  </motion.button>
-                )}
-              </div>
-
-              {/* Expandable Player with Fixed Progress */}
-              <AnimatePresence>
-                {showPlayer && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="mt-3 pt-3 border-t border-white/10"
-                  >
-                    {/* Demo Buttons */}
-                    <div className="flex gap-2 mb-3">
-                      {voice.demos.map((demo, index) => (
-                        <button
-                          key={demo.id}
-                          onClick={() => handleDemoChange(index)}
-                          className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-                            activeDemo === index
-                              ? 'bg-white/20 text-white'
-                              : 'text-white/70 hover:text-white/90'
-                          }`}
-                        >
-                          {demo.title}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Interactive Progress Bar */}
-                    <div
-                      ref={progressRef}
-                      className="relative h-2 bg-white/20 rounded-full cursor-pointer"
-                      onClick={handleProgressClick}
-                      onMouseDown={handleMouseDown}
-                      onMouseMove={handleMouseMove}
-                      onMouseUp={handleMouseUp}
-                      onMouseLeave={handleMouseUp}
+                {/* Expandable Player with Fixed Progress */}
+                <AnimatePresence>
+                  {showPlayer && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="mt-3 pt-3 border-t border-white/10"
                     >
-                      <motion.div
-                        className="absolute inset-y-0 left-0 bg-white rounded-full pointer-events-none"
-                        style={{ width: `${progress}%` }}
-                      />
-                      <motion.div
-                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg hover:scale-125 transition-transform pointer-events-none"
-                        style={{ left: `calc(${progress}% - 8px)` }}
-                      />
-                    </div>
+                      {/* Demo Buttons */}
+                      <div className="flex gap-2 mb-3">
+                        {voice.demos.map((demo, index) => (
+                          <button
+                            key={demo.id}
+                            onClick={() => handleDemoChange(index)}
+                            className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
+                              activeDemo === index
+                                ? 'bg-white/20 text-white'
+                                : 'text-white/70 hover:text-white/90'
+                            }`}
+                          >
+                            {demo.title}
+                          </button>
+                        ))}
+                      </div>
 
-                    {/* Time Display */}
-                    <div className="flex justify-between text-xs text-white/80 mt-2">
-                      <span>
-                        {audioRef.current
-                          ? `${Math.floor(((progress / 100) * audioRef.current.duration) / 60)}:${String(Math.floor(((progress / 100) * audioRef.current.duration) % 60)).padStart(2, '0')}`
-                          : '0:00'}
-                      </span>
-                      <span>{voice.demos[activeDemo].duration}</span>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                      {/* Interactive Progress Bar */}
+                      <div
+                        ref={progressRef}
+                        className="relative h-2 bg-white/20 rounded-full cursor-pointer"
+                        onClick={handleProgressClick}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                      >
+                        <motion.div
+                          className="absolute inset-y-0 left-0 bg-white rounded-full pointer-events-none"
+                          style={{ width: `${progress}%` }}
+                        />
+                        <motion.div
+                          className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg hover:scale-125 transition-transform pointer-events-none"
+                          style={{ left: `calc(${progress}% - 8px)` }}
+                        />
+                      </div>
+
+                      {/* Time Display */}
+                      <div className="flex justify-between text-xs text-white/80 mt-2">
+                        <span>
+                          {audioRef.current
+                            ? `${Math.floor(((progress / 100) * audioRef.current.duration) / 60)}:${String(Math.floor(((progress / 100) * audioRef.current.duration) % 60)).padStart(2, '0')}`
+                            : '0:00'}
+                        </span>
+                        <span>{voice.demos[activeDemo].duration}</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
         </div>
       </motion.div>
-      
+
       {/* Tooltip Caption */}
       {!isMobile && (
         <motion.div

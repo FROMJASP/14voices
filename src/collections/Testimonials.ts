@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
 const Testimonials: CollectionConfig = {
   slug: 'testimonials',
@@ -284,18 +284,18 @@ const Testimonials: CollectionConfig = {
       ({ data }) => {
         // Auto-generate excerpt if highlight text is not provided
         if (!data.display?.highlightText && data.testimonial) {
-          const words = data.testimonial.split(' ')
+          const words = data.testimonial.split(' ');
           if (words.length > 15) {
             data.display = {
               ...data.display,
               highlightText: words.slice(0, 15).join(' ') + '...',
-            }
+            };
           }
         }
-        return data
+        return data;
       },
     ],
   },
-}
+};
 
-export default Testimonials
+export default Testimonials;

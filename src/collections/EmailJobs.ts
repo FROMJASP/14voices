@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig } from 'payload';
 
 export const EmailJobs: CollectionConfig = {
   slug: 'email-jobs',
@@ -112,6 +112,6 @@ export const EmailJobs: CollectionConfig = {
       fields: ['recipient', 'sequence'],
     },
   ],
-}
+};
 
-export default EmailJobs
+export default EmailJobs;

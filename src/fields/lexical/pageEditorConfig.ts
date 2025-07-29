@@ -8,7 +8,7 @@ import {
   HorizontalRuleFeature,
   AlignFeature,
   IndentFeature,
-} from '@payloadcms/richtext-lexical'
+} from '@payloadcms/richtext-lexical';
 
 export const pageEditorConfig = lexicalEditor({
   features: ({ defaultFeatures }) => [
@@ -104,4 +104,4 @@ export const pageEditorConfig = lexicalEditor({
       ],
     }),
   ],
-})
+});

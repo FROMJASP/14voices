@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig } from 'payload';
 
 export const EmailLogs: CollectionConfig = {
   slug: 'email-logs',
@@ -155,6 +155,6 @@ export const EmailLogs: CollectionConfig = {
       unique: true,
     },
   ],
-}
+};
 
-export default EmailLogs
+export default EmailLogs;

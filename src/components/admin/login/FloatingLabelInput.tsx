@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import React, { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface FloatingLabelInputProps {
-  type: 'text' | 'email' | 'password'
-  label: string
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-  required?: boolean
-  autoComplete?: string
-  id: string
-  showPasswordToggle?: boolean
+  type: 'text' | 'email' | 'password';
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  required?: boolean;
+  autoComplete?: string;
+  id: string;
+  showPasswordToggle?: boolean;
 }
 
 export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
@@ -25,15 +25,15 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   id,
   showPasswordToggle = false,
 }) => {
-  const [isFocused, setIsFocused] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [hasValue, setHasValue] = useState(false)
-  const [isAutofilled, setIsAutofilled] = useState(false)
+  const [isFocused, setIsFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [hasValue, setHasValue] = useState(false);
+  const [isAutofilled, setIsAutofilled] = useState(false);
 
   useEffect(() => {
-    setHasValue(value.length > 0)
-  }, [value])
+    setHasValue(value.length > 0);
+  }, [value]);
 
   // Check for autofill on mount and periodically
   useEffect(() => {
@@ -41,52 +41,50 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
       if (inputRef.current) {
         try {
           // Check if the input matches the autofill pseudo-selector
-          const isAutofilledNow = inputRef.current.matches(':-webkit-autofill') || 
-                                   inputRef.current.matches(':autofill')
-          setIsAutofilled(isAutofilledNow)
-          
+          const isAutofilledNow =
+            inputRef.current.matches(':-webkit-autofill') || inputRef.current.matches(':autofill');
+          setIsAutofilled(isAutofilledNow);
+
           // Also check if there's a value but no user interaction
           if (!hasValue && inputRef.current.value) {
-            setHasValue(true)
-            setIsAutofilled(true)
+            setHasValue(true);
+            setIsAutofilled(true);
           }
         } catch {
           // Fallback for browsers that don't support :autofill selector
           if (!hasValue && inputRef.current.value) {
-            setHasValue(true)
-            setIsAutofilled(true)
+            setHasValue(true);
+            setIsAutofilled(true);
           }
         }
       }
-    }
+    };
 
     // Check immediately
-    checkAutofill()
+    checkAutofill();
 
     // Check periodically for the first 2 seconds (for slow autofill)
-    const intervals = [100, 200, 500, 1000, 2000]
-    const timeouts = intervals.map(delay => 
-      setTimeout(checkAutofill, delay)
-    )
+    const intervals = [100, 200, 500, 1000, 2000];
+    const timeouts = intervals.map((delay) => setTimeout(checkAutofill, delay));
 
     // Also check on animation events which can indicate autofill
     const handleAnimationStart = (e: AnimationEvent) => {
       if (e.animationName === 'onAutoFillStart') {
-        setIsAutofilled(true)
-        setHasValue(true)
+        setIsAutofilled(true);
+        setHasValue(true);
       }
-    }
+    };
 
-    const currentInput = inputRef.current
-    currentInput?.addEventListener('animationstart', handleAnimationStart)
+    const currentInput = inputRef.current;
+    currentInput?.addEventListener('animationstart', handleAnimationStart);
 
     return () => {
-      timeouts.forEach(clearTimeout)
-      currentInput?.removeEventListener('animationstart', handleAnimationStart)
-    }
-  }, [hasValue])
+      timeouts.forEach(clearTimeout);
+      currentInput?.removeEventListener('animationstart', handleAnimationStart);
+    };
+  }, [hasValue]);
 
-  const type = showPassword ? 'text' : initialType
+  const type = showPassword ? 'text' : initialType;
 
   return (
     <div className="floating-label-container">
@@ -168,5 +166,5 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,91 +1,99 @@
-'use client'
+'use client';
 
-import React, { useState, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
-import { toast } from 'sonner'
-import { BackgroundBeams } from './BackgroundBeams'
-import { FloatingLabelInput } from './FloatingLabelInput'
+import React, { useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
+import { BackgroundBeams } from './BackgroundBeams';
+import { FloatingLabelInput } from './FloatingLabelInput';
 
 export default function ResetPassword() {
-  const searchParams = useSearchParams()
-  const token = searchParams.get('token')
-  
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-    // Validation
-    if (!password) {
-      setError('Please enter a new password')
-      return
-    }
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setError('');
 
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long')
-      return
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      return
-    }
-
-    if (!token) {
-      setError('Invalid or missing reset token')
-      return
-    }
-
-    setIsLoading(true)
-
-    try {
-      const response = await fetch('/api/users/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          token,
-          password 
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        toast.success('Password reset successful! Redirecting to login...')
-        setTimeout(() => {
-          window.location.href = '/admin'
-        }, 2000)
-      } else {
-        setError(data.errors?.[0]?.message || 'Unable to reset password. The link may have expired.')
-        toast.error('Failed to reset password')
+      // Validation
+      if (!password) {
+        setError('Please enter a new password');
+        return;
       }
-    } catch {
-      setError('An error occurred. Please try again.')
-      toast.error('Something went wrong. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [password, confirmPassword, token])
+
+      if (password.length < 8) {
+        setError('Password must be at least 8 characters long');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
+
+      if (!token) {
+        setError('Invalid or missing reset token');
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await fetch('/api/users/reset-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token,
+            password,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          toast.success('Password reset successful! Redirecting to login...');
+          setTimeout(() => {
+            window.location.href = '/admin';
+          }, 2000);
+        } else {
+          setError(
+            data.errors?.[0]?.message || 'Unable to reset password. The link may have expired.'
+          );
+          toast.error('Failed to reset password');
+        }
+      } catch {
+        setError('An error occurred. Please try again.');
+        toast.error('Something went wrong. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [password, confirmPassword, token]
+  );
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'radial-gradient(ellipse at top left, #0a0a0a 0%, #000000 50%), radial-gradient(ellipse at bottom right, #111111 0%, #000000 50%)',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background:
+          'radial-gradient(ellipse at top left, #0a0a0a 0%, #000000 50%), radial-gradient(ellipse at bottom right, #111111 0%, #000000 50%)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
       <BackgroundBeams />
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -109,7 +117,7 @@ export default function ResetPassword() {
               Create New Password
             </motion.p>
           </motion.div>
-          
+
           <form onSubmit={handleSubmit} noValidate>
             <motion.p
               initial={{ opacity: 0 }}
@@ -119,7 +127,7 @@ export default function ResetPassword() {
                 fontSize: '1rem',
                 color: 'rgba(255, 255, 255, 0.7)',
                 marginBottom: '1.5rem',
-                textAlign: 'center'
+                textAlign: 'center',
               }}
             >
               Enter your new password below.
@@ -138,7 +146,7 @@ export default function ResetPassword() {
                 </motion.div>
               )}
             </AnimatePresence>
-            
+
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -155,7 +163,7 @@ export default function ResetPassword() {
                 showPasswordToggle
               />
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -172,20 +180,23 @@ export default function ResetPassword() {
                 showPasswordToggle
               />
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
               style={{ marginTop: '1.5rem' }}
             >
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="star-border-button"
-              >
+              <button type="submit" disabled={isLoading} className="star-border-button">
                 {isLoading ? (
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <span
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                    }}
+                  >
                     <span className="loading-spinner" />
                     Resetting...
                   </span>
@@ -199,16 +210,16 @@ export default function ResetPassword() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
-              style={{ 
-                textAlign: 'center', 
-                marginTop: '1.5rem'
+              style={{
+                textAlign: 'center',
+                marginTop: '1.5rem',
               }}
             >
               <button
                 type="button"
                 onClick={() => {
                   // Use window.location for more reliable navigation
-                  window.location.href = '/admin'
+                  window.location.href = '/admin';
                 }}
                 style={{
                   fontSize: '1rem',
@@ -219,10 +230,10 @@ export default function ResetPassword() {
                   border: 'none',
                   padding: 0,
                   font: 'inherit',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)')}
               >
                 Back to login
               </button>
@@ -231,5 +242,5 @@ export default function ResetPassword() {
         </div>
       </motion.div>
     </div>
-  )
+  );
 }

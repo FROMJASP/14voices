@@ -1,6 +1,6 @@
-import type { CollectionConfig, Where } from 'payload'
-import { formatSlug } from '../utilities/formatSlug'
-import { blogEditorConfig } from '../fields/lexical/blogEditorConfig'
+import type { CollectionConfig, Where } from 'payload';
+import { formatSlug } from '../utilities/formatSlug';
+import { blogEditorConfig } from '../fields/lexical/blogEditorConfig';
 
 const BlogPosts: CollectionConfig = {
   slug: 'blog-posts',
@@ -11,15 +11,15 @@ const BlogPosts: CollectionConfig = {
     group: 'Content',
     preview: (doc) => {
       if (doc?.slug) {
-        return `${process.env.NEXT_PUBLIC_SERVER_URL}/blog/${doc.slug}`
+        return `${process.env.NEXT_PUBLIC_SERVER_URL}/blog/${doc.slug}`;
       }
-      return null
+      return null;
     },
   },
   access: {
     read: ({ req: { user } }) => {
-      if (user?.role === 'admin') return true
-      
+      if (user?.role === 'admin') return true;
+
       // If user is logged in, show their posts and published posts
       if (user) {
         const query: Where = {
@@ -35,25 +35,25 @@ const BlogPosts: CollectionConfig = {
               },
             },
           ],
-        }
-        return query
+        };
+        return query;
       }
-      
+
       // If no user, only show published posts
       return {
         status: {
           equals: 'published',
         },
-      }
+      };
     },
     create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
     update: ({ req: { user } }) => {
-      if (user?.role === 'admin') return true
+      if (user?.role === 'admin') return true;
       return {
         author: {
           equals: user?.id,
         },
-      }
+      };
     },
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
@@ -124,11 +124,14 @@ const BlogPosts: CollectionConfig = {
                   ({ data, value }) => {
                     if (!value && data?.content) {
                       const plainText = data.content.root.children
-                        .map((node: { children?: Array<{ text?: string }> }) => node.children?.map((child) => child.text).join('') || '')
-                        .join(' ')
-                      return plainText.substring(0, 160) + '...'
+                        .map(
+                          (node: { children?: Array<{ text?: string }> }) =>
+                            node.children?.map((child) => child.text).join('') || ''
+                        )
+                        .join(' ');
+                      return plainText.substring(0, 160) + '...';
                     }
-                    return value
+                    return value;
                   },
                 ],
               },
@@ -338,13 +341,16 @@ const BlogPosts: CollectionConfig = {
           ({ data }) => {
             if (data?.content) {
               const plainText = data.content.root.children
-                .map((node: { children?: Array<{ text?: string }> }) => node.children?.map((child) => child.text).join('') || '')
-                .join(' ')
-              const wordsPerMinute = 200
-              const wordCount = plainText.split(/\s+/).length
-              return Math.ceil(wordCount / wordsPerMinute)
+                .map(
+                  (node: { children?: Array<{ text?: string }> }) =>
+                    node.children?.map((child) => child.text).join('') || ''
+                )
+                .join(' ');
+              const wordsPerMinute = 200;
+              const wordCount = plainText.split(/\s+/).length;
+              return Math.ceil(wordCount / wordsPerMinute);
             }
-            return 0
+            return 0;
           },
         ],
       },
@@ -354,9 +360,9 @@ const BlogPosts: CollectionConfig = {
     beforeChange: [
       ({ data, operation }) => {
         if (operation === 'create') {
-          data.views = 0
+          data.views = 0;
         }
-        return data
+        return data;
       },
     ],
   },
@@ -365,18 +371,18 @@ const BlogPosts: CollectionConfig = {
       path: '/increment-views',
       method: 'post',
       handler: async (req) => {
-        const body = req.json ? await req.json() : {}
-        const { id } = body
+        const body = req.json ? await req.json() : {};
+        const { id } = body;
         if (!id) {
-          return Response.json({ error: 'Post ID required' }, { status: 400 })
+          return Response.json({ error: 'Post ID required' }, { status: 400 });
         }
         try {
           const post = await req.payload.findByID({
             collection: 'blog-posts',
             id,
-          })
+          });
           if (!post) {
-            return Response.json({ error: 'Post not found' }, { status: 404 })
+            return Response.json({ error: 'Post not found' }, { status: 404 });
           }
           await req.payload.update({
             collection: 'blog-posts',
@@ -384,14 +390,14 @@ const BlogPosts: CollectionConfig = {
             data: {
               views: (post.views || 0) + 1,
             },
-          })
-          return Response.json({ success: true })
+          });
+          return Response.json({ success: true });
         } catch {
-          return Response.json({ error: 'Failed to increment views' }, { status: 500 })
+          return Response.json({ error: 'Failed to increment views' }, { status: 500 });
         }
       },
     },
   ],
-}
+};
 
-export default BlogPosts
+export default BlogPosts;

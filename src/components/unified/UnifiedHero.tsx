@@ -1,37 +1,42 @@
-import Image from 'next/image'
-import { Button, Container, Heading, Text } from '@/components/shared'
-import type { Page } from '@/payload-types'
-import type { HeroBannerData } from '@/types/blocks'
+import Image from 'next/image';
+import { Button, Container, Heading, Text } from '@/components/shared';
+import type { Page } from '@/payload-types';
+import type { HeroBannerData } from '@/types/blocks';
 
 // Types are used internally, removing unused type warnings
 
 interface UnifiedHeroProps {
-  variant?: 'page' | 'banner'
-  pageHero?: NonNullable<Page['hero']>
-  bannerData?: HeroBannerData | null | undefined
+  variant?: 'page' | 'banner';
+  pageHero?: NonNullable<Page['hero']>;
+  bannerData?: HeroBannerData | null | undefined;
 }
 
 export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedHeroProps) {
   // Handle empty states
-  if (variant === 'page' && (!pageHero || pageHero.type === 'none')) return null
-  if (variant === 'banner' && !bannerData) return null
+  if (variant === 'page' && (!pageHero || pageHero.type === 'none')) return null;
+  if (variant === 'banner' && !bannerData) return null;
 
   // Map data based on variant
-  const type = variant === 'page' ? pageHero?.type : bannerData?.backgroundType
-  const title = variant === 'page' ? pageHero?.title : bannerData?.headline
-  const subtitle = variant === 'page' ? pageHero?.subtitle : bannerData?.subheadline
-  const image = variant === 'page' ? pageHero?.image : bannerData?.backgroundImage
-  const videoUrl = variant === 'page' ? pageHero?.videoUrl : bannerData?.backgroundVideo
-  const backgroundColor = bannerData?.backgroundColor
-  
+  const type = variant === 'page' ? pageHero?.type : bannerData?.backgroundType;
+  const title = variant === 'page' ? pageHero?.title : bannerData?.headline;
+  const subtitle = variant === 'page' ? pageHero?.subtitle : bannerData?.subheadline;
+  const image = variant === 'page' ? pageHero?.image : bannerData?.backgroundImage;
+  const videoUrl = variant === 'page' ? pageHero?.videoUrl : bannerData?.backgroundVideo;
+  const backgroundColor = bannerData?.backgroundColor;
+
   // Map buttons based on variant
-  const buttons = variant === 'page' 
-    ? (pageHero?.cta ? [{ 
-        text: pageHero.cta.text || '', 
-        link: pageHero.cta.link || '', 
-        style: pageHero.cta.style 
-      }] : [])
-    : (bannerData?.buttons || [])
+  const buttons =
+    variant === 'page'
+      ? pageHero?.cta
+        ? [
+            {
+              text: pageHero.cta.text || '',
+              link: pageHero.cta.link || '',
+              style: pageHero.cta.style,
+            },
+          ]
+        : []
+      : bannerData?.buttons || [];
 
   // Height classes for banner variant
   const heightClasses = {
@@ -39,7 +44,7 @@ export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedH
     medium: 'h-[70vh]',
     large: 'h-[90vh]',
     full: 'h-screen',
-  }
+  };
 
   // Background style mapping
   const bgClasses = {
@@ -48,13 +53,13 @@ export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedH
     gradient: 'bg-gradient-to-r from-blue-600 to-purple-600',
     image: 'relative',
     video: 'relative',
-  }
+  };
 
-  const isMediaBg = type === 'image' || type === 'video'
-  const isDarkBg = type !== 'simple' && type !== 'color'
+  const isMediaBg = type === 'image' || type === 'video';
+  const isDarkBg = type !== 'simple' && type !== 'color';
 
   return (
-    <section 
+    <section
       className={`
         ${variant === 'page' ? 'hero' : 'hero-banner'} 
         ${variant === 'page' ? `hero--${type}` : ''}
@@ -77,7 +82,7 @@ export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedH
           <div className="absolute inset-0 bg-black/40" />
         </div>
       )}
-      
+
       {/* Video Background */}
       {type === 'video' && videoUrl && (
         <div className="absolute inset-0 z-0">
@@ -92,28 +97,30 @@ export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedH
       )}
 
       {/* Content */}
-      <div className={`
+      <div
+        className={`
         ${isMediaBg ? 'relative z-10' : ''} 
         ${variant === 'banner' ? 'h-full flex items-center justify-center' : ''}
-      `}>
+      `}
+      >
         <Container className="text-center">
           {title && (
-            <Heading 
-              as="h1" 
+            <Heading
+              as="h1"
               className={`mb-4 md:mb-6 ${isDarkBg ? 'text-white' : 'text-gray-900'}`}
             >
               {title}
             </Heading>
           )}
-          
+
           {subtitle && (
-            <Text 
+            <Text
               className={`mb-8 text-lg ${variant === 'banner' ? 'max-w-3xl mx-auto' : ''} ${isDarkBg ? 'text-gray-200' : 'text-gray-600'}`}
             >
               {subtitle}
             </Text>
           )}
-          
+
           {buttons.length > 0 && (
             <div className="flex flex-wrap gap-4 justify-center">
               {buttons.map((button, index) => (
@@ -132,5 +139,5 @@ export function UnifiedHero({ variant = 'page', pageHero, bannerData }: UnifiedH
         </Container>
       </div>
     </section>
-  )
+  );
 }

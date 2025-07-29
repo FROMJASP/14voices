@@ -16,7 +16,9 @@ export function VoiceoverShowcaseFooterInspired() {
     <div className={`space-y-20 p-8 bg-gray-50 ${plusJakarta.variable}`}>
       {/* Variation 1: Footer-Style with Black Inputs */}
       <div className="bg-[#fcf9f5] p-12 rounded-lg shadow-lg font-plus-jakarta">
-        <h3 className="text-sm font-bold mb-4 text-gray-500">VARIATION 1: Footer-Style Black Inputs</h3>
+        <h3 className="text-sm font-bold mb-4 text-gray-500">
+          VARIATION 1: Footer-Style Black Inputs
+        </h3>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-7xl md:text-8xl font-black leading-[0.85] mb-8">
@@ -24,7 +26,8 @@ export function VoiceoverShowcaseFooterInspired() {
               <span className="block text-gray-600 mt-2">ideale stem</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles daartussenin.
+              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles
+              daartussenin.
             </p>
           </div>
           <div className="max-w-3xl mx-auto flex gap-4">
@@ -46,14 +49,19 @@ export function VoiceoverShowcaseFooterInspired() {
 
       {/* Variation 2: Minimal with Arrow Button */}
       <div className="bg-[#fcf9f5] p-12 rounded-lg shadow-lg font-plus-jakarta">
-        <h3 className="text-sm font-bold mb-4 text-gray-500">VARIATION 2: Minimal with Arrow Button</h3>
+        <h3 className="text-sm font-bold mb-4 text-gray-500">
+          VARIATION 2: Minimal with Arrow Button
+        </h3>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-6xl md:text-7xl font-semibold leading-[0.9] mb-6">
-              Vind jouw<br />ideale stem
+              Vind jouw
+              <br />
+              ideale stem
             </h2>
             <p className="text-xl text-gray-600 max-w-xl mx-auto">
-              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles daartussenin.
+              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles
+              daartussenin.
             </p>
           </div>
           <div className="max-w-2xl mx-auto">
@@ -78,15 +86,20 @@ export function VoiceoverShowcaseFooterInspired() {
 
       {/* Variation 3: Two-Tone with Border */}
       <div className="bg-[#fcf9f5] p-12 rounded-lg shadow-lg font-plus-jakarta">
-        <h3 className="text-sm font-bold mb-4 text-gray-500">VARIATION 3: Two-Tone with Border Accent</h3>
+        <h3 className="text-sm font-bold mb-4 text-gray-500">
+          VARIATION 3: Two-Tone with Border Accent
+        </h3>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12 pb-12 border-b-2 border-gray-200">
             <h2 className="text-7xl md:text-8xl font-black leading-[0.85] mb-6">
               <span className="block">Vind jouw</span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-900 mt-2">ideale stem</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-gray-900 mt-2">
+                ideale stem
+              </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles daartussenin.
+              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles
+              daartussenin.
             </p>
           </div>
           <div className="max-w-3xl mx-auto flex gap-4">
@@ -116,7 +129,8 @@ export function VoiceoverShowcaseFooterInspired() {
               <span className="block text-gray-700 mt-2">ideale stem</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-medium">
-              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles daartussenin.
+              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles
+              daartussenin.
             </p>
           </div>
           <div className="max-w-3xl mx-auto">
@@ -147,7 +161,8 @@ export function VoiceoverShowcaseFooterInspired() {
               Vind jouw ideale stem
             </h2>
             <p className="text-xl text-gray-600 text-center max-w-2xl mx-auto">
-              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles daartussenin.
+              14 professioneel getrainde voice-overs voor jouw commercial, documentaire en alles
+              daartussenin.
             </p>
           </div>
           <div className="max-w-3xl mx-auto space-y-6">

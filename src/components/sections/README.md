@@ -5,7 +5,9 @@ This directory contains beautiful, modern React components for the 14voices land
 ## Components
 
 ### 1. NavigationBar
+
 A clean, modern navigation bar with:
+
 - Responsive design with mobile hamburger menu
 - Smooth scroll-based transparency effect
 - Language switcher (NL/EN)
@@ -13,7 +15,9 @@ A clean, modern navigation bar with:
 - Animated mobile menu with backdrop
 
 ### 2. HeroSection
+
 A stunning hero section featuring:
+
 - Animated gradient background blobs
 - Gradient text effects
 - Two CTA buttons with hover animations
@@ -22,7 +26,9 @@ A stunning hero section featuring:
 - Fully responsive design
 
 ### 3. VoiceoverShowcase
+
 A beautiful grid component that:
+
 - Fetches voiceovers from `/api/voiceovers`
 - Shows profile photos with hover effects
 - Displays name and style tags
@@ -36,6 +42,7 @@ A beautiful grid component that:
 ## Installation
 
 1. Install required dependencies:
+
 ```bash
 npm install framer-motion
 # or
@@ -45,6 +52,7 @@ bun add framer-motion
 ```
 
 2. Make sure you have the required utility components:
+
 - `/src/components/magicui/shimmer-button.tsx`
 - `/src/components/magicui/blur-fade.tsx`
 - `/src/components/magicui/animated-gradient-text.tsx`
@@ -55,7 +63,7 @@ bun add framer-motion
 ### Basic Implementation
 
 ```tsx
-import { NavigationBar, HeroSection, VoiceoverShowcase } from '@/components/sections'
+import { NavigationBar, HeroSection, VoiceoverShowcase } from '@/components/sections';
 
 export default function HomePage() {
   return (
@@ -66,13 +74,14 @@ export default function HomePage() {
         <VoiceoverShowcase />
       </main>
     </>
-  )
+  );
 }
 ```
 
 ### Demo Page
 
 A complete demo page is available at `/demo` showing all components in action:
+
 ```
 /src/app/(app)/demo/page.tsx
 ```
@@ -86,13 +95,14 @@ To integrate with your existing Payload CMS pages:
 3. Or create custom blocks in Payload CMS that render these components
 
 Example:
+
 ```tsx
-import { NavigationBar, HeroSection } from '@/components/sections'
-import { PageRenderer } from '@/components/PageRenderer'
+import { NavigationBar, HeroSection } from '@/components/sections';
+import { PageRenderer } from '@/components/PageRenderer';
 
 export default async function Page() {
   // ... fetch page data
-  
+
   return (
     <>
       <NavigationBar />
@@ -100,19 +110,21 @@ export default async function Page() {
       {!page.blocks?.length && <HeroSection />}
       <PageRenderer page={page} />
     </>
-  )
+  );
 }
 ```
 
 ## Customization
 
 ### Colors and Styling
+
 - All components use Tailwind CSS classes
 - Primary gradient: purple-600 to pink-600
 - Dark mode is fully supported
 - Animations use Framer Motion
 
 ### Language Support
+
 The NavigationBar includes a language switcher. To connect it with your i18n setup:
 
 1. Import your i18n hook/context
@@ -120,34 +132,36 @@ The NavigationBar includes a language switcher. To connect it with your i18n set
 3. Update the navigation items based on current language
 
 ### API Integration
+
 The VoiceoverShowcase component expects the API to return data in this format:
+
 ```typescript
 {
   docs: Array<{
-    id: string
-    name: string
-    description?: string
+    id: string;
+    name: string;
+    description?: string;
     profilePhoto?: {
-      url: string
-      alt?: string
-    }
+      url: string;
+      alt?: string;
+    };
     styleTags?: Array<{
-      tag: string
-      customTag?: string
-    }>
+      tag: string;
+      customTag?: string;
+    }>;
     availability?: {
-      isAvailable: boolean
-    }
+      isAvailable: boolean;
+    };
     demos?: Array<{
-      id: string
-      title: string
+      id: string;
+      title: string;
       audioFile: {
-        url: string
-      }
-      duration?: string
-      isPrimary?: boolean
-    }>
-  }>
+        url: string;
+      };
+      duration?: string;
+      isPrimary?: boolean;
+    }>;
+  }>;
 }
 ```
 
@@ -169,6 +183,7 @@ The VoiceoverShowcase component expects the API to return data in this format:
 ## Future Enhancements
 
 Consider adding:
+
 - Search functionality in VoiceoverShowcase
 - More filter options (language, accent, etc.)
 - Pagination or infinite scroll for large datasets

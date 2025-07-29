@@ -1,4 +1,4 @@
-import type { CollectionConfig, Access } from 'payload'
+import type { CollectionConfig, Access } from 'payload';
 
 const Scripts: CollectionConfig = {
   slug: 'scripts',
@@ -13,26 +13,23 @@ const Scripts: CollectionConfig = {
   },
   access: {
     read: (({ req: { user } }) => {
-      if (!user) return false
-      
+      if (!user) return false;
+
       // Admins can read all scripts
-      if (user.role === 'admin') return true
-      
+      if (user.role === 'admin') return true;
+
       // Users can read scripts they own or are assigned to
       return {
-        or: [
-          { uploadedBy: { equals: user.id } },
-          { assignedVoiceover: { equals: user.id } },
-        ],
-      }
+        or: [{ uploadedBy: { equals: user.id } }, { assignedVoiceover: { equals: user.id } }],
+      };
     }) as Access,
     create: ({ req: { user } }) => Boolean(user),
     update: (({ req: { user } }) => {
-      if (!user) return false
-      if (user.role === 'admin') return true
-      
+      if (!user) return false;
+      if (user.role === 'admin') return true;
+
       // Only owner can update their scripts
-      return { uploadedBy: { equals: user.id } }
+      return { uploadedBy: { equals: user.id } };
     }) as Access,
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
@@ -209,19 +206,19 @@ const Scripts: CollectionConfig = {
     beforeOperation: [
       async ({ args, operation }) => {
         if (operation === 'create' && args.req?.file) {
-          const file = args.req.file
-          
+          const file = args.req.file;
+
           // Enforce file size limit based on type
-          const maxSize = file.mimetype === 'application/pdf' ? 25000000 : 10000000 // 25MB for PDF, 10MB for others
+          const maxSize = file.mimetype === 'application/pdf' ? 25000000 : 10000000; // 25MB for PDF, 10MB for others
           if (file.size > maxSize) {
-            throw new Error(`Scripts must be less than ${maxSize / 1000000}MB`)
+            throw new Error(`Scripts must be less than ${maxSize / 1000000}MB`);
           }
         }
-        
-        return args
+
+        return args;
       },
     ],
   },
-}
+};
 
-export default Scripts
+export default Scripts;

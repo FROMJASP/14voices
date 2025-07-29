@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig } from 'payload';
 
 export const EmailSequences: CollectionConfig = {
   slug: 'email-sequences',
@@ -110,6 +110,6 @@ export const EmailSequences: CollectionConfig = {
       },
     },
   ],
-}
+};
 
-export default EmailSequences
+export default EmailSequences;

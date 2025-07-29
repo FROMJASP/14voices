@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
 const Media: CollectionConfig = {
   slug: 'media',
@@ -13,9 +13,9 @@ const Media: CollectionConfig = {
       admin: {
         condition: (data, { req }) => {
           if (req?.data?.mimeType) {
-            return req.data.mimeType.startsWith('image/')
+            return req.data.mimeType.startsWith('image/');
           }
-          return true
+          return true;
         },
         description: 'Alternative text for images (required for accessibility)',
       },
@@ -26,9 +26,9 @@ const Media: CollectionConfig = {
       admin: {
         condition: (data, { req }) => {
           if (req?.data?.mimeType) {
-            return req.data.mimeType.startsWith('audio/')
+            return req.data.mimeType.startsWith('audio/');
           }
-          return false
+          return false;
         },
         description: 'Optional caption for audio files',
       },
@@ -64,22 +64,22 @@ const Media: CollectionConfig = {
     beforeOperation: [
       async ({ args, operation }) => {
         if (operation === 'create' && args.req?.file) {
-          const file = args.req.file
-          const mimeType = file.mimetype
-          
+          const file = args.req.file;
+          const mimeType = file.mimetype;
+
           // Check specific file size limits based on type
           if (mimeType.startsWith('audio/') && file.size > 5000000) {
-            throw new Error('Audio files must be less than 5MB')
+            throw new Error('Audio files must be less than 5MB');
           }
           if (mimeType.startsWith('image/') && file.size > 10000000) {
-            throw new Error('Image files must be less than 10MB')
+            throw new Error('Image files must be less than 10MB');
           }
         }
-        
-        return args
+
+        return args;
       },
     ],
   },
-}
+};
 
-export default Media
+export default Media;

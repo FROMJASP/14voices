@@ -1,15 +1,17 @@
-import type { Payload } from 'payload'
+import type { Payload } from 'payload';
 
 export async function seedSiteSettings(payload: Payload) {
   try {
     // Check if site settings already exist
-    const existingSettings = await payload.findGlobal({
-      slug: 'site-settings',
-    }).catch(() => null)
+    const existingSettings = await payload
+      .findGlobal({
+        slug: 'site-settings',
+      })
+      .catch(() => null);
 
     if (existingSettings) {
-      console.log('ℹ️  Site settings already exist, skipping seed')
-      return existingSettings
+      console.log('ℹ️  Site settings already exist, skipping seed');
+      return existingSettings;
     }
 
     // Create default site settings
@@ -41,7 +43,8 @@ export async function seedSiteSettings(payload: Payload) {
         },
         defaultSeo: {
           title: '%s | 14voices - Professional Voice-Over Services',
-          description: '14voices offers professional voice-over services for commercials, narration, e-learning, and more. Find the perfect voice for your project.',
+          description:
+            '14voices offers professional voice-over services for commercials, narration, e-learning, and more. Find the perfect voice for your project.',
           keywords: [
             { keyword: 'voice over' },
             { keyword: 'voice acting' },
@@ -63,18 +66,18 @@ export async function seedSiteSettings(payload: Payload) {
           enableSearch: true,
           enableBlog: true,
           maintenanceMode: false,
-          maintenanceTitle: "We zijn zo terug!",
-          maintenanceMessage: "We voeren momenteel gepland onderhoud uit. We zijn zo weer online.",
-          maintenanceContactLabel: "Contact nodig?",
+          maintenanceTitle: 'We zijn zo terug!',
+          maintenanceMessage: 'We voeren momenteel gepland onderhoud uit. We zijn zo weer online.',
+          maintenanceContactLabel: 'Contact nodig?',
           showContactEmail: true,
         },
       },
-    })
+    });
 
-    console.log('✅ Site settings created successfully')
-    return siteSettings
+    console.log('✅ Site settings created successfully');
+    return siteSettings;
   } catch (error) {
-    console.error('❌ Error creating site settings:', error)
-    throw error
+    console.error('❌ Error creating site settings:', error);
+    throw error;
   }
 }

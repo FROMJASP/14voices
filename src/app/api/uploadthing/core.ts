@@ -1,6 +1,6 @@
-import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
-import { z } from "zod";
+import { createUploadthing, type FileRouter } from 'uploadthing/next';
+import { UploadThingError } from 'uploadthing/server';
+import { z } from 'zod';
 import { getPayload } from '@/utilities/payload';
 import { headers } from 'next/headers';
 
@@ -10,13 +10,13 @@ async function authenticateUser() {
   const payload = await getPayload();
   const headersList = await headers();
   const authHeader = headersList.get('authorization');
-  
+
   if (!authHeader?.startsWith('Bearer ')) {
     return null;
   }
-  
+
   // const token = authHeader.split(' ')[1];
-  
+
   try {
     const { user } = await payload.auth({ headers: headersList });
     return user;
@@ -28,34 +28,36 @@ async function authenticateUser() {
 export const ourFileRouter = {
   // Customer booking script uploads
   bookingScript: f({
-    pdf: { maxFileSize: "16MB", maxFileCount: 1 },
-    text: { maxFileSize: "4MB", maxFileCount: 1 },
-    blob: { maxFileSize: "4MB", maxFileCount: 1 },
+    pdf: { maxFileSize: '16MB', maxFileCount: 1 },
+    text: { maxFileSize: '4MB', maxFileCount: 1 },
+    blob: { maxFileSize: '4MB', maxFileCount: 1 },
   })
-    .input(z.object({ 
-      bookingId: z.string(),
-      scriptType: z.enum(["file", "text"]),
-      scriptContent: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        bookingId: z.string(),
+        scriptType: z.enum(['file', 'text']),
+        scriptContent: z.string().optional(),
+      })
+    )
     .middleware(async ({ input }) => {
       const user = await authenticateUser();
-      
+
       if (!user) {
-        throw new UploadThingError("Unauthorized");
+        throw new UploadThingError('Unauthorized');
       }
-      
+
       const payload = await getPayload();
       const booking = await payload.findByID({
         collection: 'bookings',
         id: input.bookingId,
         depth: 0,
       });
-      
+
       if (!booking || booking.customer !== user.id) {
-        throw new UploadThingError("Booking not found or unauthorized");
+        throw new UploadThingError('Booking not found or unauthorized');
       }
-      
-      return { 
+
+      return {
         userId: user.id,
         bookingId: input.bookingId,
         scriptType: input.scriptType,
@@ -64,7 +66,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       const payload = await getPayload();
-      
+
       await payload.create({
         collection: 'scripts',
         data: {
@@ -78,27 +80,29 @@ export const ourFileRouter = {
           textContent: metadata.scriptContent,
         },
       });
-      
+
       return { uploadedBy: metadata.userId };
     }),
 
   // Voiceover demo uploads (admin only)
   voiceoverDemo: f({
-    audio: { maxFileSize: "32MB", maxFileCount: 1 },
+    audio: { maxFileSize: '32MB', maxFileCount: 1 },
   })
-    .input(z.object({ 
-      voiceoverId: z.string(),
-      demoType: z.string(),
-      demoYear: z.string(),
-    }))
+    .input(
+      z.object({
+        voiceoverId: z.string(),
+        demoType: z.string(),
+        demoYear: z.string(),
+      })
+    )
     .middleware(async ({ input }) => {
       const user = await authenticateUser();
-      
+
       if (!user || user.role !== 'admin') {
-        throw new UploadThingError("Admin access required");
+        throw new UploadThingError('Admin access required');
       }
-      
-      return { 
+
+      return {
         userId: user.id,
         voiceoverId: input.voiceoverId,
         demoType: input.demoType,
@@ -107,7 +111,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       const payload = await getPayload();
-      
+
       await payload.create({
         collection: 'voiceoverDemos',
         data: {
@@ -121,26 +125,26 @@ export const ourFileRouter = {
           },
         },
       });
-      
+
       return { uploadedBy: metadata.userId };
     }),
 
   // User avatar uploads
   userAvatar: f({
-    image: { maxFileSize: "4MB", maxFileCount: 1 },
+    image: { maxFileSize: '4MB', maxFileCount: 1 },
   })
     .middleware(async () => {
       const user = await authenticateUser();
-      
+
       if (!user) {
-        throw new UploadThingError("Unauthorized");
+        throw new UploadThingError('Unauthorized');
       }
-      
+
       return { userId: user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       const payload = await getPayload();
-      
+
       await payload.update({
         collection: 'users',
         id: metadata.userId,
@@ -151,32 +155,34 @@ export const ourFileRouter = {
           },
         },
       });
-      
+
       return { uploadedBy: metadata.userId };
     }),
 
   // Invoice uploads (admin only)
   invoice: f({
-    pdf: { maxFileSize: "8MB", maxFileCount: 1 },
+    pdf: { maxFileSize: '8MB', maxFileCount: 1 },
   })
-    .input(z.object({ 
-      bookingId: z.string(),
-    }))
+    .input(
+      z.object({
+        bookingId: z.string(),
+      })
+    )
     .middleware(async ({ input }) => {
       const user = await authenticateUser();
-      
+
       if (!user || user.role !== 'admin') {
-        throw new UploadThingError("Admin access required");
+        throw new UploadThingError('Admin access required');
       }
-      
-      return { 
+
+      return {
         userId: user.id,
         bookingId: input.bookingId,
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       const payload = await getPayload();
-      
+
       await payload.create({
         collection: 'invoices',
         data: {
@@ -187,7 +193,7 @@ export const ourFileRouter = {
           fileKey: file.key,
         },
       });
-      
+
       return { uploadedBy: metadata.userId };
     }),
 } satisfies FileRouter;

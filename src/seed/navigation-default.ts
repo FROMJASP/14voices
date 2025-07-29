@@ -1,19 +1,19 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
 
 export async function seedDefaultNavigation() {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
 
   try {
     // Check if navigation already exists
     const existingNav = await payload.find({
       collection: 'navigation',
       limit: 1,
-    })
+    });
 
     if (existingNav.docs.length > 0) {
-      console.log('Navigation already exists, updating...')
-      
+      console.log('Navigation already exists, updating...');
+
       // Update existing navigation
       await payload.update({
         collection: 'navigation',
@@ -47,7 +47,7 @@ export async function seedDefaultNavigation() {
             },
           ],
         },
-      })
+      });
     } else {
       // Create new navigation
       await payload.create({
@@ -81,12 +81,12 @@ export async function seedDefaultNavigation() {
             },
           ],
         },
-      })
+      });
     }
 
-    console.log('✅ Default navigation seeded successfully')
+    console.log('✅ Default navigation seeded successfully');
   } catch (error) {
-    console.error('Error seeding navigation:', error)
+    console.error('Error seeding navigation:', error);
   }
 }
 
@@ -95,7 +95,7 @@ if (require.main === module) {
   seedDefaultNavigation()
     .then(() => process.exit(0))
     .catch((error) => {
-      console.error(error)
-      process.exit(1)
-    })
+      console.error(error);
+      process.exit(1);
+    });
 }

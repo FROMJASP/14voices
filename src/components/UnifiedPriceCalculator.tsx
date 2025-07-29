@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Plus_Jakarta_Sans, Instrument_Serif } from 'next/font/google';
 import Link from 'next/link';
-import { Check, Info, Plus } from 'lucide-react';
 import { useVoiceover } from '@/contexts/VoiceoverContext';
 import { useCart } from '@/contexts/CartContext';
-import { ProductionAccordion } from './ProductionAccordion';
+import { ProductionGrid } from './ProductionGrid';
+import { ProductionDetail } from './ProductionDetail';
 
 const plusJakarta = Plus_Jakarta_Sans({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -510,9 +510,6 @@ export function UnifiedPriceCalculator() {
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [customWordCount, setCustomWordCount] = useState('');
-  const [hoveredOption, setHoveredOption] = useState<string | null>(null);
-  // const [showProductionAlert, setShowProductionAlert] = useState(false);
-  // const [alertMessage, setAlertMessage] = useState('');
 
   const currentProduction = selectedProduction !== null ? productionData[selectedProduction] : null;
 
@@ -673,39 +670,6 @@ export function UnifiedPriceCalculator() {
   ]);
 
   // Removed auto-open drawer - now using hover preview instead
-
-  const toggleOption = (option: string) => {
-    if (!currentProduction) return;
-
-    const optionData = currentProduction.itemlistThree.find((item) => item.item === option);
-
-    if (!optionData) return;
-
-    const newOptions = new Set(selectedOptions);
-
-    if (newOptions.has(option)) {
-      newOptions.delete(option);
-      // Remove dependent options
-      currentProduction.itemlistThree.forEach((item) => {
-        if (item.dependencies?.includes(option)) {
-          newOptions.delete(item.item);
-        }
-      });
-    } else {
-      // Check dependencies
-      if (optionData.dependencies) {
-        const missingDeps = optionData.dependencies.filter((dep) => !newOptions.has(dep));
-        if (missingDeps.length > 0) {
-          // Auto-add dependencies
-          missingDeps.forEach((dep) => newOptions.add(dep));
-        }
-      }
-      newOptions.add(option);
-    }
-
-    setSelectedOptions(newOptions);
-  };
-
   // Removed handleBooking function - validation logic moved elsewhere
 
   return (
@@ -802,33 +766,41 @@ export function UnifiedPriceCalculator() {
             </p>
           </motion.div>
 
-          {/* Production Selection Alert - temporarily disabled */}
-          {/* <AnimatePresence>
-            {showProductionAlert && (
-              <motion.div
-                initial={{ opacity: 0, y: -20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-4"
-              >
-                <div className="bg-yellow-500 text-black px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 border-2 border-yellow-600">
-                  <Info className="w-5 h-5 flex-shrink-0" />
-                  <p className="text-sm font-semibold">{alertMessage}</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence> */}
-
           {/* Calculator Content */}
           <div className="space-y-12">
-            {/* Step 1: Production Type Selection with integrated configuration */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <ProductionAccordion
-                onSelect={(data) => {
+            {/* Production Selection - Grid or Detail View */}
+            {selectedProduction === null ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-muted-foreground">Kies je productie</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Klik op een productie om te bestellen
+                  </p>
+                </div>
+                <ProductionGrid
+                  onSelect={(index) => {
+                    setSelectedProduction(index);
+                  }}
+                />
+              </motion.div>
+            ) : (
+              <ProductionDetail
+                productionIndex={selectedProduction}
+                onBack={() => {
+                  setSelectedProduction(null);
+                  setSelectedWords(null);
+                  setSelectedOptions(new Set());
+                  setSelectedRegion(null);
+                  setCustomWordCount('');
+                  setCartItems([]);
+                  setCartItemCount(0);
+                  setCartTotal(0);
+                }}
+                onAddToCart={(data) => {
                   setSelectedProduction(data.productionIndex);
                   setSelectedWords(data.selectedWords);
                   setSelectedOptions(data.selectedOptions);
@@ -900,247 +872,11 @@ export function UnifiedPriceCalculator() {
                   if (selectedVoiceover) {
                     setSelectedVoiceover(selectedVoiceover);
                   }
+
+                  // Show success message
+                  alert('Product toegevoegd aan winkelwagen! Kies nu een stem.');
                 }}
-                selectedProduction={selectedProduction}
               />
-            </motion.div>
-
-            {/* Steps 2 and 3 are now integrated in ProductionSelectorEnhanced */}
-            {false && currentProduction && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <h3 className="text-2xl font-semibold mb-8 flex items-center gap-3">
-                  <span className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-black font-bold">
-                    2
-                  </span>
-                  {currentProduction.titleTwo}
-                </h3>
-
-                <div className="bg-[#fcf9f5] dark:bg-card rounded-2xl p-6 border border-border shadow-sm">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {currentProduction.name === 'Radiospots' ||
-                    currentProduction.name === 'TV Commercial' ||
-                    currentProduction.name === 'Web Commercial'
-                      ? 'Selecteer het aantal versies voor je productie'
-                      : 'Selecteer het aantal woorden in je script'}
-                  </p>
-                  <div className="space-y-3">
-                    {currentProduction.itemlistTwo.map((item, index) => {
-                      const isSelected = selectedWords === item.item;
-                      const isLastOption = index === currentProduction.itemlistTwo.length - 1;
-                      const showCustomInput = isSelected && isLastOption;
-
-                      return (
-                        <motion.div key={item.item} whileHover={{ x: 5 }} className="relative">
-                          <button
-                            onClick={() => {
-                              setSelectedWords(item.item);
-                              if (!isLastOption) setCustomWordCount('');
-                            }}
-                            className={`
-                          w-full p-4 rounded-xl border-2 transition-all flex justify-between items-center
-                          ${
-                            isSelected
-                              ? 'border-primary bg-primary/10 dark:bg-primary/20'
-                              : 'border-border bg-white dark:bg-background hover:border-muted-foreground hover:bg-gray-50 dark:hover:bg-muted/50'
-                          }
-                        `}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                                  isSelected ? 'bg-primary border-primary' : 'border-border'
-                                }`}
-                              >
-                                {isSelected && (
-                                  <Check className="w-4 h-4 text-primary-foreground" />
-                                )}
-                              </div>
-                              <span className="font-medium">
-                                {item.item}{' '}
-                                {currentProduction.name === 'Radiospots' ||
-                                currentProduction.name === 'TV Commercial' ||
-                                currentProduction.name === 'Web Commercial'
-                                  ? item.item === '1'
-                                    ? 'versie'
-                                    : 'versies'
-                                  : 'woorden'}
-                              </span>
-                            </div>
-                            <span className="text-sm font-semibold text-muted-foreground">
-                              +€{item.price}
-                            </span>
-                          </button>
-
-                          {/* Custom word count input */}
-                          <AnimatePresence>
-                            {showCustomInput && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="mt-3 pl-9"
-                              >
-                                <div className="flex gap-3 items-center">
-                                  <input
-                                    type="number"
-                                    min={item.item === '1500+' ? 1501 : 2001}
-                                    value={customWordCount}
-                                    onChange={(e) => setCustomWordCount(e.target.value)}
-                                    placeholder={`Vul het exacte aantal in (min. ${item.item === '1500+' ? '1501' : '2001'})`}
-                                    className="flex-1 px-4 py-2 rounded-lg border border-border bg-input text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                                  />
-                                  {customWordCount && parseInt(customWordCount) > 0 && (
-                                    <span className="text-sm font-semibold text-primary whitespace-nowrap">
-                                      +€
-                                      {calculateWordPrice(
-                                        Math.max(
-                                          parseInt(customWordCount),
-                                          item.item === '1500+' ? 1501 : 2001
-                                        ),
-                                        currentProduction.name
-                                      )}
-                                    </span>
-                                  )}
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-
-                  {currentProduction.explainText && (
-                    <p className="text-xs text-muted-foreground mt-4 italic">
-                      {currentProduction.explainText}
-                    </p>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Step 2.5: Region Selection (if applicable) */}
-            {currentProduction?.uitzendgebied && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25 }}
-              >
-                <h3 className="text-xl font-semibold mb-4">Uitzendgebied</h3>
-                <div className="flex flex-wrap gap-3">
-                  {currentProduction.uitzendgebied.map((region) => (
-                    <button
-                      key={region.name}
-                      onClick={() => setSelectedRegion(region.name)}
-                      className={`
-                      px-6 py-3 rounded-full border-2 transition-all capitalize
-                      ${
-                        selectedRegion === region.name
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border bg-[#fcf9f5] dark:bg-card text-foreground hover:border-muted-foreground hover:bg-gray-50 dark:hover:bg-card/80'
-                      }
-                    `}
-                    >
-                      {region.name}
-                      {region.price > 0 && (
-                        <span className="ml-2 text-sm opacity-70">+€{region.price}</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Step 3: Extra Options */}
-            {currentProduction && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <h3 className="text-2xl font-semibold mb-8 flex items-center gap-3">
-                  <span className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-black font-bold">
-                    3
-                  </span>
-                  Extra opties
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentProduction.itemlistThree.map((option) => {
-                    const isSelected = selectedOptions.has(option.item);
-                    const isDisabled = option.dependencies?.some(
-                      (dep) => !selectedOptions.has(dep)
-                    );
-
-                    return (
-                      <motion.div
-                        key={option.item}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <button
-                          onClick={() => !isDisabled && toggleOption(option.item)}
-                          disabled={isDisabled}
-                          onMouseEnter={() => setHoveredOption(option.item)}
-                          onMouseLeave={() => setHoveredOption(null)}
-                          className={`
-                        w-full p-6 rounded-2xl border-2 transition-all flex items-center justify-between
-                        ${
-                          isSelected
-                            ? 'border-primary bg-primary/10 dark:bg-primary/20'
-                            : 'border-border bg-[#fcf9f5] dark:bg-card hover:border-muted-foreground hover:bg-[#f5f0e8] dark:hover:bg-card/80'
-                        }
-                        ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                      `}
-                        >
-                          <div className="text-left flex-1">
-                            <h4 className="font-semibold mb-1 flex items-center gap-2">
-                              {option.item}
-                              {hoveredOption === option.item && (
-                                <Info className="w-4 h-4 text-muted-foreground" />
-                              )}
-                            </h4>
-                            <AnimatePresence>
-                              {hoveredOption === option.item && (
-                                <motion.p
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  className="text-sm text-muted-foreground mt-2"
-                                >
-                                  {option.infoText}
-                                  {option.dependencies && (
-                                    <span className="block text-xs text-destructive mt-1">
-                                      Vereist: {option.dependencies.join(', ')}
-                                    </span>
-                                  )}
-                                </motion.p>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                          <div className="flex items-center gap-3 ml-4">
-                            <span className="text-lg font-semibold">+€{option.price}</span>
-                            <div
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                                isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                              }`}
-                            >
-                              {isSelected ? (
-                                <Check className="w-5 h-5" />
-                              ) : (
-                                <Plus className="w-5 h-5" />
-                              )}
-                            </div>
-                          </div>
-                        </button>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </motion.div>
             )}
           </div>
 

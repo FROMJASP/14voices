@@ -1,19 +1,21 @@
-'use client'
+'use client';
 
-import React from 'react'
-import type { DefaultCellComponentProps } from 'payload'
+import React from 'react';
+import type { DefaultCellComponentProps } from 'payload';
 
 export const AvailabilityCell: React.FC<DefaultCellComponentProps> = ({ rowData }) => {
-  const isAvailable = rowData?.availability?.isAvailable !== false
+  const isAvailable = rowData?.availability?.isAvailable !== false;
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '56px',
-      width: '100%'
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '56px',
+        width: '100%',
+      }}
+    >
       {isAvailable ? (
         <span
           style={{
@@ -25,7 +27,7 @@ export const AvailabilityCell: React.FC<DefaultCellComponentProps> = ({ rowData 
             borderRadius: '50%',
             backgroundColor: '#d1fae5',
             color: '#059669',
-            fontSize: '16px'
+            fontSize: '16px',
           }}
           title="Available"
         >
@@ -43,7 +45,7 @@ export const AvailabilityCell: React.FC<DefaultCellComponentProps> = ({ rowData 
             backgroundColor: '#fee2e2',
             color: '#dc2626',
             fontSize: '14px',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
           }}
           title="Not available"
         >
@@ -51,5 +53,5 @@ export const AvailabilityCell: React.FC<DefaultCellComponentProps> = ({ rowData 
         </span>
       )}
     </div>
-  )
-}
+  );
+};

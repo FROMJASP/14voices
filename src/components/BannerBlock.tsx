@@ -41,14 +41,14 @@ export function BannerBlock({ banner }: BannerBlockProps) {
       setIsDismissed(false);
       return;
     }
-    
+
     // Reset banner state if dismissible setting changes from true to false
     if (!banner.dismissible) {
       localStorage.removeItem('banner-dismissed');
       setIsDismissed(false);
       return;
     }
-    
+
     const dismissed = localStorage.getItem('banner-dismissed');
     if (dismissed === 'true') {
       setIsDismissed(true);
@@ -110,10 +110,10 @@ export function BannerBlock({ banner }: BannerBlockProps) {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         // Offset by 200px to show the style tags above the grid
         const targetPosition = rect.top + scrollTop - 200;
-        
+
         window.scrollTo({
           top: targetPosition,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
     }
@@ -170,7 +170,10 @@ export function BannerBlock({ banner }: BannerBlockProps) {
                 {renderContent()}
               </p>
               {shouldAnimate && (
-                <p className="inline-block pr-8 font-instrument-serif text-lg md:text-xl lg:text-2xl text-title transition-colors duration-300 group-hover:text-[#e5e5e5] dark:group-hover:text-[#000000]" aria-hidden="true">
+                <p
+                  className="inline-block pr-8 font-instrument-serif text-lg md:text-xl lg:text-2xl text-title transition-colors duration-300 group-hover:text-[#e5e5e5] dark:group-hover:text-[#000000]"
+                  aria-hidden="true"
+                >
                   {renderContent()}
                 </p>
               )}

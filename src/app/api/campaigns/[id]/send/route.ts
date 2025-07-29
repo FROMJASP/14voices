@@ -1,70 +1,58 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getPayload, getServerSideUser } from '@/utilities/payload'
-import { resendMarketing } from '@/lib/email/resend-marketing'
-import type { EmailCampaign } from '@/types/email-marketing'
-import { campaignSendSchema } from '@/lib/validation/schemas'
-import { sanitizeHtml } from '@/lib/validation/schemas'
+import { NextRequest, NextResponse } from 'next/server';
+import { getPayload, getServerSideUser } from '@/utilities/payload';
+import { resendMarketing } from '@/lib/email/resend-marketing';
+import type { EmailCampaign } from '@/types/email-marketing';
+import { campaignSendSchema } from '@/lib/validation/schemas';
+import { sanitizeHtml } from '@/lib/validation/schemas';
 
-async function handler(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function handler(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params
-    
+    const { id } = await params;
+
     // Validate campaign ID format
     if (!id || typeof id !== 'string' || id.length > 100) {
-      return NextResponse.json(
-        { error: 'Invalid campaign ID' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Invalid campaign ID' }, { status: 400 });
     }
-    
-    const payload = await getPayload()
-    const body = await req.json()
-    
+
+    const payload = await getPayload();
+    const body = await req.json();
+
     // Validate input
-    const validationResult = campaignSendSchema.safeParse(body)
+    const validationResult = campaignSendSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid input', details: validationResult.error.errors },
         { status: 400 }
-      )
+      );
     }
-    
-    const { test, testEmails } = validationResult.data
+
+    const { test, testEmails } = validationResult.data;
 
     const campaign = await payload.findByID({
       collection: 'email-campaigns',
       id,
       depth: 2,
-    })
+    });
 
     if (!campaign) {
-      return NextResponse.json(
-        { error: 'Campaign not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
     }
 
     if (campaign.status !== 'draft' && !test) {
       return NextResponse.json(
         { error: 'Campaign can only be sent when in draft status' },
         { status: 400 }
-      )
+      );
     }
 
-    const audience = campaign.audience
+    const audience = campaign.audience;
     if (!audience || typeof audience === 'string') {
-      return NextResponse.json(
-        { error: 'Campaign audience not found' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Campaign audience not found' }, { status: 400 });
     }
 
     if (test) {
-      const results = []
-      
+      const results = [];
+
       for (const email of testEmails) {
         try {
           const result = await resendMarketing.resend.emails.send({
@@ -74,15 +62,15 @@ async function handler(
             html: await renderCampaignContent(campaign as EmailCampaign),
             text: campaign.markdownContent || '',
             replyTo: campaign.replyTo,
-          })
+          });
 
-          results.push({ email, success: true, id: result.data?.id })
+          results.push({ email, success: true, id: result.data?.id });
         } catch (sendError) {
-          results.push({ 
-            email, 
-            success: false, 
-            error: sendError instanceof Error ? sendError.message : 'Unknown error' 
-          })
+          results.push({
+            email,
+            success: false,
+            error: sendError instanceof Error ? sendError.message : 'Unknown error',
+          });
         }
       }
 
@@ -95,17 +83,17 @@ async function handler(
             sentAt: new Date(),
           })),
         },
-      })
+      });
 
-      return NextResponse.json({ testResults: results })
+      return NextResponse.json({ testResults: results });
     }
 
     if (!audience.resendAudienceId) {
-      let resendAudience
+      let resendAudience;
       try {
         resendAudience = await resendMarketing.createAudience({
           name: audience.name,
-        })
+        });
 
         await payload.update({
           collection: 'email-audiences',
@@ -113,13 +101,10 @@ async function handler(
           data: {
             resendAudienceId: resendAudience?.id || '',
           },
-        })
+        });
       } catch (createError) {
-        console.error('Failed to create Resend audience:', createError)
-        return NextResponse.json(
-          { error: 'Failed to create Resend audience' },
-          { status: 500 }
-        )
+        console.error('Failed to create Resend audience:', createError);
+        return NextResponse.json({ error: 'Failed to create Resend audience' }, { status: 500 });
       }
     }
 
@@ -131,7 +116,7 @@ async function handler(
       text: campaign.markdownContent || '',
       replyTo: campaign.replyTo,
       scheduledAt: campaign.scheduledAt ? new Date(campaign.scheduledAt).toISOString() : undefined,
-    })
+    });
 
     await payload.update({
       collection: 'email-campaigns',
@@ -141,67 +126,65 @@ async function handler(
         resendBroadcastId: broadcast?.id || '',
         'analytics.sentCount': audience.contactCount || 0,
       },
-    })
+    });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       broadcastId: broadcast?.id || '',
       status: campaign.scheduledAt ? 'scheduled' : 'sending',
-    })
+    });
   } catch (error) {
-    console.error('Failed to send campaign:', error)
-    return NextResponse.json(
-      { error: 'Failed to send campaign' },
-      { status: 500 }
-    )
+    console.error('Failed to send campaign:', error);
+    return NextResponse.json({ error: 'Failed to send campaign' }, { status: 500 });
   }
 }
 
 async function renderCampaignContent(campaign: EmailCampaign): Promise<string> {
   if (campaign.contentType === 'markdown') {
     // Sanitize markdown content
-    return sanitizeHtml(campaign.markdownContent || '')
+    return sanitizeHtml(campaign.markdownContent || '');
   }
 
   if (campaign.contentType === 'react') {
-    return '<p>React Email component rendering not implemented yet</p>'
+    return '<p>React Email component rendering not implemented yet</p>';
   }
 
   type ContentNode = {
-    type: string
-    tag?: string
-    children?: Array<{ text?: string }>
-  }
-  
-  const contentObj = campaign.content as { root?: { children?: ContentNode[] } }
-  const html = contentObj?.root?.children?.reduce((acc: string, node: ContentNode) => {
-    // Validate node type
-    const allowedTypes = ['paragraph', 'heading', 'list', 'quote']
-    if (!allowedTypes.includes(node.type)) {
-      return acc
-    }
-    
-    if (node.type === 'paragraph') {
-      const text = node.children?.map((child: { text?: string }) => 
-        sanitizeHtml(child.text || '')
-      ).join('')
-      return acc + `<p>${text}</p>`
-    }
-    if (node.type === 'heading') {
-      // Validate heading level
-      const allowedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
-      const level = allowedTags.includes(node.tag || '') ? node.tag : 'h2'
-      const text = node.children?.map((child: { text?: string }) => 
-        sanitizeHtml(child.text || '')
-      ).join('')
-      return acc + `<${level}>${text}</${level}>`
-    }
-    return acc
-  }, '') || ''
+    type: string;
+    tag?: string;
+    children?: Array<{ text?: string }>;
+  };
+
+  const contentObj = campaign.content as { root?: { children?: ContentNode[] } };
+  const html =
+    contentObj?.root?.children?.reduce((acc: string, node: ContentNode) => {
+      // Validate node type
+      const allowedTypes = ['paragraph', 'heading', 'list', 'quote'];
+      if (!allowedTypes.includes(node.type)) {
+        return acc;
+      }
+
+      if (node.type === 'paragraph') {
+        const text = node.children
+          ?.map((child: { text?: string }) => sanitizeHtml(child.text || ''))
+          .join('');
+        return acc + `<p>${text}</p>`;
+      }
+      if (node.type === 'heading') {
+        // Validate heading level
+        const allowedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+        const level = allowedTags.includes(node.tag || '') ? node.tag : 'h2';
+        const text = node.children
+          ?.map((child: { text?: string }) => sanitizeHtml(child.text || ''))
+          .join('');
+        return acc + `<${level}>${text}</${level}>`;
+      }
+      return acc;
+    }, '') || '';
 
   // Sanitize subject to prevent XSS in title
-  const sanitizedSubject = sanitizeHtml(campaign.subject)
-  
+  const sanitizedSubject = sanitizeHtml(campaign.subject);
+
   return `
     <!DOCTYPE html>
     <html>
@@ -221,24 +204,24 @@ async function renderCampaignContent(campaign: EmailCampaign): Promise<string> {
         </div>
       </body>
     </html>
-  `
+  `;
 }
 
 // Export the handler with middleware
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Simple auth check
-  const user = await getServerSideUser()
+  const user = await getServerSideUser();
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  
+
   // Call the handler
-  const response = await handler(req, { params })
-  
+  const response = await handler(req, { params });
+
   // Add security headers
-  response.headers.set('X-Content-Type-Options', 'nosniff')
-  response.headers.set('X-Frame-Options', 'DENY')
-  response.headers.set('X-XSS-Protection', '1; mode=block')
-  
-  return response
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+
+  return response;
 }

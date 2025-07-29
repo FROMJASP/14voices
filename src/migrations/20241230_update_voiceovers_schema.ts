@@ -1,5 +1,5 @@
-import { MigrateUpArgs, MigrateDownArgs } from '@payloadcms/db-postgres'
-import { sql } from 'drizzle-orm'
+import { MigrateUpArgs, MigrateDownArgs } from '@payloadcms/db-postgres';
+import { sql } from 'drizzle-orm';
 
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   // Add new columns to voiceovers table
@@ -7,7 +7,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
     ALTER TABLE voiceovers 
     ADD COLUMN IF NOT EXISTS profile_photo_id INTEGER REFERENCES media(id) ON DELETE SET NULL,
     ADD COLUMN IF NOT EXISTS primary_demo_id INTEGER REFERENCES media(id) ON DELETE SET NULL;
-  `)
+  `);
 
   // Create new array tables for additional photos and demos
   await db.execute(sql`
@@ -19,7 +19,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       caption TEXT,
       _locale VARCHAR(10)
     );
-  `)
+  `);
 
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS voiceovers_additional_demos (
@@ -31,13 +31,13 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       description TEXT,
       _locale VARCHAR(10)
     );
-  `)
+  `);
 
   // Create indexes
   await db.execute(sql`
     CREATE INDEX IF NOT EXISTS idx_voiceovers_additional_photos_parent ON voiceovers_additional_photos(_parent_id);
     CREATE INDEX IF NOT EXISTS idx_voiceovers_additional_demos_parent ON voiceovers_additional_demos(_parent_id);
-  `)
+  `);
 
   // Migrate data from old tables if they exist
   try {
@@ -48,7 +48,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
         WHERE table_schema = 'public' 
         AND table_name = 'voiceover-photos'
       );
-    `)
+    `);
 
     if (oldPhotosExist.rows[0]?.exists) {
       // Migrate primary photos
@@ -65,7 +65,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
           WHERE vp.voiceover_artist = v.id 
           AND vp.is_primary = true
         );
-      `)
+      `);
 
       // Migrate additional photos
       await db.execute(sql`
@@ -77,7 +77,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
           alt as caption
         FROM "voiceover-photos"
         WHERE is_primary = false OR is_primary IS NULL;
-      `)
+      `);
     }
 
     const oldDemosExist = await db.execute(sql`
@@ -86,7 +86,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
         WHERE table_schema = 'public' 
         AND table_name = 'voiceover-demos'
       );
-    `)
+    `);
 
     if (oldDemosExist.rows[0]?.exists) {
       // Migrate primary demos
@@ -103,7 +103,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
           WHERE vd.voiceover_artist = v.id 
           AND vd.is_primary = true
         );
-      `)
+      `);
 
       // Migrate additional demos
       await db.execute(sql`
@@ -116,10 +116,10 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
           description
         FROM "voiceover-demos"
         WHERE is_primary = false OR is_primary IS NULL;
-      `)
+      `);
     }
   } catch {
-    console.log('Old tables do not exist, skipping migration')
+    console.log('Old tables do not exist, skipping migration');
   }
 }
 
@@ -129,11 +129,11 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
     ALTER TABLE voiceovers 
     DROP COLUMN IF EXISTS profile_photo_id,
     DROP COLUMN IF EXISTS primary_demo_id;
-  `)
+  `);
 
   // Drop the new tables
   await db.execute(sql`
     DROP TABLE IF EXISTS voiceovers_additional_photos CASCADE;
     DROP TABLE IF EXISTS voiceovers_additional_demos CASCADE;
-  `)
+  `);
 }

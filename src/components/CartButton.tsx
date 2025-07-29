@@ -5,27 +5,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import { CartPreview } from '@/components/CartPreview';
 
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  details?: string[];
+}
+
 interface CartButtonProps {
   cartItemCount: number;
-  cartItems: Array<{
-    id: string;
-    production: string;
-    voice: string;
-    price: number;
-  }>;
+  cartItems: CartItem[];
   cartTotal: number;
-  productionName: string;
-  wordCount: number;
-  region: string;
-  extras: {
-    id: string;
+  productionName?: string;
+  wordCount?: string;
+  region?: string;
+  extras?: string[];
+  selectedVoiceover?: {
     name: string;
-    price: number;
-  }[];
-  selectedVoiceover: {
-    id: string;
-    name: string;
-  } | null;
+    profilePhoto?: string;
+  };
 }
 
 export function CartButton({
@@ -108,7 +106,6 @@ export function CartButton({
                   wordCount={wordCount}
                   region={region}
                   extras={extras}
-                  cartItemCount={cartItemCount}
                   selectedVoiceover={selectedVoiceover}
                 />
               </motion.div>
@@ -143,7 +140,6 @@ export function CartButton({
                   wordCount={wordCount}
                   region={region}
                   extras={extras}
-                  cartItemCount={cartItemCount}
                   selectedVoiceover={selectedVoiceover}
                 />
               </motion.div>

@@ -1,11 +1,14 @@
-'use client'
+'use client';
 
-import { motion } from 'framer-motion'
-import { Mic2, Euro, BookOpen, Mail, Play, Star, Users } from 'lucide-react'
+import { motion } from 'framer-motion';
+import { Mic2, Euro, BookOpen, Mail, Play, Star, Users } from 'lucide-react';
 
 export function StemmenSection() {
   return (
-    <section id="stemmen" className="py-20 md:py-32 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950">
+    <section
+      id="stemmen"
+      className="py-20 md:py-32 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -21,7 +24,8 @@ export function StemmenSection() {
             Onze Stemmen
           </h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-            Ontdek ons diverse team van professionele stemacteurs, elk met hun unieke klank en expertise
+            Ontdek ons diverse team van professionele stemacteurs, elk met hun unieke klank en
+            expertise
           </p>
         </motion.div>
 
@@ -59,7 +63,7 @@ export function StemmenSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export function PrijzenSection() {
@@ -73,9 +77,9 @@ export function PrijzenSection() {
         'Standaard bewerking',
         '2 revisierondes',
         'WAV & MP3 formaat',
-        '48 uur levertijd'
+        '48 uur levertijd',
       ],
-      popular: false
+      popular: false,
     },
     {
       name: 'Professional',
@@ -87,9 +91,9 @@ export function PrijzenSection() {
         '5 revisierondes',
         'Alle audio formaten',
         '24 uur levertijd',
-        'Achtergrondmuziek inbegrepen'
+        'Achtergrondmuziek inbegrepen',
       ],
-      popular: true
+      popular: true,
     },
     {
       name: 'Enterprise',
@@ -101,11 +105,11 @@ export function PrijzenSection() {
         'Onbeperkte revisies',
         'Project management',
         'Prioriteit support',
-        'Lange termijn contract'
+        'Lange termijn contract',
       ],
-      popular: false
-    }
-  ]
+      popular: false,
+    },
+  ];
 
   return (
     <section id="prijzen" className="py-20 md:py-32 bg-white dark:bg-slate-950">
@@ -120,9 +124,7 @@ export function PrijzenSection() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-6">
             <Euro className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Transparante Prijzen
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Transparante Prijzen</h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
             Kies het pakket dat bij uw project past. Geen verborgen kosten.
           </p>
@@ -137,8 +139,8 @@ export function PrijzenSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={cn(
-                "relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300",
-                plan.popular && "ring-2 ring-purple-600 scale-105"
+                'relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300',
+                plan.popular && 'ring-2 ring-purple-600 scale-105'
               )}
             >
               {plan.popular && (
@@ -155,19 +157,31 @@ export function PrijzenSection() {
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      <svg
+                        className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                       <span className="text-slate-600 dark:text-slate-400">{feature}</span>
                     </li>
                   ))}
                 </ul>
-                <button className={cn(
-                  "w-full py-3 px-6 rounded-lg font-medium transition-all duration-200",
-                  plan.popular
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg"
-                    : "bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600"
-                )}>
+                <button
+                  className={cn(
+                    'w-full py-3 px-6 rounded-lg font-medium transition-all duration-200',
+                    plan.popular
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg'
+                      : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600'
+                  )}
+                >
                   Kies {plan.name}
                 </button>
               </div>
@@ -176,36 +190,41 @@ export function PrijzenSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export function BlogSection() {
   const posts = [
     {
       title: 'De Kunst van Voice-Over: Tips voor Beginners',
-      excerpt: 'Ontdek de essentiële technieken en best practices voor het opnemen van professionele voice-overs.',
+      excerpt:
+        'Ontdek de essentiële technieken en best practices voor het opnemen van professionele voice-overs.',
       date: '15 Nov 2024',
       readTime: '5 min',
-      category: 'Tips & Tricks'
+      category: 'Tips & Tricks',
     },
     {
       title: 'Trends in Voice-Over voor 2024',
-      excerpt: 'Een blik op de opkomende trends in de voice-over industrie en wat dit betekent voor uw projecten.',
+      excerpt:
+        'Een blik op de opkomende trends in de voice-over industrie en wat dit betekent voor uw projecten.',
       date: '10 Nov 2024',
       readTime: '7 min',
-      category: 'Industrie'
+      category: 'Industrie',
     },
     {
       title: 'Het Belang van de Juiste Stem voor Uw Merk',
       excerpt: 'Hoe de juiste stem keuze het verschil kan maken in uw marketing en merkidentiteit.',
       date: '5 Nov 2024',
       readTime: '6 min',
-      category: 'Marketing'
-    }
-  ]
+      category: 'Marketing',
+    },
+  ];
 
   return (
-    <section id="blog" className="py-20 md:py-32 bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900">
+    <section
+      id="blog"
+      className="py-20 md:py-32 bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -217,9 +236,7 @@ export function BlogSection() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-6">
             <BookOpen className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Laatste Nieuws & Inzichten
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Laatste Nieuws & Inzichten</h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
             Blijf op de hoogte van de laatste ontwikkelingen in de wereld van voice-over
           </p>
@@ -247,13 +264,21 @@ export function BlogSection() {
                 <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-600 transition-colors">
                   {post.title}
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  {post.excerpt}
-                </p>
+                <p className="text-slate-600 dark:text-slate-400 mb-4">{post.excerpt}</p>
                 <div className="flex items-center text-purple-600 font-medium">
                   Lees meer
-                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -262,7 +287,7 @@ export function BlogSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export function ContactSection() {
@@ -279,11 +304,10 @@ export function ContactSection() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-6">
             <Mail className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Start Uw Project Vandaag
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Start Uw Project Vandaag</h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-            Heeft u een voice-over nodig? Neem contact op en ontvang binnen 24 uur een offerte op maat
+            Heeft u een voice-over nodig? Neem contact op en ontvang binnen 24 uur een offerte op
+            maat
           </p>
         </motion.div>
 
@@ -345,9 +369,9 @@ export function ContactSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
 
 function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }

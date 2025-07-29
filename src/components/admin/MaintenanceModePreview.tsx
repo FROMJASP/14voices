@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { useField } from '@payloadcms/ui'
+import { useField } from '@payloadcms/ui';
 
 export function MaintenanceModePreview() {
   // Get the individual field values directly
-  const { value: maintenanceMode } = useField({ path: 'features.maintenanceMode' }) || {}
-  const { value: title } = useField({ path: 'features.maintenanceTitle' }) || {}
-  const { value: message } = useField({ path: 'features.maintenanceMessage' }) || {}
-  const { value: contactLabel } = useField({ path: 'features.maintenanceContactLabel' }) || {}
-  const { value: showContactEmail } = useField({ path: 'features.showContactEmail' }) || {}
-  const { value: contactEmail } = useField({ path: 'contact.email' }) || {}
+  const { value: maintenanceMode } = useField({ path: 'features.maintenanceMode' }) || {};
+  const { value: title } = useField({ path: 'features.maintenanceTitle' }) || {};
+  const { value: message } = useField({ path: 'features.maintenanceMessage' }) || {};
+  const { value: contactLabel } = useField({ path: 'features.maintenanceContactLabel' }) || {};
+  const { value: showContactEmail } = useField({ path: 'features.showContactEmail' }) || {};
+  const { value: contactEmail } = useField({ path: 'contact.email' }) || {};
 
   // Show preview whenever checkbox is checked (even before saving)
   if (!maintenanceMode) {
-    return null // Don't show anything when maintenance mode is off
+    return null; // Don't show anything when maintenance mode is off
   }
 
   return (
@@ -22,27 +22,33 @@ export function MaintenanceModePreview() {
         <label>Preview</label>
       </div>
       <div className="field">
-        <div style={{
-          border: '1px solid var(--theme-elevation-150)',
-          borderRadius: 'var(--style-radius-m)',
-          overflow: 'hidden',
-          background: 'var(--theme-elevation-0)',
-        }}>
-          <div style={{
-            padding: '12px 16px',
-            borderBottom: '1px solid var(--theme-elevation-150)',
-            background: 'var(--theme-elevation-50)',
-            fontSize: '13px',
-            fontWeight: '600',
-          }}>
+        <div
+          style={{
+            border: '1px solid var(--theme-elevation-150)',
+            borderRadius: 'var(--style-radius-m)',
+            overflow: 'hidden',
+            background: 'var(--theme-elevation-0)',
+          }}
+        >
+          <div
+            style={{
+              padding: '12px 16px',
+              borderBottom: '1px solid var(--theme-elevation-150)',
+              background: 'var(--theme-elevation-50)',
+              fontSize: '13px',
+              fontWeight: '600',
+            }}
+          >
             Maintenance Mode Preview
           </div>
-          <div style={{
-            height: '500px',
-            position: 'relative',
-            overflow: 'hidden',
-            background: '#000',
-          }}>
+          <div
+            style={{
+              height: '500px',
+              position: 'relative',
+              overflow: 'hidden',
+              background: '#000',
+            }}
+          >
             <iframe
               srcDoc={`
                 <!DOCTYPE html>
@@ -116,9 +122,11 @@ export function MaintenanceModePreview() {
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
                       </div>
-                      <h1>${title || "We zijn zo terug!"}</h1>
-                      <div class="message">${message || "We voeren momenteel gepland onderhoud uit. We zijn zo weer online."}</div>
-                      ${showContactEmail !== false && contactEmail ? `
+                      <h1>${title || 'We zijn zo terug!'}</h1>
+                      <div class="message">${message || 'We voeren momenteel gepland onderhoud uit. We zijn zo weer online.'}</div>
+                      ${
+                        showContactEmail !== false && contactEmail
+                          ? `
                         <div class="contact">
                           <p>${contactLabel || 'Contact nodig?'}</p>
                           <a href="mailto:${contactEmail}">
@@ -128,7 +136,9 @@ export function MaintenanceModePreview() {
                             ${contactEmail}
                           </a>
                         </div>
-                      ` : ''}
+                      `
+                          : ''
+                      }
                     </div>
                   </body>
                 </html>
@@ -144,5 +154,5 @@ export function MaintenanceModePreview() {
         </div>
       </div>
     </div>
-  )
+  );
 }

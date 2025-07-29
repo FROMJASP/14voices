@@ -1,42 +1,42 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from '@/utilities/payload'
-import { resendMarketing } from '@/lib/email/resend-marketing'
-import type { Payload, Where } from 'payload'
-import type { EmailAudience, SegmentRules } from '@/types/email-marketing'
-import { z } from 'zod'
-import { audienceCreateSchema } from '@/lib/validation/schemas'
+import { NextRequest, NextResponse } from 'next/server';
+import { getPayload } from '@/utilities/payload';
+import { resendMarketing } from '@/lib/email/resend-marketing';
+import type { Payload, Where } from 'payload';
+import type { EmailAudience, SegmentRules } from '@/types/email-marketing';
+import { z } from 'zod';
+import { audienceCreateSchema } from '@/lib/validation/schemas';
 
 // Validation schema for GET query parameters
 const audienceQuerySchema = z.object({
   active: z.enum(['true', 'false']).optional(),
   page: z.coerce.number().int().min(1).optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(10)
-})
+  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+});
 
 export async function GET(req: NextRequest) {
   try {
-    const payload = await getPayload()
-    const { searchParams } = new URL(req.url)
-    
+    const payload = await getPayload();
+    const { searchParams } = new URL(req.url);
+
     // Validate query parameters
     const validationResult = audienceQuerySchema.safeParse({
       active: searchParams.get('active') || undefined,
       page: searchParams.get('page') || undefined,
-      limit: searchParams.get('limit') || undefined
-    })
-    
+      limit: searchParams.get('limit') || undefined,
+    });
+
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: validationResult.error.errors },
         { status: 400 }
-      )
+      );
     }
-    
-    const { active, limit, page } = validationResult.data
 
-    const where: Where = {}
+    const { active, limit, page } = validationResult.data;
+
+    const where: Where = {};
     if (active !== undefined) {
-      where.active = { equals: active === 'true' }
+      where.active = { equals: active === 'true' };
     }
 
     const audiences = await payload.find({
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       page,
       depth: 1,
       sort: '-createdAt',
-    })
+    });
 
     return NextResponse.json({
       audiences: audiences.docs,
@@ -54,39 +54,36 @@ export async function GET(req: NextRequest) {
       totalPages: audiences.totalPages,
       page: audiences.page,
       limit: audiences.limit,
-    })
+    });
   } catch (error) {
-    console.error('Failed to fetch audiences:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch audiences' },
-      { status: 500 }
-    )
+    console.error('Failed to fetch audiences:', error);
+    return NextResponse.json({ error: 'Failed to fetch audiences' }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayload()
-    const data = await req.json()
-    
+    const payload = await getPayload();
+    const data = await req.json();
+
     // Validate request body
-    const validationResult = audienceCreateSchema.safeParse(data)
+    const validationResult = audienceCreateSchema.safeParse(data);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid audience data', details: validationResult.error.errors },
         { status: 400 }
-      )
+      );
     }
 
-    let resendAudienceId = null
+    let resendAudienceId = null;
     if (data.syncWithResend) {
       try {
         const resendAudience = await resendMarketing.createAudience({
           name: data.name,
-        })
-        resendAudienceId = resendAudience?.id || null
+        });
+        resendAudienceId = resendAudience?.id || null;
       } catch (error) {
-        console.error('Failed to create Resend audience:', error)
+        console.error('Failed to create Resend audience:', error);
       }
     }
 
@@ -96,19 +93,16 @@ export async function POST(req: NextRequest) {
         ...data,
         resendAudienceId,
       },
-    })
+    });
 
     if (data.type === 'dynamic' && data.segmentRules) {
-      await updateDynamicAudienceContacts(payload, audience as EmailAudience)
+      await updateDynamicAudienceContacts(payload, audience as EmailAudience);
     }
 
-    return NextResponse.json({ audience })
+    return NextResponse.json({ audience });
   } catch (error) {
-    console.error('Failed to create audience:', error)
-    return NextResponse.json(
-      { error: 'Failed to create audience' },
-      { status: 500 }
-    )
+    console.error('Failed to create audience:', error);
+    return NextResponse.json({ error: 'Failed to create audience' }, { status: 500 });
   }
 }
 
@@ -118,7 +112,7 @@ async function updateDynamicAudienceContacts(payload: Payload, audience: EmailAu
       collection: 'email-contacts',
       where: buildDynamicQuery(audience.segmentRules),
       limit: 1000,
-    })
+    });
 
     await payload.update({
       collection: 'email-audiences',
@@ -126,66 +120,66 @@ async function updateDynamicAudienceContacts(payload: Payload, audience: EmailAu
       data: {
         contactCount: contacts.totalDocs,
       },
-    })
+    });
 
-    return contacts.docs
+    return contacts.docs;
   } catch (error) {
-    console.error('Failed to update dynamic audience contacts:', error)
-    return []
+    console.error('Failed to update dynamic audience contacts:', error);
+    return [];
   }
 }
 
 function buildDynamicQuery(segmentRules: SegmentRules | undefined): Where {
-  const where: Where = {}
-  
+  const where: Where = {};
+
   if (!segmentRules?.rules || segmentRules.rules.length === 0) {
-    return where
+    return where;
   }
 
   const conditions = segmentRules.rules.map((rule) => {
-    const condition: Where = {}
-    
+    const condition: Where = {};
+
     switch (rule.field) {
       case 'tags':
         if (rule.operator === 'contains') {
-          condition['tags.tag'] = { contains: rule.value }
+          condition['tags.tag'] = { contains: rule.value };
         } else if (rule.operator === 'not_contains') {
-          condition['tags.tag'] = { not_equals: rule.value }
+          condition['tags.tag'] = { not_equals: rule.value };
         }
-        break
-        
+        break;
+
       case 'location':
         if (rule.operator === 'equals') {
-          condition['location.country'] = { equals: rule.value }
+          condition['location.country'] = { equals: rule.value };
         }
-        break
-        
+        break;
+
       case 'engagement':
         if (rule.operator === 'greater_than') {
-          condition['engagement.engagementScore'] = { greater_than: parseInt(rule.value || '0') }
+          condition['engagement.engagementScore'] = { greater_than: parseInt(rule.value || '0') };
         } else if (rule.operator === 'less_than') {
-          condition['engagement.engagementScore'] = { less_than: parseInt(rule.value || '0') }
+          condition['engagement.engagementScore'] = { less_than: parseInt(rule.value || '0') };
         }
-        break
-        
+        break;
+
       case 'signupDate':
-        const date = new Date(rule.value || '')
+        const date = new Date(rule.value || '');
         if (rule.operator === 'greater_than') {
-          condition['source.signupDate'] = { greater_than: date }
+          condition['source.signupDate'] = { greater_than: date };
         } else if (rule.operator === 'less_than') {
-          condition['source.signupDate'] = { less_than: date }
+          condition['source.signupDate'] = { less_than: date };
         }
-        break
+        break;
     }
-    
-    return condition
-  })
+
+    return condition;
+  });
 
   if (segmentRules.logic === 'any') {
-    where.or = conditions
+    where.or = conditions;
   } else {
-    Object.assign(where, ...conditions)
+    Object.assign(where, ...conditions);
   }
 
-  return where
+  return where;
 }

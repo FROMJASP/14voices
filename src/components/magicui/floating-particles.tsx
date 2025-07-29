@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { motion } from 'motion/react';
+import { useEffect, useState } from 'react';
 
 interface Particle {
   id: number;
@@ -25,8 +25,8 @@ interface FloatingParticlesProps {
 
 export function FloatingParticles({
   count = 50,
-  className = "",
-  particleClassName = "",
+  className = '',
+  particleClassName = '',
   minSize = 2,
   maxSize = 6,
   minDuration = 10,
@@ -71,7 +71,7 @@ export function FloatingParticles({
             duration: particle.duration,
             delay: particle.delay,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
       ))}

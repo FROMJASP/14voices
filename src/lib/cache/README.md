@@ -18,75 +18,75 @@ High-performance caching layer with in-memory LRU cache and optional Redis suppo
 ### Basic Usage
 
 ```typescript
-import globalCache from '@/lib/cache'
+import globalCache from '@/lib/cache';
 
 // Set a value
-await globalCache.set('key', { data: 'value' }, 300000) // 5 min TTL
+await globalCache.set('key', { data: 'value' }, 300000); // 5 min TTL
 
 // Get a value
-const cached = await globalCache.get('key')
+const cached = await globalCache.get('key');
 
 // Wrap a function
 const result = await globalCache.wrap(
   'expensive-operation',
   async () => await expensiveOperation(),
   600000 // 10 min TTL
-)
+);
 ```
 
 ### API Handlers
 
 ```typescript
-import { createApiHandler, createPaginatedHandler } from '@/lib/api/handlers'
+import { createApiHandler, createPaginatedHandler } from '@/lib/api/handlers';
 
 // Simple cached API
 export const GET = createApiHandler(
   async (req) => {
-    return await fetchData()
+    return await fetchData();
   },
   {
     cache: {
       enabled: true,
       ttl: 300000,
-      invalidatePatterns: ['data:*']
+      invalidatePatterns: ['data:*'],
     },
     rateLimit: {
       requests: 30,
-      window: 60
-    }
+      window: 60,
+    },
   }
-)
+);
 
 // Paginated API
 export const GET = createPaginatedHandler(
   async (params) => {
-    const data = await fetchPaginatedData(params)
-    return { data: data.docs, total: data.total }
+    const data = await fetchPaginatedData(params);
+    return { data: data.docs, total: data.total };
   },
   {
-    cache: { enabled: true, ttl: 600000 }
+    cache: { enabled: true, ttl: 600000 },
   }
-)
+);
 ```
 
 ### Cache Strategies
 
 ```typescript
-import { createCacheStrategy } from '@/lib/cache/strategies'
+import { createCacheStrategy } from '@/lib/cache/strategies';
 
 // Write-through cache
 const strategy = createCacheStrategy('write-through', {
   cache: globalCache,
-  dataFetcher: async (key) => await fetchFromDB(key)
-})
+  dataFetcher: async (key) => await fetchFromDB(key),
+});
 
 // Refresh-ahead cache
 const refreshStrategy = createCacheStrategy('refresh-ahead', {
   cache: globalCache,
   dataFetcher: async (key) => await fetchFromAPI(key),
   refreshThreshold: 0.8, // Refresh when 80% of TTL expired
-  refreshInterval: 10000
-})
+  refreshInterval: 10000,
+});
 ```
 
 ## Configuration
@@ -112,12 +112,12 @@ const cache = new CacheManager({
   useRedis: true,
   layers: {
     memory: true,
-    redis: true
+    redis: true,
   },
   onEvict: (key, value) => {
-    console.log(`Evicted ${key}`)
-  }
-})
+    console.log(`Evicted ${key}`);
+  },
+});
 ```
 
 ## Performance Metrics
@@ -129,6 +129,7 @@ GET /api/cache/metrics
 ```
 
 Response:
+
 ```json
 {
   "stats": {
@@ -148,13 +149,13 @@ Response:
 
 ```typescript
 // Invalidate by pattern
-await globalCache.invalidate(['voiceovers:*', 'testimonials:*'])
+await globalCache.invalidate(['voiceovers:*', 'testimonials:*']);
 
 // Clear all
-await globalCache.clear()
+await globalCache.clear();
 
 // Delete specific key
-await globalCache.delete('specific-key')
+await globalCache.delete('specific-key');
 ```
 
 ## Best Practices
