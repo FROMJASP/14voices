@@ -87,10 +87,11 @@ const StyleTab = memo(
         className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-out whitespace-nowrap transform hover:scale-105 active:scale-95 cursor-pointer animate-slideInUp flex items-center gap-2 ${
           isSelected
             ? 'bg-[#18f109] text-black shadow-md hover:shadow-lg hover:bg-[#18f109]/90 scale-105'
-            : 'bg-card border border-border hover:bg-accent hover:border-accent text-normal hover:shadow-sm'
+            : 'bg-card border border-border hover:bg-accent hover:border-accent hover:shadow-sm'
         }`}
         style={{
           animationDelay: `${(index + 1) * 50}ms`,
+          ...(!isSelected && { color: 'var(--text)' }),
         }}
       >
         <Icon className="w-4 h-4" />
@@ -403,17 +404,27 @@ export const VoiceoverSearchFieldDesignOptimized = memo(
               </div>
               <div className="w-8 h-0.5 bg-border" />
               <div className="flex items-center gap-2 text-sm">
-                <span className="w-8 h-8 bg-white dark:bg-card border border-border rounded-full flex items-center justify-center font-semibold text-normal">
+                <span
+                  className="w-8 h-8 bg-white dark:bg-card border border-border rounded-full flex items-center justify-center font-semibold"
+                  style={{ color: 'var(--text)' }}
+                >
                   2
                 </span>
-                <span className="text-normal">Upload script</span>
+                <span className="font-plus-jakarta" style={{ color: 'var(--text)' }}>
+                  Upload script
+                </span>
               </div>
               <div className="hidden sm:block w-8 h-0.5 bg-border" />
               <div className="flex items-center gap-2 text-sm w-full sm:w-auto justify-center">
-                <span className="w-8 h-8 bg-white dark:bg-card border border-border rounded-full flex items-center justify-center font-semibold text-normal">
+                <span
+                  className="w-8 h-8 bg-white dark:bg-card border border-border rounded-full flex items-center justify-center font-semibold"
+                  style={{ color: 'var(--text)' }}
+                >
                   3
                 </span>
-                <span className="text-normal">Ontvang audio</span>
+                <span className="font-plus-jakarta" style={{ color: 'var(--text)' }}>
+                  Ontvang audio
+                </span>
               </div>
             </div>
 
@@ -444,7 +455,10 @@ export const VoiceoverSearchFieldDesignOptimized = memo(
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-lg lg:text-xl text-center text-normal mb-6 sm:mb-10 lg:mb-12 max-w-2xl mx-auto leading-relaxed tracking-normal">
+            <p
+              className="font-plus-jakarta text-base text-center mb-6 sm:mb-10 lg:mb-12 max-w-2xl mx-auto leading-[28px] tracking-normal"
+              style={{ color: 'var(--text)' }}
+            >
               Op zoek naar een professioneel voice-over? Vind een Nederlandse stemacteur die jouw
               merk <span className="font-medium text-title">laat spreken</span>!
             </p>
@@ -453,7 +467,10 @@ export const VoiceoverSearchFieldDesignOptimized = memo(
             <div className="flex items-center justify-center gap-3 sm:gap-6 lg:gap-8 mb-4 sm:mb-8 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <Zap className="w-5 h-5 sm:w-5 sm:h-5 text-[#18f109]" />
-                <span className="text-sm sm:text-base font-semibold whitespace-nowrap text-normal">
+                <span
+                  className="font-plus-jakarta text-base font-semibold whitespace-nowrap"
+                  style={{ color: 'var(--text)' }}
+                >
                   &lt;48u levering
                 </span>
               </div>
@@ -465,14 +482,20 @@ export const VoiceoverSearchFieldDesignOptimized = memo(
                 className="flex items-center gap-1.5 hover:text-[#efd243] transition-colors"
               >
                 <Star className="w-5 h-5 sm:w-5 sm:h-5 text-[#efd243]" />
-                <span className="text-sm sm:text-base font-semibold whitespace-nowrap text-normal">
+                <span
+                  className="font-plus-jakarta text-base font-semibold whitespace-nowrap"
+                  style={{ color: 'var(--text)' }}
+                >
                   9.1/10 beoordeeld
                 </span>
               </a>
               <div className="w-px h-5 bg-border" />
               <div className="flex items-center gap-1.5">
                 <Shield className="w-5 h-5 sm:w-5 sm:h-5 text-[#ebaa3a]" />
-                <span className="text-sm sm:text-base font-semibold whitespace-nowrap text-normal">
+                <span
+                  className="font-plus-jakarta text-base font-semibold whitespace-nowrap"
+                  style={{ color: 'var(--text)' }}
+                >
                   100% garantie
                 </span>
               </div>
@@ -491,9 +514,12 @@ export const VoiceoverSearchFieldDesignOptimized = memo(
                   className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-out whitespace-nowrap transform hover:scale-105 active:scale-95 cursor-pointer animate-slideInUp ${
                     selectedStyles.includes('Alle stijlen')
                       ? 'bg-[#18f109] text-black shadow-md hover:shadow-lg hover:bg-[#18f109]/90 scale-105'
-                      : 'bg-card border border-border hover:bg-accent hover:border-accent text-normal hover:shadow-sm'
+                      : 'bg-card border border-border hover:bg-accent hover:border-accent hover:shadow-sm'
                   }`}
-                  style={{ animationDelay: '0ms' }}
+                  style={{
+                    animationDelay: '0ms',
+                    ...(!selectedStyles.includes('Alle stijlen') && { color: 'var(--text)' }),
+                  }}
                 >
                   Alle stijlen
                 </button>

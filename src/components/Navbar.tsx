@@ -114,14 +114,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                   <Link
                     key={index}
                     href={item.href}
-                    className="hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all relative group cursor-pointer"
-                    style={{ 
-                      fontFamily: 'var(--font-plus-jakarta)',
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      lineHeight: '20px',
-                      color: 'rgb(24, 24, 27)'
-                    }}
+                    className="font-plus-jakarta text-base font-semibold leading-6 text-[var(--text)] hover:text-[var(--foreground)] dark:text-[var(--text)] dark:hover:text-[var(--foreground)] transition-all relative group cursor-pointer"
                   >
                     <span className="relative z-10">{item.label}</span>
                     <span className="absolute inset-x-0 -bottom-1 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center"></span>
@@ -188,8 +181,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               {/* Login */}
               <Link
                 href="/login"
-                className="text-base text-gray-700 hover:text-gray-900 dark:text-white dark:hover:text-white font-medium transition-all cursor-pointer px-4 py-2"
-                style={{ fontFamily: 'var(--font-inter)' }}
+                className="font-plus-jakarta text-base text-[var(--text)] hover:text-[var(--foreground)] dark:text-[var(--text)] dark:hover:text-[var(--foreground)] font-medium transition-all cursor-pointer px-4 py-2"
               >
                 Login
               </Link>
@@ -197,8 +189,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
               {/* CTA Button */}
               <Link
                 href="/demo"
-                className="relative inline-flex items-center bg-primary text-gray-900 dark:text-black px-5 py-2.5 rounded-md text-base font-medium transition-all border-2 border-black shadow-[4px_4px_0px_0px_#000000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 cursor-pointer"
-                style={{ fontFamily: 'var(--font-inter)' }}
+                className="font-plus-jakarta relative inline-flex items-center bg-primary text-gray-900 dark:text-black px-5 py-2.5 rounded-md text-base font-medium transition-all border-2 border-black shadow-[4px_4px_0px_0px_#000000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 cursor-pointer"
               >
                 Hoe het werkt?
               </Link>
@@ -320,14 +311,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                       <Link
                         href={item.href}
                         onClick={() => setIsOpen(false)}
-                        className="block px-4 py-3 rounded-lg hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-muted transition-all cursor-pointer"
-                        style={{ 
-                          fontFamily: 'var(--font-plus-jakarta)',
-                          fontSize: '14px',
-                          fontWeight: 600,
-                          lineHeight: '20px',
-                          color: 'rgb(24, 24, 27)'
-                        }}
+                        className="font-plus-jakarta block px-4 py-3 rounded-lg text-base font-semibold leading-6 text-[var(--text)] hover:text-[var(--foreground)] dark:text-[var(--text)] dark:hover:text-[var(--foreground)] hover:bg-gray-100 dark:hover:bg-muted transition-all cursor-pointer"
                       >
                         {item.label}
                       </Link>
@@ -353,7 +337,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="font-plus-jakarta block w-full text-center bg-gray-100 hover:bg-gray-200 dark:bg-muted dark:hover:bg-muted/80 text-foreground px-6 py-3 rounded-lg text-base font-medium transition-all cursor-pointer"
+                  className="font-plus-jakarta block w-full text-center bg-gray-100 hover:bg-gray-200 dark:bg-muted dark:hover:bg-muted/80 text-[var(--foreground)] px-6 py-3 rounded-lg text-base font-medium transition-all cursor-pointer"
                 >
                   Login
                 </Link>

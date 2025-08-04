@@ -1,4 +1,4 @@
-import { Plus_Jakarta_Sans, Geist_Mono } from 'next/font/google';
+import { Plus_Jakarta_Sans, Geist_Mono, Instrument_Serif } from 'next/font/google';
 import { MaintenanceModeWrapper } from '@/components/MaintenanceModeWrapper';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { CartProvider } from '@/contexts/CartContext';
@@ -8,6 +8,14 @@ const plusJakarta = Plus_Jakarta_Sans({
   variable: '--font-plus-jakarta',
   subsets: ['latin'],
   weight: ['200', '300', '400', '500', '600', '700', '800'],
+  display: 'swap',
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: '--font-instrument-serif',
+  subsets: ['latin'],
+  weight: ['400'],
+  style: ['normal', 'italic'],
   display: 'swap',
 });
 
@@ -26,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="nl" suppressHydrationWarning>
       <body
-        className={`${plusJakarta.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`${plusJakarta.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

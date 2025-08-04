@@ -182,9 +182,9 @@
   --sidebar-accent-foreground: #000000;
   --sidebar-border: #f2f2f2;
   --sidebar-ring: #c57f08;
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --font-serif: Source Serif 4, serif;
-  --font-mono: JetBrains Mono, monospace;
+  --font-sans: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
+  --font-serif: var(--font-instrument-serif), 'Instrument Serif', serif;
+  --font-mono: var(--font-geist-mono), monospace;
   --radius: 0.6rem;
   --shadow-2xs: 0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.07);
   --shadow-xs: 0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.07);
@@ -245,9 +245,9 @@
   --sidebar-accent-foreground: #332900;
   --sidebar-border: #404040;
   --sidebar-ring: #c57f08;
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --font-serif: Source Serif 4, serif;
-  --font-mono: JetBrains Mono, monospace;
+  --font-sans: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
+  --font-serif: var(--font-instrument-serif), 'Instrument Serif', serif;
+  --font-mono: var(--font-geist-mono), monospace;
   --radius: 0.6rem;
   --shadow-2xs: 0px 0px 10px 0px hsl(0 0% 10.1961% / 0.07);
   --shadow-xs: 0px 0px 10px 0px hsl(0 0% 10.1961% / 0.07);
