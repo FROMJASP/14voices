@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { Instrument_Serif, Inter } from 'next/font/google';
+import { Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
 import { useCart } from '@/contexts/CartContext';
 import { CartButton } from '@/components/CartButton';
 
@@ -17,11 +17,11 @@ const instrumentSerif = Instrument_Serif({
   variable: '--font-instrument-serif',
 });
 
-const inter = Inter({
-  weight: ['400', '500', '600'],
+const plusJakarta = Plus_Jakarta_Sans({
+  weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-plus-jakarta',
 });
 
 const defaultMenuItems = [
@@ -83,8 +83,8 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
           font-family: var(--font-instrument-serif);
           letter-spacing: 0.02em;
         }
-        .font-inter {
-          font-family: var(--font-inter), 'Inter', sans-serif;
+        .font-plus-jakarta {
+          font-family: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
         }
         /* Remove any gradient overlays or shadows */
         .sticky::before,
@@ -95,7 +95,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
 
       {/* Main Navbar */}
       <nav
-        className={`sticky top-0 z-[100] bg-white dark:bg-background transition-all duration-300 ${isScrolled ? 'border-b border-gray-200 dark:border-border shadow-sm' : ''} ${instrumentSerif.variable} ${inter.variable}`}
+        className={`sticky top-0 z-[100] bg-white dark:bg-background transition-all duration-300 ${isScrolled ? 'border-b border-gray-200 dark:border-border shadow-sm' : ''} ${instrumentSerif.variable} ${plusJakarta.variable}`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -115,7 +115,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                     key={index}
                     href={item.href}
                     className="text-base text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white font-medium transition-all relative group cursor-pointer"
-                    style={{ fontFamily: 'var(--font-inter)' }}
+                    style={{ fontFamily: 'var(--font-plus-jakarta)' }}
                   >
                     <span className="relative z-10">{item.label}</span>
                     <span className="absolute inset-x-0 -bottom-1 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center"></span>
@@ -315,7 +315,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                         href={item.href}
                         onClick={() => setIsOpen(false)}
                         className="block px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-gray-900 dark:text-white dark:hover:text-white hover:bg-gray-100 dark:hover:bg-muted transition-all cursor-pointer"
-                        style={{ fontFamily: 'var(--font-inter)' }}
+                        style={{ fontFamily: 'var(--font-plus-jakarta)' }}
                       >
                         {item.label}
                       </Link>
@@ -328,7 +328,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                   <Link
                     href="/demo"
                     onClick={() => setIsOpen(false)}
-                    className="font-inter block w-full text-center bg-primary text-gray-900 dark:text-black px-6 py-3 rounded-md text-base font-medium transition-all border-2 border-black shadow-[4px_4px_0px_0px_#000000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 cursor-pointer"
+                    className="font-plus-jakarta block w-full text-center bg-primary text-gray-900 dark:text-black px-6 py-3 rounded-md text-base font-medium transition-all border-2 border-black shadow-[4px_4px_0px_0px_#000000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 cursor-pointer"
                   >
                     Hoe het werkt?
                   </Link>
@@ -341,7 +341,7 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="font-inter block w-full text-center bg-gray-100 hover:bg-gray-200 dark:bg-muted dark:hover:bg-muted/80 text-foreground px-6 py-3 rounded-lg text-base font-medium transition-all cursor-pointer"
+                  className="font-plus-jakarta block w-full text-center bg-gray-100 hover:bg-gray-200 dark:bg-muted dark:hover:bg-muted/80 text-foreground px-6 py-3 rounded-lg text-base font-medium transition-all cursor-pointer"
                 >
                   Login
                 </Link>
