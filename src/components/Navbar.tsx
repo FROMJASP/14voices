@@ -114,8 +114,14 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                   <Link
                     key={index}
                     href={item.href}
-                    className="text-base text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white font-medium transition-all relative group cursor-pointer"
-                    style={{ fontFamily: 'var(--font-plus-jakarta)' }}
+                    className="hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all relative group cursor-pointer"
+                    style={{ 
+                      fontFamily: 'var(--font-plus-jakarta)',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      lineHeight: '20px',
+                      color: 'rgb(24, 24, 27)'
+                    }}
                   >
                     <span className="relative z-10">{item.label}</span>
                     <span className="absolute inset-x-0 -bottom-1 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center"></span>
@@ -314,8 +320,14 @@ export function Navbar({ menuItems = defaultMenuItems }: NavbarProps) {
                       <Link
                         href={item.href}
                         onClick={() => setIsOpen(false)}
-                        className="block px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-gray-900 dark:text-white dark:hover:text-white hover:bg-gray-100 dark:hover:bg-muted transition-all cursor-pointer"
-                        style={{ fontFamily: 'var(--font-plus-jakarta)' }}
+                        className="block px-4 py-3 rounded-lg hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-muted transition-all cursor-pointer"
+                        style={{ 
+                          fontFamily: 'var(--font-plus-jakarta)',
+                          fontSize: '14px',
+                          fontWeight: 600,
+                          lineHeight: '20px',
+                          color: 'rgb(24, 24, 27)'
+                        }}
                       >
                         {item.label}
                       </Link>
