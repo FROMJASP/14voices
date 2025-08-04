@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload, getServerSideUser } from '@/utilities/payload';
 import { resendMarketing } from '@/lib/email/resend-marketing';
 import type { EmailCampaign } from '@/types/email-marketing';
 import { campaignSendSchema } from '@/lib/validation/schemas';
 import { sanitizeHtml } from '@/lib/validation/schemas';
 
-async function handler(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+async function handler(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
@@ -15,7 +16,7 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ id: str
     }
 
     const payload = await getPayload();
-    const body = await req.json();
+    const body = await _req.json();
 
     // Validate input
     const validationResult = campaignSendSchema.safeParse(body);
@@ -208,7 +209,7 @@ async function renderCampaignContent(campaign: EmailCampaign): Promise<string> {
 }
 
 // Export the handler with middleware
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+async function POSTHandler(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Simple auth check
   const user = await getServerSideUser();
   if (!user) {
@@ -216,7 +217,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // Call the handler
-  const response = await handler(req, { params });
+  const response = await handler(_req, { params });
 
   // Add security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
@@ -225,3 +226,5 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   return response;
 }
+
+export const POST = withAuth(POSTHandler);

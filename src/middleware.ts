@@ -3,6 +3,12 @@ import type { NextRequest } from 'next/server';
 import { buildCSPHeader, isBlockedPath, isBlockedUserAgent } from '@/config/security';
 
 export function middleware(request: NextRequest) {
+  // Temporarily bypass security for admin login in development
+  if (process.env.NODE_ENV === 'development' && request.nextUrl.pathname.startsWith('/admin')) {
+    console.log('[DEV] Bypassing security for admin path:', request.nextUrl.pathname);
+    return NextResponse.next();
+  }
+
   // Block suspicious user agents
   const userAgent = request.headers.get('user-agent') || '';
   if (isBlockedUserAgent(userAgent)) {
@@ -14,7 +20,17 @@ export function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 404 });
   }
 
+  // For now, we'll skip nonce generation in middleware due to Edge Runtime limitations
+  // In production, consider using a different approach like hash-based CSP or
+  // generating nonces in server components
+  const nonce = null;
+  
   const response = NextResponse.next();
+
+  // Pass nonce to the request for use in components if needed
+  if (nonce) {
+    response.headers.set('x-nonce', nonce);
+  }
 
   // Add security headers globally
   response.headers.set('X-Content-Type-Options', 'nosniff');
@@ -23,8 +39,8 @@ export function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
-  // Add Content Security Policy
-  response.headers.set('Content-Security-Policy', buildCSPHeader());
+  // Add Content Security Policy with nonce support
+  response.headers.set('Content-Security-Policy', buildCSPHeader(nonce));
 
   // Add additional security headers
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');

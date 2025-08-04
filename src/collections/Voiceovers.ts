@@ -138,7 +138,7 @@ const Voiceovers: CollectionConfig = {
           name: 'customTag',
           type: 'text',
           admin: {
-            condition: (data, siblingData) => siblingData?.tag === 'custom',
+            condition: (_data, siblingData) => siblingData?.tag === 'custom',
             description: 'Enter your custom tag',
           },
         },

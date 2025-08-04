@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 // import { headers } from 'next/headers'
 import { getPayload } from '@/utilities/payload';
 import { performEmailSystemHealthCheck } from '@/lib/email/monitoring';
 
-export async function GET() {
+async function GETHandler() {
   try {
     // const headersList = await headers()
     // const authHeader = headersList.get('authorization')
@@ -45,3 +46,5 @@ export async function GET() {
     );
   }
 }
+
+export const GET = withAuth(GETHandler);

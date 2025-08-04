@@ -99,14 +99,14 @@ const Pages: CollectionConfig = {
                   name: 'title',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type !== 'none',
+                    condition: (_data, siblingData) => siblingData?.type !== 'none',
                   },
                 },
                 {
                   name: 'subtitle',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type !== 'none',
+                    condition: (_data, siblingData) => siblingData?.type !== 'none',
                   },
                 },
                 {
@@ -114,14 +114,14 @@ const Pages: CollectionConfig = {
                   type: 'upload',
                   relationTo: 'media',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'image',
+                    condition: (_data, siblingData) => siblingData?.type === 'image',
                   },
                 },
                 {
                   name: 'videoUrl',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'video',
+                    condition: (_data, siblingData) => siblingData?.type === 'video',
                     description: 'YouTube or Vimeo URL',
                   },
                 },
@@ -129,7 +129,7 @@ const Pages: CollectionConfig = {
                   name: 'cta',
                   type: 'group',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type !== 'none',
+                    condition: (_data, siblingData) => siblingData?.type !== 'none',
                   },
                   fields: [
                     {
@@ -191,7 +191,7 @@ const Pages: CollectionConfig = {
                   type: 'richText',
                   editor: pageEditorConfig,
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'richText',
+                    condition: (_data, siblingData) => siblingData?.type === 'richText',
                   },
                 },
                 // Two Column Section
@@ -200,7 +200,7 @@ const Pages: CollectionConfig = {
                   type: 'richText',
                   editor: pageEditorConfig,
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'twoColumn',
+                    condition: (_data, siblingData) => siblingData?.type === 'twoColumn',
                   },
                 },
                 {
@@ -208,7 +208,7 @@ const Pages: CollectionConfig = {
                   type: 'richText',
                   editor: pageEditorConfig,
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'twoColumn',
+                    condition: (_data, siblingData) => siblingData?.type === 'twoColumn',
                   },
                 },
                 {
@@ -223,7 +223,7 @@ const Pages: CollectionConfig = {
                     { label: '30/70', value: '30-70' },
                   ],
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'twoColumn',
+                    condition: (_data, siblingData) => siblingData?.type === 'twoColumn',
                   },
                 },
                 // CTA Section
@@ -231,14 +231,14 @@ const Pages: CollectionConfig = {
                   name: 'ctaHeading',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'cta',
+                    condition: (_data, siblingData) => siblingData?.type === 'cta',
                   },
                 },
                 {
                   name: 'ctaText',
                   type: 'textarea',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'cta',
+                    condition: (_data, siblingData) => siblingData?.type === 'cta',
                   },
                 },
                 {
@@ -246,7 +246,7 @@ const Pages: CollectionConfig = {
                   type: 'array',
                   maxRows: 2,
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'cta',
+                    condition: (_data, siblingData) => siblingData?.type === 'cta',
                   },
                   fields: [
                     {
@@ -282,7 +282,7 @@ const Pages: CollectionConfig = {
                     { label: 'Dark', value: 'dark' },
                   ],
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'cta',
+                    condition: (_data, siblingData) => siblingData?.type === 'cta',
                   },
                 },
                 // Contact Section
@@ -291,14 +291,14 @@ const Pages: CollectionConfig = {
                   type: 'text',
                   defaultValue: 'Get in Touch',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                    condition: (_data, siblingData) => siblingData?.type === 'contact',
                   },
                 },
                 {
                   name: 'contactSubheading',
                   type: 'textarea',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                    condition: (_data, siblingData) => siblingData?.type === 'contact',
                   },
                 },
                 {
@@ -306,7 +306,7 @@ const Pages: CollectionConfig = {
                   type: 'checkbox',
                   defaultValue: true,
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                    condition: (_data, siblingData) => siblingData?.type === 'contact',
                   },
                 },
                 {
@@ -314,7 +314,7 @@ const Pages: CollectionConfig = {
                   type: 'text',
                   defaultValue: 'casting@14voices.com',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                    condition: (_data, siblingData) => siblingData?.type === 'contact',
                   },
                 },
                 {
@@ -322,7 +322,7 @@ const Pages: CollectionConfig = {
                   type: 'text',
                   defaultValue: '020-2614825',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'contact',
+                    condition: (_data, siblingData) => siblingData?.type === 'contact',
                   },
                 },
                 // Pricing Section
@@ -331,14 +331,14 @@ const Pages: CollectionConfig = {
                   type: 'text',
                   defaultValue: 'Our Pricing Plans',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'pricing',
+                    condition: (_data, siblingData) => siblingData?.type === 'pricing',
                   },
                 },
                 {
                   name: 'pricingSubheading',
                   type: 'textarea',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'pricing',
+                    condition: (_data, siblingData) => siblingData?.type === 'pricing',
                   },
                 },
                 {
@@ -347,7 +347,7 @@ const Pages: CollectionConfig = {
                   minRows: 1,
                   maxRows: 4,
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'pricing',
+                    condition: (_data, siblingData) => siblingData?.type === 'pricing',
                   },
                   fields: [
                     {
@@ -397,14 +397,14 @@ const Pages: CollectionConfig = {
                   name: 'testimonialsHeading',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'testimonials',
+                    condition: (_data, siblingData) => siblingData?.type === 'testimonials',
                   },
                 },
                 {
                   name: 'testimonialsSubheading',
                   type: 'textarea',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'testimonials',
+                    condition: (_data, siblingData) => siblingData?.type === 'testimonials',
                   },
                 },
                 {
@@ -417,7 +417,7 @@ const Pages: CollectionConfig = {
                     { label: 'Selected', value: 'selected' },
                   ],
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'testimonials',
+                    condition: (_data, siblingData) => siblingData?.type === 'testimonials',
                   },
                 },
                 {
@@ -426,7 +426,7 @@ const Pages: CollectionConfig = {
                   relationTo: 'testimonials',
                   hasMany: true,
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       siblingData?.type === 'testimonials' &&
                       siblingData?.testimonialsSource === 'selected',
                   },
@@ -438,7 +438,7 @@ const Pages: CollectionConfig = {
                   min: 1,
                   max: 20,
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'testimonials',
+                    condition: (_data, siblingData) => siblingData?.type === 'testimonials',
                   },
                 },
                 // FAQ Section
@@ -446,21 +446,21 @@ const Pages: CollectionConfig = {
                   name: 'faqHeading',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'faq',
+                    condition: (_data, siblingData) => siblingData?.type === 'faq',
                   },
                 },
                 {
                   name: 'faqSubheading',
                   type: 'textarea',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'faq',
+                    condition: (_data, siblingData) => siblingData?.type === 'faq',
                   },
                 },
                 {
                   name: 'faqs',
                   type: 'array',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'faq',
+                    condition: (_data, siblingData) => siblingData?.type === 'faq',
                   },
                   fields: [
                     {
@@ -481,7 +481,7 @@ const Pages: CollectionConfig = {
                   name: 'galleryHeading',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'gallery',
+                    condition: (_data, siblingData) => siblingData?.type === 'gallery',
                   },
                 },
                 {
@@ -490,7 +490,7 @@ const Pages: CollectionConfig = {
                   relationTo: 'media',
                   hasMany: true,
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'gallery',
+                    condition: (_data, siblingData) => siblingData?.type === 'gallery',
                   },
                 },
                 {
@@ -503,7 +503,7 @@ const Pages: CollectionConfig = {
                     { label: 'Carousel', value: 'carousel' },
                   ],
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'gallery',
+                    condition: (_data, siblingData) => siblingData?.type === 'gallery',
                   },
                 },
               ],

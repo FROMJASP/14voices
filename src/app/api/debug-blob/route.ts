@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { withAdminAuth } from '@/lib/auth-middleware';
 
-export async function GET() {
+async function GETHandler() {
   const token = process.env.BLOB_READ_WRITE_TOKEN || '';
 
   const debugInfo = {
@@ -21,3 +22,5 @@ export async function GET() {
       !!process.env.BLOB_READ_WRITE_TOKEN && token.startsWith('vercel_blob_rw_'),
   });
 }
+
+export const GET = withAdminAuth(GETHandler, { rateLimit: 'admin' });

@@ -177,6 +177,7 @@ export function BeautifulAudioPlayer({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
+    return undefined;
   }, [isDragging, trackDuration, handleMouseMove, handleMouseUp]);
 
   const formatTime = (time: number) => {

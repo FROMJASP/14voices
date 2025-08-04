@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
 import { resendMarketing } from '@/lib/email/resend-marketing';
 import type { Payload, Where } from 'payload';
@@ -13,10 +14,10 @@ const audienceQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional().default(10),
 });
 
-export async function GET(req: NextRequest) {
+async function GETHandler(_req: NextRequest) {
   try {
     const payload = await getPayload();
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(_req.url);
 
     // Validate query parameters
     const validationResult = audienceQuerySchema.safeParse({
@@ -61,10 +62,10 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POSTHandler(_req: NextRequest) {
   try {
     const payload = await getPayload();
-    const data = await req.json();
+    const data = await _req.json();
 
     // Validate request body
     const validationResult = audienceCreateSchema.safeParse(data);
@@ -183,3 +184,6 @@ function buildDynamicQuery(segmentRules: SegmentRules | undefined): Where {
 
   return where;
 }
+
+export const GET = withAuth(GETHandler);
+export const POST = withAuth(POSTHandler);

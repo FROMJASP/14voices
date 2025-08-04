@@ -131,6 +131,7 @@ export const AudioPlayerField: React.FC = () => {
       document.addEventListener('mouseup', handleGlobalMouseUp);
       return () => document.removeEventListener('mouseup', handleGlobalMouseUp);
     }
+    return undefined;
   }, [isDragging]);
 
   // Cleanup timeout on unmount

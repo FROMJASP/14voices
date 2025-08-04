@@ -27,7 +27,8 @@ interface TableStats {
 }
 
 export class DatabasePerformanceMonitor {
-  constructor(private payload: Payload) {}
+  // Payload instance can be added later when needed
+  constructor() {}
 
   /**
    * Get slow queries from pg_stat_statements
@@ -146,6 +147,8 @@ export const performanceRecommendations = {
   ],
 };
 
-export function createPerformanceMonitor(payload: Payload): DatabasePerformanceMonitor {
-  return new DatabasePerformanceMonitor(payload);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function createPerformanceMonitor(_payload: Payload): DatabasePerformanceMonitor {
+  // Payload parameter kept for future use
+  return new DatabasePerformanceMonitor();
 }

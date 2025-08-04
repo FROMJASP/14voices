@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
 import type { Where } from 'payload';
 import { z } from 'zod';
@@ -11,10 +12,10 @@ const campaignQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional().default(10),
 });
 
-export async function GET(req: NextRequest) {
+async function GETHandler(_req: NextRequest) {
   try {
     const payload = await getPayload();
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(_req.url);
 
     // Validate query parameters
     const validationResult = campaignQuerySchema.safeParse({
@@ -59,10 +60,10 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POSTHandler(_req: NextRequest) {
   try {
     const payload = await getPayload();
-    const data = await req.json();
+    const data = await _req.json();
 
     // Validate request body
     const validationResult = campaignCreateSchema.safeParse(data);
@@ -84,3 +85,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to create campaign' }, { status: 500 });
   }
 }
+
+export const GET = withAuth(GETHandler);
+export const POST = withAuth(POSTHandler);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
 import { getServerSideUser } from '@/utilities/payload';
 import { z } from 'zod';
@@ -25,7 +26,7 @@ const analyticsQuerySchema = z.object({
   range: z.enum(['24h', '7d', '30d', '90d']).optional().default('7d'),
 });
 
-export async function GET(req: NextRequest) {
+async function GETHandler(_req: NextRequest) {
   try {
     const user = await getServerSideUser();
 
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(_req.url);
 
     // Validate query parameters
     const validationResult = analyticsQuerySchema.safeParse({
@@ -143,3 +144,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
   }
 }
+
+export const GET = withAuth(GETHandler);

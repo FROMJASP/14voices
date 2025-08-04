@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
 import { z } from 'zod';
 
@@ -29,9 +30,9 @@ const previewBodySchema = z.object({
   testData: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
 });
 
-export async function POST(req: NextRequest) {
+async function POSTHandler(_req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await _req.json();
 
     // Validate request body
     const validationResult = previewBodySchema.safeParse(body);
@@ -115,3 +116,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to generate preview' }, { status: 500 });
   }
 }
+
+export const POST = withAuth(POSTHandler);

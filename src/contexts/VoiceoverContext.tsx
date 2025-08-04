@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useMemo, useCallback } from 'react';
 
 interface SelectedVoiceover {
   id: string;
@@ -28,18 +28,19 @@ export function VoiceoverProvider({
     initialVoiceover || null
   );
 
-  const clearSelection = () => {
+  const clearSelection = useCallback(() => {
     setSelectedVoiceover(null);
-  };
+  }, []);
+
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    selectedVoiceover,
+    setSelectedVoiceover,
+    clearSelection,
+  }), [selectedVoiceover, clearSelection]);
 
   return (
-    <VoiceoverContext.Provider
-      value={{
-        selectedVoiceover,
-        setSelectedVoiceover,
-        clearSelection,
-      }}
-    >
+    <VoiceoverContext.Provider value={contextValue}>
       {children}
     </VoiceoverContext.Provider>
   );

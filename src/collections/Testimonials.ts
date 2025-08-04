@@ -116,7 +116,7 @@ const Testimonials: CollectionConfig = {
                   name: 'videoUrl',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'video',
+                    condition: (_data, siblingData) => siblingData?.type === 'video',
                     description: 'YouTube or Vimeo URL',
                   },
                 },
@@ -125,7 +125,7 @@ const Testimonials: CollectionConfig = {
                   type: 'upload',
                   relationTo: 'media',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'video',
+                    condition: (_data, siblingData) => siblingData?.type === 'video',
                     description: 'Video thumbnail image',
                   },
                 },
@@ -134,7 +134,7 @@ const Testimonials: CollectionConfig = {
                   type: 'upload',
                   relationTo: 'media',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type === 'audio',
+                    condition: (_data, siblingData) => siblingData?.type === 'audio',
                     description: 'Audio testimonial file',
                   },
                 },
@@ -142,7 +142,7 @@ const Testimonials: CollectionConfig = {
                   name: 'duration',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.type !== 'none',
+                    condition: (_data, siblingData) => siblingData?.type !== 'none',
                     description: 'Duration (e.g., 2:30)',
                   },
                 },

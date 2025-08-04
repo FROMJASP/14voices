@@ -2,62 +2,31 @@ import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { BannerBlock } from './BannerBlock';
 import { ClientFaviconUpdater } from './ClientFaviconUpdater';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
+
+export interface BannerData {
+  enabled: boolean;
+  message: string;
+  linkType: 'none' | 'custom' | 'page';
+  linkUrl: string;
+  dismissible: boolean;
+  style: 'gradient' | 'solid' | 'subtle';
+}
 
 interface GlobalLayoutProps {
   children: React.ReactNode;
   showBanner?: boolean;
+  bannerData?: BannerData;
 }
 
-export async function GlobalLayout({ children, showBanner = true }: GlobalLayoutProps) {
-  // Fetch banner settings from Payload
-  const payload = await getPayload({ config: configPromise });
-
-  let bannerData = {
+export function GlobalLayout({ children, showBanner = true, bannerData }: GlobalLayoutProps) {
+  const defaultBannerData: BannerData = {
     enabled: false,
     message: '',
-    linkType: 'none' as const,
+    linkType: 'none',
     linkUrl: '',
     dismissible: true,
-    style: 'gradient' as const,
+    style: 'gradient',
   };
-
-  try {
-    const siteSettings = await payload.findGlobal({
-      slug: 'site-settings',
-    });
-
-    console.log('Site settings fetched:', { banner: siteSettings?.banner });
-
-    if (siteSettings?.banner) {
-      const { banner } = siteSettings;
-      bannerData = {
-        enabled: banner.enabled || false,
-        message: banner.message || '',
-        linkType: banner.linkType || 'none',
-        linkUrl: banner.linkUrl || '',
-        dismissible: banner.dismissible !== false,
-        style: banner.style || 'gradient',
-      };
-
-      console.log('Banner data processed:', bannerData);
-
-      // Handle page relationship for linkUrl
-      if (banner.linkType === 'page' && banner.linkPage) {
-        const pageId = typeof banner.linkPage === 'object' ? banner.linkPage.id : banner.linkPage;
-        const page = await payload.findByID({
-          collection: 'pages',
-          id: pageId,
-        });
-        if (page) {
-          bannerData.linkUrl = `/${page.slug}`;
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Failed to fetch site settings:', error);
-  }
 
   return (
     <>
@@ -67,7 +36,7 @@ export async function GlobalLayout({ children, showBanner = true }: GlobalLayout
       {/* Simple, clean layout with navbar, optional banner, content, and footer */}
       <div className="min-h-screen flex flex-col">
         {/* Banner */}
-        {showBanner && <BannerBlock banner={bannerData} />}
+        {showBanner && <BannerBlock banner={bannerData || defaultBannerData} />}
 
         {/* Navbar */}
         <Navbar />

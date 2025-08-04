@@ -1,4 +1,5 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { z } from 'zod';
@@ -9,13 +10,13 @@ const paramsSchema = z.object({
   id: idSchema,
 });
 
-export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+async function GETHandler(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
 
   // Validate parameters
   const validationResult = paramsSchema.safeParse(params);
   if (!validationResult.success) {
-    return Response.json(
+    return NextResponse.json(
       { error: 'Invalid section ID', details: validationResult.error.errors },
       { status: 400 }
     );
@@ -30,8 +31,10 @@ export async function GET(request: NextRequest, props: { params: Promise<{ id: s
       depth: 2,
     });
 
-    return Response.json(section);
+    return NextResponse.json(section);
   } catch {
-    return Response.json({ error: 'Section not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Section not found' }, { status: 404 });
   }
 }
+
+export const GET = withAuth(GETHandler);

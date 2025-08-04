@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAdminAuth } from '@/lib/auth-middleware';
 import { getPayload } from 'payload';
 import config from '@payload-config';
 import { migrateStorageStructure } from '@/lib/storage/migration';
@@ -63,7 +64,7 @@ async function handler(req: NextRequest) {
 }
 
 // Export with admin-only auth middleware
-export async function POST(req: NextRequest) {
+async function POSTHandler(_req: NextRequest) {
   // Check auth first
   const user = await getServerSideUser();
   if (!user || !user.roles?.includes('admin')) {
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
 
   // Check rate limit would go here
   // For now, just call the handler
-  const response = await handler(req);
+  const response = await handler(_req);
 
   // Add security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
@@ -81,3 +82,5 @@ export async function POST(req: NextRequest) {
 
   return response;
 }
+
+export const POST = withAdminAuth(POSTHandler, { rateLimit: 'admin' });

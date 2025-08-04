@@ -277,7 +277,13 @@ export function VoiceoverShowcaseClient({
                 transition={{ delay: index * 0.1 }}
               >
                 <VoiceoverCard
-                  voice={voice}
+                  voice={{
+                    ...voice,
+                    demos: voice.demos.map(demo => ({
+                      ...demo,
+                      audioFile: { url: demo.url }
+                    }))
+                  }}
                   isSelected={isSelected}
                   onSelect={() => handleSelectVoiceover(voice)}
                   currentlyPlayingId={currentlyPlayingId}

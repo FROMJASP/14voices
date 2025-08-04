@@ -20,7 +20,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 interface Demo {
   id: string;
   title: string;
-  url: string;
+  audioFile: { url: string };
   duration: string;
 }
 
@@ -64,6 +64,9 @@ export function VoiceoverCard({
   const animationRef = useRef<number | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // Check if demos are available - if not, we'll still render the card but disable audio features
+  const hasAnyDemos = voice.demos && voice.demos.length > 0;
+
   // Tilt effect motion values
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -74,8 +77,8 @@ export function VoiceoverCard({
 
   // Initialize audio
   React.useEffect(() => {
-    if (voice.demos.length > 0) {
-      audioRef.current = new Audio(voice.demos[activeDemo].url);
+    if (hasAnyDemos && voice.demos.length > 0) {
+      audioRef.current = new Audio(voice.demos[activeDemo]?.audioFile?.url || '');
       audioRef.current.addEventListener('loadedmetadata', () => {
         // Audio loaded
       });
@@ -95,7 +98,7 @@ export function VoiceoverCard({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [activeDemo, voice.demos, onPlayingChange]);
+  }, [activeDemo, voice.demos, onPlayingChange, hasAnyDemos]);
 
   // Handle when another card starts playing
   React.useEffect(() => {
@@ -136,7 +139,7 @@ export function VoiceoverCard({
   }, [isPlaying, isDragging]);
 
   const handlePlayClick = () => {
-    if (!audioRef.current) return;
+    if (!hasAnyDemos || !audioRef.current) return;
 
     setShowPlayer(!showPlayer);
     if (!showPlayer) {
@@ -190,9 +193,11 @@ export function VoiceoverCard({
   };
 
   const handleDemoChange = (index: number) => {
+    if (!hasAnyDemos || !audioRef.current) return;
+    
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.src = voice.demos[index].url;
+      audioRef.current.src = voice.demos[index]?.audioFile?.url || '';
       setIsPlaying(false);
       setProgress(0);
     }
@@ -328,9 +333,10 @@ export function VoiceoverCard({
                   {/* Circular Play Button */}
                   <motion.button
                     onClick={handlePlayClick}
-                    className="relative flex-shrink-0"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    className={`relative flex-shrink-0 ${!hasAnyDemos ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    whileHover={hasAnyDemos ? { scale: 1.05 } : {}}
+                    whileTap={hasAnyDemos ? { scale: 0.95 } : {}}
+                    disabled={!hasAnyDemos}
                   >
                     <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
                       {showPlayer && isPlaying ? (
@@ -344,10 +350,12 @@ export function VoiceoverCard({
                   {/* Demo Info - Now with better spacing */}
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">
-                      {voice.demos[activeDemo].title}
+                      {hasAnyDemos ? (voice.demos[activeDemo]?.title || 'Demo Reel') : 'Geen demo beschikbaar'}
                     </p>
                     {!isSelected && (
-                      <p className="text-white/70 text-xs">Klik om demo te beluisteren</p>
+                      <p className="text-white/70 text-xs">
+                        {hasAnyDemos ? 'Klik om demo te beluisteren' : 'Demo komt binnenkort beschikbaar'}
+                      </p>
                     )}
                   </div>
 
@@ -374,7 +382,7 @@ export function VoiceoverCard({
 
                 {/* Expandable Player with Fixed Progress */}
                 <AnimatePresence>
-                  {showPlayer && (
+                  {showPlayer && hasAnyDemos && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
@@ -382,21 +390,23 @@ export function VoiceoverCard({
                       className="mt-3 pt-3 border-t border-white/10"
                     >
                       {/* Demo Buttons */}
-                      <div className="flex gap-2 mb-3">
-                        {voice.demos.map((demo, index) => (
-                          <button
-                            key={demo.id}
-                            onClick={() => handleDemoChange(index)}
-                            className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-                              activeDemo === index
-                                ? 'bg-white/20 text-white'
-                                : 'text-white/70 hover:text-white/90'
-                            }`}
-                          >
-                            {demo.title}
-                          </button>
-                        ))}
-                      </div>
+                      {hasAnyDemos && (
+                        <div className="flex gap-2 mb-3">
+                          {voice.demos.map((demo, index) => (
+                            <button
+                              key={demo.id}
+                              onClick={() => handleDemoChange(index)}
+                              className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
+                                activeDemo === index
+                                  ? 'bg-white/20 text-white'
+                                  : 'text-white/70 hover:text-white/90'
+                              }`}
+                            >
+                              {demo.title}
+                            </button>
+                          ))}
+                        </div>
+                      )}
 
                       {/* Interactive Progress Bar */}
                       <div
@@ -419,14 +429,16 @@ export function VoiceoverCard({
                       </div>
 
                       {/* Time Display */}
-                      <div className="flex justify-between text-xs text-white/80 mt-2">
-                        <span>
-                          {audioRef.current
-                            ? `${Math.floor(((progress / 100) * audioRef.current.duration) / 60)}:${String(Math.floor(((progress / 100) * audioRef.current.duration) % 60)).padStart(2, '0')}`
-                            : '0:00'}
-                        </span>
-                        <span>{voice.demos[activeDemo].duration}</span>
-                      </div>
+                      {hasAnyDemos && (
+                        <div className="flex justify-between text-xs text-white/80 mt-2">
+                          <span>
+                            {audioRef.current
+                              ? `${Math.floor(((progress / 100) * audioRef.current.duration) / 60)}:${String(Math.floor(((progress / 100) * audioRef.current.duration) % 60)).padStart(2, '0')}`
+                              : '0:00'}
+                          </span>
+                          <span>{voice.demos[activeDemo]?.duration || '0:00'}</span>
+                        </div>
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>

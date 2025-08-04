@@ -1,5 +1,18 @@
 {
   "extends": "next",
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ]
+  },
   "overrides": [
     {
       "files": ["src/components/admin/**/*.tsx", "src/components/admin/**/*.ts"],

@@ -1,5 +1,15 @@
 {
   "compilerOptions": {
+    // Enhanced type safety and strict checks
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": true,
     "types": ["bun-types"],
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -26,5 +36,16 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "src/migrations/**/*"]
+  "exclude": [
+    "node_modules",
+    "src/migrations/**/*",
+    ".next",
+    "out",
+    "build"
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }

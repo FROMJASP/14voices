@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
 import type { EmailLog } from '@/types/email-marketing';
 import { z } from 'zod';
@@ -11,10 +12,10 @@ const analyticsQuerySchema = z.object({
   endDate: dateSchema.optional(),
 });
 
-export async function GET(req: NextRequest) {
+async function GETHandler(_req: NextRequest) {
   try {
     const payload = await getPayload();
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(_req.url);
 
     // Validate query parameters
     const validationResult = analyticsQuerySchema.safeParse({
@@ -229,3 +230,5 @@ function calculateEngagementByHour(logs: EmailLog[]) {
     ...data,
   }));
 }
+
+export const GET = withAuth(GETHandler);

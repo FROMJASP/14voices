@@ -381,7 +381,7 @@ export function VoiceoverSearchFieldDesign({ voiceovers }: VoiceoverSearchFieldD
                       voice.demos?.map((demo) => ({
                         id: demo.id,
                         title: demo.title,
-                        url: demo.audioFile.url,
+                        audioFile: { url: demo.audioFile.url },
                         duration: demo.duration || '0:30',
                       })) || [],
                     profilePhoto: voice.profilePhoto?.url || null,

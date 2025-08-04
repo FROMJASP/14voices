@@ -452,6 +452,11 @@
     color: var(--text);
   }
 
+  /* Safe area padding for mobile devices */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   /* Custom scrollbar styles */
   /* Firefox */
   * {

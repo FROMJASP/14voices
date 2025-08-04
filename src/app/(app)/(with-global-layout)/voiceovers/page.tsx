@@ -73,7 +73,7 @@ export default function VoiceoversPage() {
                 voiceover.demos?.map((demo) => ({
                   id: demo.id,
                   title: demo.title,
-                  url: demo.audioFile.url,
+                  audioFile: { url: demo.audioFile.url },
                   duration: demo.duration || '1:00',
                 })) || [],
             }}

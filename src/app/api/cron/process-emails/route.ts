@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { getPayload } from '@/utilities/payload';
+import { withPublicAuth } from '@/lib/auth-middleware';
 import {
   processScheduledEmails,
   getEmailQueueStats,
@@ -16,7 +17,7 @@ const cronQuerySchema = z.object({
   days: z.coerce.number().int().min(1).max(365).optional().default(30),
 });
 
-export async function GET(request: Request) {
+async function GETHandler(request: Request) {
   const startTime = Date.now();
 
   try {
@@ -116,7 +117,7 @@ const cronBodySchema = z.object({
 });
 
 // Optional: POST endpoint for manual triggers
-export async function POST(request: Request) {
+async function POSTHandler(request: Request) {
   try {
     const headersList = await headers();
     const authHeader = headersList.get('authorization');
@@ -170,3 +171,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Email processing failed' }, { status: 500 });
   }
 }
+
+export const GET = withPublicAuth(GETHandler, { rateLimit: 'cron', skipCSRF: true });
+export const POST = withPublicAuth(POSTHandler, { rateLimit: 'cron', skipCSRF: true });

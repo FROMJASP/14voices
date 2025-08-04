@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload, getServerSideUser } from '@/utilities/payload';
 import { resendMarketing } from '@/lib/email/resend-marketing';
 import type { EmailContact, SegmentRules } from '@/types/email-marketing';
@@ -266,7 +267,7 @@ function buildDynamicQuery(segmentRules: SegmentRules | undefined): Where {
 }
 
 // Export the handler with middleware
-export async function POST(req: NextRequest) {
+async function POSTHandler(_req: NextRequest) {
   // Simple auth check
   const user = await getServerSideUser();
   if (!user) {
@@ -274,7 +275,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Call the handler
-  const response = await handler(req);
+  const response = await handler(_req);
 
   // Add security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
@@ -283,3 +284,5 @@ export async function POST(req: NextRequest) {
 
   return response;
 }
+
+export const POST = withAuth(POSTHandler);

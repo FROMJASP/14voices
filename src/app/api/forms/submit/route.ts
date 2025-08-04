@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withPublicAuth } from '@/lib/auth-middleware';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { formSubmitSchema } from '@/lib/validation/schemas';
 import { validateRequest, getClientId, checkRateLimit, securityHeaders } from '@/lib/api-security';
 
-export async function POST(req: NextRequest) {
+async function POSTHandler(_req: NextRequest) {
   try {
     // Rate limiting
-    const clientId = getClientId(req);
+    const clientId = getClientId(_req);
     const rateLimitResult = checkRateLimit(clientId, 10, 60000); // 10 submissions per minute
 
     if (!rateLimitResult.allowed) {
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate request
-    const validatedData = await validateRequest(req, formSubmitSchema);
+    const validatedData = await validateRequest(_req, formSubmitSchema);
     const { formId, data } = validatedData;
 
     const payload = await getPayload({ config: configPromise });
@@ -107,3 +108,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const POST = withPublicAuth(POSTHandler, { rateLimit: 'formSubmission' });

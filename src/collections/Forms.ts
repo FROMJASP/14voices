@@ -112,7 +112,7 @@ const Forms: CollectionConfig = {
                   name: 'label',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       siblingData?.fieldType !== 'hidden' &&
                       siblingData?.fieldType !== 'heading' &&
                       siblingData?.fieldType !== 'paragraph',
@@ -123,7 +123,7 @@ const Forms: CollectionConfig = {
                   name: 'placeholder',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       ['text', 'email', 'tel', 'number', 'textarea'].includes(
                         siblingData?.fieldType
                       ),
@@ -133,7 +133,7 @@ const Forms: CollectionConfig = {
                   name: 'helpText',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       siblingData?.fieldType !== 'heading' &&
                       siblingData?.fieldType !== 'paragraph',
                     description: 'Help text shown below the field',
@@ -144,7 +144,7 @@ const Forms: CollectionConfig = {
                   type: 'checkbox',
                   defaultValue: false,
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       siblingData?.fieldType !== 'hidden' &&
                       siblingData?.fieldType !== 'heading' &&
                       siblingData?.fieldType !== 'paragraph',
@@ -154,7 +154,7 @@ const Forms: CollectionConfig = {
                   name: 'validation',
                   type: 'group',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       ['text', 'email', 'tel', 'number', 'textarea'].includes(
                         siblingData?.fieldType
                       ),
@@ -164,7 +164,7 @@ const Forms: CollectionConfig = {
                       name: 'minLength',
                       type: 'number',
                       admin: {
-                        condition: (data, siblingData) =>
+                        condition: (_data, siblingData) =>
                           ['text', 'textarea'].includes(siblingData?.fieldType),
                       },
                     },
@@ -172,7 +172,7 @@ const Forms: CollectionConfig = {
                       name: 'maxLength',
                       type: 'number',
                       admin: {
-                        condition: (data, siblingData) =>
+                        condition: (_data, siblingData) =>
                           ['text', 'textarea'].includes(siblingData?.fieldType),
                       },
                     },
@@ -180,14 +180,14 @@ const Forms: CollectionConfig = {
                       name: 'min',
                       type: 'number',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.fieldType === 'number',
+                        condition: (_data, siblingData) => siblingData?.fieldType === 'number',
                       },
                     },
                     {
                       name: 'max',
                       type: 'number',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.fieldType === 'number',
+                        condition: (_data, siblingData) => siblingData?.fieldType === 'number',
                       },
                     },
                     {
@@ -210,7 +210,7 @@ const Forms: CollectionConfig = {
                   name: 'options',
                   type: 'array',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       ['select', 'radio', 'checkboxGroup'].includes(siblingData?.fieldType),
                   },
                   fields: [
@@ -230,7 +230,7 @@ const Forms: CollectionConfig = {
                   name: 'defaultValue',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       siblingData?.fieldType !== 'file' &&
                       siblingData?.fieldType !== 'heading' &&
                       siblingData?.fieldType !== 'paragraph',
@@ -240,7 +240,7 @@ const Forms: CollectionConfig = {
                   name: 'content',
                   type: 'textarea',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       siblingData?.fieldType === 'heading' ||
                       siblingData?.fieldType === 'paragraph',
                     description: 'Content for heading or paragraph',
@@ -275,14 +275,14 @@ const Forms: CollectionConfig = {
                       ],
                       defaultValue: 'all',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.enabled === true,
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
                       },
                     },
                     {
                       name: 'conditions',
                       type: 'array',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.enabled === true,
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
                       },
                       fields: [
                         {
@@ -307,7 +307,7 @@ const Forms: CollectionConfig = {
                           name: 'value',
                           type: 'text',
                           admin: {
-                            condition: (data, siblingData) =>
+                            condition: (_data, siblingData) =>
                               !['is_empty', 'is_not_empty'].includes(siblingData?.operator),
                           },
                         },
@@ -417,7 +417,7 @@ const Forms: CollectionConfig = {
                       name: 'sendTo',
                       type: 'array',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.enabled === true,
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
                       },
                       fields: [
                         {
@@ -432,14 +432,14 @@ const Forms: CollectionConfig = {
                       type: 'text',
                       defaultValue: 'New form submission',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.enabled === true,
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
                       },
                     },
                     {
                       name: 'replyTo',
                       type: 'text',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.enabled === true,
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
                         description: 'Field name containing email address for reply-to',
                       },
                     },
@@ -458,7 +458,7 @@ const Forms: CollectionConfig = {
                       name: 'emailField',
                       type: 'text',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.enabled === true,
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
                         description: 'Field name containing recipient email',
                       },
                     },
@@ -467,14 +467,14 @@ const Forms: CollectionConfig = {
                       type: 'text',
                       defaultValue: 'Thank you for contacting us',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.enabled === true,
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
                       },
                     },
                     {
                       name: 'message',
                       type: 'textarea',
                       admin: {
-                        condition: (data, siblingData) => siblingData?.enabled === true,
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
                         description: 'Email message. Use {{fieldname}} to include form values.',
                       },
                     },

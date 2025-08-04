@@ -1,10 +1,10 @@
 import { getPayload } from 'payload';
-import { importConfig } from 'payload/node';
 import { sampleVoiceovers } from '../src/seed/sample-voiceovers.js';
 
 async function seedVoiceovers() {
-  const configPath = process.cwd() + '/src/payload.config.ts';
-  const config = await importConfig(configPath);
+  // Dynamically import the config
+  const configModule = await import('../src/payload.config.js');
+  const config = configModule.default;
   const payload = await getPayload({ config });
 
   console.log('Seeding voiceovers...');

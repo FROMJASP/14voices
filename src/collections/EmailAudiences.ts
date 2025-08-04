@@ -147,7 +147,7 @@ export const EmailAudiences: CollectionConfig = {
               name: 'value',
               type: 'text',
               admin: {
-                condition: (data, siblingData) =>
+                condition: (_data, siblingData) =>
                   siblingData?.operator !== 'is_empty' && siblingData?.operator !== 'is_not_empty',
               },
             },
@@ -155,7 +155,7 @@ export const EmailAudiences: CollectionConfig = {
               name: 'customField',
               type: 'text',
               admin: {
-                condition: (data, siblingData) => siblingData?.field === 'custom',
+                condition: (_data, siblingData) => siblingData?.field === 'custom',
                 description: 'Custom field name',
               },
             },

@@ -1,7 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ClientFaviconUpdater } from '@/components/ClientFaviconUpdater';
-import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 
 export default function OrderLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,9 +14,7 @@ export default function OrderLayout({ children }: { children: React.ReactNode })
         <Navbar />
 
         {/* Main content area */}
-        <main className="flex-1">
-          <VoiceoverProvider>{children}</VoiceoverProvider>
-        </main>
+        <main className="flex-1 bg-background">{children}</main>
 
         {/* Footer */}
         <Footer />

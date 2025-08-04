@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload, getServerSideUser } from '@/utilities/payload';
 import { contactImportSchema } from '@/lib/validation/schemas';
 import { validateRequest } from '@/lib/api-security';
@@ -160,7 +161,7 @@ async function handler(req: NextRequest) {
 }
 
 // Export with security middleware
-export async function POST(req: NextRequest) {
+async function POSTHandler(_req: NextRequest) {
   // Simple auth check
   const user = await getServerSideUser();
   if (!user) {
@@ -168,7 +169,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Call the handler
-  const response = await handler(req);
+  const response = await handler(_req);
 
   // Add security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
@@ -177,3 +178,5 @@ export async function POST(req: NextRequest) {
 
   return response;
 }
+
+export const POST = withAuth(POSTHandler, { rateLimit: 'importExport' });

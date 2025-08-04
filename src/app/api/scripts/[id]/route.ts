@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
 import { headers } from 'next/headers';
 import { z } from 'zod';
@@ -9,7 +10,7 @@ const paramsSchema = z.object({
   id: idSchema,
 });
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+async function GETHandler(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
 
   // Validate parameters
@@ -97,7 +98,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+async function DELETEHandler(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
 
   // Validate parameters
@@ -146,3 +147,6 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const GET = withAuth(GETHandler);
+export const DELETE = withAuth(DELETEHandler);

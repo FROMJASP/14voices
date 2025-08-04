@@ -28,6 +28,7 @@ import Pages from './collections/Pages';
 import Forms from './collections/Forms';
 import FormSubmissions from './collections/FormSubmissions';
 import Testimonials from './collections/Testimonials';
+import SecurityLogs from './collections/SecurityLogs';
 import { EmailSettings } from './globals/EmailSettings';
 import { SiteSettings } from './globals/SiteSettings';
 import path from 'path';
@@ -39,7 +40,7 @@ export default buildConfig({
       baseDir: path.resolve(process.cwd(), 'src'),
     },
     components: {
-      beforeLogin: ['./components/admin/BeforeLogin#default'],
+      // beforeLogin: ['./components/admin/BeforeLogin#default'], // Temporarily disabled to fix login
       afterDashboard: ['./components/admin/AdminEnhancements#default'],
       actions: ['./components/admin/AdminActions#default'],
       graphics: {
@@ -104,10 +105,13 @@ export default buildConfig({
     EmailCampaigns,
     EmailAudiences,
     EmailContacts,
+    SecurityLogs,
   ],
   globals: [EmailSettings, SiteSettings],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || (() => {
+    throw new Error('PAYLOAD_SECRET environment variable is required');
+  })(),
   typescript: {
     outputFile: './src/payload-types.ts',
   },

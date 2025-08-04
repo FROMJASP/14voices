@@ -344,7 +344,7 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue:
                     '🚀 **14 Nieuwe Stemmen**. Beluister hier wat ze voor jou kunnen betekenen!',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: 'Banner message (use **text** for bold/italic styling)',
                   },
                 },
@@ -358,7 +358,7 @@ export const SiteSettings: GlobalConfig = {
                     { label: 'Internal Page', value: 'page' },
                   ],
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: 'Type of link for the banner',
                   },
                 },
@@ -366,7 +366,7 @@ export const SiteSettings: GlobalConfig = {
                   name: 'linkUrl',
                   type: 'text',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       siblingData?.enabled === true && siblingData?.linkType === 'custom',
                     description: 'Custom URL for the banner link',
                   },
@@ -376,7 +376,7 @@ export const SiteSettings: GlobalConfig = {
                   type: 'relationship',
                   relationTo: 'pages',
                   admin: {
-                    condition: (data, siblingData) =>
+                    condition: (_data, siblingData) =>
                       siblingData?.enabled === true && siblingData?.linkType === 'page',
                     description: 'Internal page to link to',
                   },
@@ -387,7 +387,7 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: true,
                   label: 'Allow Dismissing',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: 'Allow users to dismiss the banner',
                   },
                 },
@@ -401,7 +401,7 @@ export const SiteSettings: GlobalConfig = {
                     { label: 'Subtle', value: 'subtle' },
                   ],
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: 'Visual style of the banner',
                   },
                 },
@@ -424,7 +424,7 @@ export const SiteSettings: GlobalConfig = {
                   admin: {
                     description:
                       '⚠️ WARNING: Disabling this will remove search functionality from your entire website. Visitors will not be able to search for content.',
-                    condition: (data, siblingData) => {
+                    condition: (_data, siblingData) => {
                       if (
                         siblingData?.enableSearch === false &&
                         siblingData?.enableSearch !== undefined
@@ -445,7 +445,7 @@ export const SiteSettings: GlobalConfig = {
                   admin: {
                     description:
                       '⚠️ WARNING: Disabling this will hide all blog posts and the blog section from your website. This affects SEO and content visibility.',
-                    condition: (data, siblingData) => {
+                    condition: (_data, siblingData) => {
                       if (
                         siblingData?.enableBlog === false &&
                         siblingData?.enableBlog !== undefined
@@ -470,7 +470,7 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: 'We zijn zo terug!',
                   label: 'Title',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.maintenanceMode === true,
+                    condition: (_data, siblingData) => siblingData?.maintenanceMode === true,
                     description: 'Main heading for the maintenance page',
                   },
                 },
@@ -481,7 +481,7 @@ export const SiteSettings: GlobalConfig = {
                     'We voeren momenteel gepland onderhoud uit. We zijn zo weer online.',
                   label: 'Message',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.maintenanceMode === true,
+                    condition: (_data, siblingData) => siblingData?.maintenanceMode === true,
                     description: 'Main message to show during maintenance',
                   },
                 },
@@ -491,7 +491,7 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: 'Contact nodig?',
                   label: 'Contact Label',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.maintenanceMode === true,
+                    condition: (_data, siblingData) => siblingData?.maintenanceMode === true,
                     description: 'Label above contact email',
                   },
                 },
@@ -501,7 +501,7 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: true,
                   label: 'Show Contact Email',
                   admin: {
-                    condition: (data, siblingData) => siblingData?.maintenanceMode === true,
+                    condition: (_data, siblingData) => siblingData?.maintenanceMode === true,
                   },
                 },
                 {

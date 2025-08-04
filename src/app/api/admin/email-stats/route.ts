@@ -3,13 +3,14 @@ import { headers } from 'next/headers';
 import { getPayload } from '@/utilities/payload';
 import { getEmailQueueStats } from '@/lib/email/sequences';
 import { z } from 'zod';
+import { withAdminAuth } from '@/lib/auth-middleware';
 
 // Validation schema for query parameters
 const emailStatsQuerySchema = z.object({
   period: z.enum(['hour', 'day', 'week', 'month']).optional().default('day'),
 });
 
-export async function GET(request: Request) {
+async function GETHandler(request: Request) {
   try {
     const headersList = await headers();
     const authHeader = headersList.get('authorization');
@@ -230,3 +231,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Failed to fetch email statistics' }, { status: 500 });
   }
 }
+
+export const GET = withAdminAuth(GETHandler, { rateLimit: 'admin' });

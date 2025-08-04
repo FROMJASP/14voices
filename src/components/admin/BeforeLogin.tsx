@@ -63,12 +63,17 @@ export default function BeforeLogin() {
       setIsLoading(true);
 
       try {
+        // Use Payload v3's authentication endpoint
         const response = await fetch('/api/users/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ 
+            email, 
+            password,
+            // Include any CSRF token if needed
+          }),
           credentials: 'include',
         });
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth-middleware';
 import { getServerSideUser } from '@/utilities/payload';
 import { Resend } from 'resend';
 import { z } from 'zod';
@@ -15,7 +16,7 @@ const emailTestBodySchema = z.object({
   testData: z.record(z.string(), z.any()).optional(),
 });
 
-export async function POST(req: NextRequest) {
+async function POSTHandler(_req: NextRequest) {
   try {
     const user = await getServerSideUser();
 
@@ -24,11 +25,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate request body
-    const validatedData = await validateRequest(req, emailTestBodySchema);
+    const validatedData = await validateRequest(_req, emailTestBodySchema);
     const { content, subject, header, footer, testData } = validatedData;
 
     // Use the same preview generation logic
-    const previewResponse = await fetch(new URL('/api/email/preview', req.url).toString(), {
+    const previewResponse = await fetch(new URL('/api/email/preview', _req.url).toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,3 +66,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to send test email' }, { status: 500 });
   }
 }
+
+export const POST = withAuth(POSTHandler);

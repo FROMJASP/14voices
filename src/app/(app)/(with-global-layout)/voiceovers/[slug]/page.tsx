@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { PriceCalculator } from '@/components/PriceCalculator';
+import { UnifiedPriceCalculatorOptimized } from '@/components/UnifiedPriceCalculatorOptimized';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import { VoiceoverDetailClientNew } from '@/components/VoiceoverDetailClientNew';
@@ -90,7 +90,7 @@ export default async function VoiceoverPage({ params }: { params: Promise<{ slug
             <h2 className="text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
               Bereken je prijs
             </h2>
-            <PriceCalculator />
+            <UnifiedPriceCalculatorOptimized />
           </div>
         </div>
       </div>

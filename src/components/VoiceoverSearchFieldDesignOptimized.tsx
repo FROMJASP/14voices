@@ -176,7 +176,7 @@ const VoiceoverGrid = memo(
                   voice.demos?.map((demo: any) => ({
                     id: demo.id,
                     title: demo.title,
-                    url: demo.audioFile.url,
+                    audioFile: { url: demo.audioFile?.url || '' },
                     duration: demo.duration || '0:30',
                   })) || [],
                 profilePhoto: voice.profilePhoto?.url || null,

@@ -4,8 +4,13 @@ import crypto from 'crypto';
 import { getPayload } from '@/utilities/payload';
 import type { Payload } from 'payload';
 import { webhookEventSchema } from '@/lib/validation/schemas';
+import { withPublicAuth } from '@/lib/auth-middleware';
 
-const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET || '';
+const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET;
+
+if (!RESEND_WEBHOOK_SECRET) {
+  console.error('RESEND_WEBHOOK_SECRET is not configured');
+}
 
 interface ResendWebhookEvent {
   type: string;
@@ -216,17 +221,7 @@ async function handler(req: NextRequest) {
 }
 
 // Export with security middleware (no auth required for webhooks)
-export async function POST(req: NextRequest) {
-  // Call the handler (no auth for webhooks)
-  const response = await handler(req);
-
-  // Add security headers
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-
-  return response;
-}
+export const POST = withPublicAuth(handler, { skipCSRF: true, rateLimit: 'webhook' });
 
 async function handleBroadcastEvent(payload: Payload, event: ResendWebhookEvent) {
   try {
