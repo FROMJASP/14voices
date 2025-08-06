@@ -81,13 +81,14 @@ bun run seed             # Seed database with sample data
 ### Tech Stack
 
 - **Framework**: Next.js 15.4.5 with App Router
-- **CMS**: Payload CMS 3.49.1 - Headless CMS with PostgreSQL
+- **CMS**: Payload CMS 3.50.0 - Headless CMS with PostgreSQL
 - **Database**: PostgreSQL (via @payloadcms/db-postgres)
 - **Styling**: Tailwind CSS v4
 - **Package Manager**: Bun (required - npm/yarn will not work)
 - **Testing**: Vitest (unit) + Playwright (E2E)
 - **Email**: Resend API with custom email marketing system
 - **Storage**: Vercel Blob for media/documents
+- **Cache & Rate Limiting**: Redis (optional, with in-memory fallback)
 
 ### Project Structure
 
@@ -138,7 +139,9 @@ src/
 ├── lib/                  # Utility libraries
 │   ├── cache/           # Redis caching layer
 │   ├── email/           # Email system utilities
+│   ├── rate-limiter/    # Rate limiting implementation
 │   └── storage/         # Blob storage utilities
+├── middleware/           # Next.js middleware utilities
 ├── seed/                 # Database seeding scripts
 ├── types/                # TypeScript type definitions
 ├── utilities/            # Helper utilities
@@ -208,3 +211,15 @@ For detailed architecture documentation, see:
 - Use Payload's built-in auth for protected routes
 - Implement rate limiting on API endpoints
 - Never expose sensitive data in client components
+
+### Rate Limiting
+
+The application uses Redis-based rate limiting with automatic fallback:
+
+- **Redis-based**: Distributed rate limiting across server instances
+- **Edge-safe fallback**: In-memory rate limiting for middleware
+- **Automatic detection**: Different limits for auth, forms, uploads, etc.
+- **Configuration**: See `src/config/security.ts` for rate limit settings
+
+Rate limits are automatically applied to all API routes via middleware.
+See [Rate Limiting Documentation](./docs/rate-limiting.md) for details.
