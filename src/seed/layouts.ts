@@ -1,6 +1,4 @@
-import type { Payload } from 'payload';
-
-export async function seedLayouts(_payload: Payload) {
+export async function seedLayouts() {
   // The 'layouts' collection no longer exists in the current Payload configuration
   console.log('ℹ️  Layouts functionality has been disabled - collection does not exist');
   return;

@@ -2,7 +2,9 @@
 
 import React from 'react';
 
-export const SeverityCell: React.FC<{ cellData: any }> = ({ cellData }) => {
+type SeverityLevel = 'low' | 'medium' | 'high' | 'critical' | string;
+
+export const SeverityCell: React.FC<{ cellData: SeverityLevel }> = ({ cellData }) => {
   const severities: Record<string, { label: string; color: string }> = {
     low: { label: 'Low', color: 'green' },
     medium: { label: 'Medium', color: 'yellow' },

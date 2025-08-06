@@ -12,13 +12,13 @@ export class ScriptRepository {
         depth: 1,
       });
       return script as unknown as Script;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
 
   async updateScript(id: string, data: Partial<Script>): Promise<Script> {
-    // Convert uploadedBy to number if present
+    // Convert uploadedBy to number for Payload
     const updateData: any = { ...data };
     if (data.uploadedBy) {
       updateData.uploadedBy = Number(data.uploadedBy);
@@ -68,7 +68,10 @@ export class ScriptRepository {
       role === 'admin'
         ? undefined
         : {
-            or: [{ uploadedBy: { equals: userId } }, { assignedVoiceover: { equals: userId } }],
+            or: [
+              { uploadedBy: { equals: Number(userId) } },
+              { assignedVoiceover: { equals: Number(userId) } },
+            ],
           };
 
     const response = await this.payload.find({

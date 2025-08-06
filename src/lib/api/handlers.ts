@@ -123,7 +123,7 @@ export async function checkRateLimit(
   // Try to use Redis-based rate limiter if available
   try {
     // Dynamic import to avoid Edge Runtime issues
-    const { getRateLimiter } = await import('@/lib/rate-limiter');
+    const { getRateLimiter } = await import('@/lib/rate-limiter/index');
     const rateLimiter = getRateLimiter();
     const result = await rateLimiter.checkLimit(identifier, 'legacy', {
       requests: limit,
@@ -135,7 +135,7 @@ export async function checkRateLimit(
       remaining: result.remaining,
       resetAt: result.resetAt,
     };
-  } catch (error) {
+  } catch {
     // Fallback to in-memory rate limiting
     let record = rateLimitStore.get(identifier);
 

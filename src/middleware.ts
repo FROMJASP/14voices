@@ -50,7 +50,6 @@ export async function middleware(request: NextRequest) {
         request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
         request.headers.get('x-real-ip') ||
         request.headers.get('cf-connecting-ip') ||
-        request.ip ||
         'anonymous';
 
       const endpointType = getEndpointType(request.nextUrl.pathname);

@@ -235,7 +235,7 @@ const VirtualizedGrid = memo(
       updateContainerHeight();
       window.addEventListener('resize', updateContainerHeight);
       return () => window.removeEventListener('resize', updateContainerHeight);
-    }, []);
+    }, [scrollElementRef]);
 
     // Calculate visible items
     const visibleItems = useMemo(() => {

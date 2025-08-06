@@ -127,7 +127,7 @@ export const ourFileRouter = {
       });
 
       // Update voiceover with the demo based on demo type
-      const updateData: Record<string, any> = {};
+      const updateData: Record<string, string | number> = {};
       if (metadata.demoType === 'full') {
         updateData.fullDemoReel = mediaEntry.id;
       } else if (metadata.demoType === 'commercials') {

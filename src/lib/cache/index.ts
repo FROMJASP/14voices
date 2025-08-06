@@ -203,7 +203,7 @@ class RedisAdapter {
 
     try {
       // Check if we're in Edge Runtime
-      if (typeof EdgeRuntime !== 'undefined') {
+      if (process.env.NEXT_RUNTIME === 'edge') {
         console.warn('Redis not available in Edge Runtime, using memory cache only');
         this.connected = false;
         return;

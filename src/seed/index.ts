@@ -72,7 +72,7 @@ async function seed() {
 
     // 3. Create layouts with beautiful footer
     console.log('🎨 Creating layouts with footer...');
-    await seedLayouts(payload);
+    await seedLayouts();
     console.log('');
 
     // 4. Create sample pages

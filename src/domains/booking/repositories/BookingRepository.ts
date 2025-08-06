@@ -12,7 +12,7 @@ export class BookingRepository {
         depth: 2,
       });
       return booking as unknown as Booking;
-    } catch (error) {
+    } catch {
       return null;
     }
   }

@@ -12,7 +12,7 @@ export class InvoiceRepository {
         depth: 2,
       });
       return invoice as unknown as Invoice;
-    } catch (error) {
+    } catch {
       return null;
     }
   }

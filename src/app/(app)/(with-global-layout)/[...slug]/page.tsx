@@ -102,5 +102,30 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
-  return <PageRenderer page={page as any} />;
+  // Helper to convert null values to undefined recursively
+  function nullToUndefined<T>(obj: T): T {
+    if (obj === null) return undefined as unknown as T;
+    if (obj === undefined) return obj;
+    if (typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) {
+      return obj.map(nullToUndefined) as unknown as T;
+    }
+
+    const result: any = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        result[key] = nullToUndefined(obj[key]);
+      }
+    }
+    return result;
+  }
+
+  // Transform the page to ensure no null values
+  const transformedPage = {
+    ...page,
+    sections: page.sections ? nullToUndefined(page.sections) : undefined,
+    content: page.content ? nullToUndefined(page.content) : undefined,
+  };
+
+  return <PageRenderer page={transformedPage as any} />;
 }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export const SecurityEventTypeCell: React.FC<{ cellData: any }> = ({ cellData }) => {
+export const SecurityEventTypeCell: React.FC<{ cellData: string | unknown }> = ({ cellData }) => {
   const eventTypes: Record<string, { label: string; color: string }> = {
     login_attempt: { label: 'Login Attempt', color: 'blue' },
     login_success: { label: 'Login Success', color: 'green' },
