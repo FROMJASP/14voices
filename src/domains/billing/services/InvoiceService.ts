@@ -5,7 +5,6 @@ import {
   InvoiceUpdateParams,
   InvoiceStats,
   PaymentCreateParams,
-  InvoiceStatus,
 } from '../types';
 
 export class InvoiceService {
@@ -49,7 +48,7 @@ export class InvoiceService {
   async updateInvoice(
     invoiceId: string,
     data: InvoiceUpdateParams,
-    userId: string,
+    _userId: string,
     userRole: string
   ): Promise<Invoice> {
     // Only admin can update invoices

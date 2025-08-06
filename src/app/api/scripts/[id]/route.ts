@@ -38,7 +38,7 @@ async function GETHandler(_req: NextRequest, { params }: { params: Promise<{ id:
 
     // Use the domain service
     const bookingService = new BookingService(payload);
-    const script = await bookingService.getScript(id, user.id, user.role);
+    const script = await bookingService.getScript(id, String(user.id), user.role);
 
     if (!script) {
       return NextResponse.json({ error: 'Script not found' }, { status: 404 });
@@ -94,7 +94,7 @@ async function DELETEHandler(_req: NextRequest, { params }: { params: Promise<{ 
 
     // Use the domain service
     const bookingService = new BookingService(payload);
-    await bookingService.deleteScript(id, user.id, user.role);
+    await bookingService.deleteScript(id, String(user.id), user.role);
 
     return NextResponse.json({ success: true });
   } catch (error) {

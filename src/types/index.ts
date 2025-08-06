@@ -1,7 +1,17 @@
 // Central export point for all types
 
-// Shared types
-export * from './shared';
+// Shared types (excluding duplicates from payload-types)
+export type {
+  PaginationParams,
+  PaginatedResponse,
+  ApiResponse,
+  DateRange,
+  Address,
+  ContactInfo,
+  // Email marketing types that don't conflict with payload collections
+  CampaignAnalytics,
+  SegmentRules,
+} from './shared';
 
 // Payload generated types
 export * from '@/payload-types';

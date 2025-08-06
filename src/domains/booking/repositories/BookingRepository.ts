@@ -1,4 +1,4 @@
-import { Payload } from 'payload';
+import { Payload, Where } from 'payload';
 import { Booking, BookingCreateParams, BookingUpdateParams } from '../types';
 
 export class BookingRepository {
@@ -18,9 +18,9 @@ export class BookingRepository {
   }
 
   async getUserBookings(userId: string, role: string = 'customer'): Promise<Booking[]> {
-    const where =
+    const where: Where | undefined =
       role === 'admin'
-        ? {}
+        ? undefined
         : {
             or: [{ customer: { equals: userId } }, { voiceover: { equals: userId } }],
           };
@@ -40,6 +40,8 @@ export class BookingRepository {
       collection: 'bookings',
       data: {
         ...data,
+        customer: Number(data.customer),
+        voiceover: Number(data.voiceover),
         status: 'pending',
       },
     });

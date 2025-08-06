@@ -68,7 +68,7 @@ export class BookingService {
     return this.bookingRepository.updateBooking(bookingId, data);
   }
 
-  async deleteBooking(bookingId: string, userId: string, userRole: string): Promise<void> {
+  async deleteBooking(bookingId: string, _userId: string, userRole: string): Promise<void> {
     // Only admin can delete bookings
     if (userRole !== 'admin') {
       throw new Error('Access denied');

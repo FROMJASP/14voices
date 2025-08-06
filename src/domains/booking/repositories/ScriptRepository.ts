@@ -1,4 +1,4 @@
-import { Payload } from 'payload';
+import { Payload, Where } from 'payload';
 import { Script, AccessLogEntry } from '../types';
 
 export class ScriptRepository {
@@ -18,10 +18,16 @@ export class ScriptRepository {
   }
 
   async updateScript(id: string, data: Partial<Script>): Promise<Script> {
+    // Convert uploadedBy to number if present
+    const updateData: any = { ...data };
+    if (data.uploadedBy) {
+      updateData.uploadedBy = Number(data.uploadedBy);
+    }
+
     const script = await this.payload.update({
       collection: 'scripts',
       id,
-      data,
+      data: updateData,
     });
     return script as unknown as Script;
   }
@@ -48,19 +54,19 @@ export class ScriptRepository {
         accessLog: [
           ...(script.accessLog || []),
           {
-            accessedBy: userId,
+            accessedBy: Number(userId),
             accessedAt: new Date().toISOString(),
             action,
-          },
+          } as any,
         ],
       },
     });
   }
 
   async getUserScripts(userId: string, role: string = 'customer'): Promise<Script[]> {
-    const where =
+    const where: Where | undefined =
       role === 'admin'
-        ? {}
+        ? undefined
         : {
             or: [{ uploadedBy: { equals: userId } }, { assignedVoiceover: { equals: userId } }],
           };

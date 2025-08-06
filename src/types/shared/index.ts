@@ -66,8 +66,5 @@ export interface ContactInfo {
   website?: string;
 }
 
-// Re-export domain-specific types for convenience
-export * from '@/types/voiceover';
-export * from '@/types/blocks';
-export * from '@/types/email-marketing';
-export * from '@/types/forms';
+// Export email marketing types that don't conflict with Payload collections
+export type { CampaignAnalytics, SegmentRules } from '@/types/email-marketing';

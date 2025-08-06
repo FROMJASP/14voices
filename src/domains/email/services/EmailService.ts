@@ -14,7 +14,7 @@ export class EmailService {
   constructor(payload: Payload, resendApiKey?: string) {
     this.repository = new EmailRepository(payload);
     this.analyticsService = new EmailAnalyticsService(this.repository);
-    this.previewService = new EmailPreviewService(this.repository);
+    this.previewService = new EmailPreviewService(this.repository, payload);
     this.testService = new EmailTestService(this.previewService, resendApiKey);
   }
 

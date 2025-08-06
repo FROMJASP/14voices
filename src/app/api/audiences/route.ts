@@ -3,7 +3,8 @@ import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
 import { resendMarketing } from '@/lib/email/resend-marketing';
 import type { Payload, Where } from 'payload';
-import type { EmailAudience, SegmentRules } from '@/types/email-marketing';
+import type { EmailAudience } from '@/payload-types';
+import type { SegmentRules } from '@/types';
 import { z } from 'zod';
 import { audienceCreateSchema } from '@/lib/validation/schemas';
 
@@ -109,9 +110,23 @@ async function POSTHandler(_req: NextRequest) {
 
 async function updateDynamicAudienceContacts(payload: Payload, audience: EmailAudience) {
   try {
+    // Convert Payload's segmentRules to our SegmentRules type
+    const segmentRules: SegmentRules | undefined = audience.segmentRules
+      ? {
+          rules:
+            audience.segmentRules.rules?.map((rule) => ({
+              field: rule.field,
+              operator: rule.operator,
+              value: rule.value || undefined,
+              customField: rule.customField || undefined,
+            })) || [],
+          logic: audience.segmentRules.logic || 'all',
+        }
+      : undefined;
+
     const contacts = await payload.find({
       collection: 'email-contacts',
-      where: buildDynamicQuery(audience.segmentRules),
+      where: buildDynamicQuery(segmentRules),
       limit: 1000,
     });
 
@@ -137,7 +152,7 @@ function buildDynamicQuery(segmentRules: SegmentRules | undefined): Where {
     return where;
   }
 
-  const conditions = segmentRules.rules.map((rule) => {
+  const conditions = segmentRules.rules.map((rule: SegmentRules['rules'][0]) => {
     const condition: Where = {};
 
     switch (rule.field) {

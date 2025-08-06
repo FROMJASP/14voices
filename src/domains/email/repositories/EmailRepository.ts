@@ -27,9 +27,10 @@ export class EmailRepository {
 
   async createEmailLog(data: {
     recipient: string;
+    recipientEmail: string;
     template: string;
     status: EmailLogStatus['status'];
-    subject?: string;
+    subject: string;
     sentAt?: Date;
     metadata?: Record<string, any>;
   }) {
@@ -37,7 +38,9 @@ export class EmailRepository {
       collection: 'email-logs',
       data: {
         ...data,
-        sentAt: data.sentAt || new Date(),
+        recipient: Number(data.recipient),
+        template: Number(data.template),
+        sentAt: data.sentAt ? data.sentAt.toISOString() : new Date().toISOString(),
       },
     });
   }
@@ -60,7 +63,7 @@ export class EmailRepository {
 
   async getAudiences(audienceIds: string[]) {
     return await this.payload.find({
-      collection: 'audiences',
+      collection: 'email-audiences',
       where: {
         id: {
           in: audienceIds,

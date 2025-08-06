@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { getPayload, getServerSideUser } from '@/utilities/payload';
 import { resendMarketing } from '@/lib/email/resend-marketing';
-import type { EmailContact, SegmentRules } from '@/types/email-marketing';
+import type { EmailContact } from '@/payload-types';
+import type { SegmentRules } from '@/types';
 import type { Where } from 'payload';
 import { audienceSyncSchema } from '@/lib/validation/schemas';
 
@@ -115,8 +116,8 @@ async function handler(req: NextRequest) {
           if (!contact.resendContactId) {
             const resendContact = await resendMarketing.createContact({
               email: contact.email,
-              firstName: contact.firstName,
-              lastName: contact.lastName,
+              firstName: contact.firstName || undefined,
+              lastName: contact.lastName || undefined,
               unsubscribed: !contact.subscribed,
               audienceId: resendAudienceId,
             });
@@ -132,8 +133,8 @@ async function handler(req: NextRequest) {
             await resendMarketing.updateContact({
               id: contact.resendContactId,
               audienceId: resendAudienceId,
-              firstName: contact.firstName,
-              lastName: contact.lastName,
+              firstName: contact.firstName || undefined,
+              lastName: contact.lastName || undefined,
               unsubscribed: !contact.subscribed,
             });
           }
@@ -156,7 +157,7 @@ async function handler(req: NextRequest) {
         } else {
           syncResults.failed++;
           syncResults.errors.push({
-            contactId: result.contact.id,
+            contactId: String(result.contact.id),
             email: result.contact.email,
             error: result.error || 'Unknown error',
           });
@@ -200,11 +201,11 @@ function buildDynamicQuery(segmentRules: SegmentRules | undefined): Where {
   const validOperators = ['contains', 'not_contains', 'equals', 'greater_than', 'less_than'];
 
   const conditions = segmentRules.rules
-    .filter((rule) => {
+    .filter((rule: SegmentRules['rules'][0]) => {
       // Validate field and operator are from allowed list
       return validFields.includes(rule.field) && validOperators.includes(rule.operator);
     })
-    .map((rule) => {
+    .map((rule: SegmentRules['rules'][0]) => {
       const condition: Where = {};
 
       // Sanitize value to prevent injection
@@ -257,7 +258,7 @@ function buildDynamicQuery(segmentRules: SegmentRules | undefined): Where {
 
       return condition;
     })
-    .filter((condition) => Object.keys(condition).length > 0); // Remove empty conditions
+    .filter((condition: Where) => Object.keys(condition).length > 0); // Remove empty conditions
 
   if (segmentRules.logic === 'any' && conditions.length > 0) {
     where.or = conditions;

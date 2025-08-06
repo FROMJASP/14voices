@@ -1,4 +1,4 @@
-import { Payload } from 'payload';
+import { Payload, Where } from 'payload';
 import { Invoice, InvoiceCreateParams, InvoiceUpdateParams, InvoiceStatus } from '../types';
 
 export class InvoiceRepository {
@@ -31,9 +31,9 @@ export class InvoiceRepository {
   }
 
   async getUserInvoices(userId: string, role: string = 'customer'): Promise<Invoice[]> {
-    const where =
+    const where: Where | undefined =
       role === 'admin'
-        ? {}
+        ? undefined
         : {
             or: [{ client: { equals: userId } }, { provider: { equals: userId } }],
           };
@@ -62,18 +62,26 @@ export class InvoiceRepository {
     const invoice = await this.payload.create({
       collection: 'invoices',
       data: {
-        ...data,
-        items,
-        subtotal,
-        tax,
-        total,
-        status: 'draft' as InvoiceStatus,
+        invoiceNumber: data.invoiceNumber,
+        client: Number(data.client),
+        provider: Number(data.provider),
+        amount: total * 100, // Convert to cents
+        status: 'draft',
         issueDate: new Date().toISOString(),
-        currency: data.currency || 'EUR',
+        dueDate: data.dueDate,
+        currency: (data.currency || 'EUR') as 'USD' | 'EUR' | 'GBP' | 'CAD' | 'AUD',
+        notes: data.notes,
       },
     });
 
-    return invoice as unknown as Invoice;
+    // Return with the calculated fields for consistency with the domain type
+    return {
+      ...invoice,
+      items,
+      subtotal,
+      tax,
+      total,
+    } as unknown as Invoice;
   }
 
   async updateInvoice(id: string, data: InvoiceUpdateParams): Promise<Invoice> {

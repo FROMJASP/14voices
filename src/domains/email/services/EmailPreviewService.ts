@@ -1,3 +1,4 @@
+import { Payload } from 'payload';
 import { EmailRepository } from '../repositories/EmailRepository';
 import { EmailPreviewParams } from '../types';
 
@@ -7,7 +8,10 @@ interface ContentNode {
 }
 
 export class EmailPreviewService {
-  constructor(private emailRepository: EmailRepository) {}
+  constructor(
+    private emailRepository: EmailRepository,
+    private payload: Payload
+  ) {}
 
   async generatePreview(params: EmailPreviewParams): Promise<string> {
     const { templateId, data = {} } = params;
@@ -22,7 +26,8 @@ export class EmailPreviewService {
 
     // Add header if exists
     if (template.header) {
-      const headerHtml = await this.renderComponent(template.header, data);
+      const headerId = typeof template.header === 'object' ? template.header.id : template.header;
+      const headerHtml = await this.renderComponent(String(headerId), data);
       html += headerHtml;
       html += this.getHtmlDivider();
     }
@@ -34,7 +39,8 @@ export class EmailPreviewService {
     // Add footer if exists
     if (template.footer) {
       html += this.getHtmlDivider();
-      const footerHtml = await this.renderComponent(template.footer, data);
+      const footerId = typeof template.footer === 'object' ? template.footer.id : template.footer;
+      const footerHtml = await this.renderComponent(String(footerId), data);
       html += footerHtml;
     }
 
@@ -44,7 +50,7 @@ export class EmailPreviewService {
   }
 
   private async renderComponent(componentId: string, data: Record<string, any>): Promise<string> {
-    const component = await this.emailRepository.payload.findByID({
+    const component = await this.payload.findByID({
       collection: 'email-components',
       id: componentId,
     });

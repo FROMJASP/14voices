@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { getPayload, getServerSideUser } from '@/utilities/payload';
 import { resendMarketing } from '@/lib/email/resend-marketing';
-import type { EmailCampaign } from '@/types/email-marketing';
+import type { EmailCampaign } from '@/payload-types';
 import { campaignSendSchema } from '@/lib/validation/schemas';
 import { sanitizeHtml } from '@/lib/validation/schemas';
 

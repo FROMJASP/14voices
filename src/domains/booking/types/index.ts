@@ -17,7 +17,7 @@ export interface Script {
 export interface AccessLogEntry {
   accessedBy: string;
   accessedAt: string;
-  action: 'viewed' | 'downloaded' | 'edited';
+  action: 'viewed' | 'downloaded';
 }
 
 export interface ScriptAccess {
@@ -39,18 +39,13 @@ export interface Booking {
   updatedAt: string;
 }
 
-export type BookingStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled'
-  | 'refunded';
+export type BookingStatus = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
 
 export interface BookingCreateParams {
   title: string;
   customer: string;
   voiceover: string;
+  projectType: 'commercial' | 'narration' | 'elearning' | 'corporate' | 'other';
   script?: string;
   deadline?: string;
   price?: number;

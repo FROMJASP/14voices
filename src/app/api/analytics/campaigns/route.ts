@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
-import type { EmailLog } from '@/types/email-marketing';
+import type { EmailLog } from '@/payload-types';
 import { z } from 'zod';
 import { idSchema, dateSchema } from '@/lib/validation/schemas';
 
