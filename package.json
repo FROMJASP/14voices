@@ -47,6 +47,8 @@
     "@payloadcms/storage-vercel-blob": "3.50.0",
     "@payloadcms/translations": "3.50.0",
     "@payloadcms/ui": "3.50.0",
+    "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^3.0.0",
     "@types/dompurify": "^3.2.0",
