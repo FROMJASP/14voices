@@ -55,6 +55,8 @@ export function MaintenanceModeWrapper({
           } else {
             console.error('Response is not JSON:', contentType);
           }
+        } else {
+          console.error('Site settings API returned error:', response.status);
         }
       } catch (error) {
         console.error('Failed to check maintenance mode:', error);
@@ -62,6 +64,7 @@ export function MaintenanceModeWrapper({
         if (error instanceof Error) {
           console.error('Error details:', error.message);
         }
+        // Continue showing the site even if maintenance check fails
       } finally {
         setIsLoading(false);
       }
@@ -70,10 +73,10 @@ export function MaintenanceModeWrapper({
     checkMaintenanceMode();
   }, [forceMaintenanceMode]);
 
-  // Don't render anything on server during initial load
-  // This prevents hydration mismatches
+  // Show children while loading to prevent blank page
+  // Maintenance mode check happens in the background
   if (isLoading) {
-    return null;
+    return <>{children}</>;
   }
 
   if (isMaintenanceMode) {
