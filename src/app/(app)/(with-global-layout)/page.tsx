@@ -69,7 +69,7 @@ export default async function HomePage() {
       limit: 50, // Initial load limit
       depth: 2,
       sort: '-updatedAt',
-      cacheTTL: 1000 * 60 * 15, // 15 minutes cache for homepage
+      cacheTTL: 1000 * 60 * 30, // 30 minutes cache for homepage
     });
 
     console.log(`Homepage: Found ${activeResult.docs.length} voiceovers`);

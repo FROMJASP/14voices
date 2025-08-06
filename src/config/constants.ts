@@ -32,8 +32,8 @@ export const PAGINATION = {
 
 // Cache TTL (in seconds)
 export const CACHE_TTL = {
-  short: 60, // 1 minute
-  medium: 300, // 5 minutes
+  short: 900, // 15 minutes
+  medium: 1800, // 30 minutes
   long: 3600, // 1 hour
   day: 86400, // 24 hours
 };

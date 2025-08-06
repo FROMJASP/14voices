@@ -7,8 +7,10 @@ import './globals.css';
 const bricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage',
   subsets: ['latin'],
-  weight: ['200', '300', '400', '500', '600', '700', '800'],
+  weight: ['400', '600', '700'], // Reduced to only essential weights
   display: 'swap',
+  preload: true, // Add preload for critical font
+  fallback: ['system-ui', 'arial'], // Add fallback fonts
 });
 
 const instrumentSerif = Instrument_Serif({

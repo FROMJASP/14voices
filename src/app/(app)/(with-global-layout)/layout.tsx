@@ -6,7 +6,7 @@ import type { AnnouncementBarData } from '@/components/common/layout/header/anno
 
 async function getBannerData(): Promise<AnnouncementBarData> {
   const cacheKey = 'site-settings:banner';
-  const cacheTTL = 1000 * 60 * 15; // 15 minutes cache
+  const cacheTTL = 1000 * 60 * 30; // 30 minutes cache
 
   return await globalCache.wrap(
     cacheKey,

@@ -24,7 +24,7 @@ export class QueryOptimizer {
   private cache: Map<string, { data: unknown; timestamp: number }>;
   private cacheTTL: number;
 
-  constructor(payload: Payload, cacheTTL: number = 5 * 60 * 1000) {
+  constructor(payload: Payload, cacheTTL: number = 15 * 60 * 1000) {
     this.payload = payload;
     this.cache = new Map();
     this.cacheTTL = cacheTTL;

@@ -67,12 +67,14 @@ export const securityConfig = {
   },
 
   // Content Security Policy
+  // IMPORTANT: 'unsafe-inline' is required for Next.js to function properly
+  // See CLAUDE.md for details on CSP configuration and production issues
   csp: {
     'default-src': ["'self'"],
     'script-src':
       process.env.NODE_ENV === 'development'
         ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net']
-        : ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
+        : ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'], // unsafe-inline required for Next.js
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],

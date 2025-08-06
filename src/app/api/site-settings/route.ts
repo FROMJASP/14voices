@@ -17,13 +17,13 @@ export const GET = createApiHandler(
 
         return siteSettings;
       },
-      60000 // 1 minute
+      1800000 // 30 minutes
     );
   },
   {
     cache: {
       enabled: true,
-      ttl: 60000, // 1 minute
+      ttl: 1800000, // 30 minutes
       key: () => 'site-settings:api',
       invalidatePatterns: ['site-settings:*'],
     },

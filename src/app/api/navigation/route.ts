@@ -12,13 +12,13 @@ export const GET = createApiHandler(
         const navigationData = await getNavigationData();
         return formatNavigation(navigationData);
       },
-      300000 // 5 minutes
+      1800000 // 30 minutes
     );
   },
   {
     cache: {
       enabled: true,
-      ttl: 300000, // 5 minutes
+      ttl: 1800000, // 30 minutes
       key: () => 'navigation:api',
       invalidatePatterns: ['navigation:*'],
     },

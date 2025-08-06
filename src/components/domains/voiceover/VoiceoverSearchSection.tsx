@@ -48,7 +48,7 @@ const getCachedVoiceovers = unstable_cache(
   },
   ['active-voiceovers'], // Cache key
   {
-    revalidate: 60 * 15, // Cache for 15 minutes
+    revalidate: 60 * 30, // Cache for 30 minutes
     tags: ['voiceovers'], // Allow manual cache invalidation
   }
 );

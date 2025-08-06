@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { buildCSPHeader, isBlockedPath, isBlockedUserAgent } from '@/config/security';
+import { rateLimitMiddleware, getEndpointType } from '@/middleware/rate-limit';
+import { getEdgeSafeRateLimiter, getRateLimitConfig } from '@/lib/rate-limiter/edge-safe';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Temporarily bypass security for admin login in development
   if (process.env.NODE_ENV === 'development' && request.nextUrl.pathname.startsWith('/admin')) {
     console.log('[DEV] Bypassing security for admin path:', request.nextUrl.pathname);
@@ -20,6 +22,14 @@ export function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 404 });
   }
 
+  // Apply rate limiting for API routes
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    const rateLimitResponse = await rateLimitMiddleware(request);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+  }
+
   // For now, we'll skip nonce generation in middleware due to Edge Runtime limitations
   // In production, consider using a different approach like hash-based CSP or
   // generating nonces in server components
@@ -30,6 +40,36 @@ export function middleware(request: NextRequest) {
   // Pass nonce to the request for use in components if needed
   if (nonce) {
     response.headers.set('x-nonce', nonce);
+  }
+
+  // Add rate limit headers for API routes
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    try {
+      const rateLimiter = getEdgeSafeRateLimiter();
+      const identifier =
+        request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+        request.headers.get('x-real-ip') ||
+        request.headers.get('cf-connecting-ip') ||
+        request.ip ||
+        'anonymous';
+
+      const endpointType = getEndpointType(request.nextUrl.pathname);
+      const config = getRateLimitConfig(endpointType);
+
+      // Get current rate limit status without incrementing
+      const remaining = await rateLimiter.getRemainingAttempts(
+        identifier,
+        request.nextUrl.pathname,
+        config
+      );
+
+      // Add headers
+      response.headers.set('X-RateLimit-Limit', config.requests.toString());
+      response.headers.set('X-RateLimit-Remaining', remaining.toString());
+    } catch (error) {
+      // Silently fail - don't break the request over rate limit headers
+      console.error('Failed to add rate limit headers:', error);
+    }
   }
 
   // Add security headers globally
@@ -84,5 +124,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)', '/api/:path*'],
 };

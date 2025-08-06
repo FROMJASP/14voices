@@ -74,7 +74,7 @@ export const GET = createApiHandler(
   {
     cache: {
       enabled: true,
-      ttl: 300000, // 5 minutes
+      ttl: 1800000, // 30 minutes
       key: (req) => {
         const params = Object.fromEntries(req.nextUrl.searchParams);
         return `testimonials:${JSON.stringify(params)}`;

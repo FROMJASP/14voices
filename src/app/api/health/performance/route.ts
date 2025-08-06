@@ -44,7 +44,7 @@ export const GET = createApiHandler(
   {
     cache: {
       enabled: true,
-      ttl: 60000, // 1 minute cache
+      ttl: 300000, // 5 minutes cache
       key: () => 'health:performance',
     },
     rateLimit: {

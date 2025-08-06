@@ -25,7 +25,7 @@ export interface IVoiceoverRepository {
 
 export class PayloadVoiceoverRepository implements IVoiceoverRepository {
   private cache: Map<string, { data: unknown; timestamp: number }> = new Map();
-  private readonly CACHE_TTL = 60 * 1000; // 60 seconds
+  private readonly CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 
   constructor(private payload: Payload) {}
 

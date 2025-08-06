@@ -32,7 +32,7 @@ interface PaginatedResult<T> {
 // Global cache instance
 const queryCache = new LRUCache<string, any>({
   max: 1000,
-  ttl: 1000 * 60 * 15, // 15 minutes default TTL
+  ttl: 1000 * 60 * 30, // 30 minutes default TTL
 });
 
 // Request deduplication map
@@ -101,7 +101,7 @@ export async function fetchOptimized<T = any>(
 
       // Cache the result
       queryCache.set(cacheKey, transformedResult, {
-        ttl: options.cacheTTL || 1000 * 60 * 15,
+        ttl: options.cacheTTL || 1000 * 60 * 30,
       });
 
       return transformedResult;

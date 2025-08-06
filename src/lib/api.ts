@@ -8,7 +8,7 @@ export type { Voiceover, VoiceoverDemo };
 export async function getVoiceovers(): Promise<Voiceover[]> {
   try {
     const res = await fetch(`${API_URL}/api/public-voiceovers?depth=2`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 900 }, // 15 minutes
     });
 
     if (!res.ok) {
@@ -29,7 +29,7 @@ export async function getVoiceoverBySlug(slug: string): Promise<Voiceover | null
     const res = await fetch(
       `${API_URL}/api/public-voiceovers?where[slug][equals]=${slug}&depth=2`,
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 900 }, // 15 minutes
       }
     );
 
@@ -49,7 +49,7 @@ export async function getVoiceoverBySlug(slug: string): Promise<Voiceover | null
 export async function getVoiceoverDemos(): Promise<VoiceoverDemo[]> {
   try {
     const res = await fetch(`${API_URL}/api/voiceover-demos?depth=1`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 900 }, // 15 minutes
     });
 
     if (!res.ok) {
@@ -131,7 +131,7 @@ export interface Navigation {
 export async function getNavigation(): Promise<Navigation | null> {
   try {
     const res = await fetch(`${API_URL}/api/navigation?depth=2`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 900 }, // 15 minutes
     });
 
     if (!res.ok) {

@@ -202,6 +202,13 @@ class RedisAdapter {
     if (this.connected) return;
 
     try {
+      // Check if we're in Edge Runtime
+      if (typeof EdgeRuntime !== 'undefined') {
+        console.warn('Redis not available in Edge Runtime, using memory cache only');
+        this.connected = false;
+        return;
+      }
+
       const redis = await import('redis');
       this.client = redis.createClient({
         url: this.config.url,

@@ -125,7 +125,7 @@ export const GET = createApiHandler(
       // Add cache headers to response
       const response = data as Record<string, unknown>;
       response._cacheHeaders = {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800',
         'CDN-Cache-Control': 'max-age=3600',
       };
       return response;

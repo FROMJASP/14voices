@@ -109,6 +109,7 @@ export function createCacheKey(base: string, params: Record<string, unknown>): s
   return `${base}${sortedParams ? `|${sortedParams}` : ''}`;
 }
 
+// In-memory rate limit store for API routes (server-side only)
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 export async function checkRateLimit(
@@ -119,21 +120,39 @@ export async function checkRateLimit(
   const now = Date.now();
   const windowMs = window * 1000;
 
-  let record = rateLimitStore.get(identifier);
+  // Try to use Redis-based rate limiter if available
+  try {
+    // Dynamic import to avoid Edge Runtime issues
+    const { getRateLimiter } = await import('@/lib/rate-limiter');
+    const rateLimiter = getRateLimiter();
+    const result = await rateLimiter.checkLimit(identifier, 'legacy', {
+      requests: limit,
+      window,
+    });
 
-  if (!record || now >= record.resetAt) {
-    record = { count: 0, resetAt: now + windowMs };
-    rateLimitStore.set(identifier, record);
+    return {
+      allowed: result.allowed,
+      remaining: result.remaining,
+      resetAt: result.resetAt,
+    };
+  } catch (error) {
+    // Fallback to in-memory rate limiting
+    let record = rateLimitStore.get(identifier);
+
+    if (!record || now >= record.resetAt) {
+      record = { count: 0, resetAt: now + windowMs };
+      rateLimitStore.set(identifier, record);
+    }
+
+    const allowed = record.count < limit;
+    const remaining = Math.max(0, limit - record.count - 1);
+
+    if (allowed) {
+      record.count++;
+    }
+
+    return { allowed, remaining, resetAt: record.resetAt };
   }
-
-  const allowed = record.count < limit;
-  const remaining = Math.max(0, limit - record.count - 1);
-
-  if (allowed) {
-    record.count++;
-  }
-
-  return { allowed, remaining, resetAt: record.resetAt };
 }
 
 export function withCache<T extends unknown[], R>(
