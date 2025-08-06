@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Instrument_Serif } from 'next/font/google';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import type { AnnouncementBarProps } from './AnnouncementBar.types';
 
 const instrumentSerif = Instrument_Serif({

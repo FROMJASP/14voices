@@ -47,9 +47,9 @@ const Media: CollectionConfig = {
       name: 'uploadedBy',
       type: 'relationship',
       relationTo: 'users',
-      required: true,
       admin: {
         readOnly: true,
+        hidden: true, // Hide from UI since it's automatically set
       },
     },
     {
