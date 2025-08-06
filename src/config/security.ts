@@ -72,7 +72,7 @@ export const securityConfig = {
     'script-src':
       process.env.NODE_ENV === 'development'
         ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net']
-        : ["'self'", 'https://cdn.jsdelivr.net'],
+        : ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
