@@ -103,12 +103,28 @@ src/
 ├── collections/           # Payload CMS collections (data models)
 ├── components/            # React components
 │   ├── admin/            # Payload admin customizations
+│   │   ├── cells/        # Admin table cell renderers
+│   │   ├── graphics/     # Admin-specific graphics
+│   │   └── login/        # Admin login components
+│   ├── common/           # Shared, reusable components
+│   │   ├── layout/       # Layout components
+│   │   │   ├── footer/   # Footer component
+│   │   │   └── header/   # Header with navigation & banner
+│   │   ├── ui/           # Basic UI components
+│   │   │   └── magic/    # Magic UI components
+│   │   └── widgets/      # Complex reusable widgets
+│   │       ├── drawer/   # Drawer components & hooks
+│   │       ├── feedback/ # Error & maintenance components
+│   │       ├── forms/    # Form components
+│   │       └── media/    # Media player components
+│   ├── domains/          # Domain-specific components
+│   │   ├── cart/         # Shopping cart components
+│   │   ├── pricing/      # Price calculator components
+│   │   ├── production/   # Production order components
+│   │   └── voiceover/    # Voiceover cards & search
 │   ├── features/         # Feature-specific components
-│   ├── layout/           # Layout components
-│   ├── renderers/        # Page & section renderers
-│   ├── sections/         # Page section components
-│   ├── ui/               # Reusable UI components
-│   └── widgets/          # Widget components
+│   │   └── homepage/     # Homepage container
+│   └── index.ts          # Central component exports
 ├── domains/              # Domain-driven design layers
 │   ├── email/            # Email marketing domain
 │   ├── booking/          # Bookings & scripts domain
@@ -159,10 +175,11 @@ For detailed architecture documentation, see:
 
 - `admin/` - Payload admin customizations only
 - `features/` - Complex feature-specific components
-- `ui/` - Simple, reusable UI components
-- `widgets/` - Self-contained widget components
-- `layout/` - Page layout components
-- `sections/` - Page section components
+- `domains/` - Domain-specific business components
+- `common/` - Shared, reusable components
+  - `layout/` - Page layout components
+  - `ui/` - Simple, reusable UI components
+  - `widgets/` - Self-contained widget components
 
 ### Type Safety
 

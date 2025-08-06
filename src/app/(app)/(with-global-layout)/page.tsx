@@ -3,7 +3,7 @@ import configPromise from '@payload-config';
 import type { Page } from '@/payload-types';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
-import { HomepageWithDrawerOptimized } from '@/components/sections';
+import { HomepageWithDrawerOptimized } from '@/components/features/homepage/HomepageContainer';
 import { fetchOptimized } from '@/lib/data-fetching-server';
 
 export async function generateMetadata() {

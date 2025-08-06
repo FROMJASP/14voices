@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useFormFields } from '@payloadcms/ui';
-import { AnnouncementBanner } from '../sections/AnnouncementBanner/AnnouncementBanner';
+import { AnnouncementBar } from '../common/layout/header/announcement-bar';
 
 export const BannerPreview: React.FC = () => {
   // Get the form fields
@@ -35,16 +35,18 @@ export const BannerPreview: React.FC = () => {
         <p>Live Preview - Use **text** to make text orange and italic</p>
       </div>
       <div className="border rounded-lg overflow-hidden bg-background">
-        <AnnouncementBanner
-          enabled={true}
-          message={
-            banner.message ||
-            '🚀 **14 Nieuwe Stemmen**. Beluister hier wat ze voor jou kunnen betekenen!'
-          }
-          linkText={banner.linkText}
-          linkUrl={banner.linkUrl}
-          dismissible={banner.dismissible}
-          style={banner.style || 'subtle'}
+        <AnnouncementBar
+          data={{
+            enabled: true,
+            message:
+              banner.message ||
+              '🚀 **14 Nieuwe Stemmen**. Beluister hier wat ze voor jou kunnen betekenen!',
+            linkType: banner.linkType === 'custom' ? 'custom' : 'none',
+            linkUrl: banner.linkUrl,
+            linkText: banner.linkText,
+            dismissible: banner.dismissible,
+            style: banner.style || 'subtle',
+          }}
         />
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { PageRenderer } from '@/components/renderers';
+import { PageRenderer } from '@/components/common/widgets';
 import type { Page } from '@/payload-types';
 
 interface PageProps {

@@ -1,16 +1,17 @@
-import { GlobalLayout, type BannerData } from '@/components/layout';
+import { GlobalLayout } from '@/components/common/layout';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import globalCache from '@/lib/cache';
+import type { AnnouncementBarData } from '@/components/common/layout/header/announcement-bar';
 
-async function getBannerData(): Promise<BannerData> {
+async function getBannerData(): Promise<AnnouncementBarData> {
   const cacheKey = 'site-settings:banner';
   const cacheTTL = 1000 * 60 * 15; // 15 minutes cache
 
   return await globalCache.wrap(
     cacheKey,
     async () => {
-      const defaultBannerData: BannerData = {
+      const defaultBannerData: AnnouncementBarData = {
         enabled: false,
         message: '',
         linkType: 'none',
@@ -27,7 +28,7 @@ async function getBannerData(): Promise<BannerData> {
 
         if (siteSettings?.banner) {
           const { banner } = siteSettings;
-          const bannerData: BannerData = {
+          const bannerData: AnnouncementBarData = {
             enabled: banner.enabled || false,
             message: banner.message || '',
             linkType: banner.linkType || 'none',

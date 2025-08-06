@@ -1,6 +1,6 @@
 import { Bricolage_Grotesque, Geist_Mono, Instrument_Serif } from 'next/font/google';
-import { MaintenanceModeWrapper } from '@/components/widgets/feedback';
-import { ThemeProvider } from '@/components/providers';
+import { MaintenanceModeWrapper } from '@/components/common/widgets/feedback';
+import { ThemeProvider } from '@/components/common/layout';
 import { CartProvider } from '@/contexts/CartContext';
 import './globals.css';
 

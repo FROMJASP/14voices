@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { UnifiedPriceCalculatorOptimized } from '@/components/features/pricing';
+import { UnifiedPriceCalculatorOptimized } from '@/components/domains/pricing';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
-import { VoiceoverDetailClientNew } from '@/components/features/voiceover';
+import { VoiceoverDetailClientNew } from '@/components/domains/voiceover';
 import type { PayloadVoiceover } from '@/types/voiceover';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

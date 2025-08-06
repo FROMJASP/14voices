@@ -1,6 +1,5 @@
-import { Navbar } from '@/components/layout';
-import { Footer } from '@/components/layout';
-import { ClientFaviconUpdater } from '@/components/providers';
+import { Navigation } from '@/components/common/layout/header/navigation';
+import { Footer, ClientFaviconUpdater } from '@/components/common/layout';
 
 export default function OrderLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,8 +9,8 @@ export default function OrderLayout({ children }: { children: React.ReactNode })
 
       {/* Simple layout without banner for order pages */}
       <div className="min-h-screen flex flex-col">
-        {/* Navbar */}
-        <Navbar />
+        {/* Navigation */}
+        <Navigation />
 
         {/* Main content area */}
         <main className="flex-1 bg-background">{children}</main>

@@ -1,30 +1,16 @@
-// UI components (base components)
-export * from './ui';
+// Domain-specific components
+export * from './domains/voiceover';
+export * from './domains/production';
+export * from './domains/cart';
+export * from './domains/pricing';
 
-// Widget components (composed components)
-export * from './widgets/forms';
-export * from './widgets/media';
-export * from './widgets/feedback';
+// Common components
+export * from './common/ui';
+export * from './common/widgets';
+export * from './common/layout';
 
 // Feature components
-export * from './features/voiceover';
-export * from './features/production';
-export * from './features/cart';
-export * from './features/pricing';
-export * from './features/drawer';
+export * from './features';
 
-// Layout components
-export * from './layout';
-
-// Section components
-export * from './sections';
-
-// Provider components
-export * from './providers';
-
-// Renderer components
-export * from './renderers';
-
-// Other top-level components
-export { RichText } from './RichText';
-export { RotatingText } from './RotatingText';
+// Admin components (only when needed)
+// export * from './admin';

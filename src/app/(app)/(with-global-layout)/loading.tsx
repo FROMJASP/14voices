@@ -1,4 +1,4 @@
-import { LoadingSpinner } from '@/components/ui';
+import { LoadingSpinner } from '@/components/common/ui';
 import { Mic } from 'lucide-react';
 
 export default function Loading() {
