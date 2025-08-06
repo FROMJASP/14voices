@@ -6,6 +6,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect, useCallback, memo } from 'react';
+import Image from 'next/image';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -162,17 +163,18 @@ export const OptimizedVideo = memo(function OptimizedVideo({
     return (
       <div
         className={cn(
-          'bg-gray-200 dark:bg-gray-800 flex items-center justify-center animate-pulse',
+          'relative bg-gray-200 dark:bg-gray-800 flex items-center justify-center animate-pulse',
           className
         )}
         style={{ width, height }}
       >
         {poster ? (
-          <img
+          <Image
             src={poster}
             alt="Video poster"
-            className="w-full h-full object-cover"
-            loading="lazy"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="text-center p-4">
