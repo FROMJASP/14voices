@@ -1,5 +1,45 @@
 # CLAUDE.md
 
+## Critical Production Issues & Solutions
+
+### Blank Page with CSP Errors
+
+If the site shows a blank page in production with Content Security Policy errors in the console:
+
+**Problem**: CSP blocking Next.js inline scripts
+
+```
+Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'..."
+```
+
+**Solution**: Ensure `src/config/security.ts` includes `'unsafe-inline'` in production:
+
+```typescript
+'script-src': ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net']
+```
+
+**Prevention**:
+
+- Always test production builds locally with `bun run build && bun start`
+- Check browser console for CSP violations
+- Next.js REQUIRES inline scripts to function
+
+### TypeScript Compilation Errors
+
+**Problem**: Build fails on Vercel with TypeScript errors not caught locally
+
+**Common Issues**:
+
+- Payload CMS expects numeric IDs for user relationships: `String(user.id)`
+- Missing `Where` type imports from 'payload'
+- Domain types not matching Payload collection schemas
+
+**Prevention**:
+
+- Always run `bun run build` before pushing
+- Check that domain types match collection fields exactly
+- Import `Where` type when using Payload queries
+
 ## Common Development Commands
 
 ```bash
