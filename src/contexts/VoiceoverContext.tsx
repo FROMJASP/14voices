@@ -33,17 +33,16 @@ export function VoiceoverProvider({
   }, []);
 
   // Memoize context value to prevent unnecessary re-renders
-  const contextValue = useMemo(() => ({
-    selectedVoiceover,
-    setSelectedVoiceover,
-    clearSelection,
-  }), [selectedVoiceover, clearSelection]);
-
-  return (
-    <VoiceoverContext.Provider value={contextValue}>
-      {children}
-    </VoiceoverContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      selectedVoiceover,
+      setSelectedVoiceover,
+      clearSelection,
+    }),
+    [selectedVoiceover, clearSelection]
   );
+
+  return <VoiceoverContext.Provider value={contextValue}>{children}</VoiceoverContext.Provider>;
 }
 
 export function useVoiceover() {

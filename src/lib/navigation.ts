@@ -26,14 +26,44 @@ export async function getNavigationData(): Promise<Navigation | null> {
   try {
     const payload = await getPayload({ config: configPromise });
 
-    const result = await payload.find({
-      collection: 'navigation',
+    // Navigation is stored in site-settings global, not a separate collection
+    const siteSettings = await payload.findGlobal({
+      slug: 'site-settings',
       depth: 2,
-      limit: 1,
     });
 
-    // Navigation is a singleton, so we get the first (and only) document
-    return (result.docs[0] as Navigation) || null;
+    if (!siteSettings) {
+      return null;
+    }
+
+    // Extract navigation-related data from site settings
+    const banner = siteSettings.banner;
+    const navigationData: Navigation = {
+      id: 'site-settings',
+      banner: banner
+        ? {
+            enabled: banner.enabled || undefined,
+            message: banner.message || undefined,
+            linkText: undefined, // Not in site settings
+            linkType: banner.linkType || undefined,
+            linkUrl: banner.linkUrl || undefined,
+            linkPage:
+              banner.linkPage && typeof banner.linkPage === 'object' && 'slug' in banner.linkPage
+                ? { slug: banner.linkPage.slug }
+                : undefined,
+            dismissible: banner.dismissible || undefined,
+            style: banner.style as 'gradient' | 'solid' | 'subtle' | undefined,
+          }
+        : undefined,
+      mainMenu: [], // TODO: Add main menu configuration to site settings
+      footerColumns: [], // TODO: Add footer configuration to site settings
+      footerBottom: {}, // TODO: Add footer bottom configuration to site settings
+      mobileMenu: {}, // TODO: Add mobile menu configuration to site settings
+      createdAt: siteSettings.createdAt || undefined,
+      updatedAt: siteSettings.updatedAt || undefined,
+    };
+
+    return navigationData;
   } catch (error) {
     console.error('Error fetching navigation data:', error);
     return null;

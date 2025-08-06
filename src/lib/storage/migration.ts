@@ -26,7 +26,12 @@ export async function migrateStorageStructure(
 
   for (const script of scripts.docs) {
     const oldPrefix = `media/scripts/`;
-    const newPrefix = getBlobPath('userScript', script.uploadedBy as string, String(script.id));
+    const uploadedById =
+      typeof script.uploadedBy === 'object' && script.uploadedBy
+        ? script.uploadedBy.id
+        : script.uploadedBy;
+    if (!uploadedById) continue; // Skip if no uploadedBy
+    const newPrefix = getBlobPath('userScript', String(uploadedById), String(script.id));
 
     try {
       const { blobs } = await list({
@@ -34,7 +39,9 @@ export async function migrateStorageStructure(
         token,
       });
 
-      const scriptBlobs = blobs.filter((blob) => blob.pathname.includes(script.filename));
+      const scriptBlobs = script.filename
+        ? blobs.filter((blob) => blob.pathname.includes(script.filename as string))
+        : [];
 
       for (const blob of scriptBlobs) {
         const oldPath = blob.pathname;
@@ -73,7 +80,10 @@ export async function migrateStorageStructure(
 
   for (const invoice of invoices.docs) {
     const oldPrefix = `media/invoices/`;
-    const newPrefix = getBlobPath('userInvoice', invoice.client as string, String(invoice.id));
+    const clientId =
+      typeof invoice.client === 'object' && invoice.client ? invoice.client.id : invoice.client;
+    if (!clientId) continue; // Skip if no client
+    const newPrefix = getBlobPath('userInvoice', String(clientId), String(invoice.id));
 
     try {
       const { blobs } = await list({
@@ -81,7 +91,9 @@ export async function migrateStorageStructure(
         token,
       });
 
-      const invoiceBlobs = blobs.filter((blob) => blob.pathname.includes(invoice.filename));
+      const invoiceBlobs = invoice.filename
+        ? blobs.filter((blob) => blob.pathname.includes(invoice.filename as string))
+        : [];
 
       for (const blob of invoiceBlobs) {
         const oldPath = blob.pathname;
@@ -112,7 +124,9 @@ export async function migrateStorageStructure(
     }
   }
 
-  // Migrate User Avatars
+  // User avatars are stored in the users collection, not a separate collection
+  // TODO: If user avatars need migration, they should be accessed through the users collection
+  /*
   const userAvatars = await payload.find({
     collection: 'user-avatars',
     limit: 1000,
@@ -158,6 +172,7 @@ export async function migrateStorageStructure(
       });
     }
   }
+  */
 
   return results;
 }

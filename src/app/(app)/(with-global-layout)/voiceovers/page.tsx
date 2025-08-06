@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { VoiceoverCard } from '@/components/VoiceoverCard';
+import { VoiceoverCard } from '@/components/features/voiceover';
 import { getVoiceovers } from '@/lib/api';
 import type { TransformedVoiceover } from '@/types/voiceover';
 

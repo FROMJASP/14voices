@@ -4,6 +4,7 @@ import { getPayload } from '@/utilities/payload';
 import { headers } from 'next/headers';
 import { z } from 'zod';
 import { idSchema } from '@/lib/validation/schemas';
+import { BookingService } from '@/domains/booking';
 
 // Parameter validation schema
 const paramsSchema = z.object({
@@ -35,64 +36,33 @@ async function GETHandler(_req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    // Fetch the script
-    const script = await payload.findByID({
-      collection: 'scripts',
-      id,
-      depth: 1,
-    });
+    // Use the domain service
+    const bookingService = new BookingService(payload);
+    const script = await bookingService.getScript(id, user.id, user.role);
 
     if (!script) {
       return NextResponse.json({ error: 'Script not found' }, { status: 404 });
     }
 
-    // Check access permissions
-    const hasAccess =
-      user.role === 'admin' ||
-      script.uploadedBy === user.id ||
-      (script.sharedWithVoiceovers && script.booking?.voiceover === user.id);
-
-    if (!hasAccess) {
+    // Return formatted script data
+    return NextResponse.json({
+      id: script.id,
+      title: script.title,
+      filename: script.filename,
+      filesize: script.filesize,
+      url: script.url,
+      originalFilename: script.originalFilename,
+      instructions: script.instructions,
+      scriptType: script.scriptType,
+      language: script.language,
+      deadline: script.deadline,
+      assignedVoiceover: script.assignedVoiceover,
+      uploadedBy: script.uploadedBy,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Access denied') {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
-
-    // Log access
-    await payload.update({
-      collection: 'scripts',
-      id,
-      data: {
-        accessLog: [
-          ...(script.accessLog || []),
-          {
-            accessedBy: user.id,
-            accessedAt: new Date().toISOString(),
-            action: 'viewed',
-          },
-        ],
-      },
-    });
-
-    // Return script data
-    if (script.type === 'text') {
-      return NextResponse.json({
-        id: script.id,
-        type: 'text',
-        content: script.textContent,
-        fileName: script.fileName,
-        booking: script.booking,
-      });
-    } else {
-      // For file uploads, return the secure URL
-      return NextResponse.json({
-        id: script.id,
-        type: 'file',
-        fileUrl: script.fileUrl,
-        fileName: script.fileName,
-        fileSize: script.fileSize,
-        booking: script.booking,
-      });
-    }
-  } catch (error) {
     console.error('Error fetching script:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
@@ -122,27 +92,18 @@ async function DELETEHandler(_req: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const script = await payload.findByID({
-      collection: 'scripts',
-      id,
-    });
-
-    if (!script) {
-      return NextResponse.json({ error: 'Script not found' }, { status: 404 });
-    }
-
-    // Only admin or owner can delete
-    if (user.role !== 'admin' && script.uploadedBy !== user.id) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-    }
-
-    await payload.delete({
-      collection: 'scripts',
-      id,
-    });
+    // Use the domain service
+    const bookingService = new BookingService(payload);
+    await bookingService.deleteScript(id, user.id, user.role);
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Script not found') {
+      return NextResponse.json({ error: 'Script not found' }, { status: 404 });
+    }
+    if (error instanceof Error && error.message === 'Access denied') {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
     console.error('Error deleting script:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

@@ -24,7 +24,7 @@ export function middleware(request: NextRequest) {
   // In production, consider using a different approach like hash-based CSP or
   // generating nonces in server components
   const nonce = null;
-  
+
   const response = NextResponse.next();
 
   // Pass nonce to the request for use in components if needed

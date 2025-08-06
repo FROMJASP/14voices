@@ -1,11 +1,11 @@
-import { Plus_Jakarta_Sans, Geist_Mono, Instrument_Serif } from 'next/font/google';
-import { MaintenanceModeWrapper } from '@/components/MaintenanceModeWrapper';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { Bricolage_Grotesque, Geist_Mono, Instrument_Serif } from 'next/font/google';
+import { MaintenanceModeWrapper } from '@/components/widgets/feedback';
+import { ThemeProvider } from '@/components/providers';
 import { CartProvider } from '@/contexts/CartContext';
 import './globals.css';
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: '--font-plus-jakarta',
+const bricolageGrotesque = Bricolage_Grotesque({
+  variable: '--font-bricolage',
   subsets: ['latin'],
   weight: ['200', '300', '400', '500', '600', '700', '800'],
   display: 'swap',
@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="nl" suppressHydrationWarning>
       <body
-        className={`${plusJakarta.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`${bricolageGrotesque.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

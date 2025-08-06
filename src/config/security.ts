@@ -69,9 +69,10 @@ export const securityConfig = {
   // Content Security Policy
   csp: {
     'default-src': ["'self'"],
-    'script-src': process.env.NODE_ENV === 'development' 
-      ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net']
-      : ["'self'", 'https://cdn.jsdelivr.net'],
+    'script-src':
+      process.env.NODE_ENV === 'development'
+        ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net']
+        : ["'self'", 'https://cdn.jsdelivr.net'],
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
@@ -195,12 +196,12 @@ export function getRateLimitConfig(type: keyof typeof securityConfig.rateLimits)
  */
 export function buildCSPHeader(nonce?: string | null): string {
   const csp = { ...securityConfig.csp };
-  
+
   // If nonce is provided and we're in production, add it to script-src
   if (nonce && process.env.NODE_ENV === 'production') {
     csp['script-src'] = ["'self'", `'nonce-${nonce}'`, 'https://cdn.jsdelivr.net'];
   }
-  
+
   return Object.entries(csp)
     .map(([directive, values]) => `${directive} ${values.join(' ')}`)
     .join('; ');
@@ -226,15 +227,18 @@ export function isBlockedUserAgent(userAgent: string): boolean {
  * Validate and sanitize user input
  * IMPORTANT: Use parameterized queries for SQL, not string sanitization
  */
-export function validateInput(input: string, options?: {
-  maxLength?: number;
-  allowedPattern?: RegExp;
-  stripHtml?: boolean;
-}): { valid: boolean; sanitized: string; error?: string } {
-  const { 
+export function validateInput(
+  input: string,
+  options?: {
+    maxLength?: number;
+    allowedPattern?: RegExp;
+    stripHtml?: boolean;
+  }
+): { valid: boolean; sanitized: string; error?: string } {
+  const {
     maxLength = securityConfig.validation.maxStringLength,
     allowedPattern,
-    stripHtml = true
+    stripHtml = true,
   } = options || {};
 
   // Check length
@@ -242,7 +246,7 @@ export function validateInput(input: string, options?: {
     return {
       valid: false,
       sanitized: input.slice(0, maxLength),
-      error: `Input exceeds maximum length of ${maxLength}`
+      error: `Input exceeds maximum length of ${maxLength}`,
     };
   }
 
@@ -251,7 +255,7 @@ export function validateInput(input: string, options?: {
     return {
       valid: false,
       sanitized: '',
-      error: 'Input contains invalid characters'
+      error: 'Input contains invalid characters',
     };
   }
 
@@ -266,20 +270,20 @@ export function validateInput(input: string, options?: {
     /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION)\b.*\b(FROM|INTO|WHERE)\b)/i,
     /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
     /javascript:/gi,
-    /on\w+\s*=/gi
+    /on\w+\s*=/gi,
   ];
 
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(input)) {
       console.warn('[SECURITY] Suspicious input detected:', {
         pattern: pattern.toString(),
-        input: input.substring(0, 100)
+        input: input.substring(0, 100),
       });
     }
   }
 
   return {
     valid: true,
-    sanitized: sanitized.trim()
+    sanitized: sanitized.trim(),
   };
 }

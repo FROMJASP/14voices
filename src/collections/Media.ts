@@ -1,9 +1,9 @@
 import type { CollectionConfig } from 'payload';
-import { 
-  validateFileContent, 
-  sanitizeFilename, 
+import {
+  validateFileContent,
+  sanitizeFilename,
   checkFileSize,
-  scanFileForThreats 
+  scanFileForThreats,
 } from '@/lib/file-security';
 import { logSecurityEvent } from '@/lib/security-monitoring';
 
@@ -13,7 +13,7 @@ const Media: CollectionConfig = {
     read: () => true,
     create: ({ req }) => !!req.user,
     update: ({ req }) => !!req.user,
-    delete: ({ req }) => !!req.user?.roles?.includes('admin'),
+    delete: ({ req }) => req.user?.role === 'admin',
   },
   fields: [
     {
@@ -71,7 +71,8 @@ const Media: CollectionConfig = {
       type: 'json',
       admin: {
         readOnly: true,
-        condition: ({ data }) => data?.scanStatus === 'suspicious' || data?.scanStatus === 'blocked',
+        condition: ({ data }) =>
+          data?.scanStatus === 'suspicious' || data?.scanStatus === 'blocked',
       },
     },
   ],
@@ -106,7 +107,7 @@ const Media: CollectionConfig = {
       'image/webp',
       'audio/mpeg',
       'audio/wav',
-      'application/pdf'
+      'application/pdf',
     ],
   },
   hooks: {
@@ -115,7 +116,7 @@ const Media: CollectionConfig = {
         if (operation === 'create' && args.req?.file) {
           const file = args.req.file;
           const user = args.req.user;
-          
+
           if (!user) {
             throw new Error('Authentication required for file uploads');
           }
@@ -127,13 +128,13 @@ const Media: CollectionConfig = {
               type: 'file_threat',
               severity: 'medium',
               userId: String(user.id),
-              details: { 
+              details: {
                 reason: 'File size limit exceeded',
                 filename: file.filename,
                 size: file.size,
-                error: sizeCheck.error
+                error: sizeCheck.error,
               },
-              timestamp: new Date()
+              timestamp: new Date(),
             });
             throw new Error(sizeCheck.error);
           }
@@ -141,37 +142,37 @@ const Media: CollectionConfig = {
           // 2. Validate file content matches MIME type
           const buffer = Buffer.from(await file.arrayBuffer());
           const contentValidation = await validateFileContent(buffer, file.mimetype);
-          
+
           if (!contentValidation.valid) {
             await logSecurityEvent({
               type: 'file_threat',
               severity: 'high',
               userId: String(user.id),
-              details: { 
+              details: {
                 reason: 'File content mismatch',
                 filename: file.filename,
                 declaredType: file.mimetype,
-                error: contentValidation.error
+                error: contentValidation.error,
               },
-              timestamp: new Date()
+              timestamp: new Date(),
             });
             throw new Error('File type validation failed: ' + contentValidation.error);
           }
 
           // 3. Scan for threats
           const scanResult = await scanFileForThreats(buffer, file.filename);
-          
+
           if (!scanResult.safe) {
             await logSecurityEvent({
               type: 'file_threat',
               severity: 'critical',
               userId: String(user.id),
-              details: { 
+              details: {
                 reason: 'Malicious content detected',
                 filename: file.filename,
-                threats: scanResult.threats
+                threats: scanResult.threats,
               },
-              timestamp: new Date()
+              timestamp: new Date(),
             });
             throw new Error('Security scan failed: File contains potentially malicious content');
           }
@@ -189,7 +190,7 @@ const Media: CollectionConfig = {
               scannedAt: new Date(),
               originalFilename: file.filename,
               sanitizedFilename: sanitizedFilename,
-            }
+            },
           };
         }
 
@@ -204,14 +205,14 @@ const Media: CollectionConfig = {
             type: 'file_threat',
             severity: 'low',
             userId: String(args.req.user.id),
-            details: { 
+            details: {
               reason: 'File uploaded successfully',
               fileId: result.id,
               filename: result.filename,
               mimeType: result.mimeType,
-              size: result.filesize
+              size: result.filesize,
             },
-            timestamp: new Date()
+            timestamp: new Date(),
           });
         }
 

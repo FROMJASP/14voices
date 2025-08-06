@@ -37,7 +37,7 @@ export async function checkRateLimit(
   try {
     // Try Redis first
     const currentCount = await rateLimitCache.get<number>(key);
-    
+
     if (currentCount !== undefined) {
       // Redis path
       if (currentCount >= limit) {
@@ -49,7 +49,7 @@ export async function checkRateLimit(
       }
 
       await rateLimitCache.set(key, currentCount + 1, windowMs);
-      
+
       return {
         allowed: true,
         remaining: limit - currentCount - 1,
@@ -58,7 +58,7 @@ export async function checkRateLimit(
     } else {
       // Initialize counter in Redis
       await rateLimitCache.set(key, 1, windowMs);
-      
+
       return {
         allowed: true,
         remaining: limit - 1,
@@ -68,18 +68,18 @@ export async function checkRateLimit(
   } catch (redisError) {
     // Log Redis failure
     console.error('Redis rate limit error, falling back to in-memory:', redisError);
-    
+
     // Fallback to in-memory store
     const fallbackKey = `rate_limit:${clientId}`;
     let requests = rateLimitStore.get(fallbackKey) || [];
-    
+
     // Remove old requests outside the window
-    requests = requests.filter(timestamp => timestamp > windowStart);
-    
+    requests = requests.filter((timestamp) => timestamp > windowStart);
+
     if (requests.length >= limit) {
       const oldestTimestamp = requests[0];
       const resetTime = oldestTimestamp + windowMs;
-      
+
       // Log potential rate limit bypass due to Redis failure
       await logSecurityEvent({
         type: 'suspicious_activity',
@@ -91,7 +91,7 @@ export async function checkRateLimit(
         },
         timestamp: new Date(),
       });
-      
+
       return {
         allowed: false,
         remaining: 0,
@@ -102,11 +102,12 @@ export async function checkRateLimit(
     // Add current request
     requests.push(now);
     rateLimitStore.set(fallbackKey, requests);
-    
+
     // Clean up old entries periodically
-    if (Math.random() < 0.01) { // 1% chance to clean up
+    if (Math.random() < 0.01) {
+      // 1% chance to clean up
       for (const [k, v] of rateLimitStore.entries()) {
-        const filtered = v.filter(t => t > now - windowMs);
+        const filtered = v.filter((t) => t > now - windowMs);
         if (filtered.length === 0) {
           rateLimitStore.delete(k);
         } else {
@@ -129,10 +130,10 @@ export async function checkRateLimit(
 export function getRateLimitKey(req: Request, context: string = 'global'): string {
   const forwarded = req.headers.get('x-forwarded-for');
   const ip = forwarded ? forwarded.split(',')[0].trim() : 'unknown';
-  
+
   // Add user ID if authenticated
   const userId = (req as any).user?.id;
-  
+
   return userId ? `${context}:user:${userId}` : `${context}:ip:${ip}`;
 }
 
@@ -142,10 +143,10 @@ export function getRateLimitKey(req: Request, context: string = 'global'): strin
 export async function cleanupRateLimits(): Promise<void> {
   const now = Date.now();
   const oneHourAgo = now - 3600000;
-  
+
   // Clean up in-memory store
   for (const [key, timestamps] of rateLimitStore.entries()) {
-    const filtered = timestamps.filter(t => t > oneHourAgo);
+    const filtered = timestamps.filter((t) => t > oneHourAgo);
     if (filtered.length === 0) {
       rateLimitStore.delete(key);
     } else if (filtered.length !== timestamps.length) {

@@ -14,14 +14,14 @@ const nextConfig: NextConfig = {
       'lucide-react',
       '@heroicons/react',
       'framer-motion',
-      'gsap'
-    ]
+      'gsap',
+    ],
   },
   turbopack: {
     resolveAlias: {
       // Optional: Add alias resolution for faster imports
-      '@/*': './src/*'
-    }
+      '@/*': './src/*',
+    },
   },
   images: {
     remotePatterns: [

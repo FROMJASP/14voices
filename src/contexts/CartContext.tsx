@@ -66,8 +66,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addItem = useCallback((item: CartItem) => {
-    setCartItems(prev => {
-      const existingItem = prev.find(i => i.id === item.id);
+    setCartItems((prev) => {
+      const existingItem = prev.find((i) => i.id === item.id);
       if (existingItem) {
         return prev; // Item already exists
       }
@@ -79,74 +79,76 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const removeItem = useCallback((itemId: string) => {
-    setCartItems(prev => {
-      const newItems = prev.filter(item => item.id !== itemId);
+    setCartItems((prev) => {
+      const newItems = prev.filter((item) => item.id !== itemId);
       setCartItemCount(newItems.length);
       setCartTotal(newItems.reduce((sum, item) => sum + item.price, 0));
       return newItems;
     });
   }, []);
 
-  const updateItemQuantity = useCallback((itemId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeItem(itemId);
-      return;
-    }
-    setCartItems(prev => {
-      const newItems = prev.map(item => 
-        item.id === itemId ? { ...item, price: item.price * quantity } : item
-      );
-      setCartTotal(newItems.reduce((sum, item) => sum + item.price, 0));
-      return newItems;
-    });
-  }, [removeItem]);
+  const updateItemQuantity = useCallback(
+    (itemId: string, quantity: number) => {
+      if (quantity <= 0) {
+        removeItem(itemId);
+        return;
+      }
+      setCartItems((prev) => {
+        const newItems = prev.map((item) =>
+          item.id === itemId ? { ...item, price: item.price * quantity } : item
+        );
+        setCartTotal(newItems.reduce((sum, item) => sum + item.price, 0));
+        return newItems;
+      });
+    },
+    [removeItem]
+  );
 
   // Memoize the context value to prevent unnecessary re-renders
-  const contextValue = useMemo(() => ({
-    isCartOpen,
-    setIsCartOpen,
-    cartItemCount,
-    setCartItemCount,
-    cartItems,
-    setCartItems,
-    cartTotal,
-    setCartTotal,
-    productionName,
-    setProductionName,
-    wordCount,
-    setWordCount,
-    region,
-    setRegion,
-    extras,
-    setExtras,
-    selectedVoiceover,
-    setSelectedVoiceover,
-    // Optimized actions
-    clearCart,
-    addItem,
-    removeItem,
-    updateItemQuantity,
-  }), [
-    isCartOpen,
-    cartItemCount,
-    cartItems,
-    cartTotal,
-    productionName,
-    wordCount,
-    region,
-    extras,
-    selectedVoiceover,
-    clearCart,
-    addItem,
-    removeItem,
-    updateItemQuantity,
-  ]);
-
-  return (
-    <CartContext.Provider value={contextValue}>
-      {children}
-    </CartContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      isCartOpen,
+      setIsCartOpen,
+      cartItemCount,
+      setCartItemCount,
+      cartItems,
+      setCartItems,
+      cartTotal,
+      setCartTotal,
+      productionName,
+      setProductionName,
+      wordCount,
+      setWordCount,
+      region,
+      setRegion,
+      extras,
+      setExtras,
+      selectedVoiceover,
+      setSelectedVoiceover,
+      // Optimized actions
+      clearCart,
+      addItem,
+      removeItem,
+      updateItemQuantity,
+    }),
+    [
+      isCartOpen,
+      cartItemCount,
+      cartItems,
+      cartTotal,
+      productionName,
+      wordCount,
+      region,
+      extras,
+      selectedVoiceover,
+      clearCart,
+      addItem,
+      removeItem,
+      updateItemQuantity,
+    ]
   );
+
+  return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {
@@ -160,16 +162,22 @@ export function useCart() {
 // Performance-optimized hooks for specific cart features
 export function useCartState() {
   const { isCartOpen, cartItemCount, cartTotal } = useCart();
-  return useMemo(() => ({ isCartOpen, cartItemCount, cartTotal }), [isCartOpen, cartItemCount, cartTotal]);
+  return useMemo(
+    () => ({ isCartOpen, cartItemCount, cartTotal }),
+    [isCartOpen, cartItemCount, cartTotal]
+  );
 }
 
 export function useCartActions() {
   const { setIsCartOpen, clearCart, addItem, removeItem, updateItemQuantity } = useCart();
-  return useMemo(() => ({ 
-    setIsCartOpen, 
-    clearCart, 
-    addItem, 
-    removeItem, 
-    updateItemQuantity 
-  }), [setIsCartOpen, clearCart, addItem, removeItem, updateItemQuantity]);
+  return useMemo(
+    () => ({
+      setIsCartOpen,
+      clearCart,
+      addItem,
+      removeItem,
+      updateItemQuantity,
+    }),
+    [setIsCartOpen, clearCart, addItem, removeItem, updateItemQuantity]
+  );
 }

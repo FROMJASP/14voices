@@ -1,7 +1,12 @@
 import { getPayload } from '@/utilities/payload';
 
 export interface SecurityEvent {
-  type: 'auth_failure' | 'suspicious_activity' | 'rate_limit_exceeded' | 'invalid_input' | 'file_threat';
+  type:
+    | 'auth_failure'
+    | 'suspicious_activity'
+    | 'rate_limit_exceeded'
+    | 'invalid_input'
+    | 'file_threat';
   severity: 'low' | 'medium' | 'high' | 'critical';
   userId?: string;
   ipAddress?: string;
@@ -31,23 +36,25 @@ export async function logSecurityEvent(event: SecurityEvent): Promise<void> {
           level: event.severity === 'critical' ? 'error' : 'warning',
           tags: {
             security_event: event.type,
-            severity: event.severity
+            severity: event.severity,
           },
-          extra: { ...event }
+          extra: { ...event },
         });
       }
 
       // Store in database for audit trail
       const payload = await getPayload();
-      await payload.create({
-        collection: 'security-logs',
-        data: {
-          ...event,
-          timestamp: event.timestamp.toISOString()
-        }
-      }).catch(err => {
-        console.error('Failed to store security event:', err);
-      });
+      await payload
+        .create({
+          collection: 'security-logs',
+          data: {
+            ...event,
+            timestamp: event.timestamp.toISOString(),
+          },
+        })
+        .catch((err) => {
+          console.error('Failed to store security event:', err);
+        });
     }
 
     // Alert on critical events
@@ -85,7 +92,7 @@ async function sendSecurityAlert(event: SecurityEvent): Promise<void> {
         <p><strong>Path:</strong> ${event.path || 'N/A'}</p>
         <h3>Details:</h3>
         <pre>${JSON.stringify(event.details, null, 2)}</pre>
-      `
+      `,
     });
   } catch (error) {
     console.error('Failed to send security alert:', error);
@@ -111,14 +118,15 @@ export function trackAuthFailure(identifier: string): void {
       ipAddress: identifier,
       details: {
         attemptCount: failures.count,
-        message: 'Multiple failed authentication attempts'
+        message: 'Multiple failed authentication attempts',
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
   // Clean up old entries periodically
-  if (Math.random() < 0.01) { // 1% chance
+  if (Math.random() < 0.01) {
+    // 1% chance
     const oneHourAgo = new Date(Date.now() - 3600000);
     for (const [key, value] of authFailures.entries()) {
       if (value.lastAttempt < oneHourAgo) {

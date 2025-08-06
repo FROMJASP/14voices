@@ -97,7 +97,7 @@ async function POSTHandler(_req: NextRequest) {
     });
 
     if (data.type === 'dynamic' && data.segmentRules) {
-      await updateDynamicAudienceContacts(payload, audience as EmailAudience);
+      await updateDynamicAudienceContacts(payload, audience as unknown as EmailAudience);
     }
 
     return NextResponse.json({ audience });

@@ -38,14 +38,14 @@ const log = {
 async function resetAdminAccess() {
   try {
     log.info('Initializing Payload...');
-    
+
     const payload = await getPayload({ config: configPromise });
 
     log.success('Payload initialized successfully');
 
     // List existing admin users
     log.info('Checking existing admin users...');
-    
+
     const existingAdmins = await payload.find({
       collection: 'users',
       where: {
@@ -59,7 +59,9 @@ async function resetAdminAccess() {
     if (existingAdmins.docs.length > 0) {
       log.info(`Found ${existingAdmins.docs.length} admin user(s):`);
       existingAdmins.docs.forEach((admin) => {
-        console.log(`  - ${admin.email} (${admin.name || 'No name'}) - Status: ${admin.status || 'active'}`);
+        console.log(
+          `  - ${admin.email} (${admin.name || 'No name'}) - Status: ${admin.status || 'active'}`
+        );
       });
     } else {
       log.warning('No admin users found in the database');
@@ -71,7 +73,7 @@ async function resetAdminAccess() {
     console.log('2. Create new admin user');
     console.log('3. List all users');
     console.log('4. Exit');
-    
+
     const action = prompt('\nEnter your choice (1-4): ');
 
     switch (action) {
@@ -91,7 +93,6 @@ async function resetAdminAccess() {
         log.error('Invalid choice');
         process.exit(1);
     }
-
   } catch (error) {
     log.error(`Failed to reset admin access: ${error}`);
     process.exit(1);
@@ -144,7 +145,9 @@ async function resetExistingAdminPassword(payload: any) {
   console.log(`Email: ${colors.cyan}${email}${colors.reset}`);
   console.log(`Password: ${colors.cyan}${newPassword}${colors.reset}`);
   console.log(`\n${colors.yellow}⚠️  Please change this password after logging in${colors.reset}`);
-  console.log(`Login URL: ${colors.cyan}${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/login${colors.reset}`);
+  console.log(
+    `Login URL: ${colors.cyan}${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/login${colors.reset}`
+  );
 }
 
 async function createNewAdminUser(payload: any) {
@@ -211,12 +214,14 @@ async function createNewAdminUser(payload: any) {
   console.log(`Email: ${colors.cyan}${email}${colors.reset}`);
   console.log(`Password: ${colors.cyan}${password}${colors.reset}`);
   console.log(`\n${colors.yellow}⚠️  Please change this password after logging in${colors.reset}`);
-  console.log(`Login URL: ${colors.cyan}${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/login${colors.reset}`);
+  console.log(
+    `Login URL: ${colors.cyan}${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/login${colors.reset}`
+  );
 }
 
 async function listAllUsers(payload: any) {
   log.info('Fetching all users...');
-  
+
   const users = await payload.find({
     collection: 'users',
     limit: 1000,
@@ -229,7 +234,7 @@ async function listAllUsers(payload: any) {
   }
 
   console.log(`\n${colors.bright}Total users: ${users.docs.length}${colors.reset}\n`);
-  
+
   // Group by role
   const byRole = users.docs.reduce((acc: any, user: any) => {
     const role = user.role || 'user';
@@ -243,13 +248,17 @@ async function listAllUsers(payload: any) {
     users.forEach((user: any) => {
       const status = user.status || 'active';
       const statusColor = status === 'active' ? colors.green : colors.red;
-      console.log(`  - ${user.email} (${user.name || 'No name'}) - ${statusColor}${status}${colors.reset}`);
+      console.log(
+        `  - ${user.email} (${user.name || 'No name'}) - ${statusColor}${status}${colors.reset}`
+      );
     });
     console.log('');
   });
 
   // Ask if they want to take action
-  const continueAction = prompt('Would you like to reset a password or create a new admin? (y/n): ');
+  const continueAction = prompt(
+    'Would you like to reset a password or create a new admin? (y/n): '
+  );
   if (continueAction?.toLowerCase() === 'y') {
     await resetAdminAccess();
   }
@@ -260,23 +269,26 @@ function generateSecurePassword(length = 16): string {
   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
   const numbers = '0123456789';
   const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-  
+
   const allChars = uppercase + lowercase + numbers + symbols;
   let password = '';
-  
+
   // Ensure at least one character from each set
   password += uppercase[Math.floor(Math.random() * uppercase.length)];
   password += lowercase[Math.floor(Math.random() * lowercase.length)];
   password += numbers[Math.floor(Math.random() * numbers.length)];
   password += symbols[Math.floor(Math.random() * symbols.length)];
-  
+
   // Fill the rest randomly
   for (let i = password.length; i < length; i++) {
     password += allChars[Math.floor(Math.random() * allChars.length)];
   }
-  
+
   // Shuffle the password
-  return password.split('').sort(() => Math.random() - 0.5).join('');
+  return password
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('');
 }
 
 // Run the script

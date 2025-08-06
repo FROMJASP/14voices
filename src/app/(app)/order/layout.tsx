@@ -1,6 +1,6 @@
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
-import { ClientFaviconUpdater } from '@/components/ClientFaviconUpdater';
+import { Navbar } from '@/components/layout';
+import { Footer } from '@/components/layout';
+import { ClientFaviconUpdater } from '@/components/providers';
 
 export default function OrderLayout({ children }: { children: React.ReactNode }) {
   return (

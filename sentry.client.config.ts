@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -7,14 +7,14 @@ Sentry.init({
   enabled: process.env.NODE_ENV === 'production',
   release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
   environment: process.env.VERCEL_ENV || process.env.NODE_ENV,
-  
+
   // Performance monitoring configuration
   tracePropagationTargets: [
-    'localhost', 
+    'localhost',
     /^https:\/\/14voices\.com/,
-    /^https:\/\/[\w-]+\.vercel\.app/
+    /^https:\/\/[\w-]+\.vercel\.app/,
   ],
-  
+
   // Error filtering and preprocessing
   beforeSend(event) {
     // Filter out known noise or sensitive information
@@ -23,7 +23,7 @@ Sentry.init({
     }
     return event;
   },
-  
+
   // Contextual information
   beforeBreadcrumb(breadcrumb) {
     // Sanitize potentially sensitive data from breadcrumbs
@@ -32,5 +32,5 @@ Sentry.init({
       delete breadcrumb.data.referrer;
     }
     return breadcrumb;
-  }
+  },
 });

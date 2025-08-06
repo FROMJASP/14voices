@@ -15,7 +15,7 @@ export default function Error({
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Application error:', error);
-    
+
     // Send error to monitoring service in production
     // Sentry integration disabled temporarily
     // if (process.env.NODE_ENV === 'production' && window.Sentry) {
@@ -27,9 +27,7 @@ export default function Error({
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
         <h1 className="text-6xl font-bold text-red-500 mb-4">500</h1>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-          Something went wrong!
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Something went wrong!</h2>
         <p className="text-gray-600 mb-8">
           We apologize for the inconvenience. Our team has been notified and is working on a fix.
         </p>

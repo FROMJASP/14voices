@@ -1,4 +1,4 @@
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { LoadingSpinner } from '@/components/ui';
 import { Mic } from 'lucide-react';
 
 export default function Loading() {
@@ -77,9 +77,7 @@ export default function Loading() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center">
           <Mic className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-50 animate-pulse" />
-          <h3 className="text-xl font-semibold text-foreground mb-4">
-            Stemmen laden...
-          </h3>
+          <h3 className="text-xl font-semibold text-foreground mb-4">Stemmen laden...</h3>
           <p className="text-muted-foreground mb-8">
             We laden de beschikbare voice-over stemmen voor je.
           </p>

@@ -4,7 +4,7 @@ import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { ProductionOrderPageWrapper } from '@/components/ProductionOrderPageWrapper';
+import { ProductionOrderPageWrapper } from '@/components/features/production';
 
 const productionSlugs = [
   'videoproductie',
@@ -16,9 +16,9 @@ const productionSlugs = [
 ];
 
 const productionNames: Record<string, string> = {
-  'videoproductie': 'Videoproductie',
+  videoproductie: 'Videoproductie',
   'e-learning': 'E-learning',
-  'radiospot': 'Radiospot', // Changed back to singular
+  radiospot: 'Radiospot', // Changed back to singular
   'tv-commercial': 'TV Commercial',
   'web-commercial': 'Web Commercial',
   'voice-response': 'Voice Response',
@@ -46,11 +46,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function OrderPage({
-  params,
-}: {
-  params: Promise<{ production: string }>;
-}) {
+export default async function OrderPage({ params }: { params: Promise<{ production: string }> }) {
   const { production } = await params;
   const productionIndex = productionSlugs.indexOf(production);
 
@@ -75,7 +71,7 @@ export default async function OrderPage({
 
   // Transform the data
   const voiceovers = activeResult.docs.map((voiceover, index) =>
-    transformVoiceoverData(voiceover as PayloadVoiceover, index)
+    transformVoiceoverData(voiceover as unknown as PayloadVoiceover, index)
   );
 
   // Debug logging
@@ -91,7 +87,13 @@ export default async function OrderPage({
     <>
       {/* Debug info */}
       <div className="hidden">
-        <pre>{JSON.stringify({ production, productionIndex, voiceoverCount: voiceovers.length }, null, 2)}</pre>
+        <pre>
+          {JSON.stringify(
+            { production, productionIndex, voiceoverCount: voiceovers.length },
+            null,
+            2
+          )}
+        </pre>
       </div>
       <ProductionOrderPageWrapper
         productionIndex={productionIndex}

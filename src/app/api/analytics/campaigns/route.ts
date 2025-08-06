@@ -76,7 +76,7 @@ async function GETHandler(_req: NextRequest) {
         limit: 1000,
       });
 
-      const analytics = calculateCampaignAnalytics(logs.docs as EmailLog[]);
+      const analytics = calculateCampaignAnalytics(logs.docs as unknown as EmailLog[]);
 
       return NextResponse.json({
         campaign: {
@@ -84,7 +84,6 @@ async function GETHandler(_req: NextRequest) {
           name: campaign.name,
           subject: campaign.subject,
           status: campaign.status,
-          sentAt: campaign.analytics?.sentAt,
         },
         analytics,
         logs: logs.docs,
@@ -121,7 +120,7 @@ async function GETHandler(_req: NextRequest) {
               status: campaign.status,
               sentAt: campaign.scheduledAt,
             },
-            analytics: calculateCampaignAnalytics(logs.docs as EmailLog[]),
+            analytics: calculateCampaignAnalytics(logs.docs as unknown as EmailLog[]),
           };
         })
       );

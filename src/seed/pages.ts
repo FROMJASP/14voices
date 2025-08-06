@@ -13,40 +13,21 @@ export async function seedPages(payload: Payload) {
       return existingPages.docs;
     }
 
-    // Get the default layout
-    const layouts = await payload.find({
-      collection: 'layouts',
-      where: {
-        isDefault: {
-          equals: true,
-        },
-      },
-      limit: 1,
-    });
-
-    const defaultLayout = layouts.docs[0];
-
-    if (!defaultLayout) {
-      console.error('❌ No default layout found. Please run layout seed first.');
-      return [];
-    }
-
     const pages = [];
 
-    // Create Home page
+    // Create Home page without layout reference
     const homePage = await payload.create({
       collection: 'pages',
       data: {
         title: 'Home',
         slug: 'home',
-        layout: defaultLayout.id,
         status: 'published',
         hero: {
           type: 'gradient',
           title: 'Professional Voice-Over Services',
           subtitle: 'Bringing your scripts to life with the perfect voice',
         },
-        blocks: [],
+        sections: [],
         meta: {
           title: 'Home',
           description:
@@ -63,14 +44,13 @@ export async function seedPages(payload: Payload) {
       data: {
         title: 'About Us',
         slug: 'about',
-        layout: defaultLayout.id,
         status: 'published',
         hero: {
           type: 'simple',
           title: 'About 14voices',
           subtitle: 'Your trusted partner in professional voice-over services',
         },
-        blocks: [],
+        sections: [],
         meta: {
           title: 'About Us',
           description:
@@ -87,14 +67,13 @@ export async function seedPages(payload: Payload) {
       data: {
         title: 'Contact',
         slug: 'contact',
-        layout: defaultLayout.id,
         status: 'published',
         hero: {
           type: 'simple',
           title: 'Get in Touch',
           subtitle: "Let's discuss your voice-over project",
         },
-        blocks: [],
+        sections: [],
         meta: {
           title: 'Contact Us',
           description:
@@ -111,12 +90,11 @@ export async function seedPages(payload: Payload) {
       data: {
         title: 'Privacy Policy',
         slug: 'privacy-policy',
-        layout: defaultLayout.id,
         status: 'published',
         hero: {
           type: 'none',
         },
-        blocks: [],
+        sections: [],
         meta: {
           title: 'Privacy Policy',
           description:
@@ -133,12 +111,11 @@ export async function seedPages(payload: Payload) {
       data: {
         title: 'Terms of Service',
         slug: 'terms-of-service',
-        layout: defaultLayout.id,
         status: 'published',
         hero: {
           type: 'none',
         },
-        blocks: [],
+        sections: [],
         meta: {
           title: 'Terms of Service',
           description: 'Terms of service for using 14voices voice-over services.',
@@ -148,87 +125,9 @@ export async function seedPages(payload: Payload) {
     pages.push(termsPage);
     console.log('✅ Terms of Service page created');
 
-    // Now update the layout footer links to point to these pages
-    await updateLayoutFooterLinks(payload, String(defaultLayout.id), {
-      about: String(aboutPage.id),
-      contact: String(contactPage.id),
-      privacy: String(privacyPage.id),
-      terms: String(termsPage.id),
-    });
-
     return pages;
   } catch (error) {
     console.error('❌ Error creating pages:', error);
     throw error;
-  }
-}
-
-async function updateLayoutFooterLinks(
-  payload: Payload,
-  layoutId: string,
-  pageIds: {
-    about: string;
-    contact: string;
-    privacy: string;
-    terms: string;
-  }
-) {
-  try {
-    const layout = await payload.findByID({
-      collection: 'layouts',
-      id: layoutId,
-    });
-
-    // Update navigation column links
-    const updatedNavColumns = layout.footer.navigationColumns.map(
-      (column: {
-        links: Array<{ label: string; page?: string; [key: string]: unknown }>;
-        [key: string]: unknown;
-      }) => {
-        const updatedLinks = column.links.map(
-          (link: { label: string; page?: string; [key: string]: unknown }) => {
-            // Map page names to IDs
-            if (link.label === 'About Us') {
-              return { ...link, page: pageIds.about };
-            }
-            if (link.label === 'Contact') {
-              return { ...link, page: pageIds.contact };
-            }
-            return link;
-          }
-        );
-        return { ...column, links: updatedLinks };
-      }
-    );
-
-    // Update legal links
-    const updatedLegalLinks = layout.footer.legalLinks.map(
-      (link: { label: string; page?: string; [key: string]: unknown }) => {
-        if (link.label === 'Privacy Policy') {
-          return { ...link, page: pageIds.privacy };
-        }
-        if (link.label === 'Terms of Service') {
-          return { ...link, page: pageIds.terms };
-        }
-        return link;
-      }
-    );
-
-    // Update the layout
-    await payload.update({
-      collection: 'layouts',
-      id: layoutId,
-      data: {
-        footer: {
-          ...layout.footer,
-          navigationColumns: updatedNavColumns,
-          legalLinks: updatedLegalLinks,
-        },
-      },
-    });
-
-    console.log('✅ Layout footer links updated');
-  } catch (error) {
-    console.error('⚠️  Warning: Could not update layout footer links:', error);
   }
 }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useFormFields } from '@payloadcms/ui';
-import { AnnouncementBanner } from '../sections/AnnouncementBanner';
+import { AnnouncementBanner } from '../sections/AnnouncementBanner/AnnouncementBanner';
 
 export const BannerPreview: React.FC = () => {
   // Get the form fields

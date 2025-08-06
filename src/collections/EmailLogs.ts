@@ -17,7 +17,7 @@ export const EmailLogs: CollectionConfig = {
       name: 'recipient',
       type: 'relationship',
       relationTo: 'users',
-      required: true,
+      required: false,
     },
     {
       name: 'recipientEmail',

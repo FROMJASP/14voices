@@ -3,7 +3,7 @@ import configPromise from '@payload-config';
 import type { Page } from '@/payload-types';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
-import { HomepageWithDrawerOptimized } from '@/components/HomepageWithDrawerOptimized';
+import { HomepageWithDrawerOptimized } from '@/components/sections';
 import { fetchOptimized } from '@/lib/data-fetching-server';
 
 export async function generateMetadata() {
@@ -85,7 +85,7 @@ export default async function HomePage() {
     return <HomepageWithDrawerOptimized voiceovers={voiceovers} />;
   } catch (error) {
     console.error('Homepage error:', error);
-    
+
     // Fallback UI - render empty array to show proper empty state
     console.log('Homepage: Rendering fallback with empty voiceovers array');
     return <HomepageWithDrawerOptimized voiceovers={[]} />;

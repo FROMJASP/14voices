@@ -65,24 +65,24 @@ async function handler(req: NextRequest) {
             collection: 'email-contacts',
             where: {
               id: {
-                in: audience.contacts as string[],
+                in: audience.contacts as unknown as string[],
               },
             },
             limit: 1000,
             depth: 0,
           });
-          contacts = result.docs as EmailContact[];
+          contacts = result.docs as unknown as EmailContact[];
         } else {
-          contacts = audience.contacts as EmailContact[];
+          contacts = audience.contacts as unknown as EmailContact[];
         }
       }
     } else if (audience.type === 'dynamic') {
       const result = await payload.find({
         collection: 'email-contacts',
-        where: buildDynamicQuery(audience.segmentRules),
+        where: buildDynamicQuery(audience.segmentRules as unknown as SegmentRules | undefined),
         limit: 1000,
       });
-      contacts = result.docs as EmailContact[];
+      contacts = result.docs as unknown as EmailContact[];
     } else if (audience.type === 'all') {
       const result = await payload.find({
         collection: 'email-contacts',
@@ -93,7 +93,7 @@ async function handler(req: NextRequest) {
         },
         limit: 1000,
       });
-      contacts = result.docs as EmailContact[];
+      contacts = result.docs as unknown as EmailContact[];
     }
 
     const syncResults = {
@@ -169,9 +169,11 @@ async function handler(req: NextRequest) {
       id: audienceId,
       data: {
         contactCount: contacts.length,
-        'syncStatus.lastSyncedAt': new Date(),
-        'syncStatus.syncError':
-          syncResults.failed > 0 ? `Failed to sync ${syncResults.failed} contacts` : null,
+        syncStatus: {
+          lastSyncedAt: new Date().toISOString(),
+          syncError:
+            syncResults.failed > 0 ? `Failed to sync ${syncResults.failed} contacts` : null,
+        },
       },
     });
 

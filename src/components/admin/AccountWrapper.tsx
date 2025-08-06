@@ -92,7 +92,14 @@ export default function AccountWrapper() {
             img.alt = displayName;
             img.onerror = () => {
               // Fallback to initials if image fails
-              avatarWrapper.innerHTML = `<span class="initials">${getInitials(displayName)}</span>`;
+              // Remove existing content and add initials safely
+              while (avatarWrapper.firstChild) {
+                avatarWrapper.removeChild(avatarWrapper.firstChild);
+              }
+              const initialsSpan = document.createElement('span');
+              initialsSpan.className = 'initials';
+              initialsSpan.textContent = getInitials(displayName);
+              avatarWrapper.appendChild(initialsSpan);
             };
             avatarWrapper.appendChild(img);
           } else {
@@ -102,8 +109,10 @@ export default function AccountWrapper() {
             avatarWrapper.appendChild(initials);
           }
 
-          // Clear the container and add our avatar
-          iconContainer.innerHTML = '';
+          // Clear the container safely and add our avatar
+          while (iconContainer.firstChild) {
+            iconContainer.removeChild(iconContainer.firstChild);
+          }
           iconContainer.appendChild(avatarWrapper);
         }
       }

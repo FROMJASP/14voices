@@ -118,7 +118,7 @@ async function handler(req: NextRequest) {
     }
 
     const log = emailLog.docs[0];
-    const now = new Date();
+    const now = new Date().toISOString();
 
     switch (event.type) {
       case 'email.sent':
@@ -164,7 +164,7 @@ async function handler(req: NextRequest) {
             clickedAt: log.clickedAt || now,
             clickCount: (log.clickCount || 0) + 1,
             metadata: {
-              ...log.metadata,
+              ...(typeof log.metadata === 'object' && log.metadata !== null ? log.metadata : {}),
               lastClickedLink: event.data.click?.link,
             },
           },
@@ -179,7 +179,7 @@ async function handler(req: NextRequest) {
             status: 'bounced',
             error: event.data.bounce?.message,
             metadata: {
-              ...log.metadata,
+              ...(typeof log.metadata === 'object' && log.metadata !== null ? log.metadata : {}),
               bounceType: event.data.bounce?.type,
             },
           },
@@ -193,7 +193,7 @@ async function handler(req: NextRequest) {
           data: {
             status: 'unsubscribed',
             metadata: {
-              ...log.metadata,
+              ...(typeof log.metadata === 'object' && log.metadata !== null ? log.metadata : {}),
               complaintType: 'spam',
             },
           },
@@ -205,7 +205,9 @@ async function handler(req: NextRequest) {
             collection: 'users',
             id: log.recipient.id,
             data: {
-              emailUnsubscribed: true,
+              emailPreferences: {
+                unsubscribed: true,
+              },
             },
           });
         }
@@ -264,14 +266,26 @@ async function handleBroadcastEvent(payload: Payload, event: ResendWebhookEvent)
 
     let log;
     if (emailLog.totalDocs === 0) {
+      // Try to find user by email
+      const user = await payload.find({
+        collection: 'users',
+        where: {
+          email: {
+            equals: recipientEmail,
+          },
+        },
+        limit: 1,
+      });
+
       log = await payload.create({
         collection: 'email-logs',
         data: {
-          recipient: recipientEmail,
+          recipient: user.docs[0]?.id || 1, // Default to admin user if not found
           recipientEmail: recipientEmail,
+          template: 1, // Default template ID - campaigns don't have direct template references
           subject: campaignDoc.subject,
           status: 'sent',
-          sentAt: new Date(),
+          sentAt: new Date().toISOString(),
           resendId: event.data.email_id,
           metadata: {
             campaignId: campaignDoc.id,
@@ -282,7 +296,7 @@ async function handleBroadcastEvent(payload: Payload, event: ResendWebhookEvent)
     } else {
       log = emailLog.docs[0];
     }
-    const now = new Date();
+    const now = new Date().toISOString();
 
     switch (event.type) {
       case 'email.sent':
@@ -332,7 +346,7 @@ async function handleBroadcastEvent(payload: Payload, event: ResendWebhookEvent)
             clickedAt: log.clickedAt || now,
             clickCount: (log.clickCount || 0) + 1,
             metadata: {
-              ...log.metadata,
+              ...(typeof log.metadata === 'object' && log.metadata !== null ? log.metadata : {}),
               lastClickedLink: event.data.click?.link,
             },
           },
@@ -350,7 +364,7 @@ async function handleBroadcastEvent(payload: Payload, event: ResendWebhookEvent)
             status: 'bounced',
             error: event.data.bounce?.message,
             metadata: {
-              ...log.metadata,
+              ...(typeof log.metadata === 'object' && log.metadata !== null ? log.metadata : {}),
               bounceType: event.data.bounce?.type,
             },
           },
@@ -365,7 +379,7 @@ async function handleBroadcastEvent(payload: Payload, event: ResendWebhookEvent)
           data: {
             status: 'unsubscribed',
             metadata: {
-              ...log.metadata,
+              ...(typeof log.metadata === 'object' && log.metadata !== null ? log.metadata : {}),
               complaintType: 'spam',
             },
           },
@@ -407,7 +421,8 @@ async function updateCampaignAnalytics(payload: Payload, campaignId: string, met
     });
 
     const analytics = campaign.analytics || {};
-    const fieldName = `${metric}Count`;
+    const fieldName = `${metric}Count` as keyof typeof analytics;
+    const currentValue = analytics[fieldName] as number | undefined;
 
     await payload.update({
       collection: 'email-campaigns',
@@ -415,25 +430,28 @@ async function updateCampaignAnalytics(payload: Payload, campaignId: string, met
       data: {
         analytics: {
           ...analytics,
-          [fieldName]: (analytics[fieldName] || 0) + 1,
+          [fieldName]: (currentValue || 0) + 1,
         },
       },
     });
 
-    if (analytics.sentCount > 0) {
-      const openRate = analytics.openedCount
-        ? (analytics.openedCount / analytics.sentCount) * 100
-        : 0;
-      const clickRate = analytics.clickedCount
-        ? (analytics.clickedCount / analytics.sentCount) * 100
-        : 0;
+    const sentCount = analytics.sentCount as number | undefined;
+    const openedCount = analytics.openedCount as number | undefined;
+    const clickedCount = analytics.clickedCount as number | undefined;
+
+    if (sentCount && sentCount > 0) {
+      const openRate = openedCount ? (openedCount / sentCount) * 100 : 0;
+      const clickRate = clickedCount ? (clickedCount / sentCount) * 100 : 0;
 
       await payload.update({
         collection: 'email-campaigns',
         id: campaignId,
         data: {
-          'analytics.openRate': openRate,
-          'analytics.clickRate': clickRate,
+          analytics: {
+            ...analytics,
+            openRate,
+            clickRate,
+          },
         },
       });
     }

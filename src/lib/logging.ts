@@ -5,7 +5,7 @@ export enum LogLevel {
   INFO = 'info',
   WARN = 'warn',
   ERROR = 'error',
-  FATAL = 'fatal'
+  FATAL = 'fatal',
 }
 
 export interface LogContext {
@@ -33,18 +33,18 @@ class Logger {
   private formatMessage(level: LogLevel, message: string, context?: Partial<LogContext>) {
     const timestamp = new Date().toISOString();
     const fullContext = { ...this.context, ...context };
-    
+
     return {
       timestamp,
       level,
       message,
-      ...fullContext
+      ...fullContext,
     };
   }
 
   private log(level: LogLevel, message: string, context?: Partial<LogContext>) {
     const formatted = this.formatMessage(level, message, context);
-    
+
     // Console logging
     switch (level) {
       case LogLevel.DEBUG:
@@ -70,18 +70,18 @@ class Logger {
         Sentry.captureMessage(message, {
           level: level === LogLevel.FATAL ? 'fatal' : 'error',
           tags: {
-            logLevel: level
+            logLevel: level,
           },
-          extra: formatted
+          extra: formatted,
         });
       }
 
       if (context?.error) {
         Sentry.captureException(context.error, {
           tags: {
-            logLevel: level
+            logLevel: level,
           },
-          extra: formatted
+          extra: formatted,
         });
       }
     }
@@ -125,12 +125,12 @@ class Logger {
       duration,
       metadata: {
         userAgent: req.headers.get('user-agent'),
-        referer: req.headers.get('referer')
-      }
+        referer: req.headers.get('referer'),
+      },
     };
 
     const message = `${req.method} ${new URL(req.url).pathname} ${res.status} ${duration}ms`;
-    
+
     if (res.status >= 500) {
       this.error(message, context);
     } else if (res.status >= 400) {
@@ -146,8 +146,8 @@ class Logger {
       duration,
       error,
       metadata: {
-        query: query.substring(0, 200) // Truncate long queries
-      }
+        query: query.substring(0, 200), // Truncate long queries
+      },
     };
 
     if (error) {
@@ -164,34 +164,32 @@ class Logger {
 export const logger = new Logger();
 
 // Middleware for request logging
-export function withRequestLogging<T extends (...args: any[]) => Promise<Response>>(
-  handler: T
-): T {
+export function withRequestLogging<T extends (...args: any[]) => Promise<Response>>(handler: T): T {
   return (async (...args) => {
     const start = performance.now();
     const [req] = args as [Request];
-    
+
     logger.setContext({
       requestId: crypto.randomUUID(),
       path: new URL(req.url).pathname,
-      method: req.method
+      method: req.method,
     });
 
     try {
       const response = await handler(...args);
       const duration = performance.now() - start;
-      
+
       logger.logApiRequest(req, response, duration);
-      
+
       return response;
     } catch (error) {
       const duration = performance.now() - start;
-      
+
       logger.error('Request failed', {
         error: error as Error,
-        duration
+        duration,
       });
-      
+
       throw error;
     } finally {
       logger.clearContext();

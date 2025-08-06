@@ -93,12 +93,12 @@ export async function renderEmailTemplate(options: RenderTemplateOptions): Promi
 
   let html = await renderRichText(template.content, allVariables);
 
-  if (template.header) {
+  if (template.header && typeof template.header === 'object' && 'content' in template.header) {
     const headerHtml = await renderRichText(template.header.content, allVariables);
     html = headerHtml + html;
   }
 
-  if (template.footer) {
+  if (template.footer && typeof template.footer === 'object' && 'content' in template.footer) {
     const footerHtml = await renderRichText(template.footer.content, allVariables);
     html = html + footerHtml;
   }
@@ -110,9 +110,9 @@ export async function renderEmailTemplate(options: RenderTemplateOptions): Promi
     subject,
     html,
     text,
-    fromName: template.fromName,
-    fromEmail: template.fromEmail,
-    replyTo: template.replyTo,
+    fromName: template.fromName || undefined,
+    fromEmail: template.fromEmail || undefined,
+    replyTo: template.replyTo || undefined,
   };
 }
 
@@ -122,9 +122,22 @@ export async function sendEmail(
     tags?: string[];
   }
 ): Promise<string> {
-  const { recipient, scheduleAt, tags = [], payload } = options;
+  const { recipient, scheduleAt, tags = [], payload, templateKey } = options;
 
   const rendered = await renderEmailTemplate(options);
+
+  // Get the template for email log
+  const templates = await payload.find({
+    collection: 'email-templates',
+    where: {
+      key: {
+        equals: templateKey,
+      },
+    },
+    limit: 1,
+  });
+
+  const template = templates.docs[0];
 
   const emailData = {
     from: rendered.fromEmail
@@ -157,12 +170,12 @@ export async function sendEmail(
   await payload.create({
     collection: 'email-logs',
     data: {
-      recipient: recipient.email,
+      recipient: undefined as any,
       recipientEmail: recipient.email,
-      template: options.templateKey,
+      template: template.id,
       subject: rendered.subject,
       status: 'sent',
-      sentAt: new Date(),
+      sentAt: new Date().toISOString(),
       resendId: result.data?.id,
     },
   });

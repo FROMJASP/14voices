@@ -47,8 +47,8 @@ async function handler(_req: NextRequest, { params }: { params: Promise<{ id: st
     }
 
     const audience = campaign.audience;
-    if (!audience || typeof audience === 'string') {
-      return NextResponse.json({ error: 'Campaign audience not found' }, { status: 400 });
+    if (!audience || typeof audience === 'string' || typeof audience === 'number') {
+      return NextResponse.json({ error: 'Campaign audience not populated' }, { status: 400 });
     }
 
     if (test) {
@@ -60,9 +60,9 @@ async function handler(_req: NextRequest, { params }: { params: Promise<{ id: st
             from: `${campaign.fromName} <${campaign.fromEmail}>`,
             to: email,
             subject: `[TEST] ${campaign.subject}`,
-            html: await renderCampaignContent(campaign as EmailCampaign),
+            html: await renderCampaignContent(campaign as unknown as EmailCampaign),
             text: campaign.markdownContent || '',
-            replyTo: campaign.replyTo,
+            replyTo: campaign.replyTo || undefined,
           });
 
           results.push({ email, success: true, id: result.data?.id });
@@ -81,7 +81,7 @@ async function handler(_req: NextRequest, { params }: { params: Promise<{ id: st
         data: {
           testEmails: testEmails.map((email: string) => ({
             email,
-            sentAt: new Date(),
+            sentAt: new Date().toISOString(),
           })),
         },
       });
@@ -110,12 +110,12 @@ async function handler(_req: NextRequest, { params }: { params: Promise<{ id: st
     }
 
     const broadcast = await resendMarketing.sendBroadcast({
-      audienceId: audience.resendAudienceId,
+      audienceId: audience.resendAudienceId || '',
       from: `${campaign.fromName} <${campaign.fromEmail}>`,
       subject: campaign.subject,
-      html: await renderCampaignContent(campaign as EmailCampaign),
+      html: await renderCampaignContent(campaign as unknown as EmailCampaign),
       text: campaign.markdownContent || '',
-      replyTo: campaign.replyTo,
+      replyTo: campaign.replyTo || undefined,
       scheduledAt: campaign.scheduledAt ? new Date(campaign.scheduledAt).toISOString() : undefined,
     });
 
@@ -125,7 +125,9 @@ async function handler(_req: NextRequest, { params }: { params: Promise<{ id: st
       data: {
         status: campaign.scheduledAt ? 'scheduled' : 'sending',
         resendBroadcastId: broadcast?.id || '',
-        'analytics.sentCount': audience.contactCount || 0,
+        analytics: {
+          sentCount: audience.contactCount || 0,
+        },
       },
     });
 

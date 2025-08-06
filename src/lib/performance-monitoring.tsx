@@ -155,7 +155,7 @@ export class PerformanceMonitor {
 
     console.group('🚀 Performance Metrics');
     console.log('Core Web Vitals:', this.getWebVitals());
-    
+
     const latestBundle = this.bundleMetrics[this.bundleMetrics.length - 1];
     if (latestBundle) {
       console.log('Bundle Sizes:', {
@@ -180,20 +180,17 @@ export class PerformanceMonitor {
   /**
    * Measure and track lazy component loading time
    */
-  async measureLazyLoad<T>(
-    componentName: string,
-    importPromise: Promise<T>
-  ): Promise<T> {
+  async measureLazyLoad<T>(componentName: string, importPromise: Promise<T>): Promise<T> {
     const startTime = performance.now();
-    
+
     try {
       const result = await importPromise;
       const loadTime = performance.now() - startTime;
-      
+
       if (process.env.NODE_ENV === 'development') {
         console.log(`🎯 ${componentName} lazy loaded in ${loadTime.toFixed(2)}ms`);
       }
-      
+
       return result;
     } catch (error) {
       console.error(`❌ Failed to lazy load ${componentName}:`, error);
@@ -261,7 +258,7 @@ export function usePerformanceTracking(componentName: string) {
       const startTime = performance.now();
       operation();
       const operationTime = performance.now() - startTime;
-      
+
       if (process.env.NODE_ENV === 'development') {
         console.log(`⚡ ${componentName} - ${operationName}: ${operationTime.toFixed(2)}ms`);
       }

@@ -12,7 +12,7 @@ export default function GlobalError({
   useEffect(() => {
     // Log critical errors
     console.error('Global application error:', error);
-    
+
     // Send to monitoring in production
     // Sentry integration disabled temporarily
     // if (process.env.NODE_ENV === 'production' && window.Sentry) {

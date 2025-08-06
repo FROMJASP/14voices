@@ -22,7 +22,7 @@ export function generateCSRFToken(): string {
     .createHmac('sha256', SECRET)
     .update(`${token}.${timestamp}`)
     .digest('hex');
-  
+
   return `${token}.${timestamp}.${signature}`;
 }
 
@@ -32,27 +32,24 @@ export function generateCSRFToken(): string {
 export function verifyCSRFToken(token: string): boolean {
   try {
     const [tokenPart, timestamp, signature] = token.split('.');
-    
+
     if (!tokenPart || !timestamp || !signature) {
       return false;
     }
-    
+
     // Check token age (24 hours)
     const tokenAge = Date.now() - parseInt(timestamp);
     if (tokenAge > 24 * 60 * 60 * 1000) {
       return false;
     }
-    
+
     // Verify signature
     const expectedSignature = crypto
       .createHmac('sha256', SECRET)
       .update(`${tokenPart}.${timestamp}`)
       .digest('hex');
-    
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
+
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   } catch {
     return false;
   }
@@ -69,26 +66,31 @@ export function withCSRFProtection(
     if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
       return handler(req, context);
     }
-    
+
     // Get token from header or body
     const headerToken = req.headers.get(CSRF_HEADER);
     const cookieToken = req.cookies.get(CSRF_COOKIE)?.value;
-    
-    // Verify token
-    if (!headerToken || !cookieToken || headerToken !== cookieToken) {
-      return NextResponse.json(
-        { error: 'Invalid CSRF token' },
-        { status: 403 }
-      );
+
+    // Verify token with timing-safe comparison
+    if (!headerToken || !cookieToken) {
+      return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 });
     }
-    
+
+    // Use timing-safe comparison to prevent timing attacks
+    const headerBuffer = Buffer.from(headerToken);
+    const cookieBuffer = Buffer.from(cookieToken);
+
+    if (
+      headerBuffer.length !== cookieBuffer.length ||
+      !crypto.timingSafeEqual(headerBuffer, cookieBuffer)
+    ) {
+      return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 });
+    }
+
     if (!verifyCSRFToken(headerToken)) {
-      return NextResponse.json(
-        { error: 'Invalid or expired CSRF token' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Invalid or expired CSRF token' }, { status: 403 });
     }
-    
+
     return handler(req, context);
   };
 }
@@ -98,7 +100,7 @@ export function withCSRFProtection(
  */
 export function addCSRFToken(response: NextResponse): NextResponse {
   const token = generateCSRFToken();
-  
+
   response.cookies.set(CSRF_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -106,8 +108,8 @@ export function addCSRFToken(response: NextResponse): NextResponse {
     path: '/',
     maxAge: 24 * 60 * 60, // 24 hours
   });
-  
+
   response.headers.set(CSRF_HEADER, token);
-  
+
   return response;
 }

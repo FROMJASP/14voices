@@ -25,7 +25,7 @@ export function withAuth(
     requireAuth = true,
     requireAdmin = false,
     rateLimit = 'public',
-    skipCSRF = false
+    skipCSRF = false,
   } = options;
 
   return async (req: NextRequest, context?: any) => {
@@ -48,18 +48,18 @@ export function withAuth(
           path: req.url,
           method: req.method,
           details: { clientId, limit: rateLimitConfig.max },
-          timestamp: new Date()
+          timestamp: new Date(),
         });
 
         const response = NextResponse.json(
           { error: 'Too many requests' },
-          { 
+          {
             status: 429,
             headers: {
               'Retry-After': String(Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)),
               'X-RateLimit-Limit': String(rateLimitConfig.max),
-              'X-RateLimit-Remaining': '0'
-            }
+              'X-RateLimit-Remaining': '0',
+            },
           }
         );
         return applySecurityHeaders(response);
@@ -68,7 +68,7 @@ export function withAuth(
       // 2. Authentication check
       if (requireAuth) {
         const user = await getServerSideUser();
-        
+
         if (!user) {
           await logSecurityEvent({
             type: 'auth_failure',
@@ -78,18 +78,15 @@ export function withAuth(
             path: req.url,
             method: req.method,
             details: { reason: 'No authenticated user' },
-            timestamp: new Date()
+            timestamp: new Date(),
           });
 
-          const response = NextResponse.json(
-            { error: 'Unauthorized' },
-            { status: 401 }
-          );
+          const response = NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
           return applySecurityHeaders(response);
         }
 
         // 3. Admin check
-        if (requireAdmin && !user.roles?.includes('admin')) {
+        if (requireAdmin && user.role !== 'admin') {
           await logSecurityEvent({
             type: 'auth_failure',
             severity: 'high',
@@ -99,13 +96,10 @@ export function withAuth(
             path: req.url,
             method: req.method,
             details: { reason: 'Insufficient permissions', requiredRole: 'admin' },
-            timestamp: new Date()
+            timestamp: new Date(),
           });
 
-          const response = NextResponse.json(
-            { error: 'Forbidden' },
-            { status: 403 }
-          );
+          const response = NextResponse.json({ error: 'Forbidden' }, { status: 403 });
           return applySecurityHeaders(response);
         }
 
@@ -121,17 +115,16 @@ export function withAuth(
 
       // 5. Execute handler and apply security headers to response
       const response = await finalHandler(req, context);
-      
+
       // Add rate limit headers
       response.headers.set('X-RateLimit-Limit', String(rateLimitConfig.max));
       response.headers.set('X-RateLimit-Remaining', String(rateLimitResult.remaining));
       response.headers.set('X-RateLimit-Reset', new Date(rateLimitResult.resetTime).toISOString());
 
       return applySecurityHeaders(response);
-
     } catch (error) {
       console.error('Security middleware error:', error);
-      
+
       await logSecurityEvent({
         type: 'suspicious_activity',
         severity: 'medium',
@@ -140,13 +133,10 @@ export function withAuth(
         path: req.url,
         method: req.method,
         details: { error: error instanceof Error ? error.message : 'Unknown error' },
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
-      const response = NextResponse.json(
-        { error: 'Internal server error' },
-        { status: 500 }
-      );
+      const response = NextResponse.json({ error: 'Internal server error' }, { status: 500 });
       return applySecurityHeaders(response);
     }
   };
@@ -162,7 +152,7 @@ export function withPublicAuth(
   return withAuth(handler, {
     ...options,
     requireAuth: false,
-    requireAdmin: false
+    requireAdmin: false,
   });
 }
 
@@ -177,6 +167,6 @@ export function withAdminAuth(
     ...options,
     requireAuth: true,
     requireAdmin: true,
-    rateLimit: options.rateLimit || 'admin'
+    rateLimit: options.rateLimit || 'admin',
   });
 }

@@ -1,31 +1,30 @@
-// Main optimized components
-export { HomepageWithDrawerOptimized } from './HomepageWithDrawerOptimized';
-export { VoiceoverSearchSectionOptimized } from './VoiceoverSearchSectionOptimized';
-export { VoiceoverSearchFieldDesignOptimized } from './VoiceoverSearchFieldDesignOptimized';
-export { UnifiedPriceCalculatorOptimized } from './UnifiedPriceCalculatorOptimized';
-
-// Price calculator components
-export * from './price-calculator';
-
-// Drawer components
-export * from './drawer';
-
-// UI components
+// UI components (base components)
 export * from './ui';
 
-// Audio components
-export { BeautifulAudioPlayer } from './BeautifulAudioPlayer';
+// Widget components (composed components)
+export * from './widgets/forms';
+export * from './widgets/media';
+export * from './widgets/feedback';
+
+// Feature components
+export * from './features/voiceover';
+export * from './features/production';
+export * from './features/cart';
+export * from './features/pricing';
+export * from './features/drawer';
 
 // Layout components
-export { GlobalLayout } from './GlobalLayout';
-export { Navbar } from './Navbar';
-export { CartButton } from './CartButton';
+export * from './layout';
 
-// Production components
-export { ProductionGridSimple } from './ProductionGridSimple';
-export { ProductionOrderPage } from './ProductionOrderPage';
-export { ProductionOrderPageWrapper } from './ProductionOrderPageWrapper';
+// Section components
+export * from './sections';
 
-// Voiceover components
-export { VirtualizedVoiceoverGrid } from './VirtualizedVoiceoverGrid';
-export { VoiceoverCardOptimized } from './VoiceoverCardOptimized';
+// Provider components
+export * from './providers';
+
+// Renderer components
+export * from './renderers';
+
+// Other top-level components
+export { RichText } from './RichText';
+export { RotatingText } from './RotatingText';

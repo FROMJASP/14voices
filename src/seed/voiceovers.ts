@@ -116,7 +116,7 @@ export const seedVoiceovers = async (payload: Payload): Promise<void> => {
     try {
       await payload.create({
         collection: 'voiceovers',
-        data: voiceover,
+        data: voiceover as any,
       });
       console.log(`  ✓ Created voiceover: ${voiceover.name}`);
     } catch (error) {

@@ -16,7 +16,7 @@ async function handler(req: NextRequest) {
     if (contacts.length > 100) {
       // For large imports, require admin role
       const user = await payload.auth({ headers: req.headers });
-      if (!user || !user.user?.roles?.includes('admin')) {
+      if (!user || user.user?.role !== 'admin') {
         return NextResponse.json(
           { error: 'Large imports require admin privileges' },
           { status: 403 }
@@ -77,9 +77,9 @@ async function handler(req: NextRequest) {
               customFields: contactData.customFields || {},
               subscribed: true,
               source: {
-                type: 'import',
+                type: 'api',
                 detail: 'API bulk import',
-                signupDate: new Date(),
+                signupDate: new Date().toISOString(),
               },
             },
           });
@@ -120,8 +120,8 @@ async function handler(req: NextRequest) {
           const existingContacts = audience.contacts || [];
           const contactIds = [
             ...new Set([
-              ...existingContacts.map((c: string | { id: string }) =>
-                typeof c === 'string' ? c : c.id
+              ...existingContacts.map((c) =>
+                typeof c === 'string' || typeof c === 'number' ? c : c.id
               ),
               ...newContacts.docs.map((c) => c.id),
             ]),

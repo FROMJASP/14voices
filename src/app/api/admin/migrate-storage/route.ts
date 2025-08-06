@@ -67,7 +67,7 @@ async function handler(req: NextRequest) {
 async function POSTHandler(_req: NextRequest) {
   // Check auth first
   const user = await getServerSideUser();
-  if (!user || !user.roles?.includes('admin')) {
+  if (!user || user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

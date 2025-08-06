@@ -147,7 +147,7 @@ export async function performEmailSystemHealthCheck(payload: Payload): Promise<H
         .filter((job) => job.scheduledFor && job.lastAttempt)
         .map((job) => {
           const scheduled = new Date(job.scheduledFor).getTime();
-          const attempted = new Date(job.lastAttempt).getTime();
+          const attempted = new Date(job.lastAttempt!).getTime();
           return attempted - scheduled;
         });
 
@@ -255,7 +255,7 @@ export async function generateEmailSystemReport(
       .filter((job) => job.scheduledFor && job.lastAttempt)
       .map((job) => {
         const scheduled = new Date(job.scheduledFor).getTime();
-        const attempted = new Date(job.lastAttempt).getTime();
+        const attempted = new Date(job.lastAttempt!).getTime();
         return attempted - scheduled;
       });
 

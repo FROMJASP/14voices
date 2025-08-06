@@ -60,14 +60,14 @@ async function POSTHandler(_req: NextRequest) {
 
     // Create form submission with sanitized data
     const submission = await payload.create({
-      collection: 'formSubmissions',
+      collection: 'form-submissions',
       data: {
-        form: formId,
+        form: parseInt(formId, 10),
         data: sanitizedData,
         submittedAt: new Date().toISOString(),
-        status: 'pending',
-        source: validatedData.source || 'website',
+        status: 'new',
         ipAddress: clientId, // Store for abuse prevention
+        userAgent: _req.headers.get('user-agent') || 'unknown',
       },
     });
 

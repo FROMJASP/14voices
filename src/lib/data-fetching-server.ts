@@ -62,7 +62,7 @@ export async function fetchOptimized<T = any>(
   options: OptimizedQueryOptions
 ): Promise<PaginatedResult<T>> {
   const cacheKey = options.cacheKey || generateCacheKey(options);
-  
+
   // Check cache first
   const cached = queryCache.get(cacheKey);
   if (cached) {
@@ -79,7 +79,7 @@ export async function fetchOptimized<T = any>(
   const requestPromise = async () => {
     try {
       const payload = await getPayload({ config: configPromise });
-      
+
       const result = await payload.find({
         collection: options.collection as any,
         where: options.where,
@@ -123,7 +123,7 @@ export async function fetchOptimized<T = any>(
 export function clearCache(pattern?: string): void {
   if (pattern) {
     const keys = [...queryCache.keys()];
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (key.includes(pattern)) {
         queryCache.delete(key);
       }

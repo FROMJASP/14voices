@@ -32,22 +32,22 @@ export class PerformanceMonitor {
       try {
         performance.mark(`${name}-end`);
         performance.measure(name, `${name}-start`, `${name}-end`);
-        
+
         const entries = performance.getEntriesByName(name, 'measure');
         if (entries.length > 0) {
           const duration = entries[entries.length - 1].duration;
-          
+
           // Store measurement
           if (!this.measurements.has(name)) {
             this.measurements.set(name, []);
           }
           this.measurements.get(name)!.push(duration);
-          
+
           // Clean up marks
           performance.clearMarks(`${name}-start`);
           performance.clearMarks(`${name}-end`);
           performance.clearMeasures(name);
-          
+
           return duration;
         }
       } catch (error) {
@@ -182,27 +182,31 @@ export function withPerformanceMonitoring<P extends object>(
   WrappedComponent: React.ComponentType<P>,
   componentName?: string
 ) {
-  const displayName = componentName || WrappedComponent.displayName || WrappedComponent.name || 'Component';
-  
-  const MonitoredComponent = React.memo(React.forwardRef<any, P>((props, ref) => {
-    const monitor = PerformanceMonitor.getInstance();
-    
-    React.useEffect(() => {
-      monitor.startMeasurement(`${displayName}-render`);
-      
-      return () => {
-        const duration = monitor.endMeasurement(`${displayName}-render`);
-        if (duration && duration > 16) { // Warn if render takes longer than one frame
-          console.warn(`Slow render detected in ${displayName}: ${duration.toFixed(2)}ms`);
-        }
-      };
-    });
+  const displayName =
+    componentName || WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-    return React.createElement(WrappedComponent, { ...props, ref } as any);
-  }));
+  const MonitoredComponent = React.memo(
+    React.forwardRef<any, P>((props, ref) => {
+      const monitor = PerformanceMonitor.getInstance();
+
+      React.useEffect(() => {
+        monitor.startMeasurement(`${displayName}-render`);
+
+        return () => {
+          const duration = monitor.endMeasurement(`${displayName}-render`);
+          if (duration && duration > 16) {
+            // Warn if render takes longer than one frame
+            console.warn(`Slow render detected in ${displayName}: ${duration.toFixed(2)}ms`);
+          }
+        };
+      });
+
+      return React.createElement(WrappedComponent, { ...props, ref } as any);
+    })
+  );
 
   MonitoredComponent.displayName = `withPerformanceMonitoring(${displayName})`;
-  
+
   return MonitoredComponent;
 }
 
@@ -215,15 +219,16 @@ export const measureAsync = async <T>(
 ): Promise<T> => {
   const monitor = PerformanceMonitor.getInstance();
   monitor.startMeasurement(name);
-  
+
   try {
     const result = await asyncOperation();
     const duration = monitor.endMeasurement(name);
-    
-    if (duration && duration > 1000) { // Warn if async operation takes longer than 1 second
+
+    if (duration && duration > 1000) {
+      // Warn if async operation takes longer than 1 second
       console.warn(`Slow async operation detected: ${name} took ${duration.toFixed(2)}ms`);
     }
-    
+
     return result;
   } catch (error) {
     monitor.endMeasurement(name);
@@ -239,7 +244,7 @@ export function debounce<T extends (...args: any[]) => any>(
   delay: number
 ): (...args: Parameters<T>) => void {
   let timeoutId: NodeJS.Timeout;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func(...args), delay);
@@ -254,7 +259,7 @@ export function throttle<T extends (...args: any[]) => any>(
   delay: number
 ): (...args: Parameters<T>) => void {
   let lastCall = 0;
-  
+
   return (...args: Parameters<T>) => {
     const now = Date.now();
     if (now - lastCall >= delay) {
@@ -289,19 +294,19 @@ export const getMemoryUsage = (): {
 export const initializePerformanceMonitoring = () => {
   if (typeof window !== 'undefined') {
     const monitor = PerformanceMonitor.getInstance();
-    
+
     // Monitor long tasks
     monitor.monitorLongTasks((entry) => {
       // Report to analytics service if needed
       console.warn('Long task detected:', entry.duration);
     });
-    
+
     // Monitor layout shifts
     monitor.monitorLayoutShift((entry: any) => {
       // Report to analytics service if needed
       console.warn('Layout shift detected:', entry.value);
     });
-    
+
     // Monitor memory usage periodically
     setInterval(() => {
       const memoryUsage = getMemoryUsage();

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { PageRenderer } from '@/components/PageRenderer';
+import { PageRenderer } from '@/components/renderers';
 import type { Page } from '@/payload-types';
 
 interface PageProps {
@@ -102,5 +102,5 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
-  return <PageRenderer page={page} />;
+  return <PageRenderer page={page as any} />;
 }

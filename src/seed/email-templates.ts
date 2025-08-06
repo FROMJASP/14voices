@@ -11,17 +11,25 @@ export async function seedEmailTemplates(payload: Payload) {
       type: 'footer',
       content: {
         root: {
+          type: 'root',
+          version: 1,
+          direction: null,
+          format: '',
+          indent: 0,
           children: [
             {
               type: 'paragraph',
+              version: 1,
               children: [{ text: '{{companyName}} | {{companyAddress}}' }],
             },
             {
               type: 'paragraph',
+              version: 1,
               children: [{ text: 'Website: {{companyWebsite}} | Phone: {{companyPhone}}' }],
             },
             {
               type: 'paragraph',
+              version: 1,
               children: [{ text: '{{unsubscribeText}}' }],
             },
           ],
@@ -36,7 +44,7 @@ export async function seedEmailTemplates(payload: Payload) {
         { key: 'companyPhone', description: 'Company phone number' },
         { key: 'unsubscribeText', description: 'Unsubscribe message' },
       ],
-    },
+    } as any,
   });
 
   // Create default header
@@ -47,6 +55,11 @@ export async function seedEmailTemplates(payload: Payload) {
       type: 'header',
       content: {
         root: {
+          type: 'root',
+          version: 1,
+          direction: null,
+          format: '',
+          indent: 0,
           children: [
             {
               type: 'paragraph',
@@ -57,7 +70,7 @@ export async function seedEmailTemplates(payload: Payload) {
       },
       plainTextContent: '14voices - Professional Voice Over Services',
       variables: [],
-    },
+    } as any,
   });
 
   console.log('Creating email templates...');
@@ -74,6 +87,11 @@ export async function seedEmailTemplates(payload: Payload) {
       footer: defaultFooter.id,
       content: {
         root: {
+          type: 'root',
+          version: 1,
+          direction: null,
+          format: '',
+          indent: 0,
           children: [
             {
               type: 'paragraph',
@@ -129,7 +147,7 @@ export async function seedEmailTemplates(payload: Payload) {
           'You received this email because you signed up for 14voices. If you no longer wish to receive emails from us, you can unsubscribe at any time.',
       },
       active: true,
-    },
+    } as any,
   });
 
   // Booking confirmation template
@@ -144,6 +162,11 @@ export async function seedEmailTemplates(payload: Payload) {
       footer: defaultFooter.id,
       content: {
         root: {
+          type: 'root',
+          version: 1,
+          direction: null,
+          format: '',
+          indent: 0,
           children: [
             {
               type: 'paragraph',
@@ -203,7 +226,7 @@ export async function seedEmailTemplates(payload: Payload) {
         { key: 'bookingDate', description: 'Booking date', required: true },
       ],
       active: true,
-    },
+    } as any,
   });
 
   console.log('Creating email sequences...');
@@ -231,7 +254,7 @@ export async function seedEmailTemplates(payload: Payload) {
       active: true,
       stopOnReply: false,
       stopOnUnsubscribe: true,
-    },
+    } as any,
   });
 
   console.log('Email templates and sequences created successfully!');

@@ -35,7 +35,7 @@ export function applySecurityHeaders(
     "form-action 'self'",
     "object-src 'none'",
     "script-src-attr 'none'",
-    "upgrade-insecure-requests"
+    'upgrade-insecure-requests',
   ];
 
   if (reportUri) {
@@ -45,10 +45,7 @@ export function applySecurityHeaders(
   response.headers.set('Content-Security-Policy', cspDirectives.join('; '));
 
   // Strict Transport Security
-  response.headers.set(
-    'Strict-Transport-Security',
-    'max-age=63072000; includeSubDomains; preload'
-  );
+  response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
 
   // Other security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
@@ -58,7 +55,7 @@ export function applySecurityHeaders(
   response.headers.set('X-DNS-Prefetch-Control', 'off');
   response.headers.set('X-Download-Options', 'noopen');
   response.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
-  
+
   // Permissions Policy (replaces Feature-Policy)
   const permissionsPolicy = [
     'camera=()',
@@ -75,9 +72,9 @@ export function applySecurityHeaders(
     'picture-in-picture=()',
     'sync-xhr=()',
     'battery=()',
-    'display-capture=()'
+    'display-capture=()',
   ];
-  
+
   response.headers.set('Permissions-Policy', permissionsPolicy.join(', '));
 
   // CORP and COEP for enhanced security
@@ -91,9 +88,7 @@ export function applySecurityHeaders(
 /**
  * Middleware to apply security headers to all responses
  */
-export function withSecurityHeaders(
-  handler: (req: Request) => Promise<NextResponse>
-) {
+export function withSecurityHeaders(handler: (req: Request) => Promise<NextResponse>) {
   return async (req: Request) => {
     const response = await handler(req);
     return applySecurityHeaders(response);

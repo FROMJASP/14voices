@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { UnifiedPriceCalculatorOptimized } from '@/components/UnifiedPriceCalculatorOptimized';
+import { UnifiedPriceCalculatorOptimized } from '@/components/features/pricing';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
-import { VoiceoverDetailClientNew } from '@/components/VoiceoverDetailClientNew';
+import { VoiceoverDetailClientNew } from '@/components/features/voiceover';
 import type { PayloadVoiceover } from '@/types/voiceover';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -29,9 +29,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
+  const firstName = voiceover.name.split(' ')[0];
   return {
-    title: `${voiceover.name} - 14voices`,
-    description: voiceover.description || `Professionele voice-over door ${voiceover.name}`,
+    title: `${firstName} - 14voices`,
+    description: voiceover.description || `Professionele voice-over door ${firstName}`,
   };
 }
 
@@ -57,14 +58,16 @@ export default async function VoiceoverPage({ params }: { params: Promise<{ slug
   }
 
   // Transform the voiceover data
-  const transformedVoiceover = transformVoiceoverData(voiceover as PayloadVoiceover, 0);
+  const transformedVoiceover = transformVoiceoverData(voiceover as unknown as PayloadVoiceover, 0);
 
   // Pre-selected voiceover data for context
   const preSelectedVoiceover = {
     id: String(voiceover.id),
     name: voiceover.name,
     profilePhoto:
-      typeof voiceover.profilePhoto === 'object' ? voiceover.profilePhoto.url : undefined,
+      voiceover.profilePhoto && typeof voiceover.profilePhoto === 'object'
+        ? (voiceover.profilePhoto.url ?? undefined)
+        : undefined,
     styleTags: transformedVoiceover.tags,
   };
 

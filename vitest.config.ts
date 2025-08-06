@@ -18,28 +18,28 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
-        '**/node_modules/**', 
-        '**/dist/**', 
-        '**/*.d.ts', 
-        '**/src/app/**', 
-        '**/src/payload.config.ts'
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/*.d.ts',
+        '**/src/app/**',
+        '**/src/payload.config.ts',
       ],
       thresholds: {
         lines: 80,
         branches: 70,
         functions: 80,
-        statements: 80
-      }
+        statements: 80,
+      },
     },
     typecheck: {
-      enabled: true
+      enabled: true,
     },
     deps: {
       optimizer: {
         web: {
-          include: ['@testing-library/react', 'react', 'react-dom']
-        }
-      }
+          include: ['@testing-library/react', 'react', 'react-dom'],
+        },
+      },
     },
   },
   resolve: {

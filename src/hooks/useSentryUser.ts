@@ -12,7 +12,7 @@ export function useSentryUser(user: User | null) {
       Sentry.setUser({
         id: user.id,
         email: user.email,
-        username: user.name,
+        username: user.name || undefined,
       });
     } else {
       Sentry.setUser(null);

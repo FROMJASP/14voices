@@ -70,14 +70,15 @@ export const ourFileRouter = {
       await payload.create({
         collection: 'scripts',
         data: {
-          booking: metadata.bookingId,
+          title: `Script for booking ${metadata.bookingId}`,
           uploadedBy: metadata.userId,
-          type: metadata.scriptType,
-          fileUrl: file.url,
-          fileName: file.name,
-          fileKey: file.key,
-          fileSize: file.size,
-          textContent: metadata.scriptContent,
+          scriptType: 'other', // Default to 'other' for uploaded scripts
+          language: 'en', // Default to English
+          confidentialityLevel: 'standard', // Default confidentiality level
+          originalFilename: file.name,
+          filename: file.name,
+          url: file.url,
+          filesize: file.size,
         },
       });
 
@@ -112,18 +113,33 @@ export const ourFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       const payload = await getPayload();
 
-      await payload.create({
-        collection: 'voiceoverDemos',
+      // Create media entry for the demo
+      const mediaEntry = await payload.create({
+        collection: 'media',
         data: {
-          voiceover: metadata.voiceoverId,
+          filename: file.name,
+          filesize: file.size,
+          mimeType: 'audio/mpeg',
+          url: file.url,
+          alt: `Demo ${metadata.demoType} ${metadata.demoYear}`,
           uploadedBy: metadata.userId,
-          name: `Demo ${metadata.demoType} ${metadata.demoYear}`,
-          audio: {
-            url: file.url,
-            key: file.key,
-            size: file.size,
-          },
         },
+      });
+
+      // Update voiceover with the demo based on demo type
+      const updateData: Record<string, any> = {};
+      if (metadata.demoType === 'full') {
+        updateData.fullDemoReel = mediaEntry.id;
+      } else if (metadata.demoType === 'commercials') {
+        updateData.commercialsDemo = mediaEntry.id;
+      } else if (metadata.demoType === 'narrative') {
+        updateData.narrativeDemo = mediaEntry.id;
+      }
+
+      await payload.update({
+        collection: 'voiceovers',
+        id: metadata.voiceoverId,
+        data: updateData,
       });
 
       return { uploadedBy: metadata.userId };
@@ -145,14 +161,25 @@ export const ourFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       const payload = await getPayload();
 
+      // Create media entry for the avatar
+      const mediaEntry = await payload.create({
+        collection: 'media',
+        data: {
+          filename: file.name,
+          filesize: file.size,
+          mimeType: file.type || 'image/jpeg',
+          url: file.url,
+          alt: 'User avatar',
+          uploadedBy: metadata.userId,
+        },
+      });
+
+      // Update user with the avatar media ID
       await payload.update({
         collection: 'users',
         id: metadata.userId,
         data: {
-          avatar: {
-            url: file.url,
-            key: file.key,
-          },
+          avatar: mediaEntry.id,
         },
       });
 
@@ -183,14 +210,37 @@ export const ourFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       const payload = await getPayload();
 
+      // Generate invoice number
+      const year = new Date().getFullYear();
+      const month = String(new Date().getMonth() + 1).padStart(2, '0');
+      const count = await payload.count({
+        collection: 'invoices',
+        where: {
+          invoiceNumber: {
+            contains: `INV-${year}-${month}`,
+          },
+        },
+      });
+      const invoiceNumber = `INV-${year}-${month}-${String(count.totalDocs + 1).padStart(3, '0')}`;
+
+      // For now, we'll need to determine client and provider
+      // This would typically come from the booking data
       await payload.create({
         collection: 'invoices',
         data: {
-          booking: metadata.bookingId,
-          uploadedBy: metadata.userId,
-          fileUrl: file.url,
-          fileName: file.name,
-          fileKey: file.key,
+          invoiceNumber,
+          client: metadata.userId, // This should be determined from booking
+          provider: metadata.userId, // This should be determined from booking
+          status: 'draft',
+          amount: 0, // This should be calculated from booking
+          currency: 'USD',
+          issueDate: new Date().toISOString(),
+          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+          originalFilename: file.name,
+          filename: file.name,
+          filesize: file.size,
+          url: file.url,
+          mimeType: 'application/pdf',
         },
       });
 

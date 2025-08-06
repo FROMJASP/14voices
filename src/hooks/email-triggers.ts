@@ -34,12 +34,13 @@ export const afterBookingCreate: CollectionAfterChangeHook = async ({ doc, req, 
           templateKey: 'booking-confirmation',
           recipient: {
             email: user.email,
-            name: user.name,
+            name: user.name || undefined,
           },
           variables: {
             bookingId: doc.id,
             bookingDate: doc.date,
-            voiceoverName: doc.voiceover?.name,
+            voiceoverName:
+              typeof doc.voiceover === 'object' && doc.voiceover ? doc.voiceover.name || '' : '',
           },
           payload: req.payload,
         });
@@ -64,18 +65,26 @@ export const afterScriptUpload: CollectionAfterChangeHook = async ({
         depth: 2,
       });
 
-      if (booking?.user && !booking.user.emailPreferences?.unsubscribed) {
+      if (
+        booking?.customer &&
+        typeof booking.customer === 'object' &&
+        'email' in booking.customer &&
+        !booking.customer.emailPreferences?.unsubscribed
+      ) {
         const { sendEmail } = await import('@/lib/email/renderer');
 
         await sendEmail({
           templateKey: 'script-received',
           recipient: {
-            email: booking.user.email,
-            name: booking.user.name,
+            email: booking.customer.email,
+            name: booking.customer.name || undefined,
           },
           variables: {
             scriptTitle: doc.title,
-            voiceoverName: booking.voiceover?.name,
+            voiceoverName:
+              typeof booking.voiceover === 'object' && booking.voiceover
+                ? booking.voiceover.name || ''
+                : '',
           },
           payload: req.payload,
         });

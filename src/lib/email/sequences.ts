@@ -1,5 +1,5 @@
 import { Payload } from 'payload';
-import { EmailBatchProcessor } from './batch-processor';
+import { EmailBatchProcessor } from '@/domains/email/services/EmailBatchProcessor';
 
 interface TriggerSequenceOptions {
   sequenceKey: string;
@@ -15,7 +15,10 @@ interface BatchTriggerOptions {
   payload: Payload;
 }
 
-function calculateScheduleDate(delayValue: number, delayUnit: string): Date {
+function calculateScheduleDate(
+  delayValue: number,
+  delayUnit: 'minutes' | 'hours' | 'days' | 'weeks'
+): Date {
   const now = new Date();
 
   switch (delayUnit) {
@@ -85,33 +88,28 @@ export async function triggerEmailSequence(options: TriggerSequenceOptions): Pro
   }
 
   // Create jobs for each email in the sequence
-  const jobsToCreate = sequence.emails.map(
-    (
-      emailConfig: {
-        template: { id: string };
-        delayValue: number;
-        delayUnit: string;
-      },
-      i: number
-    ) => ({
-      recipient: userId,
-      template: emailConfig.template.id,
-      sequence: sequence.id,
-      sequenceEmailIndex: i,
-      scheduledFor: calculateScheduleDate(emailConfig.delayValue, emailConfig.delayUnit),
-      status: 'scheduled',
-      variables: {
-        ...variables,
-        userName: user.name || user.email,
-        userEmail: user.email,
-        sequenceName: sequence.name,
-      },
-    })
-  );
+  const jobsToCreate = sequence.emails.map((emailConfig, i) => ({
+    recipient: parseInt(userId, 10),
+    template:
+      typeof emailConfig.template === 'object' ? emailConfig.template.id : emailConfig.template,
+    sequence: sequence.id,
+    sequenceEmailIndex: i,
+    scheduledFor: calculateScheduleDate(
+      emailConfig.delayValue,
+      emailConfig.delayUnit as 'minutes' | 'hours' | 'days' | 'weeks'
+    ).toISOString(),
+    status: 'scheduled' as const,
+    variables: {
+      ...variables,
+      userName: user.name || user.email,
+      userEmail: user.email,
+      sequenceName: sequence.name,
+    },
+  }));
 
   // Batch create all jobs
   await Promise.all(
-    jobsToCreate.map((data: Record<string, unknown>) =>
+    jobsToCreate.map((data) =>
       payload.create({
         collection: 'email-jobs',
         data,
@@ -182,56 +180,55 @@ export async function triggerEmailSequenceBatch(options: BatchTriggerOptions): P
     limit: userIds.length,
   });
 
-  const usersWithJobs = new Set(existingJobs.docs.map((job) => job.recipient.id));
+  const usersWithJobs = new Set(
+    existingJobs.docs.map((job) =>
+      typeof job.recipient === 'object' ? job.recipient.id : job.recipient
+    )
+  );
 
   // Prepare all jobs to create
   const allJobsToCreate: Array<{
-    recipient: string;
-    template: string;
-    sequence: string;
+    recipient: number;
+    template: number;
+    sequence: number;
     sequenceEmailIndex: number;
-    scheduledFor: Date;
-    status: string;
-    variables: Record<string, unknown>;
+    scheduledFor: string;
+    status: 'scheduled';
+    variables: Record<string, string | number | boolean>;
   }> = [];
 
   for (const userId of userIds) {
     try {
-      if (usersWithJobs.has(userId)) {
+      if (usersWithJobs.has(parseInt(userId, 10))) {
         console.log(`User ${userId} already has active jobs for sequence ${sequenceKey}`);
         continue;
       }
 
-      const user = userMap.get(userId);
+      const user = userMap.get(parseInt(userId, 10));
       if (!user) {
         result.failed++;
         result.errors.push({ userId, error: 'User not found' });
         continue;
       }
 
-      const userJobs = sequence.emails.map(
-        (
-          emailConfig: {
-            template: { id: string };
-            delayValue: number;
-            delayUnit: string;
-          },
-          i: number
-        ) => ({
-          recipient: userId,
-          template: emailConfig.template.id,
-          sequence: sequence.id,
-          sequenceEmailIndex: i,
-          scheduledFor: calculateScheduleDate(emailConfig.delayValue, emailConfig.delayUnit),
-          status: 'scheduled',
-          variables: {
-            ...variables,
-            userName: user.name || user.email,
-            userEmail: user.email,
-            sequenceName: sequence.name,
-          },
-        })
-      );
+      const userJobs = sequence.emails.map((emailConfig, i) => ({
+        recipient: parseInt(userId, 10),
+        template:
+          typeof emailConfig.template === 'object' ? emailConfig.template.id : emailConfig.template,
+        sequence: sequence.id,
+        sequenceEmailIndex: i,
+        scheduledFor: calculateScheduleDate(
+          emailConfig.delayValue,
+          emailConfig.delayUnit as 'minutes' | 'hours' | 'days' | 'weeks'
+        ).toISOString(),
+        status: 'scheduled' as const,
+        variables: {
+          ...variables,
+          userName: user.name || user.email,
+          userEmail: user.email,
+          sequenceName: sequence.name,
+        },
+      }));
 
       allJobsToCreate.push(...userJobs);
       result.successful++;

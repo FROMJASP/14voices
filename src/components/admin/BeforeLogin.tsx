@@ -69,8 +69,8 @@ export default function BeforeLogin() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ 
-            email, 
+          body: JSON.stringify({
+            email,
             password,
             // Include any CSRF token if needed
           }),
@@ -109,9 +109,8 @@ export default function BeforeLogin() {
 
   return (
     <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
+      <style>
+        {`
           /* Hide Payload's default login form */
           .login__brand { display: none !important; }
           .login__form { display: none !important; }
@@ -159,9 +158,8 @@ export default function BeforeLogin() {
             font-weight: 400;
             transform: translateY(-1.25rem);
           }
-        `,
-        }}
-      />
+        `}
+      </style>
       <div
         className="custom-login-wrapper"
         style={{

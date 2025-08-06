@@ -65,9 +65,14 @@ export class QueryOptimizer {
     const optimizedOptions = {
       ...payloadOptions,
       depth: Math.max(options.depth || 2, 2),
+      collection: payloadOptions.collection as Parameters<
+        typeof this.payload.find
+      >[0]['collection'],
     };
 
-    const result = await this.payload.find(optimizedOptions);
+    const result = await this.payload.find(
+      optimizedOptions as Parameters<typeof this.payload.find>[0]
+    );
 
     this.setCache(cacheKey, result);
 
@@ -113,7 +118,7 @@ export class QueryOptimizer {
     // Fetch uncached items in a single query
     if (uncachedIds.length > 0) {
       const result = await this.payload.find({
-        collection,
+        collection: collection as Parameters<typeof this.payload.find>[0]['collection'],
         where: {
           id: {
             in: uncachedIds,
@@ -122,7 +127,7 @@ export class QueryOptimizer {
         depth,
         locale,
         limit: uncachedIds.length,
-      });
+      } as Parameters<typeof this.payload.find>[0]);
 
       // Cache individual items and add to result map
       for (const doc of result.docs) {

@@ -12,7 +12,6 @@ import { seedSiteSettings } from './site-settings';
 import { seedLayouts } from './layouts';
 import { seedPages } from './pages';
 import { seedVoiceovers } from './voiceovers';
-import { seedNavigation } from './navigation';
 
 // Debug: Check if env vars are loaded
 console.log('🔍 Checking environment variables...');
@@ -56,6 +55,7 @@ async function seed() {
           password: process.env.ADMIN_PASSWORD || 'ChangeThisPassword123!',
           name: 'Admin User',
           role: 'admin',
+          status: 'active',
         },
       });
 
@@ -87,7 +87,7 @@ async function seed() {
 
     // 6. Create navigation
     console.log('🧭 Creating navigation...');
-    await seedNavigation(payload);
+    // Navigation seeding removed - navigation collection is disabled
     console.log('');
 
     console.log('✨ Database seed completed successfully!');

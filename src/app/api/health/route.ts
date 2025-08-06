@@ -15,9 +15,8 @@ export const GET = createApiHandler(
     // Check database connectivity
     try {
       const payload = await getPayload({ config: configPromise });
-      await payload.find({
-        collection: 'site-settings',
-        limit: 1,
+      await payload.findGlobal({
+        slug: 'site-settings',
       });
       checks.database = true;
       checks.payload = true;

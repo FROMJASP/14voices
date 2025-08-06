@@ -41,7 +41,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         collection: 'voiceovers',
         where: whereClause,
         depth: Math.max(params.depth || 2, 2), // Ensure minimum depth of 2 to prevent N+1 queries
-        locale: params.locale || 'nl',
+        locale: (params.locale || 'nl') as 'nl' | 'en' | 'all',
         page: params.page || 1,
         limit: Math.min(params.limit || 10, 50),
         sort: params.sort || '-createdAt',
@@ -78,7 +78,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         collection: 'voiceovers',
         where: { slug: { equals: slug } },
         depth: 2,
-        locale: locale || 'nl',
+        locale: (locale || 'nl') as 'nl' | 'en' | 'all',
         limit: 1,
       });
 
@@ -109,7 +109,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         collection: 'voiceovers',
         id,
         depth: 2,
-        locale: locale || 'nl',
+        locale: (locale || 'nl') as 'nl' | 'en' | 'all',
       });
 
       if (!result) {
@@ -160,7 +160,7 @@ export class PayloadVoiceoverRepository implements IVoiceoverRepository {
         collection: 'voiceovers',
         where: whereClause,
         depth: Math.max(params?.depth || 2, 2), // Ensure minimum depth of 2 to prevent N+1 queries
-        locale: params?.locale || 'nl',
+        locale: (params?.locale || 'nl') as 'nl' | 'en' | 'all',
         page: params?.page || 1,
         limit: Math.min(params?.limit || 10, 50),
         sort: params?.sort || '-createdAt',

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import DOMPurify from 'isomorphic-dompurify';
 
 // Common schemas
 export const emailSchema = z.string().email().toLowerCase().trim();
@@ -162,7 +163,7 @@ export const campaignCreateSchema = z.object({
   replyTo: emailSchema.optional(),
   audienceId: idSchema,
   content: z.any().optional(),
-  contentType: z.enum(['rich-text', 'markdown', 'react']).optional().default('rich-text'),
+  contentType: z.enum(['richtext', 'markdown', 'react']).optional().default('richtext'),
   scheduledAt: dateSchema.optional(),
 });
 
@@ -220,12 +221,34 @@ export const searchSchema = z.object({
 
 // Sanitization helpers
 export const sanitizeHtml = (html: string): string => {
-  // Basic HTML sanitization - in production use a library like DOMPurify
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
-    .replace(/javascript:/gi, '');
+  // Using DOMPurify for secure HTML sanitization
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      'b',
+      'i',
+      'em',
+      'strong',
+      'a',
+      'p',
+      'br',
+      'ul',
+      'ol',
+      'li',
+      'blockquote',
+      'code',
+      'pre',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+    ],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
+    ALLOW_DATA_ATTR: false,
+    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'style'],
+    FORBID_ATTR: ['onerror', 'onclick', 'onload', 'onmouseover'],
+  });
 };
 
 export const sanitizeFilename = (filename: string): string => {

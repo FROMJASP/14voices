@@ -1,5 +1,5 @@
 import { getNavigationData } from '@/lib/navigation';
-import { AnnouncementBanner as AnnouncementBannerClient } from '../AnnouncementBanner';
+import { AnnouncementBanner as AnnouncementBannerClient } from './AnnouncementBanner';
 
 // Server component that fetches its own data - no props needed
 export async function AnnouncementBanner() {

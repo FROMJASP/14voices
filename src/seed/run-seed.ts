@@ -21,7 +21,6 @@ async function runSeed() {
   const { seedLayouts } = await import('./layouts');
   const { seedPages } = await import('./pages');
   const { seedVoiceovers } = await import('./voiceovers');
-  const { seedNavigation } = await import('./navigation');
 
   const payload = await getPayload({ config });
 
@@ -42,6 +41,7 @@ async function runSeed() {
           password: process.env.ADMIN_PASSWORD || 'ChangeThisPassword123!',
           name: 'Admin User',
           role: 'admin',
+          status: 'active',
         },
       });
 
@@ -71,9 +71,8 @@ async function runSeed() {
     await seedVoiceovers(payload);
     console.log('');
 
-    // 6. Create navigation
-    console.log('🧭 Setting up navigation...');
-    await seedNavigation(payload);
+    // 6. Navigation - skipped (collection disabled)
+    console.log('🧭 Navigation setup skipped (collection disabled)');
     console.log('');
 
     console.log('✨ Database seed completed successfully!');

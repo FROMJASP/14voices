@@ -1,4 +1,4 @@
-import { Navbar } from '@/components/Navbar';
+import { Navbar } from './Navbar';
 
 export async function NavigationProvider() {
   // Simple navigation provider using the new Navbar component

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Mic, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { BlurFade } from '@/components/magicui/blur-fade';
+import { BlurFade } from '@/components/ui/magic/blur-fade';
 import { makeMediaUrlRelative } from '@/lib/media-utils';
 // Temporary type definition until payload-types.ts is regenerated
 interface Voiceover {

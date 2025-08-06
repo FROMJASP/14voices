@@ -109,9 +109,11 @@ export default buildConfig({
   ],
   globals: [EmailSettings, SiteSettings],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || (() => {
-    throw new Error('PAYLOAD_SECRET environment variable is required');
-  })(),
+  secret:
+    process.env.PAYLOAD_SECRET ||
+    (() => {
+      throw new Error('PAYLOAD_SECRET environment variable is required');
+    })(),
   typescript: {
     outputFile: './src/payload-types.ts',
   },

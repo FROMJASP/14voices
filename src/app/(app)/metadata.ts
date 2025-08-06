@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
       // For blob URLs, we can't add query params, so we'll use the URL as-is
       // The blob URL itself changes when a new file is uploaded
       const iconUrl =
-        faviconUrl.startsWith('blob:') || faviconUrl.includes('.vercel-storage.com')
+        faviconUrl?.startsWith('blob:') || faviconUrl?.includes('.vercel-storage.com')
           ? faviconUrl
           : `${faviconUrl}?v=${timestamp}`;
 
@@ -53,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
         card:
           (siteSettings?.twitterCard?.cardType as 'summary' | 'summary_large_image') ||
           'summary_large_image',
-        creator: siteSettings?.twitterCard?.handle,
+        creator: siteSettings?.twitterCard?.handle ?? undefined,
       },
     };
   } catch (error) {

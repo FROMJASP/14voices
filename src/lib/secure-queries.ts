@@ -21,20 +21,20 @@ export class SecureQueryBuilder {
     if (typeof value === 'string') {
       const validation = validateInput(value, {
         maxLength: 1000,
-        stripHtml: true
+        stripHtml: true,
       });
-      
+
       if (!validation.valid) {
         throw new Error(`Invalid value for field ${field}: ${validation.error}`);
       }
-      
+
       value = validation.sanitized;
     }
 
     this.conditions.push({
       [field]: {
-        equals: value
-      }
+        equals: value,
+      },
     });
 
     return this;
@@ -52,7 +52,7 @@ export class SecureQueryBuilder {
     // Validate and escape pattern
     const validation = validateInput(pattern, {
       maxLength: 100,
-      stripHtml: true
+      stripHtml: true,
     });
 
     if (!validation.valid) {
@@ -67,8 +67,8 @@ export class SecureQueryBuilder {
 
     this.conditions.push({
       [field]: {
-        like: escaped
-      }
+        like: escaped,
+      },
     });
 
     return this;
@@ -89,17 +89,17 @@ export class SecureQueryBuilder {
     }
 
     // Validate each value
-    const validatedValues = values.map(value => {
+    const validatedValues = values.map((value) => {
       if (typeof value === 'string') {
         const validation = validateInput(value, {
           maxLength: 1000,
-          stripHtml: true
+          stripHtml: true,
         });
-        
+
         if (!validation.valid) {
           throw new Error(`Invalid value in array: ${validation.error}`);
         }
-        
+
         return validation.sanitized;
       }
       return value;
@@ -107,8 +107,8 @@ export class SecureQueryBuilder {
 
     this.conditions.push({
       [field]: {
-        in: validatedValues
-      }
+        in: validatedValues,
+      },
     });
 
     return this;
@@ -127,7 +127,7 @@ export class SecureQueryBuilder {
     }
 
     return {
-      and: this.conditions
+      and: this.conditions,
     };
   }
 }
@@ -146,7 +146,7 @@ export async function secureQuery<T = any>(
   }
 ): Promise<{ docs: T[]; totalDocs: number; page: number }> {
   const payload = await getPayload();
-  
+
   // Validate collection name
   if (!/^[a-zA-Z0-9-]+$/.test(collection)) {
     throw new Error(`Invalid collection name: ${collection}`);
@@ -157,23 +157,23 @@ export async function secureQuery<T = any>(
     limit: Math.min(options?.limit || 10, 100),
     page: Math.max(options?.page || 1, 1),
     sort: options?.sort && /^-?[a-zA-Z0-9._]+$/.test(options.sort) ? options.sort : undefined,
-    depth: Math.min(options?.depth || 0, 3)
+    depth: Math.min(options?.depth || 0, 3),
   };
 
   try {
     const result = await payload.find({
-      collection,
+      collection: collection as Parameters<typeof payload.find>[0]['collection'],
       where: queryBuilder.build(),
       limit: safeOptions.limit,
       page: safeOptions.page,
       sort: safeOptions.sort,
-      depth: safeOptions.depth
-    });
+      depth: safeOptions.depth,
+    } as Parameters<typeof payload.find>[0]);
 
     return {
       docs: result.docs as T[],
       totalDocs: result.totalDocs,
-      page: result.page || 1
+      page: result.page || 1,
     };
   } catch (error) {
     // Log error but don't expose internal details
@@ -193,7 +193,7 @@ export async function secureFindByID<T = any>(
   }
 ): Promise<T | null> {
   const payload = await getPayload();
-  
+
   // Validate collection name
   if (!/^[a-zA-Z0-9-]+$/.test(collection)) {
     throw new Error(`Invalid collection name: ${collection}`);
@@ -206,10 +206,10 @@ export async function secureFindByID<T = any>(
 
   try {
     const result = await payload.findByID({
-      collection,
+      collection: collection as Parameters<typeof payload.findByID>[0]['collection'],
       id,
-      depth: Math.min(options?.depth || 0, 3)
-    });
+      depth: Math.min(options?.depth || 0, 3),
+    } as Parameters<typeof payload.findByID>[0]);
 
     return result as T;
   } catch (error) {
@@ -217,7 +217,7 @@ export async function secureFindByID<T = any>(
     if (error instanceof Error && error.message.includes('not found')) {
       return null;
     }
-    
+
     console.error(`FindByID error for ${collection}/${id}:`, error);
     throw new Error('Database query failed');
   }
