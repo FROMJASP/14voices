@@ -54,7 +54,19 @@ Refused to execute inline script because it violates the following Content Secur
 
 2. **Script-Only Dependencies**
    - Scripts like `reset-admin-access.ts` should handle missing devDependencies gracefully
-   - Use dynamic imports with try-catch for optional dependencies
+   - Use conditional imports with environment checks:
+   ```typescript
+   // ✅ Safe pattern for optional dev dependencies
+   if (process.env.NODE_ENV !== 'production') {
+     try {
+       require.resolve('dotenv');
+       const dotenv = await import('dotenv');
+       // Use dotenv here
+     } catch (e) {
+       // Handle gracefully
+     }
+   }
+   ```
 
 3. **Missing Platform-Specific Binaries**
    - Sharp, lightningcss require platform-specific binaries
@@ -66,15 +78,18 @@ Refused to execute inline script because it violates the following Content Secur
 - CSS imports (`@import 'package-name'`) also need packages in `dependencies`
 - Run `bun run validate:build` to test production build locally
 - Never manually install platform-specific binaries
+- Scripts should use conditional imports for dev dependencies
 
 ### Build Warnings & Errors
 
 **ESLint During Builds**
+
 - Warning: "ESLint must be installed in order to run during builds"
 - Solution: ESLint is disabled during production builds in `next.config.ts`
 - Run linting locally with `bun run lint` before pushing
 
 **Deprecated Type Packages**
+
 - Warnings about `@types/dompurify` and `@types/bcryptjs` being stubs
 - These packages now provide their own types
 - Remove these from dependencies to eliminate warnings
@@ -286,23 +301,64 @@ echo "REDIS_URL=redis://localhost:6379" >> .env.local
 
 ## Pre-Deployment Checklist
 
+### 🚨 AUTOMATIC BUILD VALIDATION
+
+**Git Pre-Push Hook**: The repository now has automatic validation that runs before every push!
+
+When you run `git push`, the following checks are automatically performed:
+1. TypeScript compilation check
+2. Dependency validation (dev vs prod)
+3. Common import issue detection
+4. Full production build test
+
+**If any check fails, the push will be blocked** to prevent breaking production.
+
 ### MANDATORY Before Pushing Code
 
-**🚨 CRITICAL**: These checks MUST be run before EVERY push to prevent production build failures:
+**🚨 CRITICAL**: These checks are now automated but can be run manually:
 
-1. **Type Checking**: `bun run typecheck`
+1. **Quick Validation**: `bun run validate:pre-push`
+   - Comprehensive validation including build test
+   - Catches ALL common deployment issues
+   - Run this if you want to test before attempting to push
+
+2. **Type Checking**: `bun run typecheck`
    - Ensures no TypeScript compilation errors
    - Catches type mismatches between domains and Payload
+   - Verifies all imports are properly typed
 
-2. **Build Validation**: `bun run validate:build`
+3. **Build Validation**: `bun run validate:build`
    - Runs a full production build locally
    - Tests both Next.js and Payload compilation
    - Verifies all imports and dependencies
+   - Catches module resolution errors before deployment
 
-3. **Full Validation**: `bun run validate`
-   - Runs lint, format check, typecheck, and tests
+4. **Full Validation**: `bun run validate:full`
+   - Runs lint, format check, typecheck, tests, AND build
+   - Validates dependencies and architecture
    - Ensures code quality standards are met
-   - Prevents common deployment failures
+   - Prevents ALL common deployment failures
+
+### 🚨 Build Failure Quick Fixes
+
+**Latest Issues Resolved:**
+
+1. **Dynamic Import Errors (dotenv in scripts)**
+   - Problem: TypeScript compilation fails on dynamic imports in scripts
+   - Solution: Use environment checks before importing dev dependencies
+   ```typescript
+   if (process.env.NODE_ENV !== 'production') {
+     try {
+       require.resolve('dotenv');
+       const dotenv = await import('dotenv');
+     } catch (e) {}
+   }
+   ```
+
+2. **Script Execution Context**
+   - Scripts in `src/scripts/` are included in build but may not run in production
+   - Always guard dev-only imports with environment checks
+   - Use try-catch for optional dependencies
 
 ### Build Failure Prevention Guide
 

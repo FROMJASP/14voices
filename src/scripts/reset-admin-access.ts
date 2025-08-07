@@ -8,14 +8,18 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { resolve } from 'path';
 
-// Load environment variables only if dotenv is available
-try {
-  const dotenv = await import('dotenv');
-  dotenv.config({ path: resolve(process.cwd(), '.env.local') });
-  dotenv.config({ path: resolve(process.cwd(), '.env') });
-} catch (e) {
-  // dotenv is not available in production, which is fine
-  // Environment variables should already be set
+// Load environment variables only if dotenv is available (dev environment)
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    // Use require.resolve to check if module exists before importing
+    require.resolve('dotenv');
+    const dotenv = await import('dotenv');
+    dotenv.config({ path: resolve(process.cwd(), '.env.local') });
+    dotenv.config({ path: resolve(process.cwd(), '.env') });
+  } catch (e) {
+    // dotenv is not available, which is fine
+    // Environment variables should already be set
+  }
 }
 
 console.log('🔍 Environment check:');

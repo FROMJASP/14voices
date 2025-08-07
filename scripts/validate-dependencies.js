@@ -40,11 +40,15 @@ function extractImports(filePath) {
   if (filePath.endsWith('.css')) {
     const cssImportRegex = /@import\s+['"]([^'"]+)['"]/g;
     let match;
-    
+
     while ((match = cssImportRegex.exec(content)) !== null) {
       const importPath = match[1];
       // Only track external packages (not relative imports or URLs)
-      if (!importPath.startsWith('.') && !importPath.startsWith('http') && !importPath.startsWith('/')) {
+      if (
+        !importPath.startsWith('.') &&
+        !importPath.startsWith('http') &&
+        !importPath.startsWith('/')
+      ) {
         imports.push(importPath);
       }
     }
@@ -63,6 +67,26 @@ function extractImports(filePath) {
           ? importPath.split('/').slice(0, 2).join('/')
           : importPath.split('/')[0];
         imports.push(packageName);
+      }
+    }
+
+    // Also check for dynamic imports (e.g., await import('dotenv'))
+    const dynamicImportRegex = /await\s+import\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+    while ((match = dynamicImportRegex.exec(content)) !== null) {
+      const importPath = match[1];
+      if (!importPath.startsWith('.') && !importPath.startsWith('@/')) {
+        const packageName = importPath.startsWith('@')
+          ? importPath.split('/').slice(0, 2).join('/')
+          : importPath.split('/')[0];
+        
+        // Check if the dynamic import is properly guarded
+        const importLine = content.substring(match.index - 200, match.index + 200);
+        const hasEnvCheck = /process\.env\.NODE_ENV\s*!==?\s*['"]production['"]/.test(importLine);
+        const hasTryCatch = /try\s*\{/.test(importLine.substring(0, 200));
+        
+        if (!hasEnvCheck || !hasTryCatch) {
+          imports.push(packageName);
+        }
       }
     }
   }

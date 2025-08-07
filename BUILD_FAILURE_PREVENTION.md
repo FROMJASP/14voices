@@ -1,37 +1,49 @@
 # Build Failure Prevention Summary
 
-## Changes Made to Prevent Future Build Failures
+## Latest Updates (Aug 7, 2025)
 
-### 1. Fixed Immediate Issue
+### 1. Fixed Latest Build Issue
 
-- **Moved @sentry/nextjs from devDependencies to dependencies** in package.json
-- This was causing "Module not found" errors on Vercel because Vercel doesn't install devDependencies
+- **Fixed dotenv import in reset-admin-access.ts**
+- Added environment check before importing dev dependencies:
+  ```typescript
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      require.resolve('dotenv');
+      const dotenv = await import('dotenv');
+    } catch (e) {}
+  }
+  ```
 
-### 2. Added Automated Validation Scripts
+### 2. Enhanced Validation System
 
-- **`bun run validate:deps`** - Checks that no devDependencies are imported in production code
-- **`bun run validate:architecture`** - Validates domain boundaries and code organization
-- **`bun run validate:build`** - Tests the production build locally
-- **`bun run validate:full`** - Runs all validations including architecture and dependencies
+- **`bun run validate:pre-push`** - NEW comprehensive validation that includes:
+  - TypeScript compilation check
+  - Dependency validation with dynamic import detection
+  - Common import issue detection
+  - Full production build test
+  - Clear error reporting with fix suggestions
 
-### 3. Enhanced Git Hooks
+### 3. Improved Git Hooks
 
-- **Pre-push hook** now validates dependencies before allowing push
-- Prevents broken code from reaching the remote repository
+- **Pre-push hook** now runs comprehensive validation automatically
+- Blocks push if ANY validation fails
+- Provides clear error messages and fix instructions
 
-### 4. Added CI/CD Pipeline
+### 4. Updated Validation Scripts
 
-- GitHub Actions workflow validates every push and PR
-- Tests both Bun (local) and npm (Vercel) environments
-- Catches issues before they reach production
+- **validate-dependencies.js** now detects:
+  - Dynamic imports (e.g., `await import('dotenv')`)
+  - Unguarded dev dependency imports
+  - CSS imports that need dependencies
 
-### 5. Updated Documentation
+### 5. Documentation Updates
 
 - Enhanced CLAUDE.md with:
-  - Detailed build failure prevention guide
-  - Emergency build fix procedures
-  - Common failure causes and solutions
-  - Mandatory pre-deployment checklist
+  - Automatic build validation section
+  - Latest build failure fixes
+  - Script execution context guidelines
+  - Updated pre-deployment checklist
 
 ## How to Prevent Future Build Failures
 

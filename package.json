@@ -41,6 +41,7 @@
     "validate": "bun run lint && bun run format:check && bun run typecheck && bun run test",
     "validate:build": "bun run typecheck && bun run build",
     "validate:full": "bun run validate && bun run validate:deps && bun run validate:architecture && bun run validate:build",
+    "validate:pre-push": "node scripts/validate-build-pre-push.js",
     "ci:validate": "bun run lint && bun run format:check && bun run test && bun run test:e2e"
   },
   "dependencies": {
