@@ -1,10 +1,19 @@
-import dotenv from 'dotenv';
 import path from 'path';
 import { getPayload } from 'payload';
 
-// Load environment variables first
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+// Load environment variables only if dotenv is available (dev environment)
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    // Dynamically import dotenv to avoid production dependency
+    const dotenv = await import('dotenv');
+    dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+    dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+  } catch (e) {
+    // dotenv is not available, which is fine
+    // Environment variables should already be set
+    console.warn('dotenv not available. Ensure environment variables are set.');
+  }
+}
 
 console.log('🔍 Environment check:');
 console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing');
