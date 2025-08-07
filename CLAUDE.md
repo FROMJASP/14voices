@@ -55,6 +55,7 @@ Refused to execute inline script because it violates the following Content Secur
 2. **Script-Only Dependencies**
    - Scripts like `reset-admin-access.ts` should handle missing devDependencies gracefully
    - Use conditional imports with environment checks:
+
    ```typescript
    // ✅ Safe pattern for optional dev dependencies
    if (process.env.NODE_ENV !== 'production') {
@@ -306,6 +307,7 @@ echo "REDIS_URL=redis://localhost:6379" >> .env.local
 **Git Pre-Push Hook**: The repository now has automatic validation that runs before every push!
 
 When you run `git push`, the following checks are automatically performed:
+
 1. TypeScript compilation check
 2. Dependency validation (dev vs prod)
 3. Common import issue detection
@@ -346,6 +348,7 @@ When you run `git push`, the following checks are automatically performed:
 1. **Dynamic Import Errors (dotenv in scripts)**
    - Problem: TypeScript compilation fails on dynamic imports in scripts
    - Solution: Use environment checks before importing dev dependencies
+
    ```typescript
    if (process.env.NODE_ENV !== 'production') {
      try {

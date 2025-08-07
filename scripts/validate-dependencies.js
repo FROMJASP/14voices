@@ -78,12 +78,12 @@ function extractImports(filePath) {
         const packageName = importPath.startsWith('@')
           ? importPath.split('/').slice(0, 2).join('/')
           : importPath.split('/')[0];
-        
+
         // Check if the dynamic import is properly guarded
         const importLine = content.substring(match.index - 200, match.index + 200);
         const hasEnvCheck = /process\.env\.NODE_ENV\s*!==?\s*['"]production['"]/.test(importLine);
         const hasTryCatch = /try\s*\{/.test(importLine.substring(0, 200));
-        
+
         if (!hasEnvCheck || !hasTryCatch) {
           imports.push(packageName);
         }

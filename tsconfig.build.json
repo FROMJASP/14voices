@@ -1,0 +1,29 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist"
+  },
+  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.js", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "src/migrations/**/*",
+    ".next",
+    "out",
+    "build",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.d.ts",
+    "src/test/**/*",
+    "src/**/__tests__/**/*",
+    "src/**/*.test.*",
+    "src/**/*.spec.*",
+    "e2e/**/*",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "scripts/**/*"
+  ]
+}

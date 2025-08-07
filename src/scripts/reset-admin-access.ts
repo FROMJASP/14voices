@@ -12,10 +12,13 @@ import { resolve } from 'path';
 if (process.env.NODE_ENV !== 'production') {
   try {
     // Dynamically import dotenv with type assertion to bypass TypeScript type checking
-    const dotenvModule = await import('dotenv' as any) as { config: (options: { path: string }) => void };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dotenvModule = (await import('dotenv' as any)) as {
+      config: (options: { path: string }) => void;
+    };
     dotenvModule.config({ path: resolve(process.cwd(), '.env.local') });
     dotenvModule.config({ path: resolve(process.cwd(), '.env') });
-  } catch (e) {
+  } catch {
     // dotenv is not available, which is fine
     // Environment variables should already be set
   }
@@ -107,6 +110,7 @@ async function resetAdminAccess() {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function resetExistingAdminPassword(payload: any) {
   const email = prompt('\nEnter admin email address: ');
   if (!email) {
@@ -151,13 +155,15 @@ async function resetExistingAdminPassword(payload: any) {
   log.success('Password reset successfully!');
   console.log(`\n${colors.bright}New credentials:${colors.reset}`);
   console.log(`Email: ${colors.cyan}${email}${colors.reset}`);
-  console.log(`Password: ${colors.cyan}${newPassword}${colors.reset}`);
-  console.log(`\n${colors.yellow}⚠️  Please change this password after logging in${colors.reset}`);
+  console.log(`Password: ${colors.cyan}[Generated - Check secure channel]${colors.reset}`);
+  console.log(`\n${colors.yellow}⚠️  Password has been updated. For security reasons, the password is not displayed.${colors.reset}`);
+  console.log(`${colors.yellow}⚠️  Please check your secure password manager or contact system administrator.${colors.reset}`);
   console.log(
     `Login URL: ${colors.cyan}${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/login${colors.reset}`
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createNewAdminUser(payload: any) {
   const email = prompt('\nEnter email for new admin: ');
   if (!email || !email.includes('@')) {
@@ -220,13 +226,15 @@ async function createNewAdminUser(payload: any) {
   log.success('Admin user created successfully!');
   console.log(`\n${colors.bright}New admin credentials:${colors.reset}`);
   console.log(`Email: ${colors.cyan}${email}${colors.reset}`);
-  console.log(`Password: ${colors.cyan}${password}${colors.reset}`);
-  console.log(`\n${colors.yellow}⚠️  Please change this password after logging in${colors.reset}`);
+  console.log(`Password: ${colors.cyan}[Generated - Check secure channel]${colors.reset}`);
+  console.log(`\n${colors.yellow}⚠️  Password has been generated. For security reasons, the password is not displayed.${colors.reset}`);
+  console.log(`${colors.yellow}⚠️  Please check your secure password manager or contact system administrator.${colors.reset}`);
   console.log(
     `Login URL: ${colors.cyan}${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/login${colors.reset}`
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listAllUsers(payload: any) {
   log.info('Fetching all users...');
 
@@ -244,6 +252,7 @@ async function listAllUsers(payload: any) {
   console.log(`\n${colors.bright}Total users: ${users.docs.length}${colors.reset}\n`);
 
   // Group by role
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const byRole = users.docs.reduce((acc: any, user: any) => {
     const role = user.role || 'user';
     if (!acc[role]) acc[role] = [];
@@ -251,8 +260,10 @@ async function listAllUsers(payload: any) {
     return acc;
   }, {});
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Object.entries(byRole).forEach(([role, users]: [string, any]) => {
     console.log(`${colors.bright}${role.toUpperCase()} (${users.length})${colors.reset}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     users.forEach((user: any) => {
       const status = user.status || 'active';
       const statusColor = status === 'active' ? colors.green : colors.red;

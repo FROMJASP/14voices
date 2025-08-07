@@ -37,13 +37,29 @@ const nextConfig: NextConfig = {
       '@/*': './src/*',
     },
   },
-  webpack: (config) => {
+  webpack: (config, { webpack }) => {
     // Suppress OpenTelemetry and Sentry webpack warnings
     config.ignoreWarnings = [
       ...(config.ignoreWarnings || []),
       /Critical dependency: the request of a dependency is an expression/,
       /Module not found: Can't resolve/,
     ];
+
+    // Exclude test files from production builds
+    if (process.env.NODE_ENV === 'production') {
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /\.(test|spec)\.(ts|tsx|js|jsx)$/,
+        })
+      );
+
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^\.\/test\//,
+          contextRegExp: /src$/,
+        })
+      );
+    }
 
     return config;
   },

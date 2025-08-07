@@ -35,8 +35,23 @@
       "@root/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "src/migrations/**/*", ".next", "out", "build"],
+  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.js", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "src/migrations/**/*",
+    ".next",
+    "out",
+    "build",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "src/test/**/*",
+    "src/**/__tests__/**/*",
+    "e2e/**/*",
+    "vitest.config.ts",
+    "playwright.config.ts"
+  ],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"

@@ -4,4 +4,4 @@ org=fromjasp
 project=14voices
 
 [auth]
-token=SENTRY_AUTH_TOKEN
+token=${SENTRY_AUTH_TOKEN}

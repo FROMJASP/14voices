@@ -29,7 +29,7 @@ log.section('🔍 Running TypeScript type check...');
 try {
   execSync('bun run typecheck', { stdio: 'inherit' });
   log.success('TypeScript compilation passed');
-} catch (error) {
+} catch {
   log.error('TypeScript compilation failed');
   hasErrors = true;
 }
@@ -39,7 +39,7 @@ log.section('📦 Validating dependencies...');
 try {
   execSync('node scripts/validate-dependencies.js', { stdio: 'inherit' });
   log.success('Dependencies properly categorized');
-} catch (error) {
+} catch {
   log.error('Dependency validation failed');
   hasErrors = true;
 }
@@ -65,7 +65,9 @@ const commonIssues = [
     check: (content) => {
       // Check if Where is used but not imported
       const usesWhere = content.includes(': Where');
-      const importsWhere = /import\s+type\s*\{[^}]*Where[^}]*\}\s*from\s*['"]payload['"]/.test(content);
+      const importsWhere = /import\s+type\s*\{[^}]*Where[^}]*\}\s*from\s*['"]payload['"]/.test(
+        content
+      );
       return usesWhere && !importsWhere;
     },
   },
@@ -79,7 +81,7 @@ const commonIssues = [
 function checkFileForIssues(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
   const issues = [];
-  
+
   for (const issue of commonIssues) {
     if (issue.pattern) {
       const match = content.match(issue.pattern);
@@ -108,17 +110,17 @@ function checkFileForIssues(filePath) {
       });
     }
   }
-  
+
   return issues;
 }
 
 function findSourceFiles(dir, files = []) {
   const items = fs.readdirSync(dir);
-  
+
   for (const item of items) {
     const fullPath = path.join(dir, item);
     const stat = fs.statSync(fullPath);
-    
+
     if (stat.isDirectory()) {
       if (!['node_modules', '.next', '.git', 'dist', 'build'].includes(item)) {
         findSourceFiles(fullPath, files);
@@ -127,7 +129,7 @@ function findSourceFiles(dir, files = []) {
       files.push(fullPath);
     }
   }
-  
+
   return files;
 }
 
@@ -138,7 +140,7 @@ for (const file of sourceFiles) {
   try {
     const issues = checkFileForIssues(file);
     allIssues.push(...issues);
-  } catch (error) {
+  } catch {
     // Skip files that can't be read
   }
 }
@@ -163,7 +165,7 @@ try {
   log.info('This may take a few minutes...');
   execSync('bun run build', { stdio: 'inherit' });
   log.success('Production build succeeded');
-} catch (error) {
+} catch {
   log.error('Production build failed');
   hasErrors = true;
 }
