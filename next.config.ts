@@ -1,11 +1,21 @@
 import type { NextConfig } from 'next';
 import { withPayload } from '@payloadcms/next/withPayload';
 // import { withSentryConfig } from '@sentry/nextjs';
-import withBundleAnalyzer from '@next/bundle-analyzer';
 
-const bundleAnalyzer = withBundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
-});
+// Bundle analyzer configuration - only loads in development
+const withBundleAnalyzer = (config: NextConfig): NextConfig => {
+  if (process.env.NODE_ENV === 'development' && process.env.ANALYZE === 'true') {
+    try {
+      // Use dynamic import to avoid build errors
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const analyzer = require('@next/bundle-analyzer');
+      return analyzer({ enabled: true })(config);
+    } catch {
+      console.warn('Bundle analyzer not available');
+    }
+  }
+  return config;
+};
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -87,5 +97,5 @@ const nextConfig: NextConfig = {
 // };
 
 // Temporarily disable Sentry for build debugging
-export default bundleAnalyzer(withPayload(nextConfig));
-// export default bundleAnalyzer(withSentryConfig(withPayload(nextConfig), sentryWebpackPluginOptions));
+export default withBundleAnalyzer(withPayload(nextConfig));
+// export default withBundleAnalyzer(withSentryConfig(withPayload(nextConfig), sentryWebpackPluginOptions));
