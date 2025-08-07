@@ -83,6 +83,16 @@ Refused to execute inline script because it violates the following Content Secur
 
 ### Build Warnings & Errors
 
+**Test Files in Production Build**
+
+- Problem: Test files (`*.test.ts`, `*.spec.ts`) being included in production build
+- Error: `Cannot find module '@testing-library/react'` or similar test dependencies
+- Solution: Test files are now excluded via:
+  - `tsconfig.json` - Updated exclude patterns
+  - `tsconfig.typecheck.json` - Dedicated config for type checking
+  - `next.config.ts` - Webpack IgnorePlugin for test files
+- Prevention: Test dependencies MUST stay in devDependencies
+
 **ESLint During Builds**
 
 - Warning: "ESLint must be installed in order to run during builds"
@@ -127,6 +137,8 @@ bun run typecheck        # Run TypeScript type checking
 bun run validate         # Run all validation checks
 bun run validate:build   # Test production build locally
 bun run validate:full    # Complete validation including architecture
+bun run validate:pre-push # Comprehensive pre-push validation (runs automatically)
+bun run validate:deps    # Check dependency categorization
 
 # Payload CMS
 bun payload generate:types      # Generate TypeScript types after schema changes
@@ -269,6 +281,10 @@ See [Architecture Documentation](./docs/architecture/) for detailed design decis
 - Use Payload's built-in auth for protected routes
 - Implement rate limiting on API endpoints
 - Never expose sensitive data in client components
+- **Sentry Configuration**: `.sentryclirc` must use environment variable: `token=${SENTRY_AUTH_TOKEN}`
+- **Admin Scripts**: Never log passwords to console, even in utility scripts
+- **Environment Examples**: Use placeholders like `<generate-strong-password>` in `.env.example`
+- **Git Security**: Add sensitive config files (`.sentryclirc`) to `.gitignore`
 
 ### Redis, Caching & Rate Limiting
 
