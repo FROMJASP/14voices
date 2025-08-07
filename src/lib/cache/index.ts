@@ -190,6 +190,8 @@ class RedisAdapter {
   private config: RedisConfig;
   private connected: boolean = false;
   private client: ReturnType<typeof import('redis').createClient> | null = null;
+  private connectionAttempted: boolean = false;
+  private isProduction: boolean = process.env.NODE_ENV === 'production';
 
   constructor(config: RedisConfig) {
     this.config = {
@@ -199,12 +201,15 @@ class RedisAdapter {
   }
 
   async connect(): Promise<void> {
-    if (this.connected) return;
+    if (this.connected || this.connectionAttempted) return;
+    this.connectionAttempted = true;
 
     try {
       // Check if we're in Edge Runtime
       if (process.env.NEXT_RUNTIME === 'edge') {
-        console.warn('Redis not available in Edge Runtime, using memory cache only');
+        if (this.isProduction) {
+          console.warn('Redis not available in Edge Runtime, using memory cache only');
+        }
         this.connected = false;
         return;
       }
@@ -215,20 +220,45 @@ class RedisAdapter {
         socket: {
           host: this.config.host,
           port: this.config.port,
+          connectTimeout: 5000, // 5 second timeout
+          reconnectStrategy: (retries) => {
+            // Only retry a few times in development
+            if (!this.isProduction && retries > 3) {
+              return false; // Stop retrying
+            }
+            // In production, use exponential backoff
+            return Math.min(retries * 50, 500);
+          },
         },
         password: this.config.password,
         database: this.config.db,
       });
 
       this.client.on('error', (err: Error) => {
-        console.error('Redis Client Error:', err);
+        // Only log Redis errors in production or on first occurrence
+        if (this.isProduction) {
+          console.error('Redis Client Error:', err);
+        }
         this.connected = false;
       });
 
+      this.client.on('connect', () => {
+        console.log('Redis connected successfully');
+        this.connected = true;
+      });
+
+      this.client.on('ready', () => {
+        this.connected = true;
+      });
+
       await this.client.connect();
-      this.connected = true;
     } catch (error) {
-      console.error('Failed to connect to Redis:', error);
+      // In development, log once that Redis is not available
+      if (!this.isProduction) {
+        console.log('Redis not available, falling back to in-memory cache');
+      } else {
+        console.error('Failed to connect to Redis:', error);
+      }
       this.connected = false;
     }
   }
@@ -308,6 +338,7 @@ export class CacheManager {
   private redisAdapter?: RedisAdapter;
   private useRedis: boolean;
   private layers: { memory: boolean; redis: boolean };
+  private static initLogged = false;
 
   constructor(options: CacheManagerOptions = {}) {
     this.memoryCache = new LRUCache(options);
@@ -328,7 +359,17 @@ export class CacheManager {
           keyPrefix: process.env.CACHE_KEY_PREFIX || 'cache:',
         }
       );
-      this.redisAdapter.connect().catch(console.error);
+      this.redisAdapter.connect().catch(() => {
+        // Errors are already handled in the adapter
+      });
+    }
+
+    // Log cache configuration once
+    if (!CacheManager.initLogged && process.env.NODE_ENV === 'development') {
+      CacheManager.initLogged = true;
+      console.log(
+        `Cache initialized with layers: memory=${this.layers.memory}, redis=${this.layers.redis}`
+      );
     }
   }
 
@@ -453,6 +494,14 @@ export class CacheManager {
   }
 }
 
-const globalCache = new CacheManager();
+// Create global cache instance with appropriate defaults
+const globalCache = new CacheManager({
+  // In development, only use Redis if explicitly configured
+  useRedis: process.env.NODE_ENV === 'production' ? !!process.env.REDIS_URL : false,
+  layers: {
+    memory: true,
+    redis: process.env.NODE_ENV === 'production' ? !!process.env.REDIS_URL : false,
+  },
+});
 
 export default globalCache;

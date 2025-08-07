@@ -110,10 +110,11 @@ export function getRateLimiter(cache?: CacheManager): RedisRateLimiter {
     const cacheInstance =
       cache ||
       new CacheManager({
-        useRedis: true,
+        // In development, use memory cache for rate limiting if Redis is not available
+        useRedis: !!process.env.REDIS_URL,
         layers: {
-          memory: false, // Don't use memory layer for rate limiting
-          redis: true,
+          memory: !process.env.REDIS_URL || process.env.NODE_ENV === 'development',
+          redis: !!process.env.REDIS_URL,
         },
       });
     globalRateLimiter = new RedisRateLimiter(cacheInstance);

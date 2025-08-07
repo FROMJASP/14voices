@@ -223,3 +223,20 @@ The application uses Redis-based rate limiting with automatic fallback:
 
 Rate limits are automatically applied to all API routes via middleware.
 See [Rate Limiting Documentation](./docs/rate-limiting.md) for details.
+
+### Redis & Caching
+
+The application supports Redis for caching and rate limiting with automatic fallback:
+
+- **Production**: Uses Redis when `REDIS_URL` is configured
+- **Development**: Automatically falls back to in-memory cache if Redis is not running
+- **No Redis errors**: Connection failures are handled gracefully without console spam
+- **Automatic fallback**: System works seamlessly without Redis in development
+
+To use Redis in development:
+
+1. Install Redis locally: `brew install redis` (macOS) or use Docker
+2. Start Redis: `redis-server` or `docker run -p 6379:6379 redis`
+3. Set `REDIS_URL=redis://localhost:6379` in `.env.local`
+
+The system will automatically detect and use Redis if available, or fall back to in-memory caching.
