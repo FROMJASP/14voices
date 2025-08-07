@@ -50,16 +50,34 @@ Refused to execute inline script because it violates the following Content Secur
    - Example: `@sentry/nextjs` was in devDependencies but imported in production files
    - Vercel does NOT install devDependencies during production builds
    - Any dependency imported in production code MUST be in `dependencies`
+   - **CSS imports count too!** `tw-animate-css` must be in dependencies if imported in CSS
 
-2. **Missing Platform-Specific Binaries**
+2. **Script-Only Dependencies**
+   - Scripts like `reset-admin-access.ts` should handle missing devDependencies gracefully
+   - Use dynamic imports with try-catch for optional dependencies
+
+3. **Missing Platform-Specific Binaries**
    - Sharp, lightningcss require platform-specific binaries
    - Handled automatically by postinstall script
 
 **Prevention**:
 
 - Check all imports in production files reference packages in `dependencies`
+- CSS imports (`@import 'package-name'`) also need packages in `dependencies`
 - Run `bun run validate:build` to test production build locally
 - Never manually install platform-specific binaries
+
+### Build Warnings & Errors
+
+**ESLint During Builds**
+- Warning: "ESLint must be installed in order to run during builds"
+- Solution: ESLint is disabled during production builds in `next.config.ts`
+- Run linting locally with `bun run lint` before pushing
+
+**Deprecated Type Packages**
+- Warnings about `@types/dompurify` and `@types/bcryptjs` being stubs
+- These packages now provide their own types
+- Remove these from dependencies to eliminate warnings
 
 ## Common Development Commands
 
@@ -308,22 +326,24 @@ bun run validate:deps  # Add this script if not exists
 ### Common Build Failure Causes
 
 1. **Missing Type Imports**
+
    ```typescript
    // ❌ Will fail on Vercel
    const query: Where = { ... }
-   
+
    // ✅ Correct
    import type { Where } from 'payload'
    const query: Where = { ... }
    ```
 
 2. **Payload ID Type Mismatches**
+
    ```typescript
    // ❌ Payload expects numeric IDs
-   user: currentUser.id  // if id is string
-   
+   user: currentUser.id; // if id is string
+
    // ✅ Correct
-   user: Number(currentUser.id)
+   user: Number(currentUser.id);
    ```
 
 3. **Dev Dependencies in Production**
@@ -391,17 +411,18 @@ if (process.env.NODE_ENV === 'development') {
 If production build fails:
 
 1. **DON'T PANIC** - Follow this checklist:
+
    ```bash
    # 1. Pull latest changes
    git pull origin main
-   
+
    # 2. Clean install
    rm -rf node_modules bun.lockb
    bun install
-   
+
    # 3. Run full validation
    bun run validate:full
-   
+
    # 4. If validation passes but Vercel fails
    # Check the specific error in Vercel logs
    # Most common: dependency in wrong section

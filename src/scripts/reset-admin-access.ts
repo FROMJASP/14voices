@@ -6,12 +6,17 @@
 
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import dotenv from 'dotenv';
 import { resolve } from 'path';
 
-// Load environment variables
-dotenv.config({ path: resolve(process.cwd(), '.env.local') });
-dotenv.config({ path: resolve(process.cwd(), '.env') });
+// Load environment variables only if dotenv is available
+try {
+  const dotenv = await import('dotenv');
+  dotenv.config({ path: resolve(process.cwd(), '.env.local') });
+  dotenv.config({ path: resolve(process.cwd(), '.env') });
+} catch (e) {
+  // dotenv is not available in production, which is fine
+  // Environment variables should already be set
+}
 
 console.log('🔍 Environment check:');
 console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing');

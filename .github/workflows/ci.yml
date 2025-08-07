@@ -16,7 +16,7 @@ jobs:
   validate:
     name: Validate & Test
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:15
@@ -31,7 +31,7 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-      
+
       redis:
         image: redis:7
         options: >-
@@ -83,7 +83,7 @@ jobs:
     name: Test Vercel Build
     runs-on: ubuntu-latest
     needs: validate
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -108,7 +108,7 @@ jobs:
   architecture-check:
     name: Architecture Validation
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -129,7 +129,7 @@ jobs:
             echo "ERROR: Collections should not import from domains"
             exit 1
           fi
-          
+
           # Ensure domains don't cross-import
           for domain in src/domains/*/; do
             domain_name=$(basename "$domain")
@@ -138,7 +138,7 @@ jobs:
               exit 1
             fi
           done
-          
+
           echo "Domain boundaries check passed!"
 
       - name: Check component patterns
@@ -149,5 +149,5 @@ jobs:
             echo "ERROR: Admin components imported outside admin folder"
             exit 1
           fi
-          
+
           echo "Component patterns check passed!"

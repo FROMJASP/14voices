@@ -18,6 +18,10 @@ const withBundleAnalyzer = (config: NextConfig): NextConfig => {
 };
 
 const nextConfig: NextConfig = {
+  eslint: {
+    // Disable ESLint during production builds to avoid dependency issues
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     optimizePackageImports: [
       '@radix-ui/react-icons',
