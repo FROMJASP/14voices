@@ -1,0 +1,34 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running pre-push validation..."
+
+# Check dependencies are properly categorized
+echo "Validating dependencies..."
+bun run validate:deps
+if [ $? -ne 0 ]; then
+  echo "❌ Dependency validation failed!"
+  echo "Some devDependencies are being imported in production code."
+  echo "Please move them to dependencies before pushing."
+  exit 1
+fi
+
+# Run type checking
+echo "Checking TypeScript types..."
+bun run typecheck
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript type checking failed!"
+  echo "Please fix type errors before pushing."
+  exit 1
+fi
+
+# Run quick validation (excludes full build)
+echo "Running validation checks..."
+bun run validate
+if [ $? -ne 0 ]; then
+  echo "❌ Validation failed!"
+  echo "Please fix issues before pushing."
+  exit 1
+fi
+
+echo "✅ All pre-push checks passed!"

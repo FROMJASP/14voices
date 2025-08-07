@@ -1,0 +1,28 @@
+# Code Owners for Architecture and Build Integrity
+
+# Global owners for all files
+* @team-lead @senior-dev
+
+# Architecture and configuration
+/src/domains/ @backend-systems-architect
+/src/collections/ @backend-systems-architect
+/src/config/ @security-auditor @backend-systems-architect
+CLAUDE.md @team-lead
+.github/ @devops-lead
+
+# Build and deployment
+package.json @devops-lead @team-lead
+tsconfig.json @backend-systems-architect
+vercel.json @devops-lead
+/scripts/ @devops-lead
+
+# Critical security files
+/src/lib/auth-middleware.ts @security-auditor
+/src/lib/csrf.ts @security-auditor
+/src/config/security.ts @security-auditor
+
+# Domain-specific ownership
+/src/domains/email/ @email-specialist @backend-systems-architect
+/src/domains/billing/ @billing-specialist @backend-systems-architect
+/src/domains/booking/ @booking-specialist @backend-systems-architect
+/src/domains/voiceover/ @content-specialist @backend-systems-architect

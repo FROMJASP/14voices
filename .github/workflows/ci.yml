@@ -1,0 +1,153 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  DATABASE_URL: postgresql://test:test@localhost:5432/test
+  PAYLOAD_SECRET: test-secret-for-ci-only
+  NEXT_PUBLIC_URL: http://localhost:3000
+  REDIS_URL: redis://localhost:6379
+
+jobs:
+  validate:
+    name: Validate & Test
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run linting
+        run: bun run lint
+
+      - name: Check formatting
+        run: bun run format:check
+
+      - name: Run type checking
+        run: bun run typecheck
+
+      - name: Run unit tests
+        run: bun test
+
+      - name: Test production build
+        run: bun run build
+        env:
+          SKIP_ENV_VALIDATION: true
+
+  build-vercel:
+    name: Test Vercel Build
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (npm for Vercel compatibility)
+        run: npm ci
+
+      - name: Run Vercel build command
+        run: npm run build:vercel
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
+          PAYLOAD_SECRET: test-secret-for-ci-only
+          NEXT_PUBLIC_URL: http://localhost:3000
+          SKIP_ENV_VALIDATION: true
+
+  architecture-check:
+    name: Architecture Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check domain boundaries
+        run: |
+          echo "Checking domain boundaries..."
+          # Ensure collections don't import from domains
+          if grep -r "from ['\"]\.\./domains" src/collections/; then
+            echo "ERROR: Collections should not import from domains"
+            exit 1
+          fi
+          
+          # Ensure domains don't cross-import
+          for domain in src/domains/*/; do
+            domain_name=$(basename "$domain")
+            if grep -r "from ['\"]\.\./[^/]*/" "$domain" | grep -v "$domain_name"; then
+              echo "ERROR: Domain $domain_name has cross-domain imports"
+              exit 1
+            fi
+          done
+          
+          echo "Domain boundaries check passed!"
+
+      - name: Check component patterns
+        run: |
+          echo "Checking component patterns..."
+          # Ensure admin components don't leak outside
+          if grep -r "from ['\"].*admin/" src/components/ | grep -v "src/components/admin/"; then
+            echo "ERROR: Admin components imported outside admin folder"
+            exit 1
+          fi
+          
+          echo "Component patterns check passed!"

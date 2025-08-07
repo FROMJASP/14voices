@@ -40,6 +40,27 @@ Refused to execute inline script because it violates the following Content Secur
 - Check that domain types match collection fields exactly
 - Import `Where` type when using Payload queries
 
+### Dependency Issues
+
+**Problem**: Build fails with "Module not found" errors
+
+**Common Causes**:
+
+1. **DevDependencies Used in Production Code**
+   - Example: `@sentry/nextjs` was in devDependencies but imported in production files
+   - Vercel does NOT install devDependencies during production builds
+   - Any dependency imported in production code MUST be in `dependencies`
+
+2. **Missing Platform-Specific Binaries**
+   - Sharp, lightningcss require platform-specific binaries
+   - Handled automatically by postinstall script
+
+**Prevention**:
+
+- Check all imports in production files reference packages in `dependencies`
+- Run `bun run validate:build` to test production build locally
+- Never manually install platform-specific binaries
+
 ## Common Development Commands
 
 ```bash
@@ -66,6 +87,12 @@ bun test:e2e:ui          # Run Playwright tests with UI
 bun run lint             # Run ESLint
 bun run format           # Format code with Prettier
 bun run format:check     # Check formatting
+bun run typecheck        # Run TypeScript type checking
+
+# Pre-deployment validation (CRITICAL - RUN BEFORE EVERY PUSH)
+bun run validate         # Run all validation checks
+bun run validate:build   # Test production build locally
+bun run validate:full    # Complete validation including architecture
 
 # Payload CMS
 bun payload generate:types      # Generate TypeScript types after schema changes
@@ -239,6 +266,79 @@ docker run -p 6379:6379 redis
 echo "REDIS_URL=redis://localhost:6379" >> .env.local
 ```
 
+## Pre-Deployment Checklist
+
+### MANDATORY Before Pushing Code
+
+**🚨 CRITICAL**: These checks MUST be run before EVERY push to prevent production build failures:
+
+1. **Type Checking**: `bun run typecheck`
+   - Ensures no TypeScript compilation errors
+   - Catches type mismatches between domains and Payload
+
+2. **Build Validation**: `bun run validate:build`
+   - Runs a full production build locally
+   - Tests both Next.js and Payload compilation
+   - Verifies all imports and dependencies
+
+3. **Full Validation**: `bun run validate`
+   - Runs lint, format check, typecheck, and tests
+   - Ensures code quality standards are met
+   - Prevents common deployment failures
+
+### Build Failure Prevention Guide
+
+#### Dependency Validation
+
+**Before pushing, verify dependencies:**
+
+```bash
+# Check if any devDependencies are imported in src/
+bun run validate:deps  # Add this script if not exists
+
+# Manually verify critical packages are in dependencies:
+# - @sentry/nextjs (if using error monitoring)
+# - Any packages imported in:
+#   - src/app/**
+#   - src/components/**
+#   - src/lib/**
+#   - src/domains/**
+```
+
+### Common Build Failure Causes
+
+1. **Missing Type Imports**
+   ```typescript
+   // ❌ Will fail on Vercel
+   const query: Where = { ... }
+   
+   // ✅ Correct
+   import type { Where } from 'payload'
+   const query: Where = { ... }
+   ```
+
+2. **Payload ID Type Mismatches**
+   ```typescript
+   // ❌ Payload expects numeric IDs
+   user: currentUser.id  // if id is string
+   
+   // ✅ Correct
+   user: Number(currentUser.id)
+   ```
+
+3. **Dev Dependencies in Production**
+   - All runtime dependencies MUST be in `dependencies`, not `devDependencies`
+   - Vercel doesn't install devDependencies
+   - Common mistakes:
+     - Error monitoring (@sentry/nextjs)
+     - UI libraries used in components
+     - Utilities imported in production code
+   - Rule: If it's imported anywhere in `src/`, it belongs in `dependencies`
+
+4. **Platform-Specific Dependencies**
+   - Sharp, lightningcss handled by postinstall script
+   - Don't manually install platform binaries
+
 ## Vercel Deployment Considerations
 
 ### Package Manager Notes
@@ -266,7 +366,58 @@ if (process.env.NODE_ENV === 'development') {
 
 ### Troubleshooting Vercel Builds
 
-1. Check build logs for dependency errors
-2. Verify environment variables are set in Vercel dashboard
-3. Ensure vercel.json has correct build settings
-4. Native dependencies handled by scripts/postinstall.js
+1. **Module Not Found Errors**
+   - Check if the missing module is in devDependencies
+   - Move it to dependencies if imported in production code
+   - Run `bun install` after moving dependencies
+
+2. **TypeScript Errors**
+   - Run `bun run typecheck` locally
+   - Fix all errors before pushing
+   - Ensure all type imports use `import type`
+
+3. **Build Command Failures**
+   - Test with `bun run build:vercel` locally
+   - Check Vercel logs for specific error messages
+   - Verify all environment variables are set
+
+4. **Native Dependencies**
+   - Sharp, lightningcss handled by postinstall script
+   - Never manually install platform binaries
+   - Check postinstall.js runs successfully
+
+### Emergency Build Fix Procedure
+
+If production build fails:
+
+1. **DON'T PANIC** - Follow this checklist:
+   ```bash
+   # 1. Pull latest changes
+   git pull origin main
+   
+   # 2. Clean install
+   rm -rf node_modules bun.lockb
+   bun install
+   
+   # 3. Run full validation
+   bun run validate:full
+   
+   # 4. If validation passes but Vercel fails
+   # Check the specific error in Vercel logs
+   # Most common: dependency in wrong section
+   ```
+
+2. **For Dependency Errors**:
+   - Find the missing module in package.json
+   - If in devDependencies, move to dependencies
+   - Commit and push the fix
+
+3. **For TypeScript Errors**:
+   - Run `bun run typecheck`
+   - Fix all errors locally
+   - Test with `bun run build`
+
+4. **For Unknown Errors**:
+   - Check Vercel build logs carefully
+   - Compare with local build output
+   - Ensure environment variables match

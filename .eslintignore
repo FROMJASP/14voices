@@ -1,0 +1,30 @@
+# Build outputs
+.next
+dist
+build
+
+# Dependencies
+node_modules
+
+# Payload generated files
+payload-types.ts
+
+# Scripts (Node.js files)
+scripts/
+
+# Generated files
+*.generated.ts
+importMap.js
+
+# Test coverage
+coverage
+
+# Environment files
+.env*
+
+# IDE
+.vscode
+.idea
+
+# Platform specific
+.DS_Store

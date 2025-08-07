@@ -35,6 +35,12 @@
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "typecheck": "tsc --noEmit",
+    "validate:deps": "node scripts/validate-dependencies.js",
+    "validate:architecture": "node scripts/validate-architecture.js",
+    "validate": "bun run lint && bun run format:check && bun run typecheck && bun run test",
+    "validate:build": "bun run typecheck && bun run build",
+    "validate:full": "bun run validate && bun run validate:deps && bun run validate:architecture && bun run validate:build",
     "ci:validate": "bun run lint && bun run format:check && bun run test && bun run test:e2e"
   },
   "dependencies": {
@@ -53,6 +59,7 @@
     "@types/bcryptjs": "^3.0.0",
     "@types/dompurify": "^3.2.0",
     "@types/pg": "^8.15.5",
+    "@sentry/nextjs": "^9.34.0",
     "@types/sanitize-html": "^2.16.0",
     "@uploadthing/react": "^7.3.2",
     "@vercel/postgres": "^0.10.0",
@@ -90,7 +97,6 @@
     "@eslint/eslintrc": "^3",
     "@next/bundle-analyzer": "^15.4.5",
     "@playwright/test": "^1.53.2",
-    "@sentry/nextjs": "^9.34.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
