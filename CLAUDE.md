@@ -240,3 +240,74 @@ To use Redis in development:
 3. Set `REDIS_URL=redis://localhost:6379` in `.env.local`
 
 The system will automatically detect and use Redis if available, or fall back to in-memory caching.
+
+## Vercel Deployment Considerations
+
+### Package Manager and Build Compatibility
+
+**Critical Warning**: Bun is NOT supported on Vercel for production builds
+
+- **Build Requirements**:
+  - Use `npm` for Vercel deployments
+  - Explicitly install ALL dependencies with `npm install`
+  - Do NOT rely on Bun-specific features in production
+
+**Recommended Workflow**:
+
+```bash
+# Local development (use Bun)
+bun install
+bun dev
+
+# Vercel deployment preparation
+npm install      # Ensure ALL dependencies are installed
+npm run build    # Use npm for Vercel builds
+```
+
+### DevDependencies and Production Builds
+
+**Problem**: DevDependencies are NOT automatically installed on Vercel production builds
+
+- Always ensure critical build tools are in `dependencies`, not `devDependencies`
+- Use `npm install [package] --save-prod` for build-critical packages
+- Verify that build scripts work with npm
+
+### Optional Dependencies and Dynamic Imports
+
+**Bundle Analyzer and Conditional Loading Pattern**:
+
+- Use dynamic imports with optional chaining for optional dependencies
+- Implement fallback mechanisms for missing dependencies
+
+```typescript
+// Example of safe optional dependency loading
+const loadBundleAnalyzer = async () => {
+  try {
+    const withBundleAnalyzer = (await import('@next/bundle-analyzer'))?.default;
+    return withBundleAnalyzer({
+      enabled: process.env.ANALYZE === 'true',
+    });
+  } catch {
+    return (config) => config; // Return identity function if not available
+  }
+};
+```
+
+**Key Considerations**:
+
+- Always test Vercel builds locally using `npm`
+- Use `npm run build` to simulate Vercel build environment
+- Be prepared to modify import strategies for optional dependencies
+
+### Troubleshooting Vercel Deployment
+
+- Check Vercel build logs for specific dependency or import errors
+- Ensure all required environment variables are configured
+- Verify that Next.js configuration is compatible with Vercel's build process
+- Use Vercel's GitHub integration for automatic deployments
+
+**Recommended Vercel Settings**:
+
+- Framework Preset: Next.js
+- Build Command: `npm run build`
+- Output Directory: `.next`
