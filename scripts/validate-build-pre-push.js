@@ -52,11 +52,22 @@ const commonIssues = [
     pattern: /await\s+import\s*\(\s*['"]dotenv['"]\s*\)/,
     message: 'Unguarded dotenv import found',
     fix: 'Wrap dotenv imports with NODE_ENV check and try-catch',
+    check: (content, match) => {
+      // Check if the import is properly guarded
+      const index = content.indexOf(match);
+      const before = content.substring(Math.max(0, index - 500), index);
+      return !before.includes('process.env.NODE_ENV') || !before.includes('try');
+    },
   },
   {
     pattern: /import\s+type\s*\{[^}]*\}\s*from\s*['"]payload['"];?/,
     message: 'Missing Where type import',
-    check: (content) => content.includes(': Where') && !content.includes('import type { Where'),
+    check: (content) => {
+      // Check if Where is used but not imported
+      const usesWhere = content.includes(': Where');
+      const importsWhere = /import\s+type\s*\{[^}]*Where[^}]*\}\s*from\s*['"]payload['"]/.test(content);
+      return usesWhere && !importsWhere;
+    },
   },
   {
     pattern: /user:\s*currentUser\.id[,\s;]/,
@@ -70,7 +81,26 @@ function checkFileForIssues(filePath) {
   const issues = [];
   
   for (const issue of commonIssues) {
-    if (issue.check ? issue.check(content) : issue.pattern.test(content)) {
+    if (issue.pattern) {
+      const match = content.match(issue.pattern);
+      if (match) {
+        if (issue.check) {
+          if (issue.check(content, match[0])) {
+            issues.push({
+              file: filePath.replace(process.cwd() + '/', ''),
+              message: issue.message,
+              fix: issue.fix,
+            });
+          }
+        } else {
+          issues.push({
+            file: filePath.replace(process.cwd() + '/', ''),
+            message: issue.message,
+            fix: issue.fix,
+          });
+        }
+      }
+    } else if (issue.check && issue.check(content)) {
       issues.push({
         file: filePath.replace(process.cwd() + '/', ''),
         message: issue.message,

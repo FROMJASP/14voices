@@ -11,11 +11,10 @@ import { resolve } from 'path';
 // Load environment variables only if dotenv is available (dev environment)
 if (process.env.NODE_ENV !== 'production') {
   try {
-    // Use require.resolve to check if module exists before importing
-    require.resolve('dotenv');
-    const dotenv = await import('dotenv');
-    dotenv.config({ path: resolve(process.cwd(), '.env.local') });
-    dotenv.config({ path: resolve(process.cwd(), '.env') });
+    // Dynamically import dotenv with type assertion to bypass TypeScript type checking
+    const dotenvModule = await import('dotenv' as any) as { config: (options: { path: string }) => void };
+    dotenvModule.config({ path: resolve(process.cwd(), '.env.local') });
+    dotenvModule.config({ path: resolve(process.cwd(), '.env') });
   } catch (e) {
     // dotenv is not available, which is fine
     // Environment variables should already be set
