@@ -192,6 +192,7 @@ class RedisAdapter {
   private client: ReturnType<typeof import('redis').createClient> | null = null;
   private connectionAttempted: boolean = false;
   private isProduction: boolean = process.env.NODE_ENV === 'production';
+  private isBuildTime: boolean = process.env.NEXT_PHASE === 'phase-production-build';
 
   constructor(config: RedisConfig) {
     this.config = {
@@ -203,6 +204,12 @@ class RedisAdapter {
   async connect(): Promise<void> {
     if (this.connected || this.connectionAttempted) return;
     this.connectionAttempted = true;
+
+    // Skip Redis connection during build time
+    if (this.isBuildTime) {
+      this.connected = false;
+      return;
+    }
 
     try {
       // Check if we're in Edge Runtime
@@ -235,8 +242,8 @@ class RedisAdapter {
       });
 
       this.client.on('error', (err: Error) => {
-        // Only log Redis errors in production or on first occurrence
-        if (this.isProduction) {
+        // Only log Redis errors in production (never during build)
+        if (this.isProduction && !this.isBuildTime) {
           console.error('Redis Client Error:', err);
         }
         this.connected = false;

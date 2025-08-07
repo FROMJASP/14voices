@@ -23,6 +23,16 @@ const nextConfig: NextConfig = {
       '@/*': './src/*',
     },
   },
+  webpack: (config) => {
+    // Suppress OpenTelemetry and Sentry webpack warnings
+    config.ignoreWarnings = [
+      ...(config.ignoreWarnings || []),
+      /Critical dependency: the request of a dependency is an expression/,
+      /Module not found: Can't resolve/,
+    ];
+
+    return config;
+  },
   images: {
     remotePatterns: [
       {

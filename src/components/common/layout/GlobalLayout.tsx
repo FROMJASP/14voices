@@ -1,3 +1,5 @@
+'use client';
+
 import { Navigation } from '@/components/common/layout/header/navigation';
 import { Footer } from './footer';
 import {
