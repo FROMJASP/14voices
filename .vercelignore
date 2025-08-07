@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.turbo
+.vercel
+.cache
+playwright
+*.log
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+README.md
+.eslintrc
+.prettierrc
+.gitignore
