@@ -160,10 +160,7 @@ src/domains/{domain}/
 └── index.ts        # Public API exports
 ```
 
-For detailed architecture documentation, see:
-
-- [Architecture Overview](./docs/architecture/README.md)
-- [Architecture Decision Records](./docs/architecture/adr/)
+See [Architecture Documentation](./docs/architecture/) for detailed design decisions.
 
 ## Key Development Patterns
 
@@ -212,103 +209,64 @@ For detailed architecture documentation, see:
 - Implement rate limiting on API endpoints
 - Never expose sensitive data in client components
 
-### Rate Limiting
+### Redis, Caching & Rate Limiting
 
-The application uses Redis-based rate limiting with automatic fallback:
-
-- **Redis-based**: Distributed rate limiting across server instances
-- **Edge-safe fallback**: In-memory rate limiting for middleware
-- **Automatic detection**: Different limits for auth, forms, uploads, etc.
-- **Configuration**: See `src/config/security.ts` for rate limit settings
-
-Rate limits are automatically applied to all API routes via middleware.
-See [Rate Limiting Documentation](./docs/rate-limiting.md) for details.
-
-### Redis & Caching
-
-The application supports Redis for caching and rate limiting with automatic fallback:
+The application uses Redis for both caching and rate limiting with automatic fallback:
 
 - **Production**: Uses Redis when `REDIS_URL` is configured
-- **Development**: Automatically falls back to in-memory cache if Redis is not running
-- **No Redis errors**: Connection failures are handled gracefully without console spam
-- **Automatic fallback**: System works seamlessly without Redis in development
+- **Development**: Automatically falls back to in-memory cache/rate limiting
+- **No errors**: Connection failures handled gracefully without console spam
+- **Configuration**: See `src/config/security.ts` for rate limit settings
 
-To use Redis in development:
+**Key Features**:
 
-1. Install Redis locally: `brew install redis` (macOS) or use Docker
-2. Start Redis: `redis-server` or `docker run -p 6379:6379 redis`
-3. Set `REDIS_URL=redis://localhost:6379` in `.env.local`
+- Distributed rate limiting across server instances
+- Different limits for auth, forms, uploads, etc.
+- Edge-safe fallback for middleware
+- Automatic detection and fallback
 
-The system will automatically detect and use Redis if available, or fall back to in-memory caching.
+**Local Redis Setup** (optional):
+
+```bash
+# macOS
+brew install redis
+redis-server
+
+# Docker
+docker run -p 6379:6379 redis
+
+# Configure
+echo "REDIS_URL=redis://localhost:6379" >> .env.local
+```
 
 ## Vercel Deployment Considerations
 
-### Package Manager and Build Compatibility
+### Package Manager Notes
 
-**Critical Warning**: Bun is NOT supported on Vercel for production builds
+**Important**: Bun is NOT supported on Vercel
 
-- **Build Requirements**:
-  - Use `npm` for Vercel deployments
-  - Explicitly install ALL dependencies with `npm install`
-  - Do NOT rely on Bun-specific features in production
+- **Local Development**: Use Bun (`bun install`, `bun dev`, `bun test`)
+- **Vercel Production**: Automatically uses npm (configured in vercel.json)
+- **No manual npm commands needed** - Vercel handles the conversion
 
-**Recommended Workflow**:
+### DevDependencies in Production
 
-```bash
-# Local development (use Bun)
-bun install
-bun dev
+**Issue**: Vercel doesn't install devDependencies in production builds
 
-# Vercel deployment preparation
-npm install      # Ensure ALL dependencies are installed
-npm run build    # Use npm for Vercel builds
-```
-
-### DevDependencies and Production Builds
-
-**Problem**: DevDependencies are NOT automatically installed on Vercel production builds
-
-- Always ensure critical build tools are in `dependencies`, not `devDependencies`
-- Use `npm install [package] --save-prod` for build-critical packages
-- Verify that build scripts work with npm
-
-### Optional Dependencies and Dynamic Imports
-
-**Bundle Analyzer and Conditional Loading Pattern**:
-
-- Use dynamic imports with optional chaining for optional dependencies
-- Implement fallback mechanisms for missing dependencies
+**Solution**: Use conditional imports for optional dev tools:
 
 ```typescript
-// Example of safe optional dependency loading
-const loadBundleAnalyzer = async () => {
-  try {
-    const withBundleAnalyzer = (await import('@next/bundle-analyzer'))?.default;
-    return withBundleAnalyzer({
-      enabled: process.env.ANALYZE === 'true',
-    });
-  } catch {
-    return (config) => config; // Return identity function if not available
-  }
-};
+// Safe loading pattern for optional dependencies
+if (process.env.NODE_ENV === 'development') {
+  // Load dev-only dependencies here
+}
 ```
 
-**Key Considerations**:
+**Note**: Platform-specific native dependencies (sharp, lightningcss) are handled automatically by the postinstall script.
 
-- Local development: Continue using Bun (`bun dev`, `bun test`, `bun run build`)
-- Vercel automatically uses npm for production builds
-- Be prepared to modify import strategies for optional dependencies
-- Platform-specific native dependencies (sharp, lightningcss) are handled by postinstall script
+### Troubleshooting Vercel Builds
 
-### Troubleshooting Vercel Deployment
-
-- Check Vercel build logs for specific dependency or import errors
-- Ensure all required environment variables are configured
-- Verify that Next.js configuration is compatible with Vercel's build process
-- Use Vercel's GitHub integration for automatic deployments
-
-**Recommended Vercel Settings**:
-
-- Framework Preset: Next.js
-- Build Command: `npm run build`
-- Output Directory: `.next`
+1. Check build logs for dependency errors
+2. Verify environment variables are set in Vercel dashboard
+3. Ensure vercel.json has correct build settings
+4. Native dependencies handled by scripts/postinstall.js
