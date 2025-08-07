@@ -26,7 +26,6 @@
     "admin:reset": "bun src/scripts/reset-admin-access.ts",
     "admin:check": "bun scripts/check-admin-users.ts",
     "postinstall": "node scripts/postinstall.js",
-    "preinstall": "npm install --cache /tmp/empty-cache sharp",
     "test": "vitest",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",

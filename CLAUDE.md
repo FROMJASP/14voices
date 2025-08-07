@@ -295,9 +295,10 @@ const loadBundleAnalyzer = async () => {
 
 **Key Considerations**:
 
-- Always test Vercel builds locally using `npm`
-- Use `npm run build` to simulate Vercel build environment
+- Local development: Continue using Bun (`bun dev`, `bun test`, `bun run build`)
+- Vercel automatically uses npm for production builds
 - Be prepared to modify import strategies for optional dependencies
+- Platform-specific native dependencies (sharp, lightningcss) are handled by postinstall script
 
 ### Troubleshooting Vercel Deployment
 
