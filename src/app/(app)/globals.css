@@ -725,20 +725,23 @@
     text-align: center !important;
   }
 
-  /* Mobile menu blur effect */
-  body.mobile-menu-open {
-    overflow: hidden;
-  }
-
-  body.mobile-menu-open > div:first-child,
-  body.mobile-menu-open > #__next {
+  /* Mobile menu blur effect - works with robust scroll lock */
+  body.mobile-menu-open > div:first-child:not([data-mobile-menu]),
+  body.mobile-menu-open > #__next:not([data-mobile-menu]),
+  body.mobile-menu-open > main:not([data-mobile-menu]) {
     filter: blur(4px);
     transition: filter 0.3s ease;
   }
 
   body:not(.mobile-menu-open) > div:first-child,
-  body:not(.mobile-menu-open) > #__next {
+  body:not(.mobile-menu-open) > #__next,
+  body:not(.mobile-menu-open) > main {
     filter: none;
     transition: filter 0.3s ease;
+  }
+
+  /* Ensure mobile menu portal is not blurred */
+  [data-mobile-menu] {
+    filter: none !important;
   }
 }

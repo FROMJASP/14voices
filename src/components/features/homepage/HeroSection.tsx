@@ -76,7 +76,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
   return (
     <section className="hero bg-background px-6 py-10">
       <div className="hero-container max-w-[1280px] mx-auto px-4 lg:px-[60px] py-8 lg:py-[60px] relative">
-        <div className="hero-content grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-[60px] items-center relative z-10">
+        <div className="hero-content grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-[60px] items-center relative z-10">
           {/* Left Content */}
           <motion.div
             className="hero-text"
@@ -84,9 +84,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
             animate="animate"
             variants={staggerContainer}
           >
-            {/* Process Steps */}
+            {/* Process Steps - Reduced margin on mobile */}
             {hero.processSteps && hero.processSteps.length > 0 && (
-              <motion.div className="hero-tag mb-6" variants={staggerChild}>
+              <motion.div className="hero-tag mb-3 md:mb-6" variants={staggerChild}>
                 <div className="process-steps flex flex-wrap items-center gap-4">
                   {hero.processSteps.map((step, index) => (
                     <React.Fragment key={index}>
@@ -105,12 +105,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
               </motion.div>
             )}
 
-            {/* Hero Title */}
+            {/* Hero Title - Bigger on mobile */}
             <motion.h1
               className="hero-title"
               style={{
                 fontFamily: '"Bricolage Grotesque", var(--font-bricolage), sans-serif',
-                fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+                fontSize: 'clamp(3rem, 6vw, 3.5rem)', // Increased minimum from 2.5rem to 3rem
                 lineHeight: '1.1',
                 marginBottom: '20px',
                 fontWeight: 800,
@@ -144,13 +144,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
               {hero.description}
             </motion.p>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons - Side by side on mobile, responsive flex */}
             <motion.div
-              className="hero-actions flex flex-col sm:flex-row gap-3 mb-8"
+              className="hero-actions flex flex-row gap-3 mb-8 flex-wrap sm:flex-nowrap"
               variants={staggerChild}
             >
               <Link
                 href={hero.primaryButton.url}
+                className="flex-1 sm:flex-none"
                 style={{
                   backgroundColor: theme === 'dark' ? 'var(--primary)' : 'var(--text-primary)',
                   color: theme === 'dark' ? '#000000' : 'var(--background)',
@@ -162,8 +163,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
                   transition: 'all 0.2s',
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '8px',
                   border: 'none',
+                  minWidth: 'fit-content',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
@@ -192,6 +195,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
 
               <Link
                 href={hero.secondaryButton.url}
+                className="flex-1 sm:flex-none"
                 style={{
                   backgroundColor: 'transparent',
                   color: 'var(--text-primary)',
@@ -204,7 +208,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
                   transition: 'all 0.2s',
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '8px',
+                  minWidth: 'fit-content',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = 'var(--surface)';
@@ -230,28 +236,34 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
               </Link>
             </motion.div>
 
-            {/* Stats */}
+            {/* Stats - Always horizontal with smaller font if needed on mobile */}
             {hero.stats && hero.stats.length > 0 && (
               <motion.div
-                className="hero-stats flex flex-col sm:flex-row mt-12"
-                style={{ gap: '32px' }}
+                className="hero-stats flex flex-row justify-between sm:justify-start mt-8 md:mt-12"
+                style={{ gap: 'clamp(16px, 4vw, 32px)' }}
                 variants={staggerChild}
               >
                 {hero.stats.map((stat, index) => (
-                  <div key={index} className="stat-item text-left">
+                  <div key={index} className="stat-item text-left flex-1 sm:flex-none">
                     <div
-                      className="stat-number text-[1.75rem] leading-none mb-[6px]"
+                      className="stat-number leading-none mb-[6px]"
                       style={{
                         color: 'var(--text-primary)',
                         fontFamily: 'var(--font-bricolage)',
                         fontWeight: '800',
+                        fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', // Responsive font size
                       }}
                     >
                       {stat.number}
                     </div>
                     <div
-                      className="stat-label text-[0.813rem]"
-                      style={{ color: 'var(--text-secondary)', fontWeight: '500' }}
+                      className="stat-label"
+                      style={{
+                        color: 'var(--text-secondary)',
+                        fontWeight: '500',
+                        fontSize: 'clamp(0.7rem, 2vw, 0.813rem)', // Responsive font size
+                        lineHeight: '1.3',
+                      }}
                     >
                       {stat.label}
                     </div>
@@ -261,9 +273,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
             )}
           </motion.div>
 
-          {/* Right Content - Image */}
+          {/* Right Content - Image (Hidden on mobile/tablet, shown on xl+) */}
           <motion.div
-            className="hero-image relative"
+            className="hero-image relative hidden xl:block"
             initial="initial"
             animate="animate"
             variants={fadeInUpDelayed}
@@ -286,7 +298,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
                 className="object-cover scale-100"
                 style={{ transformOrigin: 'center' }}
                 priority
-                sizes="(max-width: 768px) 400px, 500px"
+                sizes="(max-width: 1279px) 0px, 500px"
               />
             </div>
           </motion.div>

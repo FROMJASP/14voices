@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
 import { useCart } from '@/contexts/CartContext';
+import { useScrollLock } from '@/hooks/useScrollLock';
 import { ThemeToggle } from './ThemeToggle';
 import { MobileMenu } from './MobileMenu';
 import { NavigationItem } from './NavigationItem';
@@ -55,26 +56,11 @@ export function Navigation({
     setMounted(true);
   }, []);
 
-  // Simple body scroll lock and page blur effect
-  useEffect(() => {
-    const body = document.body;
-
-    if (isOpen) {
-      // Prevent scrolling and blur the page content
-      body.style.overflow = 'hidden';
-      body.classList.add('mobile-menu-open');
-    } else {
-      // Restore scrolling and remove blur
-      body.style.overflow = '';
-      body.classList.remove('mobile-menu-open');
-    }
-
-    // Cleanup on unmount
-    return () => {
-      body.style.overflow = '';
-      body.classList.remove('mobile-menu-open');
-    };
-  }, [isOpen]);
+  // Robust scroll lock with iOS bounce prevention and blur effect
+  useScrollLock(isOpen, {
+    restoreScrollPosition: true,
+    bodyClass: 'mobile-menu-open',
+  });
 
   if (!mounted) return null;
 
