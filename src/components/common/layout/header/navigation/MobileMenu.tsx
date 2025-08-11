@@ -1,10 +1,11 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { X, ChevronDown, Mail } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ThemeToggle } from './ThemeToggle';
 import type { MenuItem } from './Navigation.types';
 import type { InfoNavbarData } from '../info-navbar/InfoNavbar.types';
@@ -50,52 +51,39 @@ export function MobileMenu({
   },
 }: MobileMenuProps) {
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleDropdown = (index: number) => {
     setExpandedItem(expandedItem === index ? null : index);
   };
 
-  return (
+  if (!mounted) return null;
+
+  const menuContent = (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop with enhanced blur effect */}
+          {/* Backdrop overlay with glass effect */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
             onTouchMove={(e) => {
               // Prevent touch scrolling on backdrop
               e.preventDefault();
             }}
-            className="fixed inset-0 z-[100] lg:hidden backdrop-blur-lg"
+            className="fixed inset-0 z-[100] lg:hidden backdrop-blur-md"
             style={{
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              touchAction: 'none', // Prevent all touch interactions
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              touchAction: 'none',
             }}
-          >
-            {/* Multiple layers for stronger blur effect */}
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-              }}
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                backdropFilter: 'blur(10px) saturate(200%)',
-                WebkitBackdropFilter: 'blur(10px) saturate(200%)',
-              }}
-            />
-          </motion.div>
+          />
 
           {/* Menu Panel */}
           <motion.div
@@ -309,4 +297,6 @@ export function MobileMenu({
       )}
     </AnimatePresence>
   );
+
+  return createPortal(menuContent, document.body);
 }
