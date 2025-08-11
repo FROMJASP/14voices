@@ -59,7 +59,7 @@ export function MobileMenu({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop with enhanced blur effect */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -69,18 +69,33 @@ export function MobileMenu({
               // Prevent touch scrolling on backdrop
               e.preventDefault();
             }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-lg z-[100] lg:hidden"
+            className="fixed inset-0 z-[100] lg:hidden backdrop-blur-lg"
             style={{
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
               touchAction: 'none', // Prevent all touch interactions
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)', // Safari support
-              backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fallback for browsers without backdrop-filter
             }}
-          />
+          >
+            {/* Multiple layers for stronger blur effect */}
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                backdropFilter: 'blur(10px) saturate(200%)',
+                WebkitBackdropFilter: 'blur(10px) saturate(200%)',
+              }}
+            />
+          </motion.div>
 
           {/* Menu Panel */}
           <motion.div

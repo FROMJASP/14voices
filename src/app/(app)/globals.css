@@ -550,6 +550,22 @@
     background: transparent;
   }
 
+  /* Force backdrop blur support */
+  .backdrop-blur-lg {
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+  }
+
+  .backdrop-blur-md {
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+
+  .backdrop-blur-sm {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
   /* Dropdown animations */
   @keyframes fade-in {
     from {
