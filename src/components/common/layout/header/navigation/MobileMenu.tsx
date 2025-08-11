@@ -69,13 +69,16 @@ export function MobileMenu({
               // Prevent touch scrolling on backdrop
               e.preventDefault();
             }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-md z-[100] lg:hidden"
+            className="fixed inset-0 bg-black/50 backdrop-blur-lg z-[100] lg:hidden"
             style={{
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
               touchAction: 'none', // Prevent all touch interactions
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)', // Safari support
+              backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fallback for browsers without backdrop-filter
             }}
           />
 

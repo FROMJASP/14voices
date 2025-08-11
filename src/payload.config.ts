@@ -31,6 +31,7 @@ import Testimonials from './collections/Testimonials';
 import SecurityLogs from './collections/SecurityLogs';
 import { EmailSettings } from './globals/EmailSettings';
 import { SiteSettings } from './globals/SiteSettings';
+import { HomepageSettings } from './globals/HomepageSettings';
 import path from 'path';
 
 export default buildConfig({
@@ -107,7 +108,7 @@ export default buildConfig({
     EmailContacts,
     SecurityLogs,
   ],
-  globals: [EmailSettings, SiteSettings],
+  globals: [EmailSettings, SiteSettings, HomepageSettings],
   editor: lexicalEditor(),
   secret:
     process.env.PAYLOAD_SECRET ||

@@ -5,11 +5,10 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
 import { useCart } from '@/contexts/CartContext';
-import { CartButton } from '@/components/domains/cart';
-import { Logo } from '../logo';
 import { ThemeToggle } from './ThemeToggle';
 import { MobileMenu } from './MobileMenu';
-import type { NavigationProps } from './Navigation.types';
+import { NavigationItem } from './NavigationItem';
+import type { NavigationProps, MenuItem } from './Navigation.types';
 
 // Font configurations
 const instrumentSerif = Instrument_Serif({
@@ -28,16 +27,27 @@ const bricolageGrotesque = Bricolage_Grotesque({
 });
 
 // Default navigation items
-const defaultMenuItems = [
-  { label: 'Voiceovers', href: '#voiceovers' },
-  { label: 'Prijzen', href: '#prijzen' },
-  { label: 'Blog', href: '#blog' },
-  { label: 'Contact', href: '#contact' },
+const defaultMenuItems: MenuItem[] = [
+  {
+    label: 'Voice-overs',
+    url: '#voiceovers',
+    hasDropdown: true,
+  },
+  { label: 'Prijzen', url: '/prijzen' },
 ];
 
-export function Navigation({ menuItems = defaultMenuItems, className = '' }: NavigationProps) {
+export function Navigation({
+  menuItems = defaultMenuItems,
+  navigationSettings = {
+    loginText: 'Login',
+    loginUrl: '/login',
+    ctaButtonText: 'Mijn omgeving',
+    ctaButtonUrl: '/dashboard',
+  },
+  infoNavbarData,
+  className = '',
+}: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const cart = useCart();
 
@@ -45,98 +55,255 @@ export function Navigation({ menuItems = defaultMenuItems, className = '' }: Nav
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
+  // Robust body scroll lock for mobile devices
   useEffect(() => {
     if (isOpen) {
+      // Store current scroll position
+      const scrollY = window.scrollY;
+
+      // Apply multiple overflow locks for different browsers/devices
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+
+      // Also lock the html element for iOS Safari
+      document.documentElement.style.overflow = 'hidden';
+
+      // Store scroll position for restoration
+      document.body.dataset.scrollY = scrollY.toString();
     }
+
+    // Cleanup function that runs when isOpen changes or component unmounts
     return () => {
-      document.body.style.overflow = 'unset';
+      // Only restore if we have a stored scroll position (meaning we applied the lock)
+      if (document.body.dataset.scrollY !== undefined) {
+        const savedScrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.documentElement.style.overflow = '';
+
+        // Restore scroll position
+        window.scrollTo(0, savedScrollY);
+
+        // Clean up data attribute
+        delete document.body.dataset.scrollY;
+      }
     };
   }, [isOpen]);
 
   if (!mounted) return null;
+
+  // Use navigation settings or fallback to defaults
+  const items = navigationSettings?.mainMenuItems || menuItems;
+  const loginText = navigationSettings?.loginText || 'Login';
+  const loginUrl = navigationSettings?.loginUrl || '/login';
 
   return (
     <>
       <style jsx global>{`
         .font-instrument-serif {
           font-family: var(--font-instrument-serif);
-          letter-spacing: 0.02em;
+          letter-spacing: -0.02em;
         }
         .font-bricolage {
           font-family: var(--font-bricolage), 'Bricolage Grotesque', sans-serif;
         }
       `}</style>
 
-      {/* Main Navbar */}
+      {/* Main Navigation */}
       <nav
-        className={`sticky top-0 z-[100] bg-white dark:bg-background transition-all duration-300 ${
-          isScrolled ? 'border-b border-gray-200 dark:border-border shadow-sm' : ''
-        } ${instrumentSerif.variable} ${bricolageGrotesque.variable} ${className}`}
+        className={`sticky top-0 z-[50] ${instrumentSerif.variable} ${bricolageGrotesque.variable} ${className}`}
+        style={{
+          backgroundColor: 'var(--background)',
+          height: '64px', // Exact mockup height
+        }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <Logo />
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              height: '64px', // Exact mockup height
+            }}
+          >
+            {/* Left: Logo + Navigation Menu */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {/* Logo */}
+              <Link
+                href="/"
+                className="font-instrument-serif"
+                style={{
+                  textDecoration: 'none',
+                  fontSize: '32px',
+                  fontWeight: '400',
+                  color: 'var(--text-primary)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                FourteenVoices
+              </Link>
 
-            {/* Center Navigation */}
-            <div className="hidden lg:flex items-center justify-center flex-1 max-w-2xl mx-16">
-              <nav className="flex items-center gap-12">
-                {menuItems.map((item, index) => (
-                  <Link
-                    key={index}
-                    href={item.href}
-                    className="font-bricolage text-base font-semibold leading-6 text-[var(--text)] hover:text-[var(--foreground)] dark:text-[var(--text)] dark:hover:text-[var(--foreground)] transition-all relative group cursor-pointer"
-                  >
-                    <span className="relative z-10">{item.label}</span>
-                    <span className="absolute inset-x-0 -bottom-1 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center"></span>
-                  </Link>
+              {/* Navigation Menu - Desktop */}
+              <div
+                className="hidden lg:flex"
+                style={{
+                  alignItems: 'center',
+                  gap: '20px',
+                  marginLeft: '48px',
+                }}
+              >
+                {items.map((item, index) => (
+                  <NavigationItem key={index} item={item} />
                 ))}
-              </nav>
+              </div>
             </div>
 
-            {/* Actions */}
-            <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
+            {/* Right: Actions */}
+            <div
+              className="hidden lg:flex"
+              style={{
+                alignItems: 'center',
+                gap: '20px', // Exact mockup gap
+              }}
+            >
               {/* Theme Toggle */}
               <ThemeToggle />
 
-              {/* Cart Icon */}
-              <CartButton {...cart} />
-
-              {/* Login */}
-              <Link
-                href="/login"
-                className="font-bricolage text-base text-[var(--text)] hover:text-[var(--foreground)] dark:text-[var(--text)] dark:hover:text-[var(--foreground)] font-medium transition-all cursor-pointer px-4 py-2"
+              {/* Shopping Cart */}
+              <button
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '6px',
+                  color: 'var(--text-primary)',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '6px',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--surface)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
-                Login
-              </Link>
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                {cart.cartItemCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-2px',
+                      right: '-2px',
+                      backgroundColor: 'var(--primary)',
+                      color: 'black',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      padding: '2px 5px',
+                      borderRadius: '8px',
+                      minWidth: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {cart.cartItemCount}
+                  </span>
+                )}
+              </button>
 
-              {/* CTA Button */}
+              {/* Login Link */}
               <Link
-                href="/demo"
-                className="font-bricolage relative inline-flex items-center bg-primary text-gray-900 dark:text-black px-5 py-2.5 rounded-md text-base font-medium transition-all border-2 border-black shadow-[4px_4px_0px_0px_#000000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 cursor-pointer"
+                href={loginUrl}
+                style={{
+                  color: 'var(--text-primary)',
+                  textDecoration: 'none',
+                  fontWeight: '500',
+                  fontSize: '15px',
+                  transition: 'color 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--primary)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--text-primary)';
+                }}
               >
-                Hoe het werkt?
+                {loginText}
               </Link>
             </div>
 
-            {/* Mobile Actions */}
-            <div className="lg:hidden flex items-center gap-2">
-              <ThemeToggle />
-              <CartButton {...cart} />
+            {/* Mobile Menu Toggle */}
+            <div className="flex lg:hidden" style={{ alignItems: 'center', gap: '12px' }}>
+              <button
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '6px',
+                  color: 'var(--text-primary)',
+                  position: 'relative',
+                }}
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                {cart.cartItemCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-2px',
+                      right: '-2px',
+                      backgroundColor: 'var(--primary)',
+                      color: 'black',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      padding: '2px 5px',
+                      borderRadius: '8px',
+                      minWidth: '16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {cart.cartItemCount}
+                  </span>
+                )}
+              </button>
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-lg text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '6px',
+                  color: 'var(--text-primary)',
+                }}
               >
                 {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -146,7 +313,13 @@ export function Navigation({ menuItems = defaultMenuItems, className = '' }: Nav
       </nav>
 
       {/* Mobile Menu */}
-      <MobileMenu isOpen={isOpen} onClose={() => setIsOpen(false)} menuItems={menuItems} />
+      <MobileMenu
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        menuItems={items}
+        infoNavbarData={infoNavbarData}
+        navigationSettings={navigationSettings}
+      />
     </>
   );
 }

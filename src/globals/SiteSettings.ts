@@ -322,88 +322,222 @@ export const SiteSettings: GlobalConfig = {
           ],
         },
         {
-          label: 'Banner',
+          label: 'Branding',
           fields: [
             {
-              name: 'banner',
+              name: 'branding',
+              type: 'group',
+              fields: [
+                {
+                  name: 'logoType',
+                  type: 'select',
+                  defaultValue: 'text',
+                  options: [
+                    { label: 'Text Logo', value: 'text' },
+                    { label: 'Image Logo', value: 'image' },
+                  ],
+                  admin: {
+                    description: 'Choose between text logo or image logo',
+                  },
+                },
+                {
+                  name: 'logoText',
+                  type: 'text',
+                  defaultValue: 'FourteenVoices',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.logoType === 'text',
+                    description: 'Text to display as logo',
+                  },
+                },
+                {
+                  name: 'logoImage',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.logoType === 'image',
+                    description:
+                      'Image to use as logo (recommended: SVG or PNG with transparent background)',
+                  },
+                },
+                {
+                  name: 'logoImageDark',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.logoType === 'image',
+                    description:
+                      'Optional: Different logo for dark mode (if not provided, same logo will be used)',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Navigation',
+          fields: [
+            {
+              name: 'navigation',
+              type: 'group',
+              fields: [
+                {
+                  name: 'mainMenuItems',
+                  type: 'array',
+                  label: 'Main Menu Items',
+                  admin: {
+                    description: 'Navigation items to display in the main menu',
+                    initCollapsed: false,
+                  },
+                  defaultValue: [
+                    { label: 'Voice-overs', url: '#voiceovers', hasDropdown: true },
+                    { label: 'Prijzen', url: '/prijzen', hasDropdown: false },
+                  ],
+                  fields: [
+                    {
+                      name: 'label',
+                      type: 'text',
+                      required: true,
+                      admin: {
+                        description: 'Display text for the menu item',
+                      },
+                    },
+                    {
+                      name: 'url',
+                      type: 'text',
+                      required: true,
+                      admin: {
+                        description: 'URL path (e.g., /voiceovers) or anchor (#voiceovers)',
+                      },
+                    },
+                    {
+                      name: 'hasDropdown',
+                      type: 'checkbox',
+                      defaultValue: false,
+                      admin: {
+                        description:
+                          'Show dropdown arrow (dropdown content can be configured later)',
+                      },
+                    },
+                    {
+                      name: 'openInNewTab',
+                      type: 'checkbox',
+                      defaultValue: false,
+                      admin: {
+                        description: 'Open link in a new tab/window',
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'loginText',
+                  type: 'text',
+                  defaultValue: 'Login',
+                  admin: {
+                    description: 'Text for the login link',
+                  },
+                },
+                {
+                  name: 'loginUrl',
+                  type: 'text',
+                  defaultValue: '/login',
+                  admin: {
+                    description: 'URL for the login link',
+                  },
+                },
+                {
+                  name: 'ctaButtonText',
+                  type: 'text',
+                  defaultValue: 'Mijn omgeving',
+                  admin: {
+                    description: 'Text for the call-to-action button',
+                  },
+                },
+                {
+                  name: 'ctaButtonUrl',
+                  type: 'text',
+                  defaultValue: '/dashboard',
+                  admin: {
+                    description: 'URL for the call-to-action button',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Top Bar',
+          fields: [
+            {
+              name: 'topBar',
               type: 'group',
               fields: [
                 {
                   name: 'enabled',
                   type: 'checkbox',
-                  defaultValue: false,
-                  label: 'Enable Banner',
-                  admin: {
-                    description: 'Show the announcement banner at the top of the site',
-                  },
-                },
-                {
-                  name: 'message',
-                  type: 'text',
-                  required: true,
-                  defaultValue:
-                    '🚀 **14 Nieuwe Stemmen**. Beluister hier wat ze voor jou kunnen betekenen!',
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description: 'Banner message (use **text** for bold/italic styling)',
-                  },
-                },
-                {
-                  name: 'linkType',
-                  type: 'select',
-                  defaultValue: 'custom',
-                  options: [
-                    { label: 'No Link', value: 'none' },
-                    { label: 'Custom URL', value: 'custom' },
-                    { label: 'Internal Page', value: 'page' },
-                  ],
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description: 'Type of link for the banner',
-                  },
-                },
-                {
-                  name: 'linkUrl',
-                  type: 'text',
-                  admin: {
-                    condition: (_data, siblingData) =>
-                      siblingData?.enabled === true && siblingData?.linkType === 'custom',
-                    description: 'Custom URL for the banner link',
-                  },
-                },
-                {
-                  name: 'linkPage',
-                  type: 'relationship',
-                  relationTo: 'pages',
-                  admin: {
-                    condition: (_data, siblingData) =>
-                      siblingData?.enabled === true && siblingData?.linkType === 'page',
-                    description: 'Internal page to link to',
-                  },
-                },
-                {
-                  name: 'dismissible',
-                  type: 'checkbox',
                   defaultValue: true,
-                  label: 'Allow Dismissing',
+                  label: 'Enable Top Bar',
                   admin: {
-                    condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description: 'Allow users to dismiss the banner',
+                    description: 'Show the top bar with contact details and quick links',
                   },
                 },
                 {
-                  name: 'style',
-                  type: 'select',
-                  defaultValue: 'gradient',
-                  options: [
-                    { label: 'Gradient', value: 'gradient' },
-                    { label: 'Solid', value: 'solid' },
-                    { label: 'Subtle', value: 'subtle' },
-                  ],
+                  name: 'whatsappNumber',
+                  type: 'text',
+                  defaultValue: '+31 6 12345678',
                   admin: {
                     condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description: 'Visual style of the banner',
+                    description:
+                      'WhatsApp number for contact (include country code, e.g., +31 6 12345678)',
                   },
+                },
+                {
+                  name: 'email',
+                  type: 'email',
+                  defaultValue: 'casting@14voices.com',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
+                    description: 'Primary contact email address',
+                  },
+                },
+                {
+                  name: 'quickLinks',
+                  type: 'array',
+                  label: 'Quick Links',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
+                    description: 'Navigation links to display in the top bar',
+                    initCollapsed: false,
+                  },
+                  defaultValue: [
+                    { label: 'Veelgestelde vragen', url: '/veelgestelde-vragen' },
+                    { label: 'Blog', url: '/blog' },
+                  ],
+                  fields: [
+                    {
+                      name: 'label',
+                      type: 'text',
+                      required: true,
+                      admin: {
+                        description: 'Display text for the link',
+                      },
+                    },
+                    {
+                      name: 'url',
+                      type: 'text',
+                      required: true,
+                      admin: {
+                        description: 'URL path (e.g., /veelgestelde-vragen) or external URL',
+                      },
+                    },
+                    {
+                      name: 'openInNewTab',
+                      type: 'checkbox',
+                      defaultValue: false,
+                      admin: {
+                        description: 'Open link in a new tab/window',
+                      },
+                    },
+                  ],
                 },
               ],
             },

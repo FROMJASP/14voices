@@ -1,0 +1,92 @@
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
+// Temporary interface until types are generated
+export interface HomepageSettings {
+  hero: {
+    processSteps?: Array<{ text: string }>;
+    title: string;
+    description: string;
+    primaryButton: {
+      text: string;
+      url: string;
+    };
+    secondaryButton: {
+      text: string;
+      url: string;
+    };
+    heroImage: string | { url: string };
+    stats?: Array<{
+      number: string;
+      label: string;
+    }>;
+  };
+}
+
+// Cache for homepage settings
+let cachedSettings: HomepageSettings | null = null;
+let cacheExpiry: number = 0;
+const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
+
+export async function getHomepageSettings(): Promise<HomepageSettings> {
+  const now = Date.now();
+
+  // Return cached settings if still valid
+  if (cachedSettings && now < cacheExpiry) {
+    return cachedSettings;
+  }
+
+  try {
+    const payload = await getPayload({ config: configPromise });
+
+    const settings = (await payload.findGlobal({
+      slug: 'homepage-settings' as any,
+      depth: 2,
+    })) as HomepageSettings;
+
+    // Cache the settings
+    cachedSettings = settings;
+    cacheExpiry = now + CACHE_DURATION;
+
+    return settings;
+  } catch (error) {
+    console.error('Error fetching homepage settings:', error);
+
+    // Return fallback settings if cache is available
+    if (cachedSettings) {
+      return cachedSettings;
+    }
+
+    // Return default fallback settings
+    return {
+      hero: {
+        processSteps: [
+          { text: '1. Kies de stem' },
+          { text: '2. Upload script' },
+          { text: '3. Ontvang audio' },
+        ],
+        title: 'Vind de stem die jouw merk laat spreken.',
+        description:
+          'Een goed verhaal verdient een goede stem. Daarom trainde wij onze 14 voice-overs die samen met onze technici klaarstaan om jouw tekst tot leven te brengen!',
+        primaryButton: {
+          text: 'Ontdek stemmen',
+          url: '#voiceovers',
+        },
+        secondaryButton: {
+          text: 'Hoe wij werken',
+          url: '/hoe-het-werkt',
+        },
+        heroImage: '/header-image.png',
+        stats: [
+          { number: '14', label: 'Stemacteurs' },
+          { number: '<48u', label: 'Snelle levering' },
+          { number: '9.1/10', label: 'Klantbeoordeling' },
+        ],
+      },
+    } as HomepageSettings;
+  }
+}
+
+export function clearHomepageSettingsCache(): void {
+  cachedSettings = null;
+  cacheExpiry = 0;
+}

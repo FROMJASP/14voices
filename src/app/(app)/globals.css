@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Google Fonts Import for Bricolage Grotesque and Instrument Serif */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -8,11 +11,23 @@
   --color-foreground: var(--foreground);
   --color-title: var(--title);
   --color-text: var(--text);
+  --color-surface: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
   --color-brand-bg: #fcf9f5;
   --color-brand-bg-dark: #0a0a0a;
-  --font-sans: var(--font-sans);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-blue: var(--accent-blue);
+  --font-sans: var(--font-bricolage);
   --font-mono: var(--font-mono);
-  --font-serif: var(--font-serif);
+  --font-serif: var(--font-instrument);
+  --font-bricolage: var(--font-bricolage);
+  --font-instrument: var(--font-instrument);
+  --nav-height: 64px;
+  --top-bar-height: 36px;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -38,7 +53,6 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -147,27 +161,46 @@
   animation: ripple 4s ease-in-out infinite;
 }
 
+/* CSS Variables - Matching mockup exactly */
 :root {
-  --background: #fafafa;
-  --foreground: rgb(9, 9, 11);
-  --title: #333333;
-  --text: rgb(9, 9, 11);
-  --card: #ffffff;
-  --card-foreground: rgb(9, 9, 11);
-  --popover: #ffffff;
-  --popover-foreground: rgb(9, 9, 11);
-  --primary: #18f109;
-  --primary-foreground: #000000;
+  --primary: #6366f1;
+  --primary-hover: #5558e8;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --background: #ffffff;
+  --surface: #f9fafb;
+  --border: #e5e7eb;
+  --accent-purple: #a855f7;
+  --accent-blue: #3b82f6;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --font-instrument: 'Instrument Serif', serif;
+  --font-bricolage: 'Bricolage Grotesque', sans-serif;
+  --nav-height: 64px;
+  --top-bar-height: 36px;
+
+  /* Legacy compatibility */
+  --foreground: var(--text-primary);
+  --title: var(--text-primary);
+  --text: var(--text-primary);
+  --card: var(--background);
+  --card-foreground: var(--text-primary);
+  --popover: var(--background);
+  --popover-foreground: var(--text-primary);
+  --primary-foreground: #ffffff;
   --secondary: #e8e8e8;
   --secondary-foreground: #143f08;
   --muted: #ebebea;
-  --muted-foreground: rgb(9, 9, 11);
+  --muted-foreground: var(--text-primary);
   --accent: #ededed;
   --accent-foreground: #333333;
   --destructive: #e21313;
   --destructive-foreground: #ff8989;
-  --border: #e3e3e3;
-  --input: #ffffff;
+  --input: var(--background);
   --ring: #ebaa3a;
   --chart-1: #c57f08;
   --chart-2: #76542d;
@@ -182,54 +215,52 @@
   --sidebar-accent-foreground: #000000;
   --sidebar-border: #f2f2f2;
   --sidebar-ring: #c57f08;
-  --font-sans: var(--font-bricolage), 'Bricolage Grotesque', sans-serif;
-  --font-serif: var(--font-instrument-serif), 'Instrument Serif', serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: var(--font-bricolage);
+  --font-serif: var(--font-instrument);
+  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
   --radius: 0.6rem;
-  --shadow-2xs: 0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.07);
-  --shadow-xs: 0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.07);
-  --shadow-sm:
-    0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.14),
-    0px 1px 2px -1px hsl(237.7778 55.102% 51.9608% / 0.14);
-  --shadow:
-    0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.14),
-    0px 1px 2px -1px hsl(237.7778 55.102% 51.9608% / 0.14);
-  --shadow-md:
-    0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.14),
-    0px 2px 4px -1px hsl(237.7778 55.102% 51.9608% / 0.14);
-  --shadow-lg:
-    0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.14),
-    0px 4px 6px -1px hsl(237.7778 55.102% 51.9608% / 0.14);
-  --shadow-xl:
-    0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.14),
-    0px 8px 10px -1px hsl(237.7778 55.102% 51.9608% / 0.14);
-  --shadow-2xl: 0px 0px 10px 0px hsl(237.7778 55.102% 51.9608% / 0.35);
+  --shadow-2xs: var(--shadow-sm);
+  --shadow-xs: var(--shadow-sm);
+  --shadow-2xl: var(--shadow-xl);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
   --font-size-base: 16px;
   --line-height-base: 28px;
 }
 
+/* Dark mode variables - Matching mockup */
+[data-theme='dark'],
 .dark {
-  --background: #212121;
-  --foreground: rgb(250, 250, 250);
-  --title: #ffffff;
-  --text: rgb(250, 250, 250);
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --background: #0a0a0a;
+  --surface: #1a1a1a;
+  --border: #374151;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+
+  /* Legacy compatibility */
+  --foreground: var(--text-primary);
+  --title: var(--text-primary);
+  --text: var(--text-primary);
   --card: #171717;
-  --card-foreground: rgb(250, 250, 250);
+  --card-foreground: var(--text-primary);
   --popover: #262626;
-  --popover-foreground: rgb(250, 250, 250);
-  --primary: #18f109;
-  --primary-foreground: #000000;
+  --popover-foreground: var(--text-primary);
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
   --secondary: #292929;
   --secondary-foreground: #fafafa;
   --muted: #262626;
-  --muted-foreground: rgb(250, 250, 250);
+  --muted-foreground: var(--text-primary);
   --accent: #292a22;
   --accent-foreground: #ffffff;
   --destructive: #e21313;
   --destructive-foreground: #ffffff;
-  --border: #404040;
   --input: #404040;
   --ring: #c57f08;
   --chart-1: #e1a404;
@@ -245,24 +276,9 @@
   --sidebar-accent-foreground: #332900;
   --sidebar-border: #404040;
   --sidebar-ring: #c57f08;
-  --font-sans: var(--font-bricolage), 'Bricolage Grotesque', sans-serif;
-  --font-serif: var(--font-instrument-serif), 'Instrument Serif', serif;
-  --font-mono: var(--font-geist-mono), monospace;
-  --radius: 0.6rem;
-  --shadow-2xs: 0px 0px 10px 0px hsl(0 0% 10.1961% / 0.07);
-  --shadow-xs: 0px 0px 10px 0px hsl(0 0% 10.1961% / 0.07);
-  --shadow-sm:
-    0px 0px 10px 0px hsl(0 0% 10.1961% / 0.14), 0px 1px 2px -1px hsl(0 0% 10.1961% / 0.14);
-  --shadow: 0px 0px 10px 0px hsl(0 0% 10.1961% / 0.14), 0px 1px 2px -1px hsl(0 0% 10.1961% / 0.14);
-  --shadow-md:
-    0px 0px 10px 0px hsl(0 0% 10.1961% / 0.14), 0px 2px 4px -1px hsl(0 0% 10.1961% / 0.14);
-  --shadow-lg:
-    0px 0px 10px 0px hsl(0 0% 10.1961% / 0.14), 0px 4px 6px -1px hsl(0 0% 10.1961% / 0.14);
-  --shadow-xl:
-    0px 0px 10px 0px hsl(0 0% 10.1961% / 0.14), 0px 8px 10px -1px hsl(0 0% 10.1961% / 0.14);
-  --shadow-2xl: 0px 0px 10px 0px hsl(0 0% 10.1961% / 0.35);
-  --font-size-base: 16px;
-  --line-height-base: 28px;
+  --shadow-2xs: var(--shadow-sm);
+  --shadow-xs: var(--shadow-sm);
+  --shadow-2xl: var(--shadow-xl);
 }
 
 /* Custom timing functions */
@@ -405,7 +421,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-sans);
+    font-family: var(--font-bricolage);
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
   }
@@ -457,6 +473,18 @@
 
   .text-normal {
     color: var(--text);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
   }
 
   /* Safe area padding for mobile devices */
@@ -520,5 +548,164 @@
   /* Corner where both scrollbars meet */
   *::-webkit-scrollbar-corner {
     background: transparent;
+  }
+
+  /* Dropdown animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-in-from-top-2 {
+    from {
+      transform: translateY(-8px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation-fill-mode: both;
+  }
+
+  .fade-in {
+    animation-name: fade-in;
+  }
+
+  .slide-in-from-top-2 {
+    animation-name: slide-in-from-top-2;
+  }
+
+  .duration-200 {
+    animation-duration: 200ms;
+  }
+
+  /* Mockup Override Styles - Force exact styling to match mockup */
+
+  /* Top Bar Overrides */
+  .top-bar-override {
+    height: 36px !important;
+    font-size: 13px !important;
+    background-color: var(--background) !important;
+  }
+
+  .top-bar-override .contact-item {
+    gap: 8px !important;
+    font-size: 13px !important;
+  }
+
+  .top-bar-override .top-bar-content {
+    gap: 40px !important;
+  }
+
+  /* Navigation Overrides */
+  .nav-override {
+    height: 64px !important;
+    background-color: var(--background) !important;
+  }
+
+  .nav-override .logo {
+    font-size: 32px !important;
+    font-family: var(--font-instrument) !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.02em !important;
+    margin-right: 48px !important;
+  }
+
+  .nav-override .nav-menu {
+    gap: 20px !important;
+    margin-left: 48px !important;
+  }
+
+  .nav-override .nav-actions {
+    gap: 20px !important;
+  }
+
+  /* Navigation Item Overrides - Force transparent style */
+  .nav-item-override {
+    background: transparent !important;
+    border: none !important;
+    padding: 10px 18px !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    color: var(--text-primary) !important;
+    text-decoration: none !important;
+    transition: opacity 0.2s ease !important;
+    transform: none !important;
+  }
+
+  .nav-item-override:hover {
+    background: transparent !important;
+    border: none !important;
+    opacity: 0.7 !important;
+    transform: none !important;
+  }
+
+  /* CTA Button Override */
+  .cta-button-override {
+    background-color: #1a1a1a !important;
+    color: white !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    text-decoration: none !important;
+    transition: all 0.2s !important;
+  }
+
+  /* Hero Button Overrides */
+  .hero-primary-button-override {
+    background-color: #1a1a1a !important;
+    color: white !important;
+    padding: 14px 28px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    text-decoration: none !important;
+    border: none !important;
+  }
+
+  .hero-secondary-button-override {
+    background-color: transparent !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border) !important;
+    padding: 14px 28px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    text-decoration: none !important;
+  }
+
+  /* Cart Button Override */
+  .cart-button-override {
+    background: none !important;
+    border: none !important;
+    padding: 6px !important;
+    color: var(--text-primary) !important;
+    border-radius: 6px !important;
+    transition: background-color 0.2s !important;
+  }
+
+  .cart-button-override:hover {
+    background-color: var(--surface) !important;
+  }
+
+  .cart-count-override {
+    position: absolute !important;
+    top: -2px !important;
+    right: -2px !important;
+    background-color: var(--primary) !important;
+    color: black !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    padding: 2px 5px !important;
+    border-radius: 8px !important;
+    min-width: 16px !important;
+    text-align: center !important;
   }
 }

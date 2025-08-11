@@ -2,19 +2,20 @@
 
 ## Tech Stack
 
-- **Framework**: Next.js 15.3.4 (App Router)
-- **CMS**: Payload CMS 3.0 (beta)
+- **Framework**: Next.js 15.4.5 (App Router)
+- **CMS**: Payload CMS 3.50.0
 - **Database**: PostgreSQL (via @payloadcms/db-postgres)
 - **Styling**: Tailwind CSS v4
 - **Authentication**: Built-in Payload auth
 - **Media Storage**: Vercel Blob
 - **Animation**: Motion (Framer Motion v12)
-- **Email**: Resend API
+- **Email**: Resend API with custom email marketing system
 - **TypeScript**: v5 with strict mode
 - **Error Monitoring**: Sentry with Discord alerts
 - **Testing**: Playwright (E2E) & Vitest (Unit)
 - **Code Quality**: ESLint, Prettier, Husky
-- **Package Manager**: Bun (required)
+- **Package Manager**: Bun (required - npm/yarn will not work)
+- **Cache & Rate Limiting**: Redis (optional, with in-memory fallback)
 
 ## Getting Started
 
@@ -57,6 +58,18 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) to see the application.
 
+## Key Features
+
+- **Voice Talent Management**: Browse and filter professional voice actors
+- **Production Ordering**: Custom order flow for different production types
+- **Email Marketing**: Built-in email campaign system with audience management
+- **Price Calculator**: Dynamic pricing based on production requirements
+- **Admin Dashboard**: Full CMS control via Payload admin panel
+- **Dark Mode**: Full theme support with CSS variables
+- **Responsive Design**: Mobile-first approach with Tailwind CSS v4
+- **Performance**: Redis caching, image optimization, lazy loading
+- **Security**: Rate limiting, input validation, CSP headers
+
 ## Project Structure
 
 ```
@@ -69,12 +82,12 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 │   ├── collections/        # Payload CMS collections
 │   ├── components/         # React components
 │   │   ├── admin/          # Payload admin customizations
-│   │   ├── features/       # Feature-specific components
-│   │   ├── layout/         # Layout components
-│   │   ├── renderers/      # Page & section renderers
-│   │   ├── sections/       # Page sections
-│   │   ├── ui/             # Reusable UI components
-│   │   └── widgets/        # Widget components
+│   │   ├── common/         # Shared, reusable components
+│   │   │   ├── layout/     # Layout components
+│   │   │   ├── ui/         # Basic UI components
+│   │   │   └── widgets/    # Complex reusable widgets
+│   │   ├── domains/        # Domain-specific components
+│   │   └── features/       # Feature-specific components
 │   ├── domains/            # Domain-driven business logic
 │   │   ├── email/          # Email marketing domain
 │   │   ├── booking/        # Bookings & scripts domain

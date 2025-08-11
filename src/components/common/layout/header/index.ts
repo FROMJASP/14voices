@@ -1,9 +1,14 @@
 // Header components
 export { Header } from './Header';
-export { AnnouncementBar } from './announcement-bar';
-export type { AnnouncementBarProps, AnnouncementBarData } from './announcement-bar';
 
+// Navigation
 export { Navigation, ThemeToggle, MobileMenu } from './navigation';
-export type { NavigationProps, MenuItem } from './navigation';
+export type { NavigationProps, MenuItem, NavigationSettings } from './navigation';
 
+// Logo
 export { Logo } from './logo';
+export type { LogoSettings } from './logo';
+
+// Info Navbar
+export { InfoNavbar } from './info-navbar';
+export type { InfoNavbarProps, InfoNavbarData } from './info-navbar';

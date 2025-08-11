@@ -1,5 +1,81 @@
 # CLAUDE.md
 
+## Recent Updates (January 2025)
+
+### Navigation & Hero Section Redesign
+
+The navbar and hero section have been completely redesigned to match the mockup at `/public/mockups/navbar-hero-redesign/`:
+
+**Changes Made**:
+
+1. **InfoNavbar Component**
+   - New top information bar above main navigation
+   - Uses CSS variables for all colors (theme-aware)
+   - Removed dividers, uses proper spacing (40px gap)
+   - Located at `src/components/common/layout/header/info-navbar/`
+
+2. **Navigation Component Updates**
+   - Removed "Mijn omgeving" button
+   - Changed Login from button to minimal text link
+   - Fixed duplicate mobile menu elements on desktop
+   - All styling uses CSS variables for proper dark mode support
+
+3. **Hero Section Redesign**
+   - Removed old animated SVG background
+   - Removed rotating word effect component
+   - Updated to clean, modern design with proper font weights (800 for titles)
+   - Fixed button padding (10px 20px instead of 14px 28px)
+   - All text uses theme CSS variables
+
+4. **Font Configuration**
+   - Updated Bricolage Grotesque to include weight 800
+   - Fixed font weight issues in hero title
+
+**Component Structure**:
+
+```
+src/components/
+├── common/layout/header/
+│   ├── info-navbar/      # Info navbar component (top bar)
+│   │   ├── InfoNavbar.tsx
+│   │   ├── InfoNavbar.types.ts
+│   │   └── index.ts
+│   ├── navigation/       # Main navigation components
+│   │   ├── Navigation.tsx
+│   │   ├── Navigation.types.ts
+│   │   ├── NavigationItem.tsx
+│   │   ├── ThemeToggle.tsx
+│   │   ├── MobileMenu.tsx
+│   │   └── index.ts
+│   ├── logo/            # Logo component
+│   │   ├── Logo.tsx
+│   │   ├── Logo.types.ts
+│   │   └── index.ts
+│   ├── Header.tsx       # Combines InfoNavbar + Navigation
+│   └── index.ts
+└── features/homepage/
+    ├── HeroSection.tsx   # Homepage hero section
+    ├── HomepageContainer.tsx
+    └── index.ts
+```
+
+**Theme Variables Used**:
+
+- `--text-primary`: Main text color
+- `--text-secondary`: Secondary/muted text
+- `--background`: Background color
+- `--surface`: Surface color for cards/dropdowns
+- `--border`: Border color
+- `--primary`: Primary accent color
+
+All components now properly support dark mode through CSS variables instead of hardcoded colors.
+
+**Removed Components**:
+
+- `TopBar` - Redundant with InfoNavbar
+- `AnnouncementBar` - Old animated banner component not in new design
+- `BannerPreview` - Admin component for AnnouncementBar
+
 ## Critical Production Issues & Solutions
 
 ### Blank Page with CSP Errors
@@ -68,6 +144,8 @@ Refused to execute inline script because it violates the following Content Secur
      }
    }
    ```
+
+   **Latest Fix (Aug 2025)**: Fixed dotenv import in reset-admin-access.ts with environment check
 
 3. **Missing Platform-Specific Binaries**
    - Sharp, lightningcss require platform-specific binaries
@@ -183,7 +261,7 @@ src/
 │   ├── common/           # Shared, reusable components
 │   │   ├── layout/       # Layout components
 │   │   │   ├── footer/   # Footer component
-│   │   │   └── header/   # Header with navigation & banner
+│   │   │   └── header/   # Header with navigation & info navbar
 │   │   ├── ui/           # Basic UI components
 │   │   │   └── magic/    # Magic UI components
 │   │   └── widgets/      # Complex reusable widgets
@@ -326,10 +404,23 @@ When you run `git push`, the following checks are automatically performed:
 
 1. TypeScript compilation check
 2. Dependency validation (dev vs prod)
-3. Common import issue detection
+3. Common import issue detection (including dynamic imports)
 4. Full production build test
 
 **If any check fails, the push will be blocked** to prevent breaking production.
+
+**Enhanced Validation System** (Aug 2025):
+
+- `bun run validate:pre-push` - Comprehensive validation including:
+  - TypeScript compilation check
+  - Dependency validation with dynamic import detection
+  - Common import issue detection
+  - Full production build test
+  - Clear error reporting with fix suggestions
+- `validate-dependencies.js` now detects:
+  - Dynamic imports (e.g., `await import('dotenv')`)
+  - Unguarded dev dependency imports
+  - CSS imports that need dependencies
 
 ### MANDATORY Before Pushing Code
 
@@ -517,3 +608,14 @@ If production build fails:
    - Check Vercel build logs carefully
    - Compare with local build output
    - Ensure environment variables match
+
+### Why Build Failures Keep Happening
+
+**Vercel's build environment is different from local development**:
+
+- **Package Manager**: Vercel uses npm, not Bun
+- **Dependencies**: Vercel doesn't install devDependencies in production
+- **Type Checking**: Type errors that TypeScript ignores locally can fail on Vercel
+- **Dynamic Imports**: Can fail if dependencies aren't properly categorized
+
+The enhanced validation system catches these differences before deployment.

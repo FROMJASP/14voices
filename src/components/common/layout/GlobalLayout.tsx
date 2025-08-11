@@ -2,31 +2,32 @@
 
 import { Navigation } from '@/components/common/layout/header/navigation';
 import { Footer } from './footer';
-import {
-  AnnouncementBar,
-  type AnnouncementBarData,
-} from '@/components/common/layout/header/announcement-bar';
+import { InfoNavbar, type InfoNavbarData } from '@/components/common/layout/header/info-navbar';
 import { ClientFaviconUpdater } from '@/components/common/layout/ClientFaviconUpdater';
 
 interface GlobalLayoutProps {
   children: React.ReactNode;
-  showBanner?: boolean;
-  bannerData?: AnnouncementBarData;
+  showInfoNavbar?: boolean;
+  infoNavbarData?: InfoNavbarData;
 }
 
-export function GlobalLayout({ children, showBanner = true, bannerData }: GlobalLayoutProps) {
+export function GlobalLayout({
+  children,
+  showInfoNavbar = true,
+  infoNavbarData,
+}: GlobalLayoutProps) {
   return (
     <>
       {/* Client-side favicon updater with cache-busting */}
       <ClientFaviconUpdater />
 
-      {/* Simple, clean layout with navbar, optional banner, content, and footer */}
+      {/* Simple, clean layout with info navbar, navbar, content, and footer */}
       <div className="min-h-screen flex flex-col">
-        {/* Banner */}
-        {showBanner && bannerData && <AnnouncementBar data={bannerData} />}
+        {/* Info Navbar */}
+        {showInfoNavbar && infoNavbarData && <InfoNavbar data={infoNavbarData} />}
 
         {/* Navigation */}
-        <Navigation />
+        <Navigation infoNavbarData={infoNavbarData} />
 
         {/* Main content area */}
         <main className="flex-1">{children}</main>

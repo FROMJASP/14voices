@@ -381,7 +381,7 @@ export const VoiceoverSearchFieldDesignOptimized = memo(
     return (
       <div
         id="voiceover-showcase"
-        className={`min-h-screen bg-white dark:bg-background ${bricolageGrotesque.variable} ${instrumentSerif.variable} font-bricolage`}
+        className={`min-h-screen bg-[#f5f5f5] dark:bg-[#1a1a1a] ${bricolageGrotesque.variable} ${instrumentSerif.variable} font-bricolage`}
       >
         <div className="relative">
           {/* Background Pattern - Minimal and clean */}
@@ -502,7 +502,7 @@ export const VoiceoverSearchFieldDesignOptimized = memo(
         </div>
 
         {/* Tabs Section */}
-        <div className="sticky top-0 z-40 bg-[#fcf9f5] dark:bg-[#1a1a1a] border-b border-border">
+        <div className="sticky top-0 z-40 bg-[#f5f5f5] dark:bg-[#1a1a1a] border-b border-border">
           <div className="w-full overflow-x-auto scrollbar-hide">
             <div className="px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
               <div className="flex items-center gap-2 py-4 md:justify-center">

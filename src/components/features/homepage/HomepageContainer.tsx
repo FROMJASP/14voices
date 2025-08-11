@@ -3,8 +3,9 @@
 import React, { useState, useCallback, lazy, Suspense, memo } from 'react';
 import { usePathname } from 'next/navigation';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
-import { VoiceoverSearchFieldDesignOptimized } from '@/components/domains/voiceover/VoiceoverSearchField';
 import { UnifiedPriceCalculatorOptimized } from '@/components/domains/pricing';
+import { HeroSection } from './HeroSection';
+import type { HomepageSettings } from '@/lib/homepage-settings';
 import { LoadingSpinner } from '@/components/common/ui';
 import type { TransformedVoiceover } from '@/types/voiceover';
 
@@ -37,6 +38,7 @@ interface HomepageWithDrawerProps {
     beschikbaar: boolean;
     availabilityText: string;
   })[];
+  heroSettings: HomepageSettings;
 }
 
 // Memoized loading fallback component
@@ -50,19 +52,18 @@ const DrawerLoadingFallback = memo(() => (
 DrawerLoadingFallback.displayName = 'DrawerLoadingFallback';
 
 // Memoized main content to prevent re-renders when drawer state changes
-const MainContent = memo(
-  ({ voiceovers }: { voiceovers: HomepageWithDrawerProps['voiceovers'] }) => (
-    <div>
-      <VoiceoverSearchFieldDesignOptimized voiceovers={voiceovers} />
-      <UnifiedPriceCalculatorOptimized />
-    </div>
-  )
-);
+const MainContent = memo(({ heroSettings }: { heroSettings: HomepageSettings }) => (
+  <div>
+    <HeroSection heroSettings={heroSettings} />
+    <UnifiedPriceCalculatorOptimized />
+  </div>
+));
 
 MainContent.displayName = 'MainContent';
 
 export const HomepageWithDrawerOptimized = memo(function HomepageWithDrawer({
   voiceovers,
+  heroSettings,
 }: HomepageWithDrawerProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedProduction, setSelectedProduction] = useState<string | null>(null);
@@ -94,7 +95,7 @@ export const HomepageWithDrawerOptimized = memo(function HomepageWithDrawer({
 
   return (
     <VoiceoverProvider>
-      <MainContent voiceovers={voiceovers} />
+      <MainContent heroSettings={heroSettings} />
 
       {/* Only render drawer when needed */}
       {isDrawerOpen && (
