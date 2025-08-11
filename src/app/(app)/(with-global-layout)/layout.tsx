@@ -2,22 +2,23 @@ import { GlobalLayout } from '@/components/common/layout';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import globalCache from '@/lib/cache';
-import type { AnnouncementBarData } from '@/components/common/layout/header/announcement-bar';
+import type { InfoNavbarData } from '@/components/common/layout/header/info-navbar';
 
-async function getBannerData(): Promise<AnnouncementBarData> {
-  const cacheKey = 'site-settings:banner';
+async function getInfoNavbarData(): Promise<InfoNavbarData> {
+  const cacheKey = 'site-settings:info-navbar';
   const cacheTTL = 1000 * 60 * 30; // 30 minutes cache
 
   return await globalCache.wrap(
     cacheKey,
     async () => {
-      const defaultBannerData: AnnouncementBarData = {
-        enabled: false,
-        message: '',
-        linkType: 'none',
-        linkUrl: '',
-        dismissible: true,
-        style: 'gradient',
+      const defaultInfoNavbarData: InfoNavbarData = {
+        enabled: true,
+        whatsappNumber: '+31 6 12345678',
+        email: 'casting@14voices.com',
+        quickLinks: [
+          { label: 'Veelgestelde vragen', url: '/veelgestelde-vragen' },
+          { label: 'Blog', url: '/blog' },
+        ],
       };
 
       try {
@@ -26,44 +27,29 @@ async function getBannerData(): Promise<AnnouncementBarData> {
           slug: 'site-settings',
         });
 
-        if (siteSettings?.banner) {
-          const { banner } = siteSettings;
-          const bannerData: AnnouncementBarData = {
-            enabled: banner.enabled || false,
-            message: banner.message || '',
-            linkType: banner.linkType || 'none',
-            linkUrl: banner.linkUrl || '',
-            dismissible: banner.dismissible !== false,
-            style: banner.style || 'gradient',
+        // @ts-expect-error - infoNavbar types will be available after schema regeneration
+        if (siteSettings?.infoNavbar) {
+          // @ts-expect-error - infoNavbar types will be available after schema regeneration
+          const { infoNavbar } = siteSettings;
+          return {
+            enabled: infoNavbar.enabled !== false,
+            whatsappNumber: infoNavbar.whatsappNumber || defaultInfoNavbarData.whatsappNumber,
+            email: infoNavbar.email || defaultInfoNavbarData.email,
+            quickLinks: infoNavbar.quickLinks || defaultInfoNavbarData.quickLinks,
           };
-
-          // Handle page relationship for linkUrl
-          if (banner.linkType === 'page' && banner.linkPage) {
-            const pageId =
-              typeof banner.linkPage === 'object' ? banner.linkPage.id : banner.linkPage;
-            const page = await payload.findByID({
-              collection: 'pages',
-              id: pageId,
-            });
-            if (page) {
-              bannerData.linkUrl = `/${page.slug}`;
-            }
-          }
-
-          return bannerData;
         }
       } catch (error) {
         console.error('Failed to fetch site settings:', error);
       }
 
-      return defaultBannerData;
+      return defaultInfoNavbarData;
     },
     cacheTTL
   );
 }
 
 export default async function WithGlobalLayout({ children }: { children: React.ReactNode }) {
-  const bannerData = await getBannerData();
+  const infoNavbarData = await getInfoNavbarData();
 
-  return <GlobalLayout bannerData={bannerData}>{children}</GlobalLayout>;
+  return <GlobalLayout infoNavbarData={infoNavbarData}>{children}</GlobalLayout>;
 }
