@@ -67,21 +67,16 @@ export function MobileMenu({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop overlay with glass effect */}
+          {/* Simple backdrop overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            onTouchMove={(e) => {
-              // Prevent touch scrolling on backdrop
-              e.preventDefault();
-            }}
-            className="fixed inset-0 z-[100] lg:hidden backdrop-blur-md"
+            className="fixed inset-0 z-[100] lg:hidden"
             style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.4)',
-              touchAction: 'none',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
             }}
           />
 
@@ -93,15 +88,8 @@ export function MobileMenu({
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className={`fixed top-0 right-0 bottom-0 w-full max-w-sm sm:max-w-md bg-white dark:bg-background shadow-xl z-[101] lg:hidden flex flex-col ${instrumentSerif.variable} ${bricolageGrotesque.variable}`}
             style={{
-              top: 0,
-              right: 0,
-              bottom: 0,
               height: '100vh',
-              overflow: 'hidden', // Changed from overflowY to overflow to prevent any scrolling on the container
-            }}
-            onTouchMove={(e) => {
-              // Allow touch events within the menu (they'll be handled by the scrollable content)
-              e.stopPropagation();
+              overflow: 'hidden',
             }}
           >
             {/* Header */}

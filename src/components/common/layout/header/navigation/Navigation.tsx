@@ -55,42 +55,24 @@ export function Navigation({
     setMounted(true);
   }, []);
 
-  // Robust body scroll lock for mobile devices
+  // Simple body scroll lock and page blur effect
   useEffect(() => {
+    const body = document.body;
+
     if (isOpen) {
-      // Store current scroll position
-      const scrollY = window.scrollY;
-
-      // Apply multiple overflow locks for different browsers/devices
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-
-      // Also lock the html element for iOS Safari
-      document.documentElement.style.overflow = 'hidden';
-
-      // Store scroll position for restoration
-      document.body.dataset.scrollY = scrollY.toString();
+      // Prevent scrolling and blur the page content
+      body.style.overflow = 'hidden';
+      body.classList.add('mobile-menu-open');
+    } else {
+      // Restore scrolling and remove blur
+      body.style.overflow = '';
+      body.classList.remove('mobile-menu-open');
     }
 
-    // Cleanup function that runs when isOpen changes or component unmounts
+    // Cleanup on unmount
     return () => {
-      // Only restore if we have a stored scroll position (meaning we applied the lock)
-      if (document.body.dataset.scrollY !== undefined) {
-        const savedScrollY = parseInt(document.body.dataset.scrollY || '0', 10);
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.documentElement.style.overflow = '';
-
-        // Restore scroll position
-        window.scrollTo(0, savedScrollY);
-
-        // Clean up data attribute
-        delete document.body.dataset.scrollY;
-      }
+      body.style.overflow = '';
+      body.classList.remove('mobile-menu-open');
     };
   }, [isOpen]);
 

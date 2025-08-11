@@ -724,4 +724,21 @@
     min-width: 16px !important;
     text-align: center !important;
   }
+
+  /* Mobile menu blur effect */
+  body.mobile-menu-open {
+    overflow: hidden;
+  }
+
+  body.mobile-menu-open > div:first-child,
+  body.mobile-menu-open > #__next {
+    filter: blur(4px);
+    transition: filter 0.3s ease;
+  }
+
+  body:not(.mobile-menu-open) > div:first-child,
+  body:not(.mobile-menu-open) > #__next {
+    filter: none;
+    transition: filter 0.3s ease;
+  }
 }
