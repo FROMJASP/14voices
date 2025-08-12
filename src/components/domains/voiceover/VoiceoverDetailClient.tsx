@@ -1,488 +1,621 @@
 'use client';
 
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Bricolage_Grotesque } from 'next/font/google';
-import {
-  ArrowLeft,
-  Play,
-  Pause,
-  Calendar,
-  Check,
-  ChevronRight,
-  User,
-  Download,
-} from 'lucide-react';
-import Link from 'next/link';
+import { ShoppingCart, User, Tag, ArrowLeft, FileText, Music } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { TransformedVoiceover } from '@/types/voiceover';
+import { SmartAudioPlayer } from './SmartAudioPlayer';
+import { Button } from '@/components/common/ui';
 import Image from 'next/image';
-import { useVoiceover, scrollToPriceCalculator } from '@/contexts/VoiceoverContext';
+import Link from 'next/link';
 
-const bricolageGrotesque = Bricolage_Grotesque({
-  weight: ['300', '400', '500', '600', '700', '800'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-bricolage',
-});
+// shadcn/ui components
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 
-interface VoiceoverData {
-  id: string;
-  name: string;
-  slug: string;
-  tags: string[];
-  color: string;
-  beschikbaar: boolean;
-  availabilityText: string;
-  demos: Array<{
-    id: string;
-    title: string;
-    url: string;
-    duration: string;
-  }>;
-  profilePhoto?: string | null;
-  description?: string;
-  cohort?: {
-    name: string;
-    color: string;
-  } | null;
-}
-
-interface VoiceoverDetailClientNewProps {
-  voiceover: VoiceoverData;
-}
-
-// Helper function to get first name only
-function getFirstName(fullName: string): string {
-  return fullName.split(' ')[0];
-}
-
-export function VoiceoverDetailClientNew({ voiceover }: VoiceoverDetailClientNewProps) {
-  const { selectedVoiceover, setSelectedVoiceover } = useVoiceover();
-  const [activeDemo, setActiveDemo] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const progressRef = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const animationRef = useRef<number | null>(null);
-
-  const isSelected = selectedVoiceover?.id === voiceover.id;
-
-  // Get first name only
-  const firstName = useMemo(() => getFirstName(voiceover.name), [voiceover.name]);
-
-  // Initialize audio
-  React.useEffect(() => {
-    if (voiceover.demos.length > 0) {
-      audioRef.current = new Audio(voiceover.demos[activeDemo].url);
-      audioRef.current.addEventListener('loadedmetadata', () => {
-        // Audio loaded
-      });
-      audioRef.current.addEventListener('ended', () => {
-        setIsPlaying(false);
-        setProgress(0);
-      });
-    }
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [activeDemo, voiceover.demos]);
-
-  // Update progress smoothly
-  React.useEffect(() => {
-    const updateProgress = () => {
-      if (audioRef.current && isPlaying && !isDragging) {
-        const currentProgress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
-        setProgress(currentProgress);
-        animationRef.current = requestAnimationFrame(updateProgress);
-      }
-    };
-
-    if (isPlaying && !isDragging) {
-      animationRef.current = requestAnimationFrame(updateProgress);
-    } else {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    }
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [isPlaying, isDragging]);
-
-  const handlePlayPause = () => {
-    if (!audioRef.current) return;
-
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play();
-      setIsPlaying(true);
-    }
-  };
-
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!audioRef.current) return;
-
-    const rect = progressRef.current?.getBoundingClientRect();
-    if (rect) {
-      const x = e.clientX - rect.left;
-      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
-      setProgress(percentage);
-
-      const newTime = (percentage / 100) * audioRef.current.duration;
-      audioRef.current.currentTime = newTime;
-    }
-  };
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-    handleProgressClick(e);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isDragging) {
-      handleProgressClick(e);
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleDemoChange = (index: number) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = voiceover.demos[index].url;
-      setIsPlaying(false);
-      setProgress(0);
-    }
-    setActiveDemo(index);
-  };
-
-  const handleSelectVoiceover = () => {
-    setSelectedVoiceover({
-      id: voiceover.id,
-      name: voiceover.name,
-      profilePhoto: voiceover.profilePhoto || undefined,
-      styleTags: voiceover.tags,
-    });
-    scrollToPriceCalculator();
-  };
-
-  // Handle download for demos
-  const handleDownload = useCallback(
-    (demo: { url: string; title: string }, e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const link = document.createElement('a');
-      link.href = demo.url;
-      link.download = `${firstName}_${demo.title}.mp3`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    },
-    [firstName]
+// Define a basic Textarea component since it's not available in the UI folder
+function Textarea({
+  className,
+  ...props
+}: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { className?: string }) {
+  return (
+    <textarea
+      className={`flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className || ''}`}
+      {...props}
+    />
   );
+}
+
+interface VoiceoverDetailClientProps {
+  voiceover: TransformedVoiceover;
+}
+
+// Production types configuration - matches homepage productions
+const PRODUCTION_TYPES = [
+  { value: 'e-learning', label: 'E-learning', requiresWordCount: true },
+  { value: 'radiospot', label: 'Radiospot', requiresWordCount: false, requiresSeconds: true },
+  {
+    value: 'web-commercial',
+    label: 'Web/online commercial',
+    requiresWordCount: false,
+    requiresDuration: true,
+  },
+  {
+    value: 'videoproductie',
+    label: 'Videoproductie',
+    requiresWordCount: false,
+    requiresDuration: true,
+  },
+  {
+    value: 'tv-commercial',
+    label: 'TV commercial',
+    requiresWordCount: false,
+    requiresSeconds: true,
+  },
+  {
+    value: 'voice-response',
+    label: 'Voice response (IVR)',
+    requiresWordCount: false,
+    requiresPrompts: true,
+  },
+] as const;
+
+// Extra options configuration - matches homepage productions
+const EXTRA_OPTIONS = [
+  { value: 'rush-delivery', label: 'Spoed levering (24u)', price: 50 },
+  { value: 'multiple-languages', label: 'Meertalig', price: 25 },
+  { value: 'sync-to-picture', label: 'Sync op beeld', price: 35 },
+  { value: 'raw-audio', label: 'Ruwe audio bestanden', price: 15 },
+  { value: 'studio-recording', label: 'Studio opname', price: 100 },
+  { value: 'same-day-delivery', label: 'Levering zelfde dag', price: 75 },
+] as const;
+
+export function VoiceoverDetailClient({ voiceover }: VoiceoverDetailClientProps) {
+  const [productionType, setProductionType] = useState<string>('');
+  const [wordCount, setWordCount] = useState<string>('');
+  const [versionCount, setVersionCount] = useState<string>('');
+  const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
+  const [script, setScript] = useState<string>('');
+  const [toneOfVoice, setToneOfVoice] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Helper function to get first name only
+  const getFirstName = (fullName: string) => {
+    return fullName.split(' ')[0];
+  };
+
+  const { addItem, setSelectedVoiceover } = useCart();
+
+  // Get current production type config
+  const currentProductionType = PRODUCTION_TYPES.find((type) => type.value === productionType);
+
+  // Calculate pricing
+  const basePrice = useMemo(() => {
+    if (!productionType) return 0;
+
+    // Base pricing per production type (simplified - should come from admin)
+    const basePrices = {
+      commercial: 150,
+      documentaire: 120,
+      'e-learning': 100,
+      ivr: 80,
+      audiobook: 200,
+      podcast: 90,
+      gaming: 130,
+      telephone: 60,
+    };
+
+    return basePrices[productionType as keyof typeof basePrices] || 100;
+  }, [productionType]);
+
+  const wordCountMultiplier = useMemo(() => {
+    const count = parseInt(wordCount);
+    if (isNaN(count) || count <= 0) return 1;
+
+    // Pricing tiers based on word count
+    if (count <= 100) return 1;
+    if (count <= 300) return 1.5;
+    if (count <= 500) return 2;
+    if (count <= 1000) return 3;
+    return Math.ceil(count / 1000) * 3;
+  }, [wordCount]);
+
+  const versionMultiplier = useMemo(() => {
+    const count = parseInt(versionCount);
+    if (isNaN(count) || count <= 0) return 1;
+    return count;
+  }, [versionCount]);
+
+  const extrasPrice = useMemo(() => {
+    return selectedExtras.reduce((total, extraValue) => {
+      const extra = EXTRA_OPTIONS.find((opt) => opt.value === extraValue);
+      return total + (extra?.price || 0);
+    }, 0);
+  }, [selectedExtras]);
+
+  const totalPrice = useMemo(() => {
+    const multiplier =
+      currentProductionType &&
+      'requiresVersions' in currentProductionType &&
+      currentProductionType.requiresVersions
+        ? versionMultiplier
+        : wordCountMultiplier;
+    return basePrice * multiplier + extrasPrice;
+  }, [basePrice, wordCountMultiplier, versionMultiplier, extrasPrice, currentProductionType]);
+
+  const handleExtraToggle = (extraValue: string) => {
+    setSelectedExtras((prev) =>
+      prev.includes(extraValue) ? prev.filter((v) => v !== extraValue) : [...prev, extraValue]
+    );
+  };
+
+  const handleAddToCart = async () => {
+    if (!productionType) {
+      alert('Selecteer een productiesoort');
+      return;
+    }
+
+    const isVersionBased =
+      currentProductionType &&
+      'requiresVersions' in currentProductionType &&
+      currentProductionType.requiresVersions;
+    const inputValue = isVersionBased ? versionCount : wordCount;
+    if (!inputValue || parseInt(inputValue) <= 0) {
+      alert(isVersionBased ? 'Voer het aantal versies in' : 'Voer het aantal woorden in');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Prepare cart item details
+      const details = [
+        `Productiesoort: ${currentProductionType?.label}`,
+        currentProductionType &&
+        'requiresVersions' in currentProductionType &&
+        currentProductionType.requiresVersions
+          ? `Aantal versies: ${versionCount}`
+          : `Aantal woorden: ${wordCount}`,
+        ...selectedExtras.map((extraValue) => {
+          const extra = EXTRA_OPTIONS.find((opt) => opt.value === extraValue);
+          return `${extra?.label} (+€${extra?.price})`;
+        }),
+      ];
+
+      // Add script and tone of voice if provided
+      if (script.trim()) {
+        details.push(`Script: ${script.substring(0, 100)}${script.length > 100 ? '...' : ''}`);
+      }
+      if (toneOfVoice.trim()) {
+        details.push(`Toon van stem: ${toneOfVoice}`);
+      }
+
+      // Add to cart
+      const cartItem = {
+        id: `${voiceover.id}-${productionType}-${Date.now()}`,
+        name: `${voiceover.name} - ${currentProductionType?.label}`,
+        price: totalPrice,
+        details,
+      };
+
+      // Set selected voiceover for context
+      setSelectedVoiceover({
+        id: voiceover.id,
+        name: voiceover.name,
+        slug: voiceover.slug,
+        profilePhoto: voiceover.profilePhoto?.url,
+        tags: voiceover.styleTags?.map((tag) => tag.tag),
+        demos: voiceover.demos.map((demo) => ({
+          id: demo.id,
+          title: demo.title,
+          audioFile: { url: demo.audioFile.url },
+          duration: demo.duration || '0:00',
+        })),
+      });
+
+      addItem(cartItem);
+
+      // Show success feedback
+      alert('Toegevoegd aan winkelwagen!');
+
+      // Reset form
+      setProductionType('');
+      setWordCount('');
+      setVersionCount('');
+      setSelectedExtras([]);
+      setScript('');
+      setToneOfVoice('');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Er ging iets mis. Probeer het opnieuw.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Download function for demo files
+  const handleDownloadDemo = async (audioUrl: string, title: string) => {
+    try {
+      const response = await fetch(audioUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${getFirstName(voiceover.name)}_${title.replace(/[^a-zA-Z0-9]/g, '_')}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Download mislukt. Probeer het opnieuw.');
+    }
+  };
 
   return (
-    <div className={`${bricolageGrotesque.variable} font-bricolage`}>
-      {/* Hero Section with Full Image Background */}
-      <section className="relative min-h-[calc(100vh-4rem)] bg-black overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          {voiceover.profilePhoto ? (
-            <>
-              <Image
-                src={voiceover.profilePhoto}
-                alt={firstName}
-                fill
-                className="object-cover filter grayscale brightness-75"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-            </>
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black">
-              <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                <User className="w-96 h-96 text-white" />
-              </div>
-            </div>
-          )}
-        </div>
+    <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <Link
+          href="/#voiceovers"
+          className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors group"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span className="text-sm font-medium">Terug naar alle stemmen</span>
+        </Link>
+      </div>
 
-        {/* Navigation */}
-        <div className="relative z-20 container mx-auto px-4 pt-8">
-          <Link
-            href="/#voiceovers"
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors group"
-          >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span className="text-sm font-medium">Terug naar overzicht</span>
-          </Link>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-20 container mx-auto px-4 flex items-end min-h-[calc(100vh-4rem)] pb-20">
-          <div className="grid lg:grid-cols-2 gap-12 w-full items-end">
-            {/* Left Column - Info */}
-            <div>
-              {/* Availability Badge */}
-              {!voiceover.beschikbaar && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="inline-flex items-center gap-2 bg-amber-600/90 backdrop-blur-sm rounded-full px-5 py-2.5 mb-6"
-                >
-                  <Calendar size={16} className="text-white" />
-                  <span className="text-white font-medium">
-                    Beschikbaar vanaf {voiceover.availabilityText}
-                  </span>
-                </motion.div>
-              )}
-
-              {/* Name - First name only */}
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-7xl lg:text-8xl font-black text-white leading-[0.9] mb-6"
-              >
-                {firstName}
-              </motion.h1>
-
-              {/* Tags */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex flex-wrap gap-3 mb-8"
-              >
-                {voiceover.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 border border-white/20 font-medium text-sm"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </motion.div>
-
-              {/* Description */}
-              {voiceover.description && (
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-lg text-white/80 leading-relaxed mb-8 max-w-2xl"
-                >
-                  {voiceover.description}
-                </motion.p>
-              )}
-
-              {/* Action Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="flex flex-wrap gap-4"
-              >
-                <motion.button
-                  whileHover={{ scale: voiceover.beschikbaar ? 1.05 : 1 }}
-                  whileTap={{ scale: voiceover.beschikbaar ? 0.95 : 1 }}
-                  onClick={handleSelectVoiceover}
-                  disabled={!voiceover.beschikbaar}
-                  className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center gap-3 ${
-                    !voiceover.beschikbaar
-                      ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed backdrop-blur-sm'
-                      : isSelected
-                        ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
-                        : 'bg-white text-gray-900 hover:bg-gray-100 shadow-lg'
-                  }`}
-                >
-                  {isSelected && <Check className="w-5 h-5" />}
-                  {!voiceover.beschikbaar
-                    ? 'Niet beschikbaar'
-                    : isSelected
-                      ? 'Ga verder'
-                      : 'Selecteer voor project'}
-                  {voiceover.beschikbaar && (
-                    <ChevronRight
-                      className={`w-5 h-5 transition-transform ${isSelected ? 'translate-x-1' : ''}`}
-                    />
-                  )}
-                </motion.button>
-
-                {voiceover.beschikbaar && (
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-white/70 text-sm">Direct beschikbaar</span>
-                  </div>
-                )}
-              </motion.div>
-            </div>
-
-            {/* Right Column - Audio Player */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="bg-black/40 backdrop-blur-2xl rounded-2xl border border-white/10 p-8"
-              >
-                <h2 className="text-2xl font-bold text-white mb-6">Demo&apos;s beluisteren</h2>
-
-                {/* Demo Selector with Download buttons */}
-                <div className="space-y-3 mb-8">
-                  {voiceover.demos.map((demo, index) => (
-                    <div key={demo.id} className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleDemoChange(index)}
-                        className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
-                          activeDemo === index
-                            ? 'bg-white text-gray-900'
-                            : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white'
-                        }`}
-                      >
-                        {demo.title}
-                      </button>
-                      <button
-                        onClick={(e) => handleDownload(demo, e)}
-                        className="p-3 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all"
-                        aria-label={`Download ${demo.title}`}
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+          {/* Left Column - Booking Form (Takes 2 columns) */}
+          <div className="lg:col-span-2 space-y-12">
+            {/* Booking Form Section */}
+            <motion.section initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 text-primary">
+                  <ShoppingCart className="w-5 h-5" />
                 </div>
-
-                {/* Current Demo Info */}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="text-white font-semibold text-lg">
-                      {voiceover.demos[activeDemo]?.title || 'Demo'}
-                    </h3>
-                    <p className="text-white/50 text-sm">
-                      Duur: {voiceover.demos[activeDemo]?.duration || '0:00'}
-                    </p>
-                  </div>
-
-                  {/* Play Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={handlePlayPause}
-                    className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl transition-shadow"
-                  >
-                    {isPlaying ? (
-                      <Pause size={24} className="text-gray-900" />
-                    ) : (
-                      <Play size={24} className="text-gray-900 ml-1" />
-                    )}
-                  </motion.button>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="space-y-3">
-                  <div
-                    ref={progressRef}
-                    className="relative h-2 bg-white/20 rounded-full cursor-pointer group"
-                    onClick={handleProgressClick}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
-                  >
-                    <motion.div
-                      className="absolute inset-y-0 left-0 bg-white rounded-full"
-                      style={{ width: `${progress}%` }}
-                    />
-                    <motion.div
-                      className="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
-                      style={{ left: `calc(${progress}% - 10px)` }}
-                    />
-                  </div>
-
-                  {/* Time Display */}
-                  <div className="flex justify-between text-sm text-white/60">
-                    <span>
-                      {audioRef.current
-                        ? `${Math.floor(((progress / 100) * audioRef.current.duration) / 60)}:${String(Math.floor(((progress / 100) * audioRef.current.duration) % 60)).padStart(2, '0')}`
-                        : '0:00'}
-                    </span>
-                    <span>{voiceover.demos[activeDemo]?.duration || '0:00'}</span>
-                  </div>
-                </div>
-
-                {/* Additional Info */}
-                <div className="mt-8 pt-8 border-t border-white/10">
-                  <p className="text-white/60 text-sm">
-                    {voiceover.demos.length} demo&apos;s beschikbaar • Direct te boeken
+                <div>
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                    Boek {getFirstName(voiceover.name)}
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                    Configureer je voice-over bestelling
                   </p>
                 </div>
-              </motion.div>
-            </div>
+              </div>
+
+              <div className="space-y-8">
+                {/* Production Type Selector */}
+                <div className="space-y-3">
+                  <Label
+                    htmlFor="production-type"
+                    className="text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Productiesoort *
+                  </Label>
+                  <Select value={productionType} onValueChange={setProductionType}>
+                    <SelectTrigger
+                      id="production-type"
+                      className="h-11 border-gray-200 dark:border-gray-800"
+                    >
+                      <SelectValue placeholder="Selecteer productiesoort" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRODUCTION_TYPES.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Word Count or Version Count Input */}
+                {currentProductionType && (
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="count-input"
+                      className="text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      {'requiresVersions' in currentProductionType &&
+                      currentProductionType.requiresVersions
+                        ? 'Aantal versies'
+                        : 'Aantal woorden'}{' '}
+                      *
+                    </Label>
+                    <Input
+                      id="count-input"
+                      type="number"
+                      min="1"
+                      className="h-11 border-gray-200 dark:border-gray-800"
+                      placeholder={
+                        'requiresVersions' in currentProductionType &&
+                        currentProductionType.requiresVersions
+                          ? 'bijv. 3'
+                          : 'bijv. 250'
+                      }
+                      value={
+                        'requiresVersions' in currentProductionType &&
+                        currentProductionType.requiresVersions
+                          ? versionCount
+                          : wordCount
+                      }
+                      onChange={(e) =>
+                        'requiresVersions' in currentProductionType &&
+                        currentProductionType.requiresVersions
+                          ? setVersionCount(e.target.value)
+                          : setWordCount(e.target.value)
+                      }
+                    />
+                  </div>
+                )}
+
+                {/* Extra Options */}
+                <div className="space-y-4">
+                  <Label className="text-sm font-medium text-gray-900 dark:text-white">
+                    Extra opties
+                  </Label>
+                  <div className="border border-gray-200 dark:border-gray-800 rounded-md p-4 space-y-4">
+                    {EXTRA_OPTIONS.map((option) => (
+                      <div key={option.value} className="flex items-center space-x-3">
+                        <Checkbox
+                          id={option.value}
+                          checked={selectedExtras.includes(option.value)}
+                          onCheckedChange={() => handleExtraToggle(option.value)}
+                        />
+                        <Label
+                          htmlFor={option.value}
+                          className="text-sm font-normal flex-1 cursor-pointer text-gray-700 dark:text-gray-300"
+                        >
+                          {option.label}
+                          <span className="text-primary font-medium ml-2">+€{option.price}</span>
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Script Field */}
+                <div className="space-y-3">
+                  <Label
+                    htmlFor="script"
+                    className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Script (optioneel)
+                  </Label>
+                  <Textarea
+                    id="script"
+                    placeholder="Voer hier je script in..."
+                    value={script}
+                    onChange={(e) => setScript(e.target.value)}
+                    className="min-h-[120px] resize-none border-gray-200 dark:border-gray-800"
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Je kunt je script nu invoeren of later toevoegen via je bestelling.
+                  </p>
+                </div>
+
+                {/* Tone of Voice Field */}
+                <div className="space-y-3">
+                  <Label
+                    htmlFor="tone"
+                    className="text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Toon van stem (optioneel)
+                  </Label>
+                  <Input
+                    id="tone"
+                    placeholder="bijv. professioneel, vriendelijk, energiek..."
+                    value={toneOfVoice}
+                    onChange={(e) => setToneOfVoice(e.target.value)}
+                    className="h-11 border-gray-200 dark:border-gray-800"
+                  />
+                </div>
+              </div>
+            </motion.section>
+
+            {/* Price Summary */}
+            {productionType && (
+              <motion.section
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="border-t border-gray-200 dark:border-gray-800 pt-8"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                  Prijsoverzicht
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-400">Basisprijs:</span>
+                    <span className="font-medium text-gray-900 dark:text-white">€{basePrice}</span>
+                  </div>
+
+                  {currentProductionType &&
+                  'requiresVersions' in currentProductionType &&
+                  currentProductionType.requiresVersions
+                    ? versionCount &&
+                      parseInt(versionCount) > 1 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            {versionCount} versies:
+                          </span>
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            €{basePrice * versionMultiplier}
+                          </span>
+                        </div>
+                      )
+                    : wordCount &&
+                      wordCountMultiplier > 1 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            {wordCount} woorden:
+                          </span>
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            €{basePrice * wordCountMultiplier}
+                          </span>
+                        </div>
+                      )}
+
+                  {selectedExtras.length > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">Extra&apos;s:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        €{extrasPrice}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between text-xl font-semibold border-t border-gray-200 dark:border-gray-800 pt-4 mt-6">
+                    <span className="text-gray-900 dark:text-white">Totaal:</span>
+                    <span className="text-primary">€{totalPrice}</span>
+                  </div>
+                </div>
+
+                {/* Add to Cart Button */}
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={
+                    !productionType ||
+                    isSubmitting ||
+                    (currentProductionType &&
+                    'requiresVersions' in currentProductionType &&
+                    currentProductionType.requiresVersions
+                      ? !versionCount || parseInt(versionCount) <= 0
+                      : !wordCount || parseInt(wordCount) <= 0)
+                  }
+                  className="w-full h-12 text-base font-medium mt-8"
+                  size="lg"
+                >
+                  {isSubmitting ? (
+                    'Toevoegen...'
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      Toevoegen aan winkelwagen
+                    </>
+                  )}
+                </Button>
+
+                {/* Help Text */}
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4 leading-relaxed">
+                  Prijzen zijn exclusief BTW. Je kunt de bestelling later aanpassen in je
+                  winkelwagen.
+                </p>
+              </motion.section>
+            )}
+          </div>
+
+          {/* Right Column - Voiceover Profile (Takes 1 column) */}
+          <div className="lg:col-span-1">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="sticky top-20"
+            >
+              <div className="space-y-8">
+                {/* Profile Header */}
+                <section className="text-center space-y-6">
+                  {/* Profile Photo */}
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    className="relative w-24 h-24 mx-auto rounded-full overflow-hidden border border-gray-200 dark:border-gray-800"
+                  >
+                    {voiceover.profilePhoto ? (
+                      <Image
+                        src={voiceover.profilePhoto.url}
+                        alt={
+                          voiceover.profilePhoto.alt ||
+                          `Profile photo of ${getFirstName(voiceover.name)}`
+                        }
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
+                        <User className="w-12 h-12 text-gray-400" />
+                      </div>
+                    )}
+                  </motion.div>
+
+                  {/* Profile Info */}
+                  <div className="space-y-4">
+                    <div>
+                      <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        {getFirstName(voiceover.name)}
+                      </h1>
+                      {voiceover.cohort && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs mt-2 border-current"
+                          style={{
+                            borderColor: voiceover.cohort.color,
+                            color: voiceover.cohort.color,
+                          }}
+                        >
+                          {voiceover.cohort.name}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Bio */}
+                    {voiceover.bio && (
+                      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                        {voiceover.bio}
+                      </p>
+                    )}
+
+                    {/* Style Tags */}
+                    {voiceover.styleTags && voiceover.styleTags.length > 0 && (
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {voiceover.styleTags.map((tagObj, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="text-xs px-2 py-1 border border-gray-200 dark:border-gray-700"
+                          >
+                            <Tag className="w-2.5 h-2.5 mr-1" />
+                            {tagObj.customTag || tagObj.tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </section>
+
+                {/* Demo Players Section */}
+                <section className="border-t border-gray-200 dark:border-gray-800 pt-8">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Music className="w-4 h-4 text-primary" />
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                      Demo&apos;s
+                    </h3>
+                  </div>
+
+                  <SmartAudioPlayer
+                    demos={voiceover.demos}
+                    artistName={getFirstName(voiceover.name)}
+                    onDownload={handleDownloadDemo}
+                  />
+                </section>
+              </div>
+            </motion.div>
           </div>
         </div>
-      </section>
-
-      {/* Additional Info Section */}
-      <section className="bg-[#fcf9f5] dark:bg-gray-900 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Waarom {firstName} kiezen?
-            </h2>
-            <p className="text-lg text-gray-700 dark:text-gray-300 mb-12">
-              {firstName} brengt jouw project tot leven met een unieke stem die perfect past bij
-              jouw merk. Van commercials tot documentaires, {firstName} heeft de ervaring en het
-              talent om jouw boodschap krachtig over te brengen.
-            </p>
-
-            {/* Features Grid */}
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-8 h-8 text-white dark:text-gray-900" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Professionele kwaliteit</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Studio-opnames van de hoogste kwaliteit
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-8 h-8 text-white dark:text-gray-900" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Snelle levering</h3>
-                <p className="text-gray-600 dark:text-gray-400">Binnen 24-48 uur geleverd</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                  <ChevronRight className="w-8 h-8 text-white dark:text-gray-900" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Flexibele aanpassing</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Revisies mogelijk voor het perfecte resultaat
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }
