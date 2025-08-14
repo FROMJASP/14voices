@@ -21,6 +21,7 @@ import { seedSiteSettings } from './site-settings';
 import { seedLayouts } from './layouts';
 import { seedPages } from './pages';
 import { seedVoiceovers } from './voiceovers';
+import { faqSeedData } from './faq';
 
 // Debug: Check if env vars are loaded
 console.log('🔍 Checking environment variables...');
@@ -94,7 +95,27 @@ async function seed() {
     await seedVoiceovers(payload);
     console.log('');
 
-    // 6. Create navigation
+    // 6. Create FAQ items
+    console.log('❓ Creating FAQ items...');
+    const existingFAQ = await payload.find({
+      collection: 'faq',
+      limit: 1,
+    });
+
+    if (existingFAQ.docs.length === 0) {
+      for (const faq of faqSeedData) {
+        await payload.create({
+          collection: 'faq',
+          data: faq,
+        });
+      }
+      console.log(`✓ Created ${faqSeedData.length} FAQ items`);
+    } else {
+      console.log('✓ FAQ items already exist, skipping...');
+    }
+    console.log('');
+
+    // 7. Create navigation
     console.log('🧭 Creating navigation...');
     // Navigation seeding removed - navigation collection is disabled
     console.log('');

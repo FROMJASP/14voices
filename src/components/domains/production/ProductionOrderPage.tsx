@@ -632,7 +632,9 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
     setCartSelectedVoiceover(
       selectedVoiceover
         ? {
+            id: selectedVoiceover.id,
             name: selectedVoiceover.name,
+            slug: selectedVoiceover.name.toLowerCase().replace(/\s+/g, '-'),
             profilePhoto: selectedVoiceover.profilePhoto,
           }
         : undefined

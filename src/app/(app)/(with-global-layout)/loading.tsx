@@ -1,89 +1,106 @@
-import { LoadingSpinner } from '@/components/common/ui';
-import { Mic } from 'lucide-react';
-
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-background">
-      {/* Header skeleton */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 sm:pt-16 lg:pt-20">
-        {/* Process steps skeleton */}
-        <div className="flex items-center justify-center gap-4 mb-4 sm:mb-8">
-          <div className="animate-pulse">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-              <div className="w-20 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+    <div className="min-h-screen bg-background">
+      {/* Hero Section Skeleton */}
+      <section className="hero bg-background px-6 py-10">
+        <div className="hero-container max-w-[1280px] mx-auto px-4 lg:px-[60px] py-8 lg:py-[60px]">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-[60px] items-center">
+            {/* Left Content Skeleton */}
+            <div className="space-y-6">
+              {/* Process Steps Skeleton */}
+              <div className="flex flex-wrap items-center gap-4 animate-pulse">
+                {[1, 2, 3].map((_, index) => (
+                  <div key={index} className="flex items-center gap-4">
+                    <div className="h-4 bg-muted rounded w-20" />
+                    {index < 2 && <span className="text-muted">→</span>}
+                  </div>
+                ))}
+              </div>
+
+              {/* Title Skeleton - 3 lines like actual hero */}
+              <div className="space-y-3 animate-pulse">
+                <div className="h-12 bg-muted rounded w-3/4" />
+                <div className="h-12 bg-muted rounded w-3/4" />
+                <div className="h-12 bg-muted rounded w-2/3" />
+              </div>
+
+              {/* Description Skeleton */}
+              <div className="animate-pulse">
+                <div className="h-6 bg-muted rounded w-full max-w-[440px]" />
+              </div>
+
+              {/* CTA Buttons Skeleton */}
+              <div className="flex flex-row gap-3 animate-pulse">
+                <div className="h-11 bg-muted rounded-[10px] w-36" />
+                <div className="h-11 bg-muted rounded-[10px] w-36 border border-border" />
+              </div>
+
+              {/* Stats Skeleton */}
+              <div className="flex flex-row gap-8 mt-8 animate-pulse">
+                {[1, 2, 3].map((_, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="h-7 bg-muted rounded w-16" />
+                    <div className="h-4 bg-muted rounded w-20" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Content - Image Skeleton (Hidden on mobile/tablet) */}
+            <div className="hidden xl:block animate-pulse">
+              <div 
+                className="relative mx-auto lg:ml-auto max-w-[420px] aspect-[4/5] bg-muted border-2 border-border"
+                style={{
+                  borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+                }}
+              />
             </div>
           </div>
-          <div className="w-8 h-0.5 bg-gray-200 dark:bg-gray-700"></div>
-          <div className="animate-pulse">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-              <div className="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        </div>
+      </section>
+
+      {/* Voiceover Grid Section Skeleton */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          {/* Section Header Skeleton */}
+          <div className="mb-8 animate-pulse">
+            <div className="h-10 bg-muted rounded w-64 mb-4" />
+            <div className="h-6 bg-muted rounded w-96" />
+          </div>
+
+          {/* Filter Controls Skeleton */}
+          <div className="flex items-center justify-between mb-6 animate-pulse">
+            <div className="flex items-center gap-3">
+              <div className="h-10 bg-muted rounded-lg w-24" />
+              <div className="hidden md:block h-10 bg-muted rounded-lg w-20" />
             </div>
+            <div className="h-5 bg-muted rounded w-24" />
           </div>
-          <div className="w-8 h-0.5 bg-gray-200 dark:bg-gray-700"></div>
-          <div className="animate-pulse">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-              <div className="w-20 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            </div>
-          </div>
-        </div>
 
-        {/* Title skeleton */}
-        <div className="text-center mb-8 animate-pulse">
-          <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded mb-4 max-w-md mx-auto"></div>
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded max-w-lg mx-auto"></div>
-        </div>
-
-        {/* Subtitle skeleton */}
-        <div className="animate-pulse mb-10">
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded max-w-2xl mx-auto mb-2"></div>
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded max-w-xl mx-auto"></div>
-        </div>
-
-        {/* Stats skeleton */}
-        <div className="flex items-center justify-center gap-6 mb-8 animate-pulse">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            <div className="w-20 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          </div>
-          <div className="w-px h-5 bg-gray-200 dark:bg-gray-700"></div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            <div className="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          </div>
-          <div className="w-px h-5 bg-gray-200 dark:bg-gray-700"></div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            <div className="w-20 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          {/* Grid Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, index) => (
+              <div key={index} className="group">
+                {/* Card with optimized aspect ratio */}
+                <div className="custom-card-wrapper">
+                  <div className="custom-card animate-pulse">
+                    <div className="relative aspect-[3/4] bg-muted" />
+                  </div>
+                </div>
+                {/* Name and tags below card */}
+                <div className="mt-3 px-1 space-y-2 animate-pulse">
+                  <div className="h-5 bg-muted rounded w-20" />
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-3 bg-muted rounded w-16" />
+                    <span className="w-1 h-1 bg-muted-foreground/40 rounded-full" />
+                    <div className="h-3 bg-muted rounded w-20" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-
-      {/* Tabs skeleton */}
-      <div className="sticky top-0 z-40 bg-[#fcf9f5] dark:bg-[#1a1a1a] border-b border-border">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 py-4 animate-pulse">
-            <div className="px-5 py-2.5 bg-gray-200 dark:bg-gray-700 rounded-full w-24 h-10"></div>
-            <div className="px-5 py-2.5 bg-gray-200 dark:bg-gray-700 rounded-full w-20 h-10"></div>
-            <div className="px-5 py-2.5 bg-gray-200 dark:bg-gray-700 rounded-full w-28 h-10"></div>
-            <div className="px-5 py-2.5 bg-gray-200 dark:bg-gray-700 rounded-full w-22 h-10"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Loading content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center">
-          <Mic className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-50 animate-pulse" />
-          <h3 className="text-xl font-semibold text-foreground mb-4">Stemmen laden...</h3>
-          <p className="text-muted-foreground mb-8">
-            We laden de beschikbare voice-over stemmen voor je.
-          </p>
-          <LoadingSpinner size="large" text="" />
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

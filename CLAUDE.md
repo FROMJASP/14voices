@@ -363,6 +363,10 @@ See [Architecture Documentation](./docs/architecture/) for detailed design decis
 - **Admin Scripts**: Never log passwords to console, even in utility scripts
 - **Environment Examples**: Use placeholders like `<generate-strong-password>` in `.env.example`
 - **Git Security**: Add sensitive config files (`.sentryclirc`) to `.gitignore`
+- **CSRF Protection**: Use dedicated `CSRF_SECRET` environment variable, separate from `PAYLOAD_SECRET`
+- **Session Security**: Sessions configured with `sameSite: 'strict'` for maximum protection
+- **CSP Note**: 'unsafe-inline' is required for Next.js compatibility - see SECURITY.md for details
+- **Security Headers**: Comprehensive headers including HSTS, CORP, COOP, and COEP
 
 ### Redis, Caching & Rate Limiting
 

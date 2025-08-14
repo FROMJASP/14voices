@@ -44,7 +44,7 @@ export function MobileMenu({
   menuItems,
   infoNavbarData,
   navigationSettings = {
-    loginText: 'Login',
+    loginText: 'Log In',
     loginUrl: '/login',
     ctaButtonText: 'Mijn omgeving',
     ctaButtonUrl: '/dashboard',

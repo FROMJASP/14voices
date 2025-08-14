@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
@@ -9,6 +9,7 @@ import { useScrollLock } from '@/hooks/useScrollLock';
 import { ThemeToggle } from './ThemeToggle';
 import { MobileMenu } from './MobileMenu';
 import { NavigationItem } from './NavigationItem';
+import { CartHoverMenu } from '@/components/common/widgets/cart';
 import type { NavigationProps, MenuItem } from './Navigation.types';
 
 // Font configurations
@@ -40,7 +41,7 @@ const defaultMenuItems: MenuItem[] = [
 export function Navigation({
   menuItems = defaultMenuItems,
   navigationSettings = {
-    loginText: 'Login',
+    loginText: 'Log In',
     loginUrl: '/login',
     ctaButtonText: 'Mijn omgeving',
     ctaButtonUrl: '/dashboard',
@@ -50,11 +51,29 @@ export function Navigation({
 }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [hoverStyle, setHoverStyle] = useState({});
+  const [isCartHoverOpen, setIsCartHoverOpen] = useState(false);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cartButtonRef = useRef<HTMLButtonElement>(null);
   const cart = useCart();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (hoveredIndex !== null) {
+      const hoveredElement = itemRefs.current[hoveredIndex];
+      if (hoveredElement) {
+        const { offsetLeft, offsetWidth } = hoveredElement;
+        setHoverStyle({
+          left: `${offsetLeft}px`,
+          width: `${offsetWidth}px`,
+        });
+      }
+    }
+  }, [hoveredIndex]);
 
   // Robust scroll lock with iOS bounce prevention and blur effect
   useScrollLock(isOpen, {
@@ -66,7 +85,7 @@ export function Navigation({
 
   // Use navigation settings or fallback to defaults
   const items = navigationSettings?.mainMenuItems || menuItems;
-  const loginText = navigationSettings?.loginText || 'Login';
+  const loginText = navigationSettings?.loginText || 'Log In';
   const loginUrl = navigationSettings?.loginUrl || '/login';
 
   return (
@@ -122,10 +141,33 @@ export function Navigation({
                   alignItems: 'center',
                   gap: '20px',
                   marginLeft: '48px',
+                  position: 'relative',
                 }}
               >
+                {/* Hover Background */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    height: '36px',
+                    transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                    backgroundColor: 'var(--surface)',
+                    borderRadius: '8px',
+                    opacity: hoveredIndex !== null ? 1 : 0,
+                    ...hoverStyle,
+                  }}
+                />
+                
                 {items.map((item, index) => (
-                  <NavigationItem key={index} item={item} />
+                  <div
+                    key={index}
+                    ref={(el) => {
+                      itemRefs.current[index] = el;
+                    }}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                  >
+                    <NavigationItem item={item} />
+                  </div>
                 ))}
               </div>
             </div>
@@ -143,6 +185,17 @@ export function Navigation({
 
               {/* Shopping Cart */}
               <button
+                ref={cartButtonRef}
+                onClick={() => cart.openDrawer('cart')}
+                onMouseEnter={() => setIsCartHoverOpen(true)}
+                onMouseLeave={(e) => {
+                  // Small delay to allow moving to the hover menu
+                  setTimeout(() => {
+                    if (!e.relatedTarget || !cartButtonRef.current?.contains(e.relatedTarget as Node)) {
+                      setIsCartHoverOpen(false);
+                    }
+                  }, 100);
+                }}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -155,12 +208,7 @@ export function Navigation({
                   justifyContent: 'center',
                   borderRadius: '6px',
                   transition: 'background-color 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--surface)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
+                  backgroundColor: isCartHoverOpen ? 'var(--surface)' : 'transparent',
                 }}
               >
                 <svg
@@ -221,6 +269,7 @@ export function Navigation({
             {/* Mobile Menu Toggle */}
             <div className="flex lg:hidden" style={{ alignItems: 'center', gap: '12px' }}>
               <button
+                onClick={() => cart.openDrawer('cart')}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -288,6 +337,15 @@ export function Navigation({
         infoNavbarData={infoNavbarData}
         navigationSettings={navigationSettings}
       />
+
+      {/* Cart Hover Menu - Desktop only */}
+      <div className="hidden lg:block">
+        <CartHoverMenu
+          isVisible={isCartHoverOpen}
+          onClose={() => setIsCartHoverOpen(false)}
+          triggerRef={cartButtonRef}
+        />
+      </div>
     </>
   );
 }

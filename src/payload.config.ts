@@ -3,7 +3,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { resendAdapter } from '@payloadcms/email-resend';
 // import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
+// import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
 import { en } from '@payloadcms/translations/languages/en';
 import { nl } from '@payloadcms/translations/languages/nl';
 // import { i18n as customI18n } from './i18n/index';
@@ -29,6 +29,7 @@ import Forms from './collections/Forms';
 import FormSubmissions from './collections/FormSubmissions';
 import Testimonials from './collections/Testimonials';
 import SecurityLogs from './collections/SecurityLogs';
+import { FAQ } from './collections/FAQ';
 import { EmailSettings } from './globals/EmailSettings';
 import { SiteSettings } from './globals/SiteSettings';
 import { HomepageSettings } from './globals/HomepageSettings';
@@ -98,6 +99,7 @@ export default buildConfig({
     Forms,
     FormSubmissions,
     Testimonials,
+    FAQ,
     EmailComponents,
     EmailTemplates,
     EmailSequences,
@@ -131,18 +133,19 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
-    ...(process.env.BLOB_READ_WRITE_TOKEN &&
-    process.env.BLOB_READ_WRITE_TOKEN.startsWith('vercel_blob_rw_')
-      ? [
-          vercelBlobStorage({
-            collections: {
-              media: true,
-              scripts: true,
-              invoices: true,
-            },
-            token: process.env.BLOB_READ_WRITE_TOKEN,
-          }),
-        ]
-      : []),
+    // Vercel Blob storage is currently suspended
+    // Uncomment when reactivated:
+    // ...(process.env.BLOB_READ_WRITE_TOKEN
+    //   ? [
+    //       vercelBlobStorage({
+    //         collections: {
+    //           media: true,
+    //           scripts: true,
+    //           invoices: true,
+    //         },
+    //         token: process.env.BLOB_READ_WRITE_TOKEN,
+    //       }),
+    //     ]
+    //   : []),
   ],
 });

@@ -10,8 +10,26 @@ interface CartItem {
 }
 
 interface SelectedVoiceover {
+  id: string;
   name: string;
+  slug: string;
   profilePhoto?: string;
+  tags?: string[];
+  demos?: Array<{
+    id: string;
+    title: string;
+    audioFile: { url: string };
+    duration: string;
+  }>;
+}
+
+type DrawerStep = 'voiceover' | 'production' | 'cart' | 'checkout';
+
+interface CheckoutFormData {
+  script?: string;
+  toneOfVoice?: string;
+  referenceExamples?: string;
+  deliveryDate?: string;
 }
 
 interface CartContextType {
@@ -33,6 +51,18 @@ interface CartContextType {
   setExtras: (extras: string[] | undefined) => void;
   selectedVoiceover?: SelectedVoiceover;
   setSelectedVoiceover: (voiceover: SelectedVoiceover | undefined) => void;
+  // Checkout form data
+  checkoutForm: CheckoutFormData;
+  setCheckoutForm: (data: CheckoutFormData) => void;
+  updateCheckoutForm: (field: keyof CheckoutFormData, value: string) => void;
+  // Drawer state management
+  isDrawerOpen: boolean;
+  drawerStep: DrawerStep;
+  setDrawerStep: (step: DrawerStep) => void;
+  openDrawer: (step: DrawerStep, voiceover?: SelectedVoiceover) => void;
+  closeDrawer: () => void;
+  nextStep: () => void;
+  previousStep: () => void;
   // Optimized actions
   clearCart: () => void;
   addItem: (item: CartItem) => void;
@@ -52,6 +82,52 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [region, setRegion] = useState<string | undefined>();
   const [extras, setExtras] = useState<string[] | undefined>();
   const [selectedVoiceover, setSelectedVoiceover] = useState<SelectedVoiceover | undefined>();
+  
+  // Checkout form state
+  const [checkoutForm, setCheckoutForm] = useState<CheckoutFormData>({});
+  
+  // Drawer state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [drawerStep, setDrawerStep] = useState<DrawerStep>('voiceover');
+
+  // Drawer management
+  const openDrawer = useCallback((step: DrawerStep, voiceover?: SelectedVoiceover) => {
+    if (voiceover) {
+      setSelectedVoiceover(voiceover);
+    }
+    setDrawerStep(step);
+    setIsDrawerOpen(true);
+    // Ensure cart modal is closed when drawer opens
+    setIsCartOpen(false);
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    setIsDrawerOpen(false);
+  }, []);
+
+  const nextStep = useCallback(() => {
+    const stepOrder: DrawerStep[] = ['voiceover', 'production', 'cart', 'checkout'];
+    const currentIndex = stepOrder.indexOf(drawerStep);
+    if (currentIndex < stepOrder.length - 1) {
+      setDrawerStep(stepOrder[currentIndex + 1]);
+    }
+  }, [drawerStep]);
+
+  const previousStep = useCallback(() => {
+    const stepOrder: DrawerStep[] = ['voiceover', 'production', 'cart', 'checkout'];
+    const currentIndex = stepOrder.indexOf(drawerStep);
+    if (currentIndex > 0) {
+      setDrawerStep(stepOrder[currentIndex - 1]);
+    }
+  }, [drawerStep]);
+
+  // Checkout form update method
+  const updateCheckoutForm = useCallback((field: keyof CheckoutFormData, value: string) => {
+    setCheckoutForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
 
   // Memoized optimized actions to prevent re-renders
   const clearCart = useCallback(() => {
@@ -63,6 +139,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setRegion(undefined);
     setExtras(undefined);
     setSelectedVoiceover(undefined);
+    setCheckoutForm({});
+    setIsDrawerOpen(false);
+    setDrawerStep('voiceover');
   }, []);
 
   const addItem = useCallback((item: CartItem) => {
@@ -125,6 +204,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setExtras,
       selectedVoiceover,
       setSelectedVoiceover,
+      // Checkout form data
+      checkoutForm,
+      setCheckoutForm,
+      updateCheckoutForm,
+      // Drawer state
+      isDrawerOpen,
+      drawerStep,
+      setDrawerStep,
+      openDrawer,
+      closeDrawer,
+      nextStep,
+      previousStep,
       // Optimized actions
       clearCart,
       addItem,
@@ -141,6 +232,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       region,
       extras,
       selectedVoiceover,
+      checkoutForm,
+      updateCheckoutForm,
+      isDrawerOpen,
+      drawerStep,
+      openDrawer,
+      closeDrawer,
+      nextStep,
+      previousStep,
       clearCart,
       addItem,
       removeItem,

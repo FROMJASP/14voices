@@ -487,8 +487,55 @@ export const SiteSettings: GlobalConfig = {
                   admin: {
                     condition: (_data, siblingData) => siblingData?.enabled === true,
                     description:
-                      'WhatsApp number for contact (include country code, e.g., +31 6 12345678)',
+                      'WhatsApp number for contact (include country code). Default: +31 6 12345678',
                   },
+                },
+                {
+                  name: 'whatsappTooltip',
+                  type: 'group',
+                  label: 'WhatsApp Tooltip',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.enabled === true && siblingData?.whatsappNumber,
+                    description: 'Configure the tooltip that appears when hovering over the WhatsApp number',
+                  },
+                  fields: [
+                    {
+                      name: 'enabled',
+                      type: 'checkbox',
+                      defaultValue: true,
+                      label: 'Enable Tooltip',
+                      admin: {
+                        description: 'Show a tooltip when hovering over the WhatsApp number',
+                      },
+                    },
+                    {
+                      name: 'title',
+                      type: 'text',
+                      defaultValue: 'Stuur ons een WhatsApp',
+                      admin: {
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
+                        description: 'Title text for the tooltip. Default: "Stuur ons een WhatsApp"',
+                      },
+                    },
+                    {
+                      name: 'message',
+                      type: 'textarea',
+                      defaultValue: 'We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen.',
+                      admin: {
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
+                        description: 'Message text for the tooltip. Default: "We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen."',
+                      },
+                    },
+                    {
+                      name: 'image',
+                      type: 'upload',
+                      relationTo: 'media',
+                      admin: {
+                        condition: (_data, siblingData) => siblingData?.enabled === true,
+                        description: 'Optional image to show in the tooltip (recommended: 80x80px)',
+                      },
+                    },
+                  ],
                 },
                 {
                   name: 'email',
@@ -496,7 +543,7 @@ export const SiteSettings: GlobalConfig = {
                   defaultValue: 'casting@14voices.com',
                   admin: {
                     condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description: 'Primary contact email address',
+                    description: 'Primary contact email address. Default: casting@14voices.com',
                   },
                 },
                 {
@@ -505,7 +552,7 @@ export const SiteSettings: GlobalConfig = {
                   label: 'Quick Links',
                   admin: {
                     condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description: 'Navigation links to display in the top bar',
+                    description: 'Navigation links to display in the top bar. Default links: "Veelgestelde vragen" (/veelgestelde-vragen) and "Blog" (/blog)',
                     initCollapsed: false,
                   },
                   defaultValue: [
@@ -538,6 +585,78 @@ export const SiteSettings: GlobalConfig = {
                       },
                     },
                   ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'FAQ',
+          fields: [
+            {
+              name: 'faq',
+              type: 'group',
+              fields: [
+                {
+                  name: 'enabled',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: 'Enable FAQ Section',
+                  admin: {
+                    description: 'Show the FAQ section on the homepage',
+                  },
+                },
+                {
+                  name: 'title',
+                  type: 'text',
+                  defaultValue: 'Veelgestelde vragen',
+                  label: 'Section Title',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
+                    description: 'Title displayed above the FAQ section',
+                  },
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  defaultValue: 'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
+                  label: 'Section Description',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
+                    description: 'Optional description text below the title',
+                  },
+                },
+                {
+                  name: 'showCategories',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  label: 'Show Category Filter',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
+                    description: 'Allow visitors to filter FAQ items by category',
+                  },
+                },
+                {
+                  name: 'itemsToShow',
+                  type: 'number',
+                  defaultValue: 10,
+                  min: 1,
+                  max: 50,
+                  label: 'Items to Display',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
+                    description: 'Maximum number of FAQ items to display (1-50)',
+                  },
+                },
+                {
+                  name: 'manageFAQs',
+                  type: 'ui',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
+                    components: {
+                      Field: '@/components/admin/ui/FAQManageField#FAQManageField'
+                    },
+                  },
                 },
               ],
             },

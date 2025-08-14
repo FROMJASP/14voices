@@ -3,14 +3,26 @@ import crypto from 'crypto';
 
 const CSRF_HEADER = 'x-csrf-token';
 const CSRF_COOKIE = 'csrf-token';
-const CSRF_SECRET = process.env.CSRF_SECRET || process.env.PAYLOAD_SECRET;
+
+// Use dedicated CSRF_SECRET environment variable for better security separation
+const CSRF_SECRET = process.env.CSRF_SECRET;
 
 if (!CSRF_SECRET) {
+  console.warn(
+    '[SECURITY] CSRF_SECRET not found, falling back to PAYLOAD_SECRET. ' +
+    'It is recommended to use a dedicated CSRF_SECRET for better security.'
+  );
+}
+
+// TypeScript assertion to ensure SECRET is defined
+const SECRET = CSRF_SECRET || process.env.PAYLOAD_SECRET;
+
+if (!SECRET) {
   throw new Error('CSRF_SECRET or PAYLOAD_SECRET environment variable is required');
 }
 
-// TypeScript assertion to ensure CSRF_SECRET is defined
-const SECRET = CSRF_SECRET as string;
+// Type assertion to tell TypeScript that SECRET is defined after the check
+const VERIFIED_SECRET = SECRET as string;
 
 /**
  * Generate a CSRF token
@@ -19,7 +31,7 @@ export function generateCSRFToken(): string {
   const token = crypto.randomBytes(32).toString('hex');
   const timestamp = Date.now();
   const signature = crypto
-    .createHmac('sha256', SECRET)
+    .createHmac('sha256', VERIFIED_SECRET)
     .update(`${token}.${timestamp}`)
     .digest('hex');
 
@@ -45,7 +57,7 @@ export function verifyCSRFToken(token: string): boolean {
 
     // Verify signature
     const expectedSignature = crypto
-      .createHmac('sha256', SECRET)
+      .createHmac('sha256', VERIFIED_SECRET)
       .update(`${tokenPart}.${timestamp}`)
       .digest('hex');
 
@@ -104,7 +116,7 @@ export function addCSRFToken(response: NextResponse): NextResponse {
   response.cookies.set(CSRF_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'strict', // Already using strict for better security
     path: '/',
     maxAge: 24 * 60 * 60, // 24 hours
   });

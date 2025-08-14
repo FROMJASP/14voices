@@ -1,6 +1,8 @@
-import { VoiceoverEntity, VoiceoverQueryParams, DemoEntity, ValidationError } from '../types';
+import { VoiceoverEntity, VoiceoverQueryParams, DemoEntity } from '../types';
 import { IVoiceoverRepository } from '../repositories/VoiceoverRepository';
 import { TransformedVoiceover, VoiceoverDemo } from '@/types/voiceover';
+import { ValidationError, VoiceoverNotFoundError, DatabaseError } from '@/lib/errors';
+import { logger } from '@/lib/errors/logger';
 
 export interface VoiceoverServiceOptions {
   defaultLocale?: string;
@@ -57,14 +59,42 @@ export class VoiceoverService {
 
   async getVoiceoverBySlug(slug: string, locale?: string): Promise<TransformedVoiceover> {
     if (!slug || slug.trim().length === 0) {
-      throw new ValidationError('Slug is required');
+      throw new ValidationError('Slug is required', { slug, locale });
     }
 
-    const entity = await this.repository.findBySlug(
-      slug,
-      locale || this.defaultOptions.defaultLocale
-    );
-    return this.transformToFrontendFormat(entity);
+    try {
+      logger.debug(`Fetching voiceover by slug: ${slug}`, {
+        action: 'get_voiceover_by_slug',
+        metadata: { slug, locale },
+      });
+
+      const entity = await this.repository.findBySlug(
+        slug,
+        locale || this.defaultOptions.defaultLocale
+      );
+      
+      const transformed = this.transformToFrontendFormat(entity);
+      
+      logger.info(`Successfully fetched voiceover: ${slug}`, {
+        action: 'voiceover_fetched',
+        metadata: { slug, locale, voiceoverId: transformed.id },
+      });
+      
+      return transformed;
+    } catch (error) {
+      // Re-throw if it's already a known error
+      if (error instanceof VoiceoverNotFoundError || error instanceof ValidationError) {
+        throw error;
+      }
+      
+      // Log and wrap unknown errors
+      logger.error(`Failed to fetch voiceover by slug: ${slug}`, error, {
+        action: 'get_voiceover_by_slug_error',
+        metadata: { slug, locale },
+      });
+      
+      throw new DatabaseError('getVoiceoverBySlug', error);
+    }
   }
 
   async getActiveVoiceovers(params?: Omit<VoiceoverQueryParams, 'status'>): Promise<{
@@ -268,6 +298,12 @@ export class VoiceoverService {
       },
     }));
 
+    // Extract style tags for the tags property
+    const tags = entity.styleTags?.map(st => {
+      if (st.tag === 'custom' && st.customTag) return st.customTag;
+      return st.tag;
+    }) || [];
+
     return {
       id: entity.id,
       name: entity.name,
@@ -278,6 +314,10 @@ export class VoiceoverService {
       status: entity.status,
       cohort: entity.cohort,
       styleTags: entity.styleTags,
+      tags,
+      beschikbaar: entity.availability?.isAvailable !== false,
+      color: undefined, // This is typically added during rendering
+      availabilityText: undefined, // This is typically added during rendering
     };
   }
 

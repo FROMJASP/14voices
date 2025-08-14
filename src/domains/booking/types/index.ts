@@ -41,7 +41,7 @@ export interface Booking {
 
 export type BookingStatus = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
 
-export interface BookingCreateParams {
+export interface BookingCreateParams extends Record<string, unknown> {
   title: string;
   customer: string;
   voiceover: string;

@@ -138,7 +138,7 @@ export function Footer({
                     <input
                       type="email"
                       name="newsletter_email"
-                      className="font-bricolage flex-1 border-none bg-transparent py-3 px-6 placeholder-muted-foreground focus:outline-none"
+                      className="font-bricolage flex-1 border-none bg-transparent py-3 px-6 placeholder-gray-400 dark:placeholder-gray-500 text-white dark:text-black focus:outline-none"
                       placeholder="Jouw email *"
                       required
                     />
@@ -208,7 +208,7 @@ export function Footer({
                 variants={variants}
                 d={path}
                 fill="currentColor"
-                className="text-primary hover:text-orange-500 transition-colors duration-200 cursor-pointer"
+                className="text-primary hover:text-primary-hover transition-colors duration-200 cursor-pointer"
                 whileHover={{
                   y: -5,
                   transition: { type: 'spring', stiffness: 400, damping: 25 },

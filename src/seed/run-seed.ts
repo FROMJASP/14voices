@@ -1,26 +1,31 @@
 import path from 'path';
 import { getPayload } from 'payload';
 
-// Load environment variables only if dotenv is available (dev environment)
-if (process.env.NODE_ENV !== 'production') {
-  try {
-    // Dynamically import dotenv to avoid production dependency
-    const dotenv = await import('dotenv');
-    dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
-    dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-  } catch (e) {
-    // dotenv is not available, which is fine
-    // Environment variables should already be set
-    console.warn('dotenv not available. Ensure environment variables are set.');
+async function loadEnv() {
+  // Load environment variables only if dotenv is available (dev environment)
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      // Dynamically import dotenv to avoid production dependency
+      const dotenv = await import('dotenv');
+      dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+      dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+    } catch (e) {
+      // dotenv is not available, which is fine
+      // Environment variables should already be set
+      console.warn('dotenv not available. Ensure environment variables are set.');
+    }
   }
 }
 
-console.log('🔍 Environment check:');
-console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing');
-console.log('   POSTGRES_URL:', process.env.POSTGRES_URL ? '✓ Set' : '✗ Missing');
-console.log('');
-
 async function runSeed() {
+  // Load environment variables first
+  await loadEnv();
+  
+  console.log('🔍 Environment check:');
+  console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing');
+  console.log('   POSTGRES_URL:', process.env.POSTGRES_URL ? '✓ Set' : '✗ Missing');
+  console.log('');
+  
   // Dynamically import the config AFTER env vars are loaded
   const configModule = await import('../payload.config');
   const config = configModule.default;
@@ -30,6 +35,7 @@ async function runSeed() {
   const { seedLayouts } = await import('./layouts');
   const { seedPages } = await import('./pages');
   const { seedVoiceovers } = await import('./voiceovers');
+  const { faqSeedData } = await import('./faq');
 
   const payload = await getPayload({ config });
 
@@ -80,7 +86,27 @@ async function runSeed() {
     await seedVoiceovers(payload);
     console.log('');
 
-    // 6. Navigation - skipped (collection disabled)
+    // 6. Create FAQ items
+    console.log('❓ Creating FAQ items...');
+    const existingFAQ = await payload.find({
+      collection: 'faq',
+      limit: 1,
+    });
+
+    if (existingFAQ.docs.length === 0) {
+      for (const faq of faqSeedData) {
+        await payload.create({
+          collection: 'faq',
+          data: faq,
+        });
+      }
+      console.log(`✓ Created ${faqSeedData.length} FAQ items`);
+    } else {
+      console.log('✓ FAQ items already exist, skipping...');
+    }
+    console.log('');
+
+    // 7. Navigation - skipped (collection disabled)
     console.log('🧭 Navigation setup skipped (collection disabled)');
     console.log('');
 

@@ -35,6 +35,7 @@ export function GlobalLayout({
         {/* Footer */}
         <Footer />
       </div>
+
     </>
   );
 }

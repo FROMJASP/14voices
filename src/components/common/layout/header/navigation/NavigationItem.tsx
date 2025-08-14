@@ -19,13 +19,12 @@ export function NavigationItem({ item }: NavigationItemProps) {
       display: 'inline-flex',
       alignItems: 'center',
       gap: '6px',
-      background: 'transparent !important',
-      border: 'none !important',
-      padding: '10px 18px',
+      background: 'transparent',
+      border: 'none',
+      padding: '8px 12px',
       cursor: 'pointer',
       position: 'relative',
-      transition: 'opacity 0.2s ease !important',
-      transform: 'none !important',
+      transition: 'color 0.2s ease',
       textDecoration: 'none',
     } as React.CSSProperties;
   };
@@ -56,18 +55,6 @@ export function NavigationItem({ item }: NavigationItemProps) {
       <div style={{ position: 'relative' }} className="group">
         <button
           style={getButtonStyle()}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = '0.7';
-            e.currentTarget.style.background = 'transparent !important';
-            e.currentTarget.style.border = 'none !important';
-            e.currentTarget.style.transform = 'none !important';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = '1';
-            e.currentTarget.style.background = 'transparent !important';
-            e.currentTarget.style.border = 'none !important';
-            e.currentTarget.style.transform = 'none !important';
-          }}
         >
           <ButtonContent />
         </button>
@@ -95,18 +82,6 @@ export function NavigationItem({ item }: NavigationItemProps) {
     <Link
       href={item.url}
       style={getButtonStyle()}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.opacity = '0.7';
-        e.currentTarget.style.background = 'transparent !important';
-        e.currentTarget.style.border = 'none !important';
-        e.currentTarget.style.transform = 'none !important';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.opacity = '1';
-        e.currentTarget.style.background = 'transparent !important';
-        e.currentTarget.style.border = 'none !important';
-        e.currentTarget.style.transform = 'none !important';
-      }}
       target={item.openInNewTab ? '_blank' : undefined}
       rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
     >

@@ -1,5 +1,6 @@
 import { EmailRepository } from '../repositories/EmailRepository';
 import { DateRange, EmailAnalytics, TemplateStats, EmailStats } from '../types';
+import type { EmailLog } from '@/payload-types';
 
 export class EmailAnalyticsService {
   constructor(private emailRepository: EmailRepository) {}
@@ -29,16 +30,19 @@ export class EmailAnalyticsService {
     return { overall, byTemplate };
   }
 
-  private calculateOverallStats(emailLogs: any): EmailStats {
+  private calculateOverallStats(emailLogs: { 
+    totalDocs: number, 
+    docs: EmailLog[]
+  }): EmailStats {
     const totalSent = emailLogs.totalDocs;
-    const totalDelivered = emailLogs.docs.filter((log: any) =>
+    const totalDelivered = emailLogs.docs.filter((log) =>
       ['delivered', 'opened', 'clicked'].includes(log.status)
     ).length;
-    const totalOpened = emailLogs.docs.filter((log: any) =>
+    const totalOpened = emailLogs.docs.filter((log) =>
       ['opened', 'clicked'].includes(log.status)
     ).length;
-    const totalClicked = emailLogs.docs.filter((log: any) => log.status === 'clicked').length;
-    const totalBounced = emailLogs.docs.filter((log: any) => log.status === 'bounced').length;
+    const totalClicked = emailLogs.docs.filter((log) => log.status === 'clicked').length;
+    const totalBounced = emailLogs.docs.filter((log) => log.status === 'bounced').length;
 
     return {
       totalSent,
@@ -52,15 +56,21 @@ export class EmailAnalyticsService {
     };
   }
 
-  private calculateTemplateStats(emailLogs: any): TemplateStats[] {
+  private calculateTemplateStats(emailLogs: { 
+    docs: EmailLog[]
+  }): TemplateStats[] {
     const templateMap = new Map<string, Omit<TemplateStats, 'openRate' | 'clickRate'>>();
 
-    emailLogs.docs.forEach((log: any) => {
-      const templateId =
-        typeof log.template === 'object' && log.template ? String(log.template.id) : 'unknown';
+    emailLogs.docs.forEach((log) => {
+      const templateId = 
+        typeof log.template === 'number' 
+          ? String(log.template) 
+          : (log.template && typeof log.template === 'object' && log.template.id) 
+            ? String(log.template.id) 
+            : 'unknown';
       const templateName =
-        typeof log.template === 'object' && log.template
-          ? log.template.name || 'Unknown Template'
+        typeof log.template === 'object' && log.template?.name 
+          ? log.template.name 
           : 'Unknown Template';
 
       if (!templateMap.has(templateId)) {

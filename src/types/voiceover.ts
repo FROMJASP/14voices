@@ -94,6 +94,10 @@ export interface TransformedVoiceover {
     tag: string;
     customTag?: string;
   }>;
+  tags: string[];
+  beschikbaar: boolean;
+  color?: string;
+  availabilityText?: string;
 }
 
 export interface VoiceoverDemo {

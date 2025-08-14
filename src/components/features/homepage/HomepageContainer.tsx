@@ -5,9 +5,11 @@ import { usePathname } from 'next/navigation';
 import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { UnifiedPriceCalculatorOptimized } from '@/components/domains/pricing';
 import { HeroSection } from './HeroSection';
+import FAQSection from './FAQSection'; // Uses default export (client wrapper)
 import type { HomepageSettings } from '@/lib/homepage-settings';
 import { LoadingSpinner } from '@/components/common/ui';
 import type { TransformedVoiceover } from '@/types/voiceover';
+import { OptimizedVoiceoverGrid } from '@/components/domains/voiceover';
 
 // Lazy load heavy components that are only shown conditionally
 const ProductionDrawerOptimized = lazy(() =>
@@ -52,12 +54,28 @@ const DrawerLoadingFallback = memo(() => (
 DrawerLoadingFallback.displayName = 'DrawerLoadingFallback';
 
 // Memoized main content to prevent re-renders when drawer state changes
-const MainContent = memo(({ heroSettings }: { heroSettings: HomepageSettings }) => (
-  <div>
-    <HeroSection heroSettings={heroSettings} />
-    <UnifiedPriceCalculatorOptimized />
-  </div>
-));
+const MainContent = memo(({ heroSettings, voiceovers }: { heroSettings: HomepageSettings; voiceovers: any[] }) => {
+  return (
+    <div>
+      <HeroSection heroSettings={heroSettings} />
+      <section id="voiceovers" className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="mb-8">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Onze Stemacteurs
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Vind de perfecte stem voor jouw project
+            </p>
+          </div>
+          <OptimizedVoiceoverGrid voiceovers={voiceovers} />
+        </div>
+      </section>
+      <UnifiedPriceCalculatorOptimized />
+      <FAQSection />
+    </div>
+  );
+});
 
 MainContent.displayName = 'MainContent';
 
@@ -95,9 +113,9 @@ export const HomepageWithDrawerOptimized = memo(function HomepageWithDrawer({
 
   return (
     <VoiceoverProvider>
-      <MainContent heroSettings={heroSettings} />
+      <MainContent heroSettings={heroSettings} voiceovers={voiceovers} />
 
-      {/* Only render drawer when needed */}
+      {/* Only render production drawer when needed */}
       {isDrawerOpen && (
         <Suspense fallback={<DrawerLoadingFallback />}>
           <ProductionDrawerOptimized

@@ -22,6 +22,13 @@ const nextConfig: NextConfig = {
     // Disable ESLint during production builds to avoid dependency issues
     ignoreDuringBuilds: true,
   },
+  transpilePackages: [
+    'react-media-recorder',
+    'extendable-media-recorder',
+    'standardized-audio-context',
+    'media-encoder-host',
+    'recorder-audio-worklet'
+  ],
   experimental: {
     optimizePackageImports: [
       '@radix-ui/react-icons',
@@ -30,14 +37,20 @@ const nextConfig: NextConfig = {
       'framer-motion',
       'gsap',
     ],
+    // Enable modern optimizations
+    optimizeServerReact: true,
   },
+  // Performance optimizations
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: false,
   turbopack: {
     resolveAlias: {
       // Optional: Add alias resolution for faster imports
       '@/*': './src/*',
     },
   },
-  webpack: (config, { webpack }) => {
+  webpack: (config, { webpack, isServer }) => {
     // Suppress OpenTelemetry and Sentry webpack warnings
     config.ignoreWarnings = [
       ...(config.ignoreWarnings || []),
@@ -59,6 +72,53 @@ const nextConfig: NextConfig = {
           contextRegExp: /src$/,
         })
       );
+
+      // Bundle analysis and optimization
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          ...config.optimization.splitChunks,
+          chunks: 'all',
+          cacheGroups: {
+            ...config.optimization.splitChunks?.cacheGroups,
+            // Separate vendor chunks for better caching
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+            },
+            // Separate audio/media processing libraries
+            audio: {
+              test: /[\\/]node_modules[\\/](standardized-audio-context|react-media-recorder)[\\/]/,
+              name: 'audio-vendor',
+              chunks: 'async',
+              priority: 15,
+            },
+            // UI libraries
+            ui: {
+              test: /[\\/]node_modules[\\/](@radix-ui|framer-motion|lucide-react)[\\/]/,
+              name: 'ui-vendor',
+              chunks: 'all',
+              priority: 12,
+            },
+          },
+        },
+      };
+    }
+
+    // Client-side optimizations
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+
+      // Tree shake unused exports
+      config.optimization.usedExports = true;
+      config.optimization.sideEffects = false;
     }
 
     return config;
@@ -102,6 +162,14 @@ const nextConfig: NextConfig = {
         pathname: '/api/media/**',
       },
     ],
+    // Performance optimizations
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000, // 1 year
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Device sizes for responsive images
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 };
 

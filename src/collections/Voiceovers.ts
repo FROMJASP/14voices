@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload';
+import type { TextFieldSingleValidation } from 'payload';
 
 const Voiceovers: CollectionConfig = {
   slug: 'voiceovers',
@@ -31,6 +32,34 @@ const Voiceovers: CollectionConfig = {
           Cell: './components/admin/cells/NameCell#NameCell',
         },
       },
+      validate: (async (value, { req, id }) => {
+        if (!value) return 'Name is required';
+        
+        const firstName = value.split(' ')[0].toLowerCase();
+        
+        // Check for existing voiceovers with the same first name
+        const existingVoiceovers = await req.payload.find({
+          collection: 'voiceovers',
+          where: {
+            id: {
+              not_equals: id || '0', // Exclude current record when updating
+            },
+          },
+          limit: 1000,
+        });
+        
+        const duplicateFirstNames = existingVoiceovers.docs.filter((vo: any) => {
+          const existingFirstName = vo.name?.split(' ')[0].toLowerCase();
+          return existingFirstName === firstName;
+        });
+        
+        if (duplicateFirstNames.length > 0) {
+          const duplicateNames = duplicateFirstNames.map((vo: any) => vo.name).join(', ');
+          return `WARNING: Another voiceover with the same first name "${firstName}" already exists: ${duplicateNames}. This will cause URL conflicts! Please use a different first name or add a middle initial/nickname.`;
+        }
+        
+        return true;
+      }) as TextFieldSingleValidation,
     },
     {
       name: 'slug',
@@ -38,14 +67,17 @@ const Voiceovers: CollectionConfig = {
       required: true,
       unique: true,
       admin: {
-        description: 'URL-friendly version of the name',
+        description: 'URL-friendly version of the first name (automatically generated from the first name only). Example: "Peter Smit" becomes "peter"',
         position: 'sidebar',
+        readOnly: true,
       },
       hooks: {
         beforeValidate: [
           ({ value, data }) => {
-            if (!value && data?.name) {
-              return data.name
+            if (data?.name) {
+              // Extract first name only
+              const firstName = data.name.split(' ')[0];
+              return firstName
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-+|-+$/g, '');

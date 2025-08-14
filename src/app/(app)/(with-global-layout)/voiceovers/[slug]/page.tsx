@@ -1,102 +1,84 @@
 import { notFound } from 'next/navigation';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
-import { UnifiedPriceCalculatorOptimized } from '@/components/domains/pricing';
-import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
+import { VoiceoverDetailClient } from '@/components/domains/voiceover/VoiceoverDetailClient';
+import { fetchOptimized } from '@/lib/data-fetching-server';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
-import { VoiceoverDetailClientNew } from '@/components/domains/voiceover';
 import type { PayloadVoiceover } from '@/types/voiceover';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const payload = await getPayload({ config: configPromise });
-
-  const result = await payload.find({
-    collection: 'voiceovers',
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  });
-
-  const voiceover = result.docs[0];
-
-  if (!voiceover) {
-    return {
-      title: 'Voiceover niet gevonden',
-    };
-  }
-
-  const firstName = voiceover.name.split(' ')[0];
-  return {
-    title: `${firstName} - 14voices`,
-    description: voiceover.description || `Professionele voice-over door ${firstName}`,
-  };
+interface VoiceoverPageProps {
+  params: Promise<{
+    slug: string;
+  }>;
 }
 
-export default async function VoiceoverPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const payload = await getPayload({ config: configPromise });
-
-  const result = await payload.find({
-    collection: 'voiceovers',
-    where: {
-      slug: {
-        equals: slug,
+async function fetchVoiceoverBySlug(slug: string) {
+  try {
+    const result = await fetchOptimized({
+      collection: 'voiceovers',
+      where: {
+        slug: {
+          equals: slug,
+        },
+        status: {
+          equals: 'active',
+        },
       },
-    },
-    depth: 2,
-    limit: 1,
-  });
+      limit: 1,
+      depth: 2,
+    });
 
-  const voiceover = result.docs[0];
+    if (!result.docs || result.docs.length === 0) {
+      return null;
+    }
+
+    // Transform the voiceover data to match the expected format
+    const voiceover = transformVoiceoverData(result.docs[0] as PayloadVoiceover, 0);
+    return voiceover;
+  } catch (error) {
+    console.error('Error fetching voiceover:', error);
+    return null;
+  }
+}
+
+export default async function VoiceoverPage({ params }: VoiceoverPageProps) {
+  const { slug } = await params;
+  const voiceover = await fetchVoiceoverBySlug(slug);
 
   if (!voiceover) {
     notFound();
   }
 
-  // Transform the voiceover data
-  const transformedVoiceover = transformVoiceoverData(voiceover as unknown as PayloadVoiceover, 0);
+  return <VoiceoverDetailClient voiceover={voiceover} />;
+}
 
-  // Pre-selected voiceover data for context
-  const preSelectedVoiceover = {
-    id: String(voiceover.id),
-    name: voiceover.name,
-    profilePhoto:
-      voiceover.profilePhoto && typeof voiceover.profilePhoto === 'object'
-        ? (voiceover.profilePhoto.url ?? undefined)
-        : undefined,
-    styleTags: transformedVoiceover.tags,
+// Generate metadata for SEO
+export async function generateMetadata({ params }: VoiceoverPageProps) {
+  const { slug } = await params;
+  const voiceover = await fetchVoiceoverBySlug(slug);
+
+  if (!voiceover) {
+    return {
+      title: 'Voiceover Not Found',
+    };
+  }
+
+  const description = voiceover.bio 
+    ? `${voiceover.bio.substring(0, 160)}...`
+    : `Professionele Nederlandse voice-over van ${voiceover.name}. Boek nu voor uw project.`;
+
+  return {
+    title: `${voiceover.name} - Professional Voice-over | 14Voices`,
+    description,
+    openGraph: {
+      title: `${voiceover.name} - Professional Voice-over`,
+      description,
+      images: voiceover.profilePhoto?.url ? [
+        {
+          url: voiceover.profilePhoto.url,
+          width: 800,
+          height: 600,
+          alt: `Profile photo of ${voiceover.name}`,
+        },
+      ] : [],
+    },
   };
-
-  return (
-    <VoiceoverProvider initialVoiceover={preSelectedVoiceover}>
-      <div className="min-h-screen">
-        <VoiceoverDetailClientNew
-          voiceover={{
-            ...transformedVoiceover,
-            profilePhoto: transformedVoiceover.profilePhoto?.url || null,
-            demos: transformedVoiceover.demos.map((demo) => ({
-              id: demo.id,
-              title: demo.title,
-              url: demo.audioFile.url,
-              duration: demo.duration || '0:30',
-            })),
-          }}
-        />
-
-        {/* Price Calculator Section */}
-        <div className="bg-[#fcf9f5] dark:bg-gray-900 py-20">
-          <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
-              Bereken je prijs
-            </h2>
-            <UnifiedPriceCalculatorOptimized />
-          </div>
-        </div>
-      </div>
-    </VoiceoverProvider>
-  );
 }

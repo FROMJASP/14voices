@@ -557,7 +557,9 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
     setCartSelectedVoiceover(
       selectedVoiceover
         ? {
+            id: selectedVoiceover.id,
             name: selectedVoiceover.name,
+            slug: selectedVoiceover.name.toLowerCase().replace(/\s+/g, '-'),
             profilePhoto: selectedVoiceover.profilePhoto,
           }
         : undefined

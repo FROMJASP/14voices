@@ -4,7 +4,7 @@ import type { Page } from '@/payload-types';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 import { HomepageWithDrawerOptimized } from '@/components/features/homepage/HomepageContainer';
-import { fetchOptimized } from '@/lib/data-fetching-server';
+import { OptimizedVoiceoverQueries } from '@/lib/database-optimizations';
 import { getHomepageSettings } from '@/lib/homepage-settings';
 
 export async function generateMetadata() {
@@ -59,41 +59,33 @@ export default async function HomePage() {
   try {
     console.log('Homepage: Starting optimized data fetch...');
 
-    // Fetch both voiceovers and homepage settings in parallel
-    const [activeResult, heroSettings] = await Promise.all([
-      fetchOptimized({
-        collection: 'voiceovers',
-        where: {
-          status: {
-            equals: 'active',
-          },
-        },
-        limit: 50, // Initial load limit
-        depth: 2,
-        sort: '-updatedAt',
-        cacheTTL: 1000 * 60 * 30, // 30 minutes cache for homepage
+    // Use optimized database queries with aggressive caching
+    const [voiceoverData, heroSettings] = await Promise.all([
+      OptimizedVoiceoverQueries.getHomepageVoiceovers({
+        limit: 50,
+        includeUnavailable: false,
+        cacheTTL: 1000 * 60 * 30, // 30 minutes cache
       }),
       getHomepageSettings(),
     ]);
 
-    console.log(`Homepage: Found ${activeResult.docs.length} voiceovers`);
+    // Ensure voiceoverData is an array
+    const voiceoverArray = Array.isArray(voiceoverData) ? voiceoverData : [];
+    console.log(`Homepage: Found ${voiceoverArray.length} voiceovers`);
 
-    // Transform the data
-    const voiceovers = activeResult.docs.map((voiceover: any, index: number) =>
-      transformVoiceoverData(voiceover as PayloadVoiceover, index)
-    );
+    // Transform the data efficiently
+    const voiceovers = voiceoverArray.map((voiceover: any, index: number) => {
+      const transformed = transformVoiceoverData(voiceover as PayloadVoiceover, index);
+      return transformed;
+    });
 
     console.log('Homepage: Data transformed, rendering component...');
 
-    // If no voiceovers found, still render the component - it will show empty state
     return <HomepageWithDrawerOptimized voiceovers={voiceovers} heroSettings={heroSettings} />;
   } catch (error) {
     console.error('Homepage error:', error);
 
-    // Fallback UI - render empty array to show proper empty state
-    console.log('Homepage: Rendering fallback with empty voiceovers array');
-
-    // Get fallback hero settings
+    // Optimized fallback with cached settings
     const fallbackHeroSettings = await getHomepageSettings().catch(() => ({
       hero: {
         title: 'Vind de stem die jouw merk laat spreken.',

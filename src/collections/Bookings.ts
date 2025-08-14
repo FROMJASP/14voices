@@ -1,7 +1,7 @@
 import type { CollectionConfig, Access } from 'payload';
 import { authenticated } from '@/access/authenticated';
 import { isAdmin } from '@/access/isAdmin';
-import { afterBookingCreate } from '@/hooks/email-triggers';
+import { afterBookingCreate } from '@/hooks/emailTriggers';
 
 export const Bookings: CollectionConfig = {
   slug: 'bookings',

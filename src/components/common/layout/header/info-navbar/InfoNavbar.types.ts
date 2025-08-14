@@ -4,9 +4,20 @@ export interface QuickLink {
   openInNewTab?: boolean;
 }
 
+export interface WhatsAppTooltip {
+  enabled?: boolean;
+  title?: string;
+  message?: string;
+  image?: {
+    url?: string;
+    alt?: string;
+  } | number;
+}
+
 export interface InfoNavbarData {
   enabled: boolean;
   whatsappNumber?: string;
+  whatsappTooltip?: WhatsAppTooltip;
   email?: string;
   quickLinks?: QuickLink[];
 }

@@ -1,5 +1,20 @@
 // Performance monitoring and optimization utilities
 
+interface LayoutShiftEntry extends PerformanceEntry {
+  value: number;
+  hadRecentInput: boolean;
+}
+
+// Extend global interfaces for TypeScript type safety
+declare global {
+  interface Performance {
+    memory?: {
+      usedJSHeapSize: number;
+      totalJSHeapSize: number;
+    };
+  }
+}
+
 /**
  * Performance monitoring utility for tracking component render times and identifying bottlenecks
  */
@@ -106,15 +121,16 @@ export class PerformanceMonitor {
   /**
    * Monitor Layout Shift (CLS) for performance issues
    */
-  monitorLayoutShift(callback?: (entry: PerformanceEntry) => void): void {
+  monitorLayoutShift(callback?: (entry: LayoutShiftEntry) => void): void {
     if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
       try {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          entries.forEach((entry: any) => {
-            if (entry.hadRecentInput) return; // Ignore user-initiated shifts
-            console.warn(`Layout shift detected: ${entry.value}`, entry);
-            callback?.(entry);
+          entries.forEach((entry) => {
+            const layoutShiftEntry = entry as LayoutShiftEntry;
+            if (layoutShiftEntry.hadRecentInput) return; // Ignore user-initiated shifts
+            console.warn(`Layout shift detected: ${layoutShiftEntry.value}`, layoutShiftEntry);
+            callback?.(layoutShiftEntry);
           });
         });
         observer.observe({ entryTypes: ['layout-shift'] });
@@ -128,8 +144,8 @@ export class PerformanceMonitor {
   /**
    * Get all performance measurements
    */
-  getAllStats(): Record<string, any> {
-    const stats: Record<string, any> = {};
+  getAllStats(): Record<string, ReturnType<typeof this.getStats>> {
+    const stats: Record<string, ReturnType<typeof this.getStats>> = {};
     this.measurements.forEach((_measurements, name) => {
       stats[name] = this.getStats(name);
     });

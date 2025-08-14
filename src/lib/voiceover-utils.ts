@@ -170,9 +170,9 @@ export const transformVoiceoverData = (
       },
     ].filter(Boolean) as VoiceoverDemo[],
     profilePhoto:
-      typeof voiceover.profilePhoto === 'object' && voiceover.profilePhoto
+      typeof voiceover.profilePhoto === 'object' && voiceover.profilePhoto && voiceover.profilePhoto.url
         ? {
-            url: makeMediaUrlRelative(voiceover.profilePhoto.url || ''),
+            url: makeMediaUrlRelative(voiceover.profilePhoto.url),
             alt: voiceover.profilePhoto.alt || voiceover.name,
           }
         : undefined,

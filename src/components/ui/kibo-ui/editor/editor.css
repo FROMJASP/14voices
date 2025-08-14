@@ -1,0 +1,119 @@
+/* Kibo UI Editor Styles */
+/* Ensures proper text selection in all browsers */
+
+.simple-editor-container {
+  /* Base container styles */
+  min-height: 80px;
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.simple-editor-container:focus-within {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px hsl(var(--ring));
+  border-color: hsl(var(--ring));
+}
+
+/* TipTap editor specific styles */
+.simple-editor-container .ProseMirror {
+  outline: none !important;
+  min-height: 80px;
+  
+  /* Critical: Enable text selection */
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  
+  /* Ensure all child elements are selectable */
+  * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+  }
+}
+
+/* Paragraph styles */
+.simple-editor-container .ProseMirror p {
+  margin: 0;
+  line-height: 1.5;
+  color: hsl(var(--foreground));
+  
+  /* Ensure paragraphs are selectable */
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+.simple-editor-container .ProseMirror p + p {
+  margin-top: 0.5rem;
+}
+
+/* Selection styles */
+.simple-editor-container .ProseMirror ::selection {
+  background-color: hsl(var(--primary) / 0.2);
+}
+
+.simple-editor-container .ProseMirror ::-moz-selection {
+  background-color: hsl(var(--primary) / 0.2);
+}
+
+/* Placeholder styles */
+.simple-editor-container .ProseMirror.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--muted-foreground) / 0.5);
+  pointer-events: none;
+  height: 0;
+  font-style: italic;
+  
+  /* Placeholder should not be selectable */
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Disabled state */
+.simple-editor-container.editor-disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Hard break styles */
+.simple-editor-container .ProseMirror .break-line {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+/* Focus styles for better accessibility */
+.simple-editor-container .ProseMirror:focus {
+  outline: none;
+}
+
+/* Ensure cursor is always text cursor within editor */
+.simple-editor-container .ProseMirror {
+  cursor: text;
+}
+
+.simple-editor-container .ProseMirror * {
+  cursor: text;
+}
+
+/* Override any inherited cursor styles */
+.simple-editor-container .ProseMirror p,
+.simple-editor-container .ProseMirror span,
+.simple-editor-container .ProseMirror div {
+  cursor: text !important;
+}

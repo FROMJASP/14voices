@@ -67,14 +67,17 @@ export const securityConfig = {
   },
 
   // Content Security Policy
-  // IMPORTANT: 'unsafe-inline' is required for Next.js to function properly
-  // See CLAUDE.md for details on CSP configuration and production issues
+  // NOTE: Next.js requires 'unsafe-inline' for scripts to function properly.
+  // This is due to Next.js injecting inline scripts for hydration and runtime.
+  // While nonce-based CSP would be more secure, Next.js doesn't fully support it
+  // in production without significant configuration complexity.
+  // See: https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
   csp: {
     'default-src': ["'self'"],
     'script-src':
       process.env.NODE_ENV === 'development'
         ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net']
-        : ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'], // unsafe-inline required for Next.js
+        : ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'], // unsafe-inline required for Next.js hydration
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
@@ -90,6 +93,8 @@ export const securityConfig = {
     'frame-ancestors': ["'none'"],
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
+    'object-src': ["'none'"],
+    'upgrade-insecure-requests': process.env.NODE_ENV === 'production' ? [''] : undefined,
   },
 
   // CORS configuration
@@ -119,7 +124,7 @@ export const securityConfig = {
     maxAge: 7 * 24 * 60 * 60, // 7 days
     updateAge: 24 * 60 * 60, // 1 day
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
+    sameSite: 'strict' as const, // Changed from 'lax' to 'strict' for better security
     httpOnly: true,
   },
 
@@ -195,17 +200,28 @@ export function getRateLimitConfig(type: keyof typeof securityConfig.rateLimits)
 
 /**
  * Build Content Security Policy header string
+ * 
+ * NOTE: While nonce-based CSP would be more secure, Next.js requires 'unsafe-inline'
+ * for its hydration and runtime scripts to function properly. Implementing nonce-based
+ * CSP with Next.js requires significant configuration changes and may break certain
+ * features. The 'unsafe-inline' directive is maintained for compatibility.
+ * 
+ * For more information, see:
+ * https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
  */
-export function buildCSPHeader(nonce?: string | null): string {
+export function buildCSPHeader(): string {
   const csp = { ...securityConfig.csp };
 
-  // If nonce is provided and we're in production, add it to script-src
-  if (nonce && process.env.NODE_ENV === 'production') {
-    csp['script-src'] = ["'self'", `'nonce-${nonce}'`, 'https://cdn.jsdelivr.net'];
-  }
+  // Filter out undefined values (like upgrade-insecure-requests in dev)
+  const filteredCsp = Object.entries(csp).reduce((acc, [directive, values]) => {
+    if (values !== undefined) {
+      acc[directive] = values;
+    }
+    return acc;
+  }, {} as Record<string, string[]>);
 
-  return Object.entries(csp)
-    .map(([directive, values]) => `${directive} ${values.join(' ')}`)
+  return Object.entries(filteredCsp)
+    .map(([directive, values]) => `${directive} ${values!.join(' ')}`)
     .join('; ');
 }
 

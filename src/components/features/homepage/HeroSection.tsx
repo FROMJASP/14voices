@@ -153,8 +153,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
                 href={hero.primaryButton.url}
                 className="flex-1 sm:flex-none"
                 style={{
-                  backgroundColor: theme === 'dark' ? 'var(--primary)' : 'var(--text-primary)',
-                  color: theme === 'dark' ? '#000000' : 'var(--background)',
+                  backgroundColor: theme === 'dark' ? '#ffffff' : 'var(--text-primary)',
+                  color: theme === 'dark' ? '#0a0a0a' : 'var(--background)',
                   padding: '10px 20px',
                   borderRadius: '10px',
                   textDecoration: 'none',

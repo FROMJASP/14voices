@@ -1,11 +1,8 @@
 import type { CollectionConfig } from 'payload';
-import {
-  validateFileContent,
-  sanitizeFilename,
-  checkFileSize,
-  scanFileForThreats,
+import { 
+  validateUploadedFile,
+  getAllowedMimeTypes,
 } from '@/lib/file-security';
-import { logSecurityEvent } from '@/lib/security-monitoring';
 
 const Media: CollectionConfig = {
   slug: 'media',
@@ -21,12 +18,6 @@ const Media: CollectionConfig = {
       type: 'text',
       required: true,
       admin: {
-        condition: (_data, { req }) => {
-          if (req?.data?.mimeType) {
-            return req.data.mimeType.startsWith('image/');
-          }
-          return true;
-        },
         description: 'Alternative text for images (required for accessibility)',
       },
     },
@@ -34,22 +25,16 @@ const Media: CollectionConfig = {
       name: 'caption',
       type: 'text',
       admin: {
-        condition: (_data, { req }) => {
-          if (req?.data?.mimeType) {
-            return req.data.mimeType.startsWith('audio/');
-          }
-          return false;
-        },
-        description: 'Optional caption for audio files',
+        description: 'Optional caption for media files',
       },
     },
     {
       name: 'uploadedBy',
       type: 'relationship',
       relationTo: 'users',
+      hasMany: false,
       admin: {
         readOnly: true,
-        hidden: true, // Hide from UI since it's automatically set
       },
     },
     {
@@ -71,14 +56,13 @@ const Media: CollectionConfig = {
       type: 'json',
       admin: {
         readOnly: true,
-        condition: ({ data }) =>
+        condition: ({ data }) => 
           data?.scanStatus === 'suspicious' || data?.scanStatus === 'blocked',
       },
     },
   ],
   upload: {
     staticDir: 'media',
-    filesRequiredOnCreate: false,
     imageSizes: [
       {
         name: 'thumbnail',
@@ -87,7 +71,7 @@ const Media: CollectionConfig = {
         position: 'centre',
       },
       {
-        name: 'card',
+        name: 'card', 
         width: 768,
         height: 1024,
         position: 'centre',
@@ -102,121 +86,106 @@ const Media: CollectionConfig = {
     adminThumbnail: 'thumbnail',
     mimeTypes: [
       'image/jpeg',
-      'image/png',
+      'image/png', 
       'image/gif',
       'image/webp',
       'audio/mpeg',
       'audio/wav',
+      'audio/mp3',
       'application/pdf',
     ],
   },
   hooks: {
-    beforeOperation: [
-      async ({ args, operation }) => {
-        if (operation === 'create' && args.req?.file) {
-          const file = args.req.file;
-          const user = args.req.user;
-
-          if (!user) {
-            throw new Error('Authentication required for file uploads');
-          }
-
-          // 1. Check file size limits
-          const sizeCheck = checkFileSize(file.size, file.mimetype);
-          if (!sizeCheck.valid) {
-            await logSecurityEvent({
-              type: 'file_threat',
-              severity: 'medium',
-              userId: String(user.id),
-              details: {
-                reason: 'File size limit exceeded',
-                filename: file.filename,
-                size: file.size,
-                error: sizeCheck.error,
-              },
-              timestamp: new Date(),
-            });
-            throw new Error(sizeCheck.error);
-          }
-
-          // 2. Validate file content matches MIME type
-          const buffer = Buffer.from(await file.arrayBuffer());
-          const contentValidation = await validateFileContent(buffer, file.mimetype);
-
-          if (!contentValidation.valid) {
-            await logSecurityEvent({
-              type: 'file_threat',
-              severity: 'high',
-              userId: String(user.id),
-              details: {
-                reason: 'File content mismatch',
-                filename: file.filename,
-                declaredType: file.mimetype,
-                error: contentValidation.error,
-              },
-              timestamp: new Date(),
-            });
-            throw new Error('File type validation failed: ' + contentValidation.error);
-          }
-
-          // 3. Scan for threats
-          const scanResult = await scanFileForThreats(buffer, file.filename);
-
-          if (!scanResult.safe) {
-            await logSecurityEvent({
-              type: 'file_threat',
-              severity: 'critical',
-              userId: String(user.id),
-              details: {
-                reason: 'Malicious content detected',
-                filename: file.filename,
-                threats: scanResult.threats,
-              },
-              timestamp: new Date(),
-            });
-            throw new Error('Security scan failed: File contains potentially malicious content');
-          }
-
-          // 4. Sanitize filename
-          const sanitizedFilename = sanitizeFilename(file.filename);
-          file.filename = sanitizedFilename;
-
-          // 5. Add user reference
-          args.data = {
-            ...args.data,
-            uploadedBy: user.id,
-            scanStatus: 'safe',
-            scanDetails: {
-              scannedAt: new Date(),
-              originalFilename: file.filename,
-              sanitizedFilename: sanitizedFilename,
-            },
-          };
+    beforeChange: [
+      async ({ req, data, operation }) => {
+        // Add user reference
+        if (req.user && operation === 'create') {
+          data.uploadedBy = req.user.id;
         }
 
-        return args;
+        // Only run security checks on file upload (create with file)
+        if (operation === 'create' && req.file) {
+          try {
+            const file = req.file;
+            
+            // Perform comprehensive file validation
+            const validation = await validateUploadedFile(file, {
+              allowedTypes: getAllowedMimeTypes('media'),
+              maxSize: 100 * 1024 * 1024, // 100MB max
+            });
+
+            if (!validation.valid) {
+              // Log security issue
+              console.error('[Media Security] File validation failed:', {
+                filename: file.name,
+                error: validation.error,
+                metadata: validation.metadata,
+              });
+              
+              // Reject the upload
+              throw new Error(validation.error || 'File validation failed');
+            }
+
+            // Mark file scan status based on validation
+            if (validation.warnings && validation.warnings.length > 0) {
+              data.scanStatus = 'suspicious';
+              data.scanDetails = {
+                scannedAt: new Date(),
+                warnings: validation.warnings,
+                threats: validation.metadata?.threats,
+                threatSeverity: validation.metadata?.threatSeverity,
+                actualType: validation.metadata?.actualType,
+                sanitizedFilename: validation.metadata?.sanitizedFilename,
+              };
+            } else {
+              data.scanStatus = 'safe';
+              data.scanDetails = {
+                scannedAt: new Date(),
+                actualType: validation.metadata?.actualType,
+                sanitizedFilename: validation.metadata?.sanitizedFilename,
+              };
+            }
+            
+            // Update filename if it was sanitized
+            if (validation.metadata?.sanitizedFilename && 
+                validation.metadata.sanitizedFilename !== file.name) {
+              data.filename = validation.metadata.sanitizedFilename;
+            }
+            
+          } catch (error) {
+            console.error('[Media Security] Error during file validation:', error);
+            
+            // For security errors, block the upload
+            if (error instanceof Error && error.message.includes('validation failed')) {
+              throw error;
+            }
+            
+            // For other errors, mark as suspicious but allow upload
+            data.scanStatus = 'suspicious';
+            data.scanDetails = {
+              scannedAt: new Date(),
+              error: error instanceof Error ? error.message : String(error),
+            };
+          }
+        }
+
+        return data;
       },
     ],
-    afterOperation: [
-      async ({ args, operation, result }) => {
-        if (operation === 'create' && result && args.req?.user) {
-          // Log successful upload
-          await logSecurityEvent({
-            type: 'file_threat',
-            severity: 'low',
-            userId: String(args.req.user.id),
-            details: {
-              reason: 'File uploaded successfully',
-              fileId: result.id,
-              filename: result.filename,
-              mimeType: result.mimeType,
-              size: result.filesize,
-            },
-            timestamp: new Date(),
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        // Log successful uploads
+        if (operation === 'create' && doc && req?.user) {
+          console.log('[Media] File uploaded successfully:', {
+            id: doc.id,
+            filename: doc.filename,
+            mimeType: doc.mimeType,
+            size: doc.filesize,
+            user: req.user.email,
+            scanStatus: doc.scanStatus,
           });
         }
-
-        return result;
+        return doc;
       },
     ],
   },

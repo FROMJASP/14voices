@@ -79,6 +79,7 @@ export interface Config {
     forms: Form;
     'form-submissions': FormSubmission;
     testimonials: Testimonial;
+    faq: FAQ;
     'email-components': EmailComponent;
     'email-templates': EmailTemplate;
     'email-sequences': EmailSequence;
@@ -1185,6 +1186,20 @@ export interface Testimonial {
   updatedAt: string;
   createdAt: string;
 }
+
+export interface FAQ {
+  id: string;
+  question: string;
+  answer?: {
+    [k: string]: unknown;
+  } | null;
+  category?: ('general' | 'pricing' | 'technical' | 'delivery' | 'other') | null;
+  order?: number | null;
+  published?: boolean | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms".

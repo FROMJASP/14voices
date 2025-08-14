@@ -1,0 +1,123 @@
+/* Simple approach */
+.custom-card-wrapper {
+  position: relative;
+}
+
+.custom-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  overflow: visible; /* Allow trapezoid to overlap */
+}
+
+/* Trapezoid shape that overlaps card top border */
+.custom-card-availability-section {
+  position: absolute;
+  top: -1px; /* Overlap the card's top border */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 30px;
+  z-index: 10;
+}
+
+/* SVG for trapezoid shape */
+.custom-card-trapezoid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Availability text */
+.custom-card-availability {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Play button trapezoid shape at bottom */
+.custom-card-play-section {
+  position: absolute;
+  bottom: -1px; /* Overlap the card's bottom border */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 42px;
+  z-index: 10;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Expand trapezoid on hover */
+.custom-card-play-section:hover {
+  width: 240px;
+}
+
+/* Play button content */
+.custom-card-play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  background: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* Play button wrapper */
+.custom-card-play-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-left: 8px;
+}
+
+/* Play button icon */
+.custom-card-play-icon {
+  flex-shrink: 0;
+}
+
+/* Play text - hidden by default, shows on hover */
+.custom-card-play-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+  text-decoration: underline;
+}
+
+/* On hover animations */
+.custom-card-play-section:hover .custom-card-play-wrapper {
+  padding-left: 35px;
+  padding-right: 35px;
+}
+
+.custom-card-play-section:hover .custom-card-play-text {
+  opacity: 1;
+  width: auto;
+  transition-delay: 0.1s;
+}
+
+/* Hide scrollbars for production selector */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* WebKit */
+}

@@ -3,11 +3,12 @@ import { getPayload } from 'payload';
 import config from '@/payload.config';
 import { PayloadVoiceoverRepository } from '@/domains/voiceover/repositories/VoiceoverRepository';
 import { VoiceoverService } from '@/domains/voiceover/services/VoiceoverService';
-import { VoiceoverQueryParams, ValidationError } from '@/domains/voiceover/types';
+import { VoiceoverQueryParams } from '@/domains/voiceover/types';
 import { createApiHandler, createCacheKey } from '@/lib/api/handlers';
 import globalCache from '@/lib/cache';
 import { z } from 'zod';
 import { slugSchema } from '@/lib/validation/schemas';
+import { ValidationError } from '@/lib/errors';
 
 // Validation schema for query parameters
 const voiceoverQuerySchema = z.object({
