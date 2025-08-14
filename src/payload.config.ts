@@ -3,7 +3,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { resendAdapter } from '@payloadcms/email-resend';
 // import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
+import { wrappedMinioStorage } from './lib/storage/minio-adapter';
 import { en } from '@payloadcms/translations/languages/en';
 import { nl } from '@payloadcms/translations/languages/nl';
 // import { i18n as customI18n } from './i18n/index';
@@ -133,16 +133,21 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
-    // Vercel Blob storage for production file uploads
-    ...(process.env.BLOB_READ_WRITE_TOKEN
+    // MinIO storage for self-hosted file uploads
+    ...(process.env.S3_ACCESS_KEY && process.env.S3_SECRET_KEY
       ? [
-          vercelBlobStorage({
+          wrappedMinioStorage({
             collections: {
               media: true,
               scripts: true,
               invoices: true,
             },
-            token: process.env.BLOB_READ_WRITE_TOKEN,
+            endpoint: process.env.S3_ENDPOINT || 'http://localhost:9000',
+            accessKeyId: process.env.S3_ACCESS_KEY,
+            secretAccessKey: process.env.S3_SECRET_KEY,
+            bucketName: process.env.S3_BUCKET || 'fourteenvoices-media',
+            region: process.env.S3_REGION || 'us-east-1',
+            publicUrl: process.env.S3_PUBLIC_URL,
           }),
         ]
       : []),

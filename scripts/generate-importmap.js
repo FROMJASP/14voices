@@ -50,7 +50,6 @@ import { MaintenanceModePreview as MaintenanceModePreview_custom } from '../../.
 import { default as default_16e62c7e42dfe7700742ba3a13bf8900 } from '../../../components/admin/graphics/Icon'
 import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../components/admin/graphics/Logo'
 import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'
-import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
 export const importMap = {
   "./components/admin/cells/NameCell#NameCell": NameCell_9c0639e919331889896aa9ea1c557661,
@@ -92,7 +91,6 @@ export const importMap = {
   "./components/admin/graphics/Icon#default": default_16e62c7e42dfe7700742ba3a13bf8900,
   "./components/admin/graphics/Logo#default": default_13338d86bf8cb9661b50b401726320cd,
   "./components/admin/Root#default": default_52fc470c96be62b5d8029b692894d144,
-  "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e
 }
 `;
 

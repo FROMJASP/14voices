@@ -1,8 +1,6 @@
 import type { CollectionConfig } from 'payload';
-import { 
-  validateUploadedFile,
-  getAllowedMimeTypes,
-} from '@/lib/file-security';
+import { validateUploadedFile, getAllowedMimeTypes } from '@/lib/file-security';
+import { logStorageError } from '@/lib/storage/errors';
 
 const Media: CollectionConfig = {
   slug: 'media',
@@ -10,7 +8,19 @@ const Media: CollectionConfig = {
     read: () => true,
     create: ({ req }) => !!req.user,
     update: ({ req }) => !!req.user,
-    delete: ({ req }) => req.user?.role === 'admin',
+    delete: ({ req }) => {
+      if (!req.user) return false;
+
+      // Admins can delete any media
+      if (req.user.role === 'admin') return true;
+
+      // Users can delete their own uploads
+      return {
+        uploadedBy: {
+          equals: req.user.id,
+        },
+      };
+    },
   },
   fields: [
     {
@@ -56,7 +66,7 @@ const Media: CollectionConfig = {
       type: 'json',
       admin: {
         readOnly: true,
-        condition: ({ data }) => 
+        condition: ({ data }) =>
           data?.scanStatus === 'suspicious' || data?.scanStatus === 'blocked',
       },
     },
@@ -71,7 +81,7 @@ const Media: CollectionConfig = {
         position: 'centre',
       },
       {
-        name: 'card', 
+        name: 'card',
         width: 768,
         height: 1024,
         position: 'centre',
@@ -86,7 +96,7 @@ const Media: CollectionConfig = {
     adminThumbnail: 'thumbnail',
     mimeTypes: [
       'image/jpeg',
-      'image/png', 
+      'image/png',
       'image/gif',
       'image/webp',
       'audio/mpeg',
@@ -94,6 +104,9 @@ const Media: CollectionConfig = {
       'audio/mp3',
       'application/pdf',
     ],
+    // Storage handled by hybrid adapter
+    disableLocalStorage:
+      process.env.NODE_ENV === 'production' && !!process.env.BLOB_READ_WRITE_TOKEN,
   },
   hooks: {
     beforeChange: [
@@ -107,7 +120,7 @@ const Media: CollectionConfig = {
         if (operation === 'create' && req.file) {
           try {
             const file = req.file;
-            
+
             // Skip strict validation in production if file data is not available
             // This can happen with Vercel Blob storage where files are streamed directly
             if (!file.data && process.env.NODE_ENV === 'production') {
@@ -116,26 +129,26 @@ const Media: CollectionConfig = {
                 mimetype: file.mimetype,
                 size: file.size,
               });
-              
+
               // Basic validation only
               const allowedTypes = getAllowedMimeTypes('media');
               if (!allowedTypes.includes(file.mimetype)) {
                 throw new Error(`File type ${file.mimetype} is not allowed`);
               }
-              
+
               if (file.size > 100 * 1024 * 1024) {
                 throw new Error('File size exceeds 100MB limit');
               }
-              
+
               data.scanStatus = 'safe';
               data.scanDetails = {
                 scannedAt: new Date(),
                 note: 'Basic validation only (Vercel Blob storage)',
               };
-              
+
               return data;
             }
-            
+
             // Perform comprehensive file validation when buffer is available
             const validation = await validateUploadedFile(file, {
               allowedTypes: getAllowedMimeTypes('media'),
@@ -150,7 +163,7 @@ const Media: CollectionConfig = {
                 error: validation.error,
                 metadata: validation.metadata,
               });
-              
+
               // Reject the upload
               throw new Error(validation.error || 'File validation failed');
             }
@@ -174,21 +187,22 @@ const Media: CollectionConfig = {
                 sanitizedFilename: validation.metadata?.sanitizedFilename,
               };
             }
-            
+
             // Update filename if it was sanitized
-            if (validation.metadata?.sanitizedFilename && 
-                validation.metadata.sanitizedFilename !== file.name) {
+            if (
+              validation.metadata?.sanitizedFilename &&
+              validation.metadata.sanitizedFilename !== file.name
+            ) {
               data.filename = validation.metadata.sanitizedFilename;
             }
-            
           } catch (error) {
             console.error('[Media Security] Error during file validation:', error);
-            
+
             // For security errors, block the upload
             if (error instanceof Error && error.message.includes('validation failed')) {
               throw error;
             }
-            
+
             // For other errors, mark as suspicious but allow upload
             data.scanStatus = 'suspicious';
             data.scanDetails = {
@@ -212,9 +226,19 @@ const Media: CollectionConfig = {
             size: doc.filesize,
             user: req.user.email,
             scanStatus: doc.scanStatus,
+            storageUrl: doc.url,
           });
         }
         return doc;
+      },
+    ],
+    afterError: [
+      async ({ error }) => {
+        // Log storage errors with context
+        logStorageError(error, {
+          collection: 'media',
+          operation: 'unknown',
+        });
       },
     ],
   },

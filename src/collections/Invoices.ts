@@ -179,7 +179,9 @@ const Invoices: CollectionConfig = {
     staticDir: 'media/invoices',
     filesRequiredOnCreate: false,
     mimeTypes: ['application/pdf'],
-    disableLocalStorage: true, // Force blob storage for security
+    // Storage handled by wrapped Vercel adapter or local storage
+    disableLocalStorage:
+      process.env.NODE_ENV === 'production' && !!process.env.BLOB_READ_WRITE_TOKEN,
     adminThumbnail: () => `/admin/assets/pdf-icon.svg`,
   },
   hooks: {

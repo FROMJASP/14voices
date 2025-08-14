@@ -53,14 +53,14 @@ export function OptimizedImage({
     isVisible: false,
     loadStartTime: null,
   });
-  
+
   const imgRef = useRef<HTMLImageElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Intersection Observer for lazy loading
   useEffect(() => {
     if (eagerLoading || priority) {
-      setState(prev => ({ ...prev, isVisible: true }));
+      setState((prev) => ({ ...prev, isVisible: true }));
       return;
     }
 
@@ -68,10 +68,10 @@ export function OptimizedImage({
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
-          setState(prev => ({ 
-            ...prev, 
+          setState((prev) => ({
+            ...prev,
             isVisible: true,
-            loadStartTime: performance.now()
+            loadStartTime: performance.now(),
           }));
           observerRef.current?.disconnect();
         }
@@ -93,8 +93,8 @@ export function OptimizedImage({
 
   // Handle successful image load
   const handleLoad = () => {
-    setState(prev => ({ ...prev, isLoading: false }));
-    
+    setState((prev) => ({ ...prev, isLoading: false }));
+
     // Performance monitoring
     if (state.loadStartTime) {
       const loadTime = performance.now() - state.loadStartTime;
@@ -102,13 +102,13 @@ export function OptimizedImage({
         console.warn(`Slow image load: ${src} took ${loadTime.toFixed(2)}ms`);
       }
     }
-    
+
     onLoadComplete?.();
   };
 
   // Handle image load error
   const handleError = () => {
-    setState(prev => ({ ...prev, hasError: true, isLoading: false }));
+    setState((prev) => ({ ...prev, hasError: true, isLoading: false }));
     onErrorOccurred?.();
   };
 
@@ -117,12 +117,12 @@ export function OptimizedImage({
     if (typeof originalSrc !== 'string') {
       return originalSrc;
     }
-    
-    // If it's already a Vercel Blob URL or external URL, return as-is
-    if (originalSrc.includes('vercel-storage.com') || originalSrc.startsWith('http')) {
+
+    // If it's already a cloud storage URL or external URL, return as-is
+    if (originalSrc.startsWith('http')) {
       return originalSrc;
     }
-    
+
     // For relative URLs, they'll be handled by Next.js Image optimization
     return originalSrc;
   };
@@ -139,7 +139,7 @@ export function OptimizedImage({
         </div>
       );
     }
-    
+
     if (thumbnail) {
       return (
         <Image
@@ -152,13 +152,8 @@ export function OptimizedImage({
         />
       );
     }
-    
-    return (
-      <div className={cn(
-        "absolute inset-0 bg-muted animate-pulse",
-        loadingClassName
-      )} />
-    );
+
+    return <div className={cn('absolute inset-0 bg-muted animate-pulse', loadingClassName)} />;
   };
 
   // Render error fallback
@@ -166,24 +161,23 @@ export function OptimizedImage({
     if (errorFallback) {
       return errorFallback;
     }
-    
+
     return (
-      <div className={cn(
-        "absolute inset-0 bg-muted flex items-center justify-center",
-        errorClassName
-      )}>
+      <div
+        className={cn('absolute inset-0 bg-muted flex items-center justify-center', errorClassName)}
+      >
         <div className="text-muted-foreground text-sm">
-          <svg 
-            className="w-8 h-8 mx-auto mb-2" 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className="w-8 h-8 mx-auto mb-2"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
           <p>Afbeelding niet beschikbaar</p>
@@ -193,13 +187,13 @@ export function OptimizedImage({
   };
 
   return (
-    <div ref={imgRef} className={cn("relative overflow-hidden", className)}>
+    <div ref={imgRef} className={cn('relative overflow-hidden', className)}>
       {/* Loading placeholder */}
       {state.isLoading && !state.hasError && renderLoadingPlaceholder()}
-      
+
       {/* Error fallback */}
       {state.hasError && renderErrorFallback()}
-      
+
       {/* Main image - only render when visible */}
       {state.isVisible && !state.hasError && (
         <Image
@@ -210,8 +204,8 @@ export function OptimizedImage({
           quality={qualityThreshold}
           priority={priority}
           className={cn(
-            "transition-opacity duration-300",
-            state.isLoading ? "opacity-0" : "opacity-100"
+            'transition-opacity duration-300',
+            state.isLoading ? 'opacity-0' : 'opacity-100'
           )}
           {...props}
         />
@@ -233,11 +227,10 @@ export function VoiceoverProfileImage({
   className?: string;
   size?: 'small' | 'medium' | 'large';
 } & Partial<OptimizedImageProps>) {
-
   const sizesMap = {
     small: '64px',
     medium: '128px',
-    large: '192px'
+    large: '192px',
   };
 
   const firstName = name.split(' ')[0];
@@ -247,7 +240,7 @@ export function VoiceoverProfileImage({
       src={src || '/default-avatar.png'}
       alt={firstName}
       fill
-      className={cn("object-cover", className)}
+      className={cn('object-cover', className)}
       sizes={sizesMap[size]}
       qualityThreshold={85}
       errorFallback={
@@ -278,7 +271,7 @@ export function HeroImage({
       src={src}
       alt={alt}
       fill
-      className={cn("object-cover", className)}
+      className={cn('object-cover', className)}
       priority={true}
       eagerLoading={true}
       qualityThreshold={90}
@@ -306,7 +299,7 @@ export function DemoImage({
       src={src}
       alt={alt}
       fill
-      className={cn("object-cover", className)}
+      className={cn('object-cover', className)}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       qualityThreshold={80}
       progressive={true}

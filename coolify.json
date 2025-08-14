@@ -1,0 +1,30 @@
+{
+  "schema": "1",
+  "services": {
+    "app": {
+      "image": "14voices-app",
+      "build": {
+        "context": ".",
+        "dockerfile": "Dockerfile"
+      },
+      "environment": {
+        "NODE_ENV": "production",
+        "PORT": "3000"
+      },
+      "ports": ["3000"],
+      "healthcheck": {
+        "test": "curl -f http://localhost:3000/api/health || exit 1",
+        "interval": "30s",
+        "timeout": "10s",
+        "retries": 3,
+        "start_period": "40s"
+      },
+      "depends_on": ["postgres", "minio"]
+    }
+  },
+  "volumes": {
+    "uploads": {
+      "driver": "local"
+    }
+  }
+}

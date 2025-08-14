@@ -14,10 +14,14 @@ const envSchema = z
 
     // API Keys
     RESEND_API_KEY: z.string().regex(/^re_[a-zA-Z0-9]+$/, 'Invalid Resend API key format'),
-    BLOB_READ_WRITE_TOKEN: z
-      .string()
-      .regex(/^vercel_blob_rw_[a-zA-Z0-9]+$/, 'Invalid Vercel Blob token format')
-      .optional(),
+
+    // MinIO/S3 Storage
+    S3_ENDPOINT: z.string().optional(),
+    S3_ACCESS_KEY: z.string().optional(),
+    S3_SECRET_KEY: z.string().optional(),
+    S3_BUCKET: z.string().optional(),
+    S3_REGION: z.string().optional(),
+    S3_PUBLIC_URL: z.string().url().optional(),
 
     // Webhooks
     RESEND_WEBHOOK_SECRET: z
@@ -42,7 +46,15 @@ const envSchema = z
   .refine(
     (data) => data.DATABASE_URL || data.POSTGRES_URL,
     'Either DATABASE_URL or POSTGRES_URL must be provided'
-  );
+  )
+  .refine((data) => {
+    // If any S3/MinIO config is provided, all required fields must be present
+    const s3Fields = [data.S3_ENDPOINT, data.S3_ACCESS_KEY, data.S3_SECRET_KEY, data.S3_BUCKET];
+    const hasAnyS3Config = s3Fields.some((field) => field !== undefined);
+    const hasAllS3Config = s3Fields.every((field) => field !== undefined);
+
+    return !hasAnyS3Config || hasAllS3Config;
+  }, 'All S3/MinIO configuration fields (S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET) must be provided together');
 
 /**
  * Validate environment variables at startup

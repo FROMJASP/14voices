@@ -18,6 +18,8 @@ const withBundleAnalyzer = (config: NextConfig): NextConfig => {
 };
 
 const nextConfig: NextConfig = {
+  // Enable standalone output for Docker deployment
+  output: 'standalone',
   eslint: {
     // Disable ESLint during production builds to avoid dependency issues
     ignoreDuringBuilds: true,
@@ -27,7 +29,7 @@ const nextConfig: NextConfig = {
     'extendable-media-recorder',
     'standardized-audio-context',
     'media-encoder-host',
-    'recorder-audio-worklet'
+    'recorder-audio-worklet',
   ],
   experimental: {
     optimizePackageImports: [
@@ -116,9 +118,9 @@ const nextConfig: NextConfig = {
         tls: false,
       };
 
-      // Tree shake unused exports
-      config.optimization.usedExports = true;
-      config.optimization.sideEffects = false;
+      // Tree shake unused exports - disabled due to conflict with cacheUnaffected
+      // config.optimization.usedExports = true;
+      // config.optimization.sideEffects = false;
     }
 
     return config;
@@ -132,13 +134,14 @@ const nextConfig: NextConfig = {
         pathname: '/api/media/**',
       },
       {
-        protocol: 'https',
-        hostname: '*.vercel-storage.com',
+        protocol: 'http',
+        hostname: 'minio',
+        port: '9000',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: '*.public.blob.vercel-storage.com',
+        hostname: 'minio.*',
         pathname: '/**',
       },
       {

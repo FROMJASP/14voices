@@ -200,7 +200,9 @@ const Scripts: CollectionConfig = {
       'application/rtf',
       'application/vnd.apple.pages',
     ],
-    disableLocalStorage: true, // Force blob storage for security
+    // Storage handled by wrapped Vercel adapter or local storage
+    disableLocalStorage:
+      process.env.NODE_ENV === 'production' && !!process.env.BLOB_READ_WRITE_TOKEN,
   },
   hooks: {
     beforeOperation: [
