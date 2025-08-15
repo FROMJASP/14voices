@@ -212,6 +212,22 @@ View logs in Coolify:
 
 ## Troubleshooting
 
+### Build Failures with Database Connection Errors
+
+**Problem**: Build fails with `ECONNREFUSED` when trying to connect to database during static page generation.
+
+**Solution**: The application uses a fake database URL during build to prevent connection attempts:
+
+- The Dockerfile sets `DATABASE_URL=postgresql://fake:fake@fake:5432/fake` during build
+- Components check for this fake URL and return default values
+- Real database connection only happens at runtime
+
+**Prevention**:
+
+- All pages accessing database must have `export const dynamic = 'force-dynamic'`
+- Metadata and layout functions must check for fake database URL
+- Never remove the fake database URL from Dockerfile
+
 ### Application Won't Start
 
 1. Check environment variables are set correctly

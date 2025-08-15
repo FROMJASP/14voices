@@ -529,6 +529,56 @@ bun run validate:deps  # Add this script if not exists
    - Sharp, lightningcss handled by postinstall script
    - Don't manually install platform binaries
 
+## Self-Hosted Deployment with Coolify
+
+### Critical Build Configuration
+
+**Database Connection During Build**: Next.js attempts to connect to the database during static page generation, which fails in Docker builds.
+
+**Solution**: The Dockerfile uses a fake database URL during build:
+
+```dockerfile
+DATABASE_URL=postgresql://fake:fake@fake:5432/fake
+```
+
+**Required Code Patterns**:
+
+1. **Pages with Database Access**:
+
+   ```typescript
+   export const dynamic = 'force-dynamic';
+   ```
+
+2. **Metadata Functions**:
+
+   ```typescript
+   export async function generateMetadata() {
+     // Check for fake database URL during build
+     if (process.env.DATABASE_URL?.includes('fake:fake@fake')) {
+       return {
+         title: 'Default Title',
+         description: 'Default description',
+       };
+     }
+     // ... normal database queries
+   }
+   ```
+
+3. **Layout Components**:
+   ```typescript
+   // In getInfoNavbarData or similar functions
+   if (process.env.DATABASE_URL?.includes('fake:fake@fake')) {
+     return defaultData;
+   }
+   ```
+
+**Never Remove**: The fake database URL in Dockerfile is critical - removing it will cause build failures.
+
+### Storage Configuration
+
+- **From Vercel Blob to MinIO**: The application now uses MinIO (S3-compatible) for file storage
+- **Environment Variables**: See `docs/SELF_HOSTED_DEPLOYMENT.md` for complete MinIO setup
+
 ## Vercel Deployment Considerations
 
 ### Package Manager Notes
