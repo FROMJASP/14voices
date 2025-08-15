@@ -56,7 +56,7 @@ async function handler(_req: NextRequest, { params }: { params: Promise<{ id: st
 
       for (const email of testEmails) {
         try {
-          const result = await resendMarketing.resend.emails.send({
+          const result = await resendMarketing.sendEmail({
             from: `${campaign.fromName} <${campaign.fromEmail}>`,
             to: email,
             subject: `[TEST] ${campaign.subject}`,

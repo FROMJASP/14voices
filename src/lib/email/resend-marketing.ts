@@ -357,6 +357,17 @@ export class ResendMarketingService {
       throw error;
     }
   }
+
+  async sendEmail(options: {
+    from: string;
+    to: string | string[];
+    subject: string;
+    html?: string;
+    text?: string;
+    replyTo?: string;
+  }) {
+    return this.resend.emails.send(options);
+  }
 }
 
 export const resendMarketing = new ResendMarketingService();
