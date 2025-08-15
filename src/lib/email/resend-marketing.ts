@@ -366,7 +366,22 @@ export class ResendMarketingService {
     text?: string;
     replyTo?: string;
   }) {
-    return this.resend.emails.send(options);
+    // Ensure at least one of html or text is provided
+    const emailOptions = {
+      from: options.from,
+      to: options.to,
+      subject: options.subject,
+      ...(options.html && { html: options.html }),
+      ...(options.text && { text: options.text }),
+      ...(options.replyTo && { replyTo: options.replyTo }),
+    };
+
+    // If neither html nor text is provided, add empty text
+    if (!emailOptions.html && !emailOptions.text) {
+      emailOptions.text = '';
+    }
+
+    return this.resend.emails.send(emailOptions);
   }
 }
 
