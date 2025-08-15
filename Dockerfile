@@ -13,6 +13,9 @@ RUN bun install --frozen-lockfile
 FROM oven/bun:1.1.38-alpine AS builder
 WORKDIR /app
 
+# Install Node.js for Payload CLI compatibility
+RUN apk add --no-cache nodejs
+
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -21,8 +24,8 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Generate Payload import map
-RUN bun payload generate:importmap
+# Generate Payload import map using Node.js
+RUN node node_modules/payload/dist/bin/index.js generate:importmap
 
 # Build the application
 RUN bun run build
