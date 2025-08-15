@@ -10,25 +10,32 @@ interface PageProps {
   }>;
 }
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise });
+// Disable static generation for self-hosted deployments
+// This prevents build-time database connection attempts
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 
-  const pages = await payload.find({
-    collection: 'pages',
-    where: {
-      status: {
-        equals: 'published',
-      },
-    },
-    limit: 100,
-  });
-
-  return pages.docs
-    .filter((page) => (page as Page).slug !== 'home')
-    .map((page) => ({
-      slug: (page as Page).slug.split('/'),
-    }));
-}
+// Commented out for self-hosted deployment
+// Uncomment if you want to enable static generation with a database available at build time
+// export async function generateStaticParams() {
+//   const payload = await getPayload({ config: configPromise });
+//
+//   const pages = await payload.find({
+//     collection: 'pages',
+//     where: {
+//       status: {
+//         equals: 'published',
+//       },
+//     },
+//     limit: 100,
+//   });
+//
+//   return pages.docs
+//     .filter((page) => (page as Page).slug !== 'home')
+//     .map((page) => ({
+//       slug: (page as Page).slug.split('/'),
+//     }));
+// }
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug: slugArray } = await params;
