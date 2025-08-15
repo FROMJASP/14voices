@@ -21,6 +21,9 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
+# Generate Payload import map
+RUN bun payload generate:importmap
+
 # Build the application
 RUN bun run build
 
