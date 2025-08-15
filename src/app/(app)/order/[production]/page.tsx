@@ -46,6 +46,10 @@ export async function generateStaticParams() {
   }));
 }
 
+// Disable static generation for self-hosted deployments
+// Even though we have static params, we still query the database for voiceovers
+export const dynamic = 'force-dynamic';
+
 export default async function OrderPage({ params }: { params: Promise<{ production: string }> }) {
   const { production } = await params;
   const productionIndex = productionSlugs.indexOf(production);

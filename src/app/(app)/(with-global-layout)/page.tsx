@@ -7,6 +7,10 @@ import { HomepageWithDrawerOptimized } from '@/components/features/homepage/Home
 import { OptimizedVoiceoverQueries } from '@/lib/database-optimizations';
 import { getHomepageSettings } from '@/lib/homepage-settings';
 
+// Disable static generation for self-hosted deployments
+// This prevents build-time database connection attempts
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata() {
   const payload = await getPayload({ config: configPromise });
 

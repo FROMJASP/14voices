@@ -4,6 +4,10 @@ import { fetchOptimized } from '@/lib/data-fetching-server';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 
+// Disable static generation for self-hosted deployments
+// This prevents build-time database connection attempts
+export const dynamic = 'force-dynamic';
+
 interface VoiceoverPageProps {
   params: Promise<{
     slug: string;
@@ -61,7 +65,7 @@ export async function generateMetadata({ params }: VoiceoverPageProps) {
     };
   }
 
-  const description = voiceover.bio 
+  const description = voiceover.bio
     ? `${voiceover.bio.substring(0, 160)}...`
     : `Professionele Nederlandse voice-over van ${voiceover.name}. Boek nu voor uw project.`;
 
@@ -71,14 +75,16 @@ export async function generateMetadata({ params }: VoiceoverPageProps) {
     openGraph: {
       title: `${voiceover.name} - Professional Voice-over`,
       description,
-      images: voiceover.profilePhoto?.url ? [
-        {
-          url: voiceover.profilePhoto.url,
-          width: 800,
-          height: 600,
-          alt: `Profile photo of ${voiceover.name}`,
-        },
-      ] : [],
+      images: voiceover.profilePhoto?.url
+        ? [
+            {
+              url: voiceover.profilePhoto.url,
+              width: 800,
+              height: 600,
+              alt: `Profile photo of ${voiceover.name}`,
+            },
+          ]
+        : [],
     },
   };
 }
