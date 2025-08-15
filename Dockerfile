@@ -1,5 +1,5 @@
 # Stage 1: Dependencies
-FROM oven/bun:1.0.33-alpine AS deps
+FROM oven/bun:1.1.38-alpine AS deps
 WORKDIR /app
 
 # Copy package files and scripts needed for postinstall
@@ -10,7 +10,7 @@ COPY scripts ./scripts
 RUN bun install --frozen-lockfile
 
 # Stage 2: Builder
-FROM oven/bun:1.0.33-alpine AS builder
+FROM oven/bun:1.1.38-alpine AS builder
 WORKDIR /app
 
 # Copy dependencies from deps stage
@@ -25,7 +25,7 @@ ENV NODE_ENV=production
 RUN bun run build
 
 # Stage 3: Runner
-FROM oven/bun:1.0.33-alpine AS runner
+FROM oven/bun:1.1.38-alpine AS runner
 WORKDIR /app
 
 # Install runtime dependencies
