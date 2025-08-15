@@ -30,17 +30,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV CSRF_SECRET=dummy-csrf-secret-for-build
 
-# Generate Payload import map - try multiple methods with debugging
-RUN echo "Attempting to generate import map..." && \
-    (DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
-    PAYLOAD_SECRET=dummy-secret-for-build \
-    NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
-    RESEND_API_KEY=re_dummy_key \
-    node node_modules/payload/dist/bin/index.js generate:importmap && \
-    echo "✅ Payload CLI import map generation succeeded") || \
-    (echo "⚠️ Payload CLI failed, trying fallback script..." && \
-    node scripts/generate-importmap.js) || \
-    (echo "❌ Both import map generation methods failed" && exit 1)
+# Generate Payload import map - use fallback script directly since CLI has different output path
+RUN echo "Generating import map for build..." && \
+    node scripts/generate-importmap.js && \
+    echo "✅ Import map generation completed"
 
 # Verify import map was generated
 RUN if [ -f "src/app/(payload)/admin/importMap.js" ]; then \
@@ -51,7 +44,7 @@ RUN if [ -f "src/app/(payload)/admin/importMap.js" ]; then \
       echo "Listing app directory structure:"; \
       find src/app -type f -name "*.js" | head -20; \
       echo "Looking for importMap.js:"; \
-      find . -name "importMap.js" -type f; \
+      find . -name "importMap.js" -type f 2>/dev/null | head -10; \
       exit 1; \
     fi
 
