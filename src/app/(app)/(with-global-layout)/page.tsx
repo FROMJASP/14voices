@@ -12,6 +12,14 @@ import { getHomepageSettings } from '@/lib/homepage-settings';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata() {
+  // During build time with fake database URL, return default metadata
+  if (process.env.DATABASE_URL?.includes('fake:fake@fake')) {
+    return {
+      title: '14voices - Professionele Voice-overs',
+      description: 'Professionele voice-overs voor elk project. Van commercials tot bedrijfsfilms.',
+    };
+  }
+
   const payload = await getPayload({ config: configPromise });
 
   const pages = await payload.find({

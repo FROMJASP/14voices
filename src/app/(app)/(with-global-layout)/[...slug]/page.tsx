@@ -38,6 +38,14 @@ export const dynamicParams = true;
 // }
 
 export async function generateMetadata({ params }: PageProps) {
+  // During build time with fake database URL, return default metadata
+  if (process.env.DATABASE_URL?.includes('fake:fake@fake')) {
+    return {
+      title: '14voices - Professionele Voice-overs',
+      description: 'Professionele voice-overs voor elk project. Van commercials tot bedrijfsfilms.',
+    };
+  }
+
   const { slug: slugArray } = await params;
   const slug = slugArray?.join('/') || 'home';
   const payload = await getPayload({ config: configPromise });
