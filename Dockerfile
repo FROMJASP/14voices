@@ -40,11 +40,13 @@ RUN NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
     DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
     PAYLOAD_SECRET=dummy-secret-for-build \
     CSRF_SECRET=dummy-csrf-secret-for-build \
+    RESEND_API_KEY=re_dummy_build_key \
     node scripts/validate-test-dependencies.js && \
     NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
     DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
     PAYLOAD_SECRET=dummy-secret-for-build \
     CSRF_SECRET=dummy-csrf-secret-for-build \
+    RESEND_API_KEY=re_dummy_build_key \
     bun run build
 
 # Stage 3: Runner

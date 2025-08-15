@@ -42,10 +42,16 @@ export interface BroadcastAnalytics {
 }
 
 export class ResendMarketingService {
-  resend: Resend;
+  private _resend?: Resend;
 
-  constructor(apiKey?: string) {
-    this.resend = new Resend(apiKey || process.env.RESEND_API_KEY);
+  constructor(private apiKey?: string) {}
+
+  private get resend(): Resend {
+    if (!this._resend) {
+      const key = this.apiKey || process.env.RESEND_API_KEY || 're_dummy_build_key';
+      this._resend = new Resend(key);
+    }
+    return this._resend;
   }
 
   async createAudience(options: CreateAudienceOptions) {

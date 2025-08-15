@@ -2,7 +2,15 @@ import { Payload } from 'payload';
 import { Resend } from 'resend';
 import { renderEmailTemplate } from '../../../lib/email/renderer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization to avoid build-time errors
+let resendInstance: Resend | null = null;
+const getResend = () => {
+  if (!resendInstance) {
+    const apiKey = process.env.RESEND_API_KEY || 're_dummy_build_key';
+    resendInstance = new Resend(apiKey);
+  }
+  return resendInstance;
+};
 
 interface BatchEmailJob {
   id: string;
@@ -168,7 +176,7 @@ export class EmailBatchProcessor {
               : [],
           };
 
-          const result = await resend.emails.send(emailData);
+          const result = await getResend().emails.send(emailData);
 
           if (result.error) {
             throw new Error(result.error.message);

@@ -1,7 +1,15 @@
 import { Resend } from 'resend';
 import { Payload } from 'payload';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization to avoid build-time errors
+let resendInstance: Resend | null = null;
+const getResend = () => {
+  if (!resendInstance) {
+    const apiKey = process.env.RESEND_API_KEY || 're_dummy_build_key';
+    resendInstance = new Resend(apiKey);
+  }
+  return resendInstance;
+};
 
 interface RenderTemplateOptions {
   templateKey: string;
@@ -152,7 +160,7 @@ export async function sendEmail(
     scheduledAt: scheduleAt?.toISOString(),
   };
 
-  const result = await resend.emails.send({
+  const result = await getResend().emails.send({
     from: emailData.from,
     to: emailData.to,
     subject: emailData.subject,
