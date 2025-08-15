@@ -11,12 +11,17 @@ const path = require('path');
 
 const importMapPath = path.join(__dirname, '../src/app/(payload)/admin/importMap.js');
 
-const importMapContent = `import { NameCell as NameCell_9c0639e919331889896aa9ea1c557661 } from '../../../components/admin/cells/NameCell'
+const importMapContent = `import { UserInfoCell as UserInfoCell_2498c455506837329098564ecaa127bb } from '../../../components/admin/cells/UserInfoCell'
+import { UserAvatarCell as UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd } from '../../../components/admin/cells/UserAvatarCell'
+import { UserStatusCell as UserStatusCell_d564d781689a1acdfcdc133ddfd7dec7 } from '../../../components/admin/cells/UserStatusCell'
+import { UserRoleCell as UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d } from '../../../components/admin/cells/UserRoleCell'
+import { UserLastSeenCell as UserLastSeenCell_b5d142be42099c385752cb29940d2ee5 } from '../../../components/admin/cells/UserLastSeenCell'
+import { NameCell as NameCell_9c0639e919331889896aa9ea1c557661 } from '../../../components/admin/cells/NameCell'
 import { ProfilePhotoCell as ProfilePhotoCell_fc0d7ba41e7df02cabb84445148888d0 } from '../../../components/admin/cells/ProfilePhotoCell'
 import { StyleTagsCell as StyleTagsCell_789abce5a437648d513c3e44bd81ed9c } from '../../../components/admin/cells/StyleTagsCell'
 import { AudioDemoCell as AudioDemoCell_c5277311b993037e42bbdbf8c691c657 } from '../../../components/admin/cells/AudioDemoCell'
 import { StatusCell as StatusCell_9552c302193d4c39b8e8f39758f33f86 } from '../../../components/admin/cells/StatusCell'
-import { CohortCell as CohortCell_4f97fbdb7152b6433c40f3aaa21af63b } from '../../../components/admin/cells/CohortCell'
+import { CohortCell as CohortCell_c5ee63c454ad322318b0c5b17d768ea7 } from '../../../components/admin/cells/CohortCell'
 import { AvailabilityCell as AvailabilityCell_f18f4f9ba3a684cf14cb7d599fed8813 } from '../../../components/admin/cells/AvailabilityCell'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -52,12 +57,17 @@ import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../co
 import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'
 
 export const importMap = {
+  "./components/admin/cells/UserInfoCell#UserInfoCell": UserInfoCell_2498c455506837329098564ecaa127bb,
+  "./components/admin/cells/UserAvatarCell#UserAvatarCell": UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd,
+  "./components/admin/cells/UserStatusCell#UserStatusCell": UserStatusCell_d564d781689a1acdfcdc133ddfd7dec7,
+  "./components/admin/cells/UserRoleCell#UserRoleCell": UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d,
+  "./components/admin/cells/UserLastSeenCell#UserLastSeenCell": UserLastSeenCell_b5d142be42099c385752cb29940d2ee5,
   "./components/admin/cells/NameCell#NameCell": NameCell_9c0639e919331889896aa9ea1c557661,
   "./components/admin/cells/ProfilePhotoCell#ProfilePhotoCell": ProfilePhotoCell_fc0d7ba41e7df02cabb84445148888d0,
   "./components/admin/cells/StyleTagsCell#StyleTagsCell": StyleTagsCell_789abce5a437648d513c3e44bd81ed9c,
   "./components/admin/cells/AudioDemoCell#AudioDemoCell": AudioDemoCell_c5277311b993037e42bbdbf8c691c657,
   "./components/admin/cells/StatusCell#StatusCell": StatusCell_9552c302193d4c39b8e8f39758f33f86,
-  "./components/admin/cells/CohortCell#CohortCell": CohortCell_4f97fbdb7152b6433c40f3aaa21af63b,
+  "./components/admin/cells/CohortCell#CohortCell": CohortCell_c5ee63c454ad322318b0c5b17d768ea7,
   "./components/admin/cells/AvailabilityCell#AvailabilityCell": AvailabilityCell_f18f4f9ba3a684cf14cb7d599fed8813,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,

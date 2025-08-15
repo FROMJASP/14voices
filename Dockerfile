@@ -25,15 +25,21 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV CSRF_SECRET=dummy-csrf-secret-for-build
 
-# Generate Payload import map using Node.js with fallback
+# Generate Payload import map - try multiple methods
 RUN DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
     PAYLOAD_SECRET=dummy-secret-for-build \
     NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
+    RESEND_API_KEY=re_dummy_key \
     node node_modules/payload/dist/bin/index.js generate:importmap || \
-    node scripts/generate-importmap.js
+    node scripts/generate-importmap.js || \
+    (echo "Both import map generation methods failed" && exit 1)
 
-# Verify import map was generated
-RUN ls -la "src/app/(payload)/admin/importMap.js" || echo "Import map not found at expected location"
+# Verify import map was generated (escape parentheses)
+RUN ls -la src/app/\(payload\)/admin/importMap.js || \
+    (echo "Import map not found at expected location" && \
+     echo "Listing directory structure:" && \
+     find src/app -name "importMap.js" -type f && \
+     exit 1)
 
 # Install platform-specific sharp binary for Alpine
 RUN npm install --os=linux --cpu=x64 sharp --force
