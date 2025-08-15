@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 
 /**
- * This script generates a minimal importMap.js file for Vercel builds
+ * This script generates a minimal importMap.js file for Docker/production builds
  * when database is not available during build time
  */
 
@@ -115,8 +115,10 @@ export const importMap = {
 
 // Create directory if it doesn't exist
 const dir = path.dirname(importMapPath);
-console.log('Creating import map at:', importMapPath);
+console.log('Import map will be created at:', importMapPath);
 console.log('Directory path:', dir);
+console.log('Current working directory:', process.cwd());
+console.log('Script directory:', __dirname);
 
 try {
   if (!fs.existsSync(dir)) {

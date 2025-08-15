@@ -30,23 +30,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV CSRF_SECRET=dummy-csrf-secret-for-build
 
-# Generate Payload import map - use fallback script directly since CLI has different output path
-RUN echo "Generating import map for build..." && \
-    node scripts/generate-importmap.js && \
-    echo "✅ Import map generation completed"
-
-# Verify import map was generated
-RUN if [ -f "src/app/(payload)/admin/importMap.js" ]; then \
-      echo "✅ Import map found at: src/app/(payload)/admin/importMap.js"; \
-      ls -la "src/app/(payload)/admin/importMap.js"; \
-    else \
-      echo "❌ Import map not found at expected location"; \
-      echo "Listing app directory structure:"; \
-      find src/app -type f -name "*.js" | head -20; \
-      echo "Looking for importMap.js:"; \
-      find . -name "importMap.js" -type f 2>/dev/null | head -10; \
-      exit 1; \
-    fi
+# Skip separate import map generation - it's now included in the build script
 
 # Install platform-specific sharp binary for Alpine
 RUN npm install --os=linux --cpu=x64 sharp --force

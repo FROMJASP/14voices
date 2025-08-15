@@ -13,7 +13,7 @@
     "fromjasp": "bun scripts/fromjasp.ts",
     "dev": "next dev",
     "dev:turbo": "next dev --turbopack",
-    "build": "next build",
+    "build": "node scripts/generate-importmap.js && next build",
     "build:with-migrate": "payload migrate && next build",
     "build:vercel": "node scripts/validate-test-dependencies.js && node scripts/generate-importmap.js && npm install sharp --force && next build",
     "start": "next start",
