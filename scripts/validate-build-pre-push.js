@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -23,6 +24,19 @@ const log = {
 
 // Track if any validation failed
 let hasErrors = false;
+
+// 0. Generate import map if needed (for local validation)
+const importMapPath = path.join(__dirname, '../src/app/(payload)/admin/importMap.js');
+if (!fs.existsSync(importMapPath)) {
+  log.section('📝 Generating import map for validation...');
+  try {
+    execSync('node scripts/generate-importmap.js', { stdio: 'inherit' });
+    log.success('Import map generated');
+  } catch {
+    log.error('Failed to generate import map');
+    hasErrors = true;
+  }
+}
 
 // 1. Check TypeScript compilation
 log.section('🔍 Running TypeScript type check...');
