@@ -28,9 +28,7 @@ FROM oven/bun:1.0.33-alpine AS runner
 WORKDIR /app
 
 # Install runtime dependencies
-RUN apk add --no-cache \
-    libc6-compat \
-    tini
+RUN apk add --no-cache tini
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
