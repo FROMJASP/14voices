@@ -2,8 +2,9 @@
 FROM oven/bun:1.0.33-alpine AS deps
 WORKDIR /app
 
-# Copy package files
+# Copy package files and scripts needed for postinstall
 COPY package.json bun.lockb ./
+COPY scripts ./scripts
 
 # Install dependencies
 RUN bun install --frozen-lockfile
