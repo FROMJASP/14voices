@@ -9,7 +9,16 @@
 const fs = require('fs');
 const path = require('path');
 
-const importMapPath = path.join(__dirname, '../src/app/(payload)/admin/importMap.js');
+// Use explicit path construction to handle parentheses correctly
+const importMapPath = path.join(
+  __dirname,
+  '..',
+  'src',
+  'app',
+  '(payload)',
+  'admin',
+  'importMap.js'
+);
 
 const importMapContent = `import { UserInfoCell as UserInfoCell_2498c455506837329098564ecaa127bb } from '../../../components/admin/cells/UserInfoCell'
 import { UserAvatarCell as UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd } from '../../../components/admin/cells/UserAvatarCell'
@@ -106,10 +115,31 @@ export const importMap = {
 
 // Create directory if it doesn't exist
 const dir = path.dirname(importMapPath);
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
+console.log('Creating import map at:', importMapPath);
+console.log('Directory path:', dir);
 
-// Write the importMap file
-fs.writeFileSync(importMapPath, importMapContent);
-console.log('✅ Generated importMap.js for build');
+try {
+  if (!fs.existsSync(dir)) {
+    console.log('Directory does not exist, creating:', dir);
+    fs.mkdirSync(dir, { recursive: true });
+    console.log('Directory created successfully');
+  } else {
+    console.log('Directory already exists:', dir);
+  }
+
+  // Write the importMap file
+  fs.writeFileSync(importMapPath, importMapContent);
+  console.log('✅ Generated importMap.js for build at:', importMapPath);
+
+  // Verify the file was created
+  if (fs.existsSync(importMapPath)) {
+    const stats = fs.statSync(importMapPath);
+    console.log('✅ Import map file verified, size:', stats.size, 'bytes');
+  } else {
+    console.error('❌ Import map file was not created!');
+    process.exit(1);
+  }
+} catch (error) {
+  console.error('❌ Error creating import map:', error);
+  process.exit(1);
+}
