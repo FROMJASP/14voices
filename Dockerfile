@@ -37,13 +37,13 @@ RUN npm install --os=linux --cpu=x64 sharp --force
 
 # Build the application using Docker-optimized build process
 RUN NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
-    DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
+    DATABASE_URL=postgresql://fake:fake@fake:5432/fake \
     PAYLOAD_SECRET=dummy-secret-for-build \
     CSRF_SECRET=dummy-csrf-secret-for-build \
     RESEND_API_KEY=re_dummy_build_key \
     node scripts/validate-test-dependencies.js && \
     NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
-    DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
+    DATABASE_URL=postgresql://fake:fake@fake:5432/fake \
     PAYLOAD_SECRET=dummy-secret-for-build \
     CSRF_SECRET=dummy-csrf-secret-for-build \
     RESEND_API_KEY=re_dummy_build_key \
