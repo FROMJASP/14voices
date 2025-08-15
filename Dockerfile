@@ -13,8 +13,8 @@ RUN bun install --frozen-lockfile
 FROM oven/bun:1.1.38-alpine AS builder
 WORKDIR /app
 
-# Install Node.js for Payload CLI compatibility
-RUN apk add --no-cache nodejs
+# Install Node.js 20 for Payload CLI compatibility
+RUN apk add --no-cache nodejs=~20 npm
 
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
@@ -23,12 +23,32 @@ COPY . .
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV CSRF_SECRET=dummy-csrf-secret-for-build
 
-# Generate Payload import map using Node.js
-RUN node node_modules/payload/dist/bin/index.js generate:importmap
+# Generate Payload import map using Node.js with fallback
+RUN DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
+    PAYLOAD_SECRET=dummy-secret-for-build \
+    NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
+    node node_modules/payload/dist/bin/index.js generate:importmap || \
+    node scripts/generate-importmap.js
 
-# Build the application
-RUN bun run build
+# Verify import map was generated
+RUN ls -la "src/app/(payload)/admin/importMap.js" || echo "Import map not found at expected location"
+
+# Install platform-specific sharp binary for Alpine
+RUN npm install --os=linux --cpu=x64 sharp --force
+
+# Build the application using Docker-optimized build process
+RUN NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
+    DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
+    PAYLOAD_SECRET=dummy-secret-for-build \
+    CSRF_SECRET=dummy-csrf-secret-for-build \
+    node scripts/validate-test-dependencies.js && \
+    NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
+    DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy \
+    PAYLOAD_SECRET=dummy-secret-for-build \
+    CSRF_SECRET=dummy-csrf-secret-for-build \
+    bun run build
 
 # Stage 3: Runner
 FROM oven/bun:1.1.38-alpine AS runner

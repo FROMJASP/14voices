@@ -76,7 +76,10 @@ export async function middleware(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  response.headers.set(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), payment=()'
+  );
 
   // Add Content Security Policy
   response.headers.set('Content-Security-Policy', buildCSPHeader());
@@ -86,7 +89,7 @@ export async function middleware(request: NextRequest) {
   response.headers.set('X-DNS-Prefetch-Control', 'off');
   response.headers.set('X-Download-Options', 'noopen');
   response.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
-  
+
   // Additional modern security headers
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
   response.headers.set('Cross-Origin-Resource-Policy', 'same-origin');
@@ -103,10 +106,13 @@ export async function middleware(request: NextRequest) {
       host: request.headers.get('host') || 'unknown',
     };
 
-    // In production, this should be sent to a monitoring service
+    // Log to console for immediate visibility
     if (process.env.NODE_ENV === 'production') {
       console.log('[ADMIN_ACCESS]', JSON.stringify(accessLog));
     }
+
+    // TODO: When payload is available in middleware, log to SecurityLogs collection
+    // Currently, Payload cannot be accessed in Edge Runtime
   }
 
   // Log suspicious query parameters
