@@ -381,7 +381,7 @@ export class ResendMarketingService {
       emailOptions.text = '';
     }
 
-    return this.resend.emails.send(emailOptions);
+    return this.resend.emails.send(emailOptions as any);
   }
 }
 
