@@ -193,6 +193,9 @@ class RedisAdapter {
   private connectionAttempted: boolean = false;
   private isProduction: boolean = process.env.NODE_ENV === 'production';
   private isBuildTime: boolean = process.env.NEXT_PHASE === 'phase-production-build';
+  private hasLoggedConnectionFailure: boolean = false;
+  private operationErrorCount: number = 0;
+  private maxOperationErrors: number = 5;
 
   constructor(config: RedisConfig) {
     this.config = {
@@ -229,29 +232,42 @@ class RedisAdapter {
           port: this.config.port,
           connectTimeout: 5000, // 5 second timeout
           reconnectStrategy: (retries) => {
-            // Only retry a few times in development
-            if (!this.isProduction && retries > 3) {
+            // Don't retry if Redis isn't configured
+            if (!this.config.url && !this.config.host) {
+              return false;
+            }
+            // Limit retries to prevent connection spam
+            if (retries > 5) {
+              if (!this.hasLoggedConnectionFailure) {
+                this.hasLoggedConnectionFailure = true;
+                console.warn('Redis connection failed after 5 attempts, disabling Redis cache');
+              }
               return false; // Stop retrying
             }
-            // In production, use exponential backoff
-            return Math.min(retries * 50, 500);
+            // Use exponential backoff with a cap
+            return Math.min(retries * 100, 1000);
           },
         },
         password: this.config.password,
         database: this.config.db,
       });
 
-      this.client.on('error', (err: Error) => {
-        // Only log Redis errors in production (never during build)
-        if (this.isProduction && !this.isBuildTime) {
-          console.error('Redis Client Error:', err);
+      this.client.on('error', () => {
+        // Only log the first Redis error to avoid spam
+        if (!this.hasLoggedConnectionFailure && this.isProduction && !this.isBuildTime) {
+          this.hasLoggedConnectionFailure = true;
+          console.warn('Redis connection error occurred, falling back to in-memory cache');
         }
         this.connected = false;
       });
 
       this.client.on('connect', () => {
-        console.log('Redis connected successfully');
+        if (this.hasLoggedConnectionFailure) {
+          console.log('Redis reconnected successfully');
+        }
         this.connected = true;
+        this.hasLoggedConnectionFailure = false;
+        this.operationErrorCount = 0;
       });
 
       this.client.on('ready', () => {
@@ -260,13 +276,38 @@ class RedisAdapter {
 
       await this.client.connect();
     } catch (error) {
-      // In development, log once that Redis is not available
-      if (!this.isProduction) {
-        console.log('Redis not available, falling back to in-memory cache');
-      } else {
-        console.error('Failed to connect to Redis:', error);
+      // Only log once to avoid spam
+      if (!this.hasLoggedConnectionFailure) {
+        this.hasLoggedConnectionFailure = true;
+        if (!this.isProduction) {
+          console.log('Redis not available, using in-memory cache');
+        } else if (this.config.url || this.config.host) {
+          // Only log in production if Redis was actually configured
+          console.warn('Redis connection failed, falling back to in-memory cache');
+        }
       }
       this.connected = false;
+    }
+  }
+
+  private handleOperationError(): void {
+    this.operationErrorCount++;
+
+    // Only log if we haven't exceeded the error threshold
+    if (this.operationErrorCount <= this.maxOperationErrors) {
+      if (this.operationErrorCount === this.maxOperationErrors) {
+        console.warn(
+          `Redis operations failing, suppressing further errors. Using in-memory cache.`
+        );
+      }
+    }
+
+    // Disconnect if too many errors
+    if (this.operationErrorCount > 10) {
+      this.connected = false;
+      if (this.client) {
+        this.client.disconnect().catch(() => {});
+      }
     }
   }
 
@@ -277,7 +318,7 @@ class RedisAdapter {
       const value = await this.client.get(this.config.keyPrefix + key);
       return value ? JSON.parse(value) : undefined;
     } catch (error) {
-      console.error('Redis get error:', error);
+      this.handleOperationError();
       return undefined;
     }
   }
@@ -293,7 +334,7 @@ class RedisAdapter {
         await this.client.set(this.config.keyPrefix + key, serialized);
       }
     } catch (error) {
-      console.error('Redis set error:', error);
+      this.handleOperationError();
     }
   }
 
@@ -304,7 +345,7 @@ class RedisAdapter {
       const result = await this.client.del(this.config.keyPrefix + key);
       return result > 0;
     } catch (error) {
-      console.error('Redis delete error:', error);
+      this.handleOperationError();
       return false;
     }
   }
@@ -318,7 +359,7 @@ class RedisAdapter {
         await this.client.del(keys);
       }
     } catch (error) {
-      console.error('Redis clear error:', error);
+      this.handleOperationError();
     }
   }
 
@@ -356,19 +397,28 @@ export class CacheManager {
     };
 
     if (this.layers.redis && this.useRedis) {
-      this.redisAdapter = new RedisAdapter(
-        options.redis || {
-          url: process.env.REDIS_URL,
-          host: process.env.REDIS_HOST,
-          port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : undefined,
-          password: process.env.REDIS_PASSWORD,
-          db: process.env.REDIS_DB ? parseInt(process.env.REDIS_DB) : undefined,
-          keyPrefix: process.env.CACHE_KEY_PREFIX || 'cache:',
+      const redisConfig = options.redis || {
+        url: process.env.REDIS_URL,
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : undefined,
+        password: process.env.REDIS_PASSWORD,
+        db: process.env.REDIS_DB ? parseInt(process.env.REDIS_DB) : undefined,
+        keyPrefix: process.env.CACHE_KEY_PREFIX || 'cache:',
+      };
+
+      // Only initialize Redis adapter if we have actual configuration
+      if (redisConfig.url || redisConfig.host) {
+        this.redisAdapter = new RedisAdapter(redisConfig);
+        this.redisAdapter.connect().catch(() => {
+          // Errors are already handled in the adapter
+        });
+      } else {
+        // No Redis configuration found, disable Redis layer
+        this.layers.redis = false;
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Redis not configured, using in-memory cache only');
         }
-      );
-      this.redisAdapter.connect().catch(() => {
-        // Errors are already handled in the adapter
-      });
+      }
     }
 
     // Log cache configuration once
@@ -503,11 +553,11 @@ export class CacheManager {
 
 // Create global cache instance with appropriate defaults
 const globalCache = new CacheManager({
-  // In development, only use Redis if explicitly configured
-  useRedis: process.env.NODE_ENV === 'production' ? !!process.env.REDIS_URL : false,
+  // Only use Redis if URL is configured
+  useRedis: !!process.env.REDIS_URL,
   layers: {
     memory: true,
-    redis: process.env.NODE_ENV === 'production' ? !!process.env.REDIS_URL : false,
+    redis: !!process.env.REDIS_URL,
   },
 });
 

@@ -673,3 +673,19 @@ If production build fails:
 - **Dynamic Imports**: Can fail if dependencies aren't properly categorized
 
 The enhanced validation system catches these differences before deployment.
+
+## MCP Server Instructions
+
+The following MCP servers are available and should be used when appropriate:
+
+### coolify
+
+Use this server to interact with Coolify instances for deployment and infrastructure management. This server allows you to:
+
+- List and manage servers, projects, applications, services, and databases
+- Deploy applications and monitor deployment status
+- Manage environment variables and configurations
+- Create and update resources in Coolify
+- Handle self-hosted deployments
+
+When working with deployment tasks, infrastructure management, or self-hosted deployment configurations, use the Coolify MCP tools to interact with the Coolify instance.
