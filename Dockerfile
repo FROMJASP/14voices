@@ -54,7 +54,8 @@ FROM oven/bun:1.1.38-alpine AS runner
 WORKDIR /app
 
 # Install runtime dependencies
-RUN apk add --no-cache tini
+# Install Node.js for better compatibility with Next.js standalone server
+RUN apk add --no-cache tini nodejs=~20
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
@@ -73,6 +74,7 @@ RUN chown -R nextjs:nodejs public/uploads
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
 # Switch to non-root user
 USER nextjs
@@ -83,5 +85,5 @@ EXPOSE 3000
 # Use tini to handle signals properly
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Start the application
-CMD ["bun", "run", "server.js"]
+# Start the application using Node.js for better compatibility
+CMD ["node", "server.js"]
