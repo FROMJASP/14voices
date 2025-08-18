@@ -55,9 +55,10 @@ WORKDIR /app
 
 # Install runtime dependencies
 # Install Node.js for better compatibility with Next.js standalone server
+# Install npm for running migration scripts that use npx
 # Install both wget and curl for maximum compatibility with different health check systems
 # Install PostgreSQL client for database connectivity check
-RUN apk add --no-cache tini nodejs=~20 wget curl postgresql-client
+RUN apk add --no-cache tini nodejs=~20 npm wget curl postgresql-client
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
@@ -77,8 +78,10 @@ COPY --from=builder /app/src/payload.config.ts ./src/payload.config.ts
 COPY --from=builder /app/package.json ./package.json
 
 # Copy migration and entrypoint scripts
-COPY --from=builder /app/scripts/migrate-database.mjs ./scripts/migrate-database.mjs
+COPY --from=builder /app/scripts/run-migrations.js ./scripts/run-migrations.js
 COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+# Also copy the entire src directory for TypeScript imports
+COPY --from=builder /app/src ./src
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Create upload directories with correct permissions

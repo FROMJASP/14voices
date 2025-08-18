@@ -64,6 +64,19 @@ async function checkIfMigrationsRan() {
 async function runPayloadMigrations() {
   console.log('🚀 Running Payload migrations...');
   
+  // First check if tsx is available
+  try {
+    execSync('which tsx', { stdio: 'ignore' });
+  } catch {
+    console.log('📦 Installing tsx for TypeScript execution...');
+    try {
+      execSync('npm install -g tsx', { stdio: 'inherit' });
+    } catch (installError) {
+      console.error('❌ Failed to install tsx:', installError.message);
+      return false;
+    }
+  }
+  
   // Create a script that will be executed with tsx
   const migrationScript = `
     import { getPayload } from 'payload';
@@ -92,10 +105,24 @@ async function runPayloadMigrations() {
   `;
   
   return new Promise((resolve) => {
-    // Use tsx to handle TypeScript in production
-    const migrationProcess = spawn('npx', ['tsx', '-e', migrationScript], {
+    // Try using tsx directly first, then fallback to npx
+    const tsxCommand = process.platform === 'win32' ? 'tsx.cmd' : 'tsx';
+    let command = tsxCommand;
+    let args = ['-e', migrationScript];
+    
+    // Check if tsx exists as a command
+    try {
+      execSync(`which ${tsxCommand}`, { stdio: 'ignore' });
+    } catch {
+      // Fallback to npx
+      command = 'npx';
+      args = ['tsx', '-e', migrationScript];
+    }
+    
+    const migrationProcess = spawn(command, args, {
       stdio: 'inherit',
-      env: { ...process.env, NODE_ENV: 'production' }
+      env: { ...process.env, NODE_ENV: 'production' },
+      shell: true
     });
     
     migrationProcess.on('close', (code) => {

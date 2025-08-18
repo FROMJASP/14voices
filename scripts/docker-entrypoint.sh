@@ -30,9 +30,27 @@ echo "Running database migrations..."
 cd /app
 export PATH="/app/node_modules/.bin:$PATH"
 
-# Use our custom migration script that handles TypeScript configs properly
-if node ./scripts/migrate-database.mjs; then
-  echo "✅ Database migration and seeding completed successfully"
+# First, ensure tsx is available
+if ! command -v tsx &> /dev/null; then
+  echo "📦 Installing tsx for TypeScript support..."
+  npm install -g tsx
+fi
+
+# Run migrations using tsx to handle TypeScript
+if npx tsx ./scripts/run-migrations.js; then
+  echo "✅ Database migration completed successfully"
+  
+  # Run seeding if needed
+  if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
+    echo "🌱 Checking if seeding is needed..."
+    npx tsx -e "
+      const { seed } = require('./src/seed/index.ts');
+      seed().catch(err => {
+        console.error('Seeding error:', err);
+        process.exit(1);
+      });
+    " || echo "⚠️  Seeding skipped or already completed"
+  fi
 else
   echo "❌ Database migration failed!"
   exit 1
