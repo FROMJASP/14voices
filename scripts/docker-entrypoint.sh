@@ -3,6 +3,14 @@ set -e
 
 echo "Starting application initialization..."
 
+# Debug: Print DATABASE_URL (masked)
+echo "DATABASE_URL is set: ${DATABASE_URL:+yes}"
+if [ -n "$DATABASE_URL" ]; then
+  echo "DATABASE_URL format check: $(echo $DATABASE_URL | sed 's/:\/\/[^@]*@/:\/\/***:***@/g')"
+else
+  echo "WARNING: DATABASE_URL is not set!"
+fi
+
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
 MAX_RETRIES=30
@@ -10,6 +18,8 @@ RETRY_COUNT=0
 
 until node -e "
 const { Pool } = require('pg');
+const url = new URL(process.env.DATABASE_URL);
+console.log('Attempting to connect to host:', url.hostname);
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 pool.query('SELECT 1')
   .then(() => { console.log('Database is ready'); process.exit(0); })

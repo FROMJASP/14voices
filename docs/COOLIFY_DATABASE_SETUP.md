@@ -1,5 +1,16 @@
 # Coolify Database Setup for 14voices
 
+## ⚠️ CRITICAL: Database Hostname Issue
+
+**The most common deployment error is using the wrong database hostname!**
+
+In Coolify, the database hostname is NOT the service name you gave it. Coolify generates a unique hostname.
+
+1. Go to your PostgreSQL database in Coolify
+2. Look for **"Internal Connection URL"**
+3. The hostname will be a random string (NOT `fourteenvoices-db`)
+4. Copy the entire Internal Connection URL and use it as your DATABASE_URL
+
 ## Quick Fix for Current Deployment Issue
 
 Based on your Coolify PostgreSQL setup, here's what you need to do:
@@ -10,7 +21,9 @@ In your 14voices application settings in Coolify, add these environment variable
 
 ```env
 # Database Connection
-DATABASE_URL=postgresql://fourteenvoices:YOUR_PASSWORD@fourteenvoices-db:5432/postgres
+# Use the Internal Connection URL from your Coolify PostgreSQL database
+# Format: postgresql://username:password@hostname:5432/database
+DATABASE_URL=<copy-internal-url-from-coolify-database-settings>
 
 # Required Payload/Next.js Settings
 PAYLOAD_SECRET=your-secret-key-here
@@ -81,10 +94,19 @@ If you still see issues:
 
 1. **Check Coolify logs** for the application
 2. **Verify environment variables** are set correctly
-3. **Check database connectivity** from the application container:
+3. **Fix "getaddrinfo EAI_AGAIN" error**:
+   - This error means the database hostname cannot be resolved
+   - In Coolify, go to your PostgreSQL database settings
+   - Look for "Internal Connection URL" - it shows the exact hostname
+   - The hostname is NOT just `fourteenvoices-db`, it includes a unique suffix
+   - Example: `fourteenvoices-db-abc123` (where abc123 is a random ID)
+   - Update your DATABASE_URL with the correct hostname from Coolify
+
+4. **Check database connectivity** from the application container:
    ```bash
    # In Coolify terminal for the app
-   pg_isready -h fourteenvoices-db -p 5432 -U fourteenvoices
+   # Replace <actual-hostname> with the hostname from Coolify's Internal Connection URL
+   pg_isready -h <actual-hostname> -p 5432 -U fourteenvoices
    ```
 
 ### 7. Database Migration from Neon (Optional)
