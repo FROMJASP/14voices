@@ -30,52 +30,12 @@ echo "Running database migrations..."
 cd /app
 export PATH="/app/node_modules/.bin:$PATH"
 
-# Check if migrations have already run by looking for the users table
-if node -e "
-const { Pool } = require('pg');
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-pool.query(\"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'users')\")
-  .then((result) => { 
-    if (result.rows[0].exists) {
-      console.log('Database already migrated'); 
-      process.exit(0);
-    } else {
-      process.exit(1);
-    }
-  })
-  .catch(() => { process.exit(1); });
-"; then
-  echo "Database already migrated, skipping..."
+# Use our custom migration script that handles TypeScript configs properly
+if node ./scripts/migrate-database.mjs; then
+  echo "✅ Database migration and seeding completed successfully"
 else
-  echo "Running Payload migrations..."
-  if /app/node_modules/.bin/payload migrate; then
-    echo "Migrations completed successfully"
-    
-    # Run seed data to initialize site settings
-    echo "Initializing site settings..."
-    if bun run seed; then
-      echo "Site settings initialized successfully"
-    else
-      echo "Warning: Failed to initialize site settings, but continuing..."
-    fi
-  else
-    echo "ERROR: Migrations failed!"
-    # Try with bun as fallback
-    if bun run payload migrate; then
-      echo "Migrations completed successfully with bun"
-      
-      # Run seed data to initialize site settings
-      echo "Initializing site settings..."
-      if bun run seed; then
-        echo "Site settings initialized successfully"
-      else
-        echo "Warning: Failed to initialize site settings, but continuing..."
-      fi
-    else
-      echo "ERROR: Migrations failed with both methods!"
-      exit 1
-    fi
-  fi
+  echo "❌ Database migration failed!"
+  exit 1
 fi
 
 # Start the application

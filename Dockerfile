@@ -71,7 +71,13 @@ COPY --from=builder /app/.next/static ./.next/static
 # Copy node_modules for Payload CLI (needed for migrations)
 COPY --from=builder /app/node_modules ./node_modules
 
-# Copy entrypoint script
+# Copy configuration files needed for Payload CLI
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/src/payload.config.ts ./src/payload.config.ts
+COPY --from=builder /app/package.json ./package.json
+
+# Copy migration and entrypoint scripts
+COPY --from=builder /app/scripts/migrate-database.mjs ./scripts/migrate-database.mjs
 COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 

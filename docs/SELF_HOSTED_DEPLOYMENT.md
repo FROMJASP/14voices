@@ -63,6 +63,33 @@ This guide covers deploying 14voices on your Hetzner server using Coolify with M
 
 2. **Note Connection Details**
    - Internal URL: `postgresql://postgres:password@postgres-14voices:5432/fourteenvoices`
+   - Replace `password` with your actual PostgreSQL password
+
+### Migrating from Neon to Coolify PostgreSQL
+
+If you're switching from Neon Database to Coolify's PostgreSQL:
+
+1. **Export Data from Neon** (if you have existing data):
+
+   ```bash
+   # Export from Neon
+   pg_dump "your-neon-connection-string" > neon-backup.sql
+   ```
+
+2. **Import to Coolify PostgreSQL**:
+
+   ```bash
+   # Access your Coolify PostgreSQL container
+   docker exec -i postgres-14voices psql -U postgres -d fourteenvoices < neon-backup.sql
+   ```
+
+3. **Update Environment Variables**:
+   - Remove: `POSTGRES_URL` (Neon format)
+   - Update: `DATABASE_URL=postgresql://postgres:password@postgres-14voices:5432/fourteenvoices`
+
+4. **Redeploy Application** with new DATABASE_URL
+
+**Note**: If this is a fresh deployment, skip the migration steps - the application will automatically create all necessary tables.
 
 ## Step 3: Deploy the Application
 
@@ -120,7 +147,34 @@ This guide covers deploying 14voices on your Hetzner server using Coolify with M
 
 ## Step 4: Post-Deployment Setup
 
-1. **Run Database Migrations**
+**✅ Automatic Setup**: The application now automatically handles database migrations and seeding on first startup!
+
+1. **Monitor First Deployment**
+
+   The Docker container will automatically:
+   - Wait for database to be ready
+   - Run Payload migrations to create all tables
+   - Seed initial data (site settings, admin user if configured)
+   - Start the application
+
+   Watch the deployment logs in Coolify to see this process:
+
+   ```
+   🚀 Starting 14voices application...
+   Waiting for database to be ready...
+   ✅ Database connection successful
+   🔄 Starting database migration...
+   📦 Attempting migration via Payload initialization...
+   ✅ Migration completed successfully
+   🌱 Running seed data...
+   ✅ Seed data completed successfully
+   🎉 Database initialization completed!
+   🎯 Starting application...
+   ```
+
+2. **Manual Migration (If Needed)**
+
+   If automatic migration fails, you can run manually:
 
    ```bash
    # SSH into your server
@@ -129,18 +183,16 @@ This guide covers deploying 14voices on your Hetzner server using Coolify with M
    # Access the container
    docker exec -it [container-name] sh
 
-   # Run migrations
-   bun payload migrate
+   # Run custom migration script
+   node ./scripts/migrate-database.js
    ```
 
-2. **Seed Initial Data (Optional)**
+3. **Verify Setup**
+   - Access your domain: `https://14voices.com`
+   - Access admin panel: `https://14voices.com/admin`
+   - Login with your ADMIN_EMAIL and ADMIN_PASSWORD
 
-   ```bash
-   # In the container
-   bun run seed
-   ```
-
-3. **Configure MinIO Public Access**
+4. **Configure MinIO Public Access**
    - Set up reverse proxy for MinIO through Coolify
    - Configure domain: `minio.14voices.com`
    - This allows public access to uploaded files
@@ -211,6 +263,28 @@ View logs in Coolify:
    - Commit and push
 
 ## Troubleshooting
+
+### Migration Issues
+
+**❌ Problem**: `TypeError: Cannot read properties of null (reading 'config')`
+
+**✅ Solution**: This has been fixed! The application now uses a custom migration script that bypasses TypeScript config issues in Docker.
+
+**How it works**:
+
+- Custom migration script: `scripts/migrate-database.js`
+- Handles TypeScript files properly in production environment
+- Multiple fallback methods for maximum reliability
+- Automatic detection of existing migrations
+
+**❌ Problem**: `ECONNREFUSED` when connecting to database during migrations
+
+**✅ Solution**:
+
+- Check your `DATABASE_URL` environment variable
+- Ensure PostgreSQL service is running in Coolify
+- Verify internal service names match Coolify configuration
+- The migration script waits for database connectivity before proceeding
 
 ### Build Failures with Database Connection Errors
 
