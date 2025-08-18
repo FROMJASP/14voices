@@ -55,8 +55,8 @@ WORKDIR /app
 
 # Install runtime dependencies
 # Install Node.js for better compatibility with Next.js standalone server
-# Also install wget for Coolify health checks (Coolify uses wget, not curl)
-RUN apk add --no-cache tini nodejs=~20 wget
+# Install both wget and curl for maximum compatibility with different health check systems
+RUN apk add --no-cache tini nodejs=~20 wget curl
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
