@@ -56,7 +56,8 @@ WORKDIR /app
 # Install runtime dependencies
 # Install Node.js for better compatibility with Next.js standalone server
 # Install both wget and curl for maximum compatibility with different health check systems
-RUN apk add --no-cache tini nodejs=~20 wget curl
+# Install PostgreSQL client for database connectivity check
+RUN apk add --no-cache tini nodejs=~20 wget curl postgresql-client
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
@@ -67,9 +68,18 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+# Copy node_modules for Payload CLI (needed for migrations)
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy entrypoint script
+COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Create upload directories with correct permissions
 RUN mkdir -p public/uploads/media public/uploads/scripts public/uploads/invoices
-RUN chown -R nextjs:nodejs public/uploads
+
+# Give ownership of the entire app directory to nextjs user
+RUN chown -R nextjs:nodejs /app
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -84,7 +94,7 @@ USER nextjs
 EXPOSE 3000
 
 # Use tini to handle signals properly
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
 
 # Start the application using Node.js for better compatibility
 CMD ["node", "server.js"]
