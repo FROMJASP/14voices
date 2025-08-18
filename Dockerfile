@@ -55,7 +55,8 @@ WORKDIR /app
 
 # Install runtime dependencies
 # Install Node.js for better compatibility with Next.js standalone server
-RUN apk add --no-cache tini nodejs=~20
+# Also install curl for health checks
+RUN apk add --no-cache tini nodejs=~20 curl
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
