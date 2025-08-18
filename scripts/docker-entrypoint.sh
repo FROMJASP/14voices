@@ -6,7 +6,18 @@ echo "Starting application initialization..."
 # Debug: Print DATABASE_URL (masked)
 echo "DATABASE_URL is set: ${DATABASE_URL:+yes}"
 if [ -n "$DATABASE_URL" ]; then
+  echo "DATABASE_URL length: $(echo -n "$DATABASE_URL" | wc -c)"
   echo "DATABASE_URL format check: $(echo $DATABASE_URL | sed 's/:\/\/[^@]*@/:\/\/***:***@/g')"
+  # Check if DATABASE_URL starts with "DATABASE_URL="
+  if echo "$DATABASE_URL" | grep -q "^DATABASE_URL="; then
+    echo "ERROR: DATABASE_URL contains 'DATABASE_URL=' prefix!"
+    echo "This suggests the environment variable is not being set correctly in Coolify."
+    echo "Please check your Coolify environment variable configuration."
+    # Try to extract the actual URL
+    export DATABASE_URL=$(echo "$DATABASE_URL" | sed 's/^DATABASE_URL=//')
+    echo "Attempting to fix by removing prefix..."
+    echo "New DATABASE_URL format: $(echo $DATABASE_URL | sed 's/:\/\/[^@]*@/:\/\/***:***@/g')"
+  fi
 else
   echo "WARNING: DATABASE_URL is not set!"
 fi
@@ -18,12 +29,28 @@ RETRY_COUNT=0
 
 until node -e "
 const { Pool } = require('pg');
-const url = new URL(process.env.DATABASE_URL);
-console.log('Attempting to connect to host:', url.hostname);
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-pool.query('SELECT 1')
-  .then(() => { console.log('Database is ready'); process.exit(0); })
-  .catch((err) => { console.log('Database not ready:', err.message); process.exit(1); });
+try {
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) {
+    console.log('DATABASE_URL is not set!');
+    process.exit(1);
+  }
+  console.log('DATABASE_URL length:', dbUrl.length);
+  console.log('First 50 chars:', dbUrl.substring(0, 50) + '...');
+  
+  // Parse the URL to get hostname
+  const url = new URL(dbUrl);
+  console.log('Attempting to connect to host:', url.hostname);
+  
+  const pool = new Pool({ connectionString: dbUrl });
+  pool.query('SELECT 1')
+    .then(() => { console.log('Database is ready'); process.exit(0); })
+    .catch((err) => { console.log('Database not ready:', err.message); process.exit(1); });
+} catch (e) {
+  console.log('Error parsing DATABASE_URL:', e.message);
+  console.log('DATABASE_URL value:', process.env.DATABASE_URL);
+  process.exit(1);
+}
 " || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
   RETRY_COUNT=$((RETRY_COUNT+1))
   echo "Waiting for database... (attempt $RETRY_COUNT/$MAX_RETRIES)"
