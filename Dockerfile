@@ -79,7 +79,8 @@ COPY --from=builder /app/package.json ./package.json
 
 # Copy migration and entrypoint scripts
 COPY --from=builder /app/scripts/run-migrations.js ./scripts/run-migrations.js
-COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY --from=builder /app/scripts/run-migrations-simple.js ./scripts/run-migrations-simple.js
+COPY --from=builder /app/scripts/docker-entrypoint-fixed.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports
 COPY --from=builder /app/src ./src
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

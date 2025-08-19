@@ -1,0 +1,14 @@
+traefik.enable=true
+traefik.http.routers.http-0-fcw844w8ko4g4sssk84sg4wk.entryPoints=http
+traefik.http.routers.http-0-fcw844w8ko4g4sssk84sg4wk.rule=Host(`14voices.fromjasp.com`)
+traefik.http.routers.http-0-fcw844w8ko4g4sssk84sg4wk.service=http-0-fcw844w8ko4g4sssk84sg4wk
+traefik.http.routers.https-0-fcw844w8ko4g4sssk84sg4wk.entryPoints=https
+traefik.http.routers.https-0-fcw844w8ko4g4sssk84sg4wk.rule=Host(`14voices.fromjasp.com`)
+traefik.http.routers.https-0-fcw844w8ko4g4sssk84sg4wk.service=http-0-fcw844w8ko4g4sssk84sg4wk
+traefik.http.routers.https-0-fcw844w8ko4g4sssk84sg4wk.tls=true
+traefik.http.routers.https-0-fcw844w8ko4g4sssk84sg4wk.tls.certresolver=letsencrypt
+traefik.http.services.http-0-fcw844w8ko4g4sssk84sg4wk.loadbalancer.server.port=3000
+traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+traefik.http.routers.http-0-fcw844w8ko4g4sssk84sg4wk.middlewares=redirect-to-https
+traefik.http.middlewares.gzip.compress=true
+traefik.http.routers.https-0-fcw844w8ko4g4sssk84sg4wk.middlewares=gzip
