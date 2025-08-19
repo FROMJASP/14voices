@@ -73,21 +73,26 @@ else
   echo "Running database migrations..."
   
   # Try different migration approaches
-  echo "Attempting direct database migration..."
-  if node scripts/direct-db-migrate.js; then
-    echo "✅ Database preparation completed"
+  echo "Attempting comprehensive database migration..."
+  if node scripts/comprehensive-db-migrate.js; then
+    echo "✅ Comprehensive database setup completed"
   else
-    echo "Direct DB migration failed, trying production migration..."
-    if node scripts/run-migrations-prod.js; then
-      echo "✅ Database migration process completed"
+    echo "Comprehensive migration had some issues, trying direct DB migration..."
+    if node scripts/direct-db-migrate.js; then
+      echo "✅ Database preparation completed"
     else
-      echo "Production migration failed, trying alternative approaches..."
-      if node scripts/direct-migrate.js; then
-        echo "✅ Database migration completed with direct approach"
+      echo "Direct DB migration failed, trying production migration..."
+      if node scripts/run-migrations-prod.js; then
+        echo "✅ Database migration process completed"
       else
-        echo "⚠️  All migration approaches had issues"
-        echo "ℹ️  Payload will handle database setup on first request"
-        echo "ℹ️  This is normal for initial deployments"
+        echo "Production migration failed, trying alternative approaches..."
+        if node scripts/direct-migrate.js; then
+          echo "✅ Database migration completed with direct approach"
+        else
+          echo "⚠️  All migration approaches had issues"
+          echo "ℹ️  Payload will handle database setup on first request"
+          echo "ℹ️  This is normal for initial deployments"
+        fi
       fi
     fi
   fi
