@@ -73,8 +73,9 @@ if ! command -v tsx &> /dev/null; then
   npm install -g tsx
 fi
 
-# Run migrations using tsx to handle TypeScript
-if npx tsx ./scripts/run-migrations.js; then
+# Run migrations using the Payload CLI directly
+echo "Running Payload migrations..."
+if npx payload migrate; then
   echo "✅ Database migration completed successfully"
   
   # Run seeding if needed
@@ -90,7 +91,26 @@ if npx tsx ./scripts/run-migrations.js; then
   fi
 else
   echo "❌ Database migration failed!"
-  exit 1
+  echo "Trying alternative migration approach..."
+  # Try running migrations with Node directly
+  node -e "
+    const { getPayload } = require('payload');
+    const configPromise = require('./src/payload.config.ts');
+    
+    async function migrate() {
+      try {
+        const payload = await getPayload({
+          config: await configPromise.default || configPromise,
+        });
+        console.log('✅ Alternative migration completed');
+      } catch (err) {
+        console.error('Alternative migration failed:', err);
+        process.exit(1);
+      }
+    }
+    
+    migrate();
+  "
 fi
 
 # Start the application

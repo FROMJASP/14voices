@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.http-${COOLIFY_APP_ID:-app}.rule=Host(`14voices.fromjasp.com`)'
+      - 'traefik.http.routers.https-${COOLIFY_APP_ID:-app}.rule=Host(`14voices.fromjasp.com`)'
+      - 'traefik.http.routers.http-${COOLIFY_APP_ID:-app}.entrypoints=http'
+      - 'traefik.http.routers.https-${COOLIFY_APP_ID:-app}.entrypoints=https'
+      - 'traefik.http.routers.https-${COOLIFY_APP_ID:-app}.tls=true'
+      - 'traefik.http.routers.https-${COOLIFY_APP_ID:-app}.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.${COOLIFY_APP_ID:-app}.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.http-${COOLIFY_APP_ID:-app}.middlewares=redirect-to-https'
+      - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
+      - 'traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true'
