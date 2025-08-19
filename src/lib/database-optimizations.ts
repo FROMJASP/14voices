@@ -3,9 +3,8 @@
  * Implements advanced caching, query optimization, and performance monitoring
  */
 
-import { getPayload } from 'payload';
 import type { Where } from 'payload';
-import configPromise from '@payload-config';
+import { getSafePayload } from '@/lib/safe-payload';
 import globalCache from '@/lib/cache';
 
 // Query performance monitoring
@@ -92,7 +91,11 @@ export class OptimizedVoiceoverQueries {
     }
 
     // Optimized database query
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getSafePayload();
+    if (!payload) {
+      console.log('Payload not initialized, returning empty array');
+      return [];
+    }
     
     // Use select to limit fields and reduce payload size
     const result = await payload.find({
@@ -148,7 +151,10 @@ export class OptimizedVoiceoverQueries {
       return cached;
     }
 
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getSafePayload();
+    if (!payload) {
+      return null;
+    }
     
     // Main voiceover query
     const voiceoverResult = await payload.find({
@@ -222,7 +228,10 @@ export class OptimizedVoiceoverQueries {
       return cached;
     }
 
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getSafePayload();
+    if (!payload) {
+      return null;
+    }
     
     // Optimized search query with multiple search strategies
     const searchTerms = query.toLowerCase().trim().split(' ').filter(Boolean);
@@ -276,7 +285,10 @@ export class OptimizedVoiceoverQueries {
     const cached = await queryCache.get(cacheKey);
     if (cached) return cached;
 
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getSafePayload();
+    if (!payload) {
+      return null;
+    }
     
     const result = await payload.find({
       collection: 'voiceovers',

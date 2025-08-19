@@ -1,5 +1,4 @@
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
+import { getSafePayload } from '@/lib/safe-payload';
 import type { Page } from '@/payload-types';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
@@ -20,7 +19,13 @@ export async function generateMetadata() {
     };
   }
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getSafePayload();
+  if (!payload) {
+    return {
+      title: '14voices - Professionele Voice-overs',
+      description: 'Professionele voice-overs voor elk project. Van commercials tot bedrijfsfilms.',
+    };
+  }
 
   const pages = await payload.find({
     collection: 'pages',

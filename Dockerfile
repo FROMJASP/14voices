@@ -82,6 +82,7 @@ COPY --from=builder /app/scripts/run-migrations.js ./scripts/run-migrations.js
 COPY --from=builder /app/scripts/run-migrations-simple.js ./scripts/run-migrations-simple.js
 COPY --from=builder /app/scripts/run-migrations-prod.js ./scripts/run-migrations-prod.js
 COPY --from=builder /app/scripts/direct-migrate.js ./scripts/direct-migrate.js
+COPY --from=builder /app/scripts/direct-db-migrate.js ./scripts/direct-db-migrate.js
 COPY --from=builder /app/scripts/manual-db-setup.sql ./scripts/manual-db-setup.sql
 COPY --from=builder /app/scripts/docker-entrypoint-fixed.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports
