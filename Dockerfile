@@ -85,6 +85,9 @@ COPY --from=builder /app/scripts/direct-migrate.js ./scripts/direct-migrate.js
 COPY --from=builder /app/scripts/direct-db-migrate.js ./scripts/direct-db-migrate.js
 COPY --from=builder /app/scripts/comprehensive-db-migrate.js ./scripts/comprehensive-db-migrate.js
 COPY --from=builder /app/scripts/quick-schema-fix.js ./scripts/quick-schema-fix.js
+COPY --from=builder /app/scripts/fix-column-naming.js ./scripts/fix-column-naming.js
+COPY --from=builder /app/scripts/comprehensive-migration.js ./scripts/comprehensive-migration.js
+COPY --from=builder /app/scripts/fix-column-naming.sql ./scripts/fix-column-naming.sql
 COPY --from=builder /app/scripts/manual-db-setup.sql ./scripts/manual-db-setup.sql
 COPY --from=builder /app/scripts/docker-entrypoint-fixed.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports

@@ -1,5 +1,4 @@
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
+import { getSafePayload } from '@/lib/safe-payload';
 // Temporary interface until types are generated
 export interface HomepageSettings {
   hero: {
@@ -36,7 +35,17 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
   }
 
   try {
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getSafePayload();
+    
+    if (!payload) {
+      console.log('Payload not initialized, returning fallback settings');
+      // Return cached settings if available
+      if (cachedSettings) {
+        return cachedSettings;
+      }
+      // Otherwise return default fallback
+      throw new Error('Payload not initialized');
+    }
 
     const settings = (await payload.findGlobal({
       slug: 'homepage-settings' as any,

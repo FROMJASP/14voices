@@ -72,36 +72,49 @@ if [ -n "$SKIP_MIGRATIONS" ]; then
 else
   echo "Running database migrations..."
   
-  # Always run the quick schema fix first to ensure auth columns exist
-  echo "Running quick schema fix for auth columns..."
-  if node scripts/quick-schema-fix.js; then
-    echo "✅ Schema fix completed"
-  else
-    echo "⚠️  Schema fix had issues, continuing with migrations..."
-  fi
-  
-  # Try different migration approaches
-  echo "Attempting comprehensive database migration..."
-  if node scripts/comprehensive-db-migrate.js; then
-    echo "✅ Comprehensive database setup completed"
-  else
-    echo "Comprehensive migration had some issues, trying direct DB migration..."
-    if node scripts/direct-db-migrate.js; then
-      echo "✅ Database preparation completed"
+  # Run the comprehensive migration script
+  echo "Running comprehensive database migration..."
+  if [ -f "scripts/comprehensive-migration.js" ]; then
+    if node scripts/comprehensive-migration.js; then
+      echo "✅ Comprehensive migration completed successfully"
     else
-      echo "Direct DB migration failed, trying production migration..."
-      if node scripts/run-migrations-prod.js; then
-        echo "✅ Database migration process completed"
-      else
-        echo "Production migration failed, trying alternative approaches..."
-        if node scripts/direct-migrate.js; then
-          echo "✅ Database migration completed with direct approach"
-        else
-          echo "⚠️  All migration approaches had issues"
-          echo "ℹ️  Payload will handle database setup on first request"
-          echo "ℹ️  This is normal for initial deployments"
-        fi
+      echo "⚠️  Comprehensive migration had some issues"
+      
+      # Fallback to column naming fix
+      if [ -f "scripts/fix-column-naming.js" ]; then
+        echo "Attempting column naming fix..."
+        node scripts/fix-column-naming.js || true
       fi
+      
+      # Fallback to quick schema fix
+      if [ -f "scripts/quick-schema-fix.js" ]; then
+        echo "Attempting quick schema fix..."
+        node scripts/quick-schema-fix.js || true
+      fi
+      
+      echo "ℹ️  Some migration steps failed, but continuing..."
+      echo "ℹ️  Payload will handle remaining setup on first request"
+    fi
+  else
+    # Fallback to old migration scripts if comprehensive one doesn't exist
+    echo "Comprehensive migration script not found, using fallback approach..."
+    
+    # Try column naming fix
+    if [ -f "scripts/fix-column-naming.js" ]; then
+      echo "Running column naming fix..."
+      node scripts/fix-column-naming.js || true
+    fi
+    
+    # Try quick schema fix
+    if [ -f "scripts/quick-schema-fix.js" ]; then
+      echo "Running quick schema fix..."
+      node scripts/quick-schema-fix.js || true
+    fi
+    
+    # Try other migration approaches
+    if [ -f "scripts/comprehensive-db-migrate.js" ]; then
+      echo "Running comprehensive db migrate..."
+      node scripts/comprehensive-db-migrate.js || true
     fi
   fi
 fi
