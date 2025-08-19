@@ -64,6 +64,7 @@ import { MaintenanceModePreview as MaintenanceModePreview_custom } from '../../.
 import { default as default_16e62c7e42dfe7700742ba3a13bf8900 } from '../../../components/admin/graphics/Icon'
 import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../components/admin/graphics/Logo'
 import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'
+import { S3ClientUploadHandler as S3ClientUploadHandler_f7a8e9c3b2d1a5e8 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
   "./components/admin/cells/UserInfoCell#UserInfoCell": UserInfoCell_2498c455506837329098564ecaa127bb,
@@ -110,6 +111,7 @@ export const importMap = {
   "./components/admin/graphics/Icon#default": default_16e62c7e42dfe7700742ba3a13bf8900,
   "./components/admin/graphics/Logo#default": default_13338d86bf8cb9661b50b401726320cd,
   "./components/admin/Root#default": default_52fc470c96be62b5d8029b692894d144,
+  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f7a8e9c3b2d1a5e8,
 }
 `;
 
