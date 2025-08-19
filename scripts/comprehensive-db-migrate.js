@@ -55,12 +55,12 @@ const migrations = [
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
-        "resetPasswordToken" VARCHAR(255),
-        "resetPasswordExpiration" TIMESTAMP,
+        reset_password_token VARCHAR(255),
+        reset_password_expiration TIMESTAMP,
         salt VARCHAR(255),
         hash VARCHAR(255),
-        "lockUntil" TIMESTAMP,
-        "loginAttempts" INT DEFAULT 0,
+        lock_until TIMESTAMP,
+        login_attempts INT DEFAULT 0,
         name VARCHAR(255),
         avatar INT,
         "avatarColor" VARCHAR(50),
@@ -257,14 +257,14 @@ const migrations = [
       BEGIN
         -- Add reset password token if missing
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                       WHERE table_name='users' AND column_name='resetPasswordToken') THEN
-          ALTER TABLE users ADD COLUMN "resetPasswordToken" VARCHAR(255);
+                       WHERE table_name='users' AND column_name='reset_password_token') THEN
+          ALTER TABLE users ADD COLUMN reset_password_token VARCHAR(255);
         END IF;
         
         -- Add reset password expiration if missing
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                       WHERE table_name='users' AND column_name='resetPasswordExpiration') THEN
-          ALTER TABLE users ADD COLUMN "resetPasswordExpiration" TIMESTAMP;
+                       WHERE table_name='users' AND column_name='reset_password_expiration') THEN
+          ALTER TABLE users ADD COLUMN reset_password_expiration TIMESTAMP;
         END IF;
         
         -- Add salt if missing
@@ -279,16 +279,16 @@ const migrations = [
           ALTER TABLE users ADD COLUMN hash VARCHAR(255);
         END IF;
         
-        -- Add lockUntil if missing
+        -- Add lock_until if missing
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                       WHERE table_name='users' AND column_name='lockUntil') THEN
-          ALTER TABLE users ADD COLUMN "lockUntil" TIMESTAMP;
+                       WHERE table_name='users' AND column_name='lock_until') THEN
+          ALTER TABLE users ADD COLUMN lock_until TIMESTAMP;
         END IF;
         
-        -- Add loginAttempts if missing
+        -- Add login_attempts if missing
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                       WHERE table_name='users' AND column_name='loginAttempts') THEN
-          ALTER TABLE users ADD COLUMN "loginAttempts" INT DEFAULT 0;
+                       WHERE table_name='users' AND column_name='login_attempts') THEN
+          ALTER TABLE users ADD COLUMN login_attempts INT DEFAULT 0;
         END IF;
       END
       $$;
@@ -300,7 +300,7 @@ const migrations = [
     description: 'Creating indexes',
     sql: `
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-      CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users("resetPasswordToken");
+      CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users(reset_password_token);
       CREATE INDEX IF NOT EXISTS idx_voiceovers_slug ON voiceovers(slug);
       CREATE INDEX IF NOT EXISTS idx_pages_slug ON pages(slug);
       CREATE INDEX IF NOT EXISTS idx_productions_slug ON productions(slug);
@@ -355,7 +355,7 @@ for (const table of criticalTables) {
 // Check for critical auth columns in users table
 console.log('\n🔍 Verifying auth columns in users table...');
 
-const authColumns = ['resetPasswordToken', 'resetPasswordExpiration', 'salt', 'hash'];
+const authColumns = ['reset_password_token', 'reset_password_expiration', 'salt', 'hash'];
 let allAuthColumnsExist = true;
 
 for (const column of authColumns) {

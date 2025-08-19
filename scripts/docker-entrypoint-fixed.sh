@@ -72,6 +72,14 @@ if [ -n "$SKIP_MIGRATIONS" ]; then
 else
   echo "Running database migrations..."
   
+  # Always run the quick schema fix first to ensure auth columns exist
+  echo "Running quick schema fix for auth columns..."
+  if node scripts/quick-schema-fix.js; then
+    echo "✅ Schema fix completed"
+  else
+    echo "⚠️  Schema fix had issues, continuing with migrations..."
+  fi
+  
   # Try different migration approaches
   echo "Attempting comprehensive database migration..."
   if node scripts/comprehensive-db-migrate.js; then
