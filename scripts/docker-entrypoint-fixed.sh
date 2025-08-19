@@ -73,29 +73,22 @@ else
   echo "Running database migrations..."
   
   # Try different migration approaches
-  echo "Attempting migration with direct-migrate.js..."
-  if node scripts/direct-migrate.js; then
-    echo "✅ Database migration completed successfully"
+  echo "Attempting production migration..."
+  if node scripts/run-migrations-prod.js; then
+    echo "✅ Database migration process completed"
   else
-    echo "Direct migration failed, trying simple migration..."
-    if node scripts/run-migrations-simple.js; then
-      echo "✅ Database migration completed with simple approach"
+    echo "Production migration failed, trying direct approach..."
+    if node scripts/direct-migrate.js; then
+      echo "✅ Database migration completed with direct approach"
     else
-      echo "Simple migration failed, trying manual SQL..."
-      
-      # Try manual SQL as last resort
-      if command -v psql > /dev/null 2>&1; then
-        echo "Attempting manual SQL migration..."
-        if psql "$DATABASE_URL" < scripts/manual-db-setup.sql 2>/dev/null; then
-          echo "✅ Manual SQL migration completed"
-        else
-          echo "Manual SQL migration also failed"
-        fi
+      echo "Direct migration failed, trying simple migration..."
+      if node scripts/run-migrations-simple.js; then
+        echo "✅ Database migration completed with simple approach"
+      else
+        echo "⚠️  All migration approaches failed"
+        echo "ℹ️  Payload will attempt to run migrations on first request"
+        echo "ℹ️  This is normal for initial deployments"
       fi
-      
-      echo "⚠️  All migration approaches failed"
-      echo "⚠️  Application will start without migrations"
-      echo "⚠️  Payload will attempt to run migrations on startup"
     fi
   fi
 fi

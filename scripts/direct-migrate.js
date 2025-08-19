@@ -47,15 +47,15 @@ async function runMigration() {
     console.error('❌ tsx migration failed:', error.message);
   }
 
-  // Try with node directly
-  console.log('\n=== Attempting migration with node ===');
+  // Try with node directly using --import (Node v20+ syntax)
+  console.log('\n=== Attempting migration with node --import ===');
 
   try {
     const node = spawn(
       'node',
       [
         '--experimental-specifier-resolution=node',
-        '--loader=tsx',
+        '--import=tsx',
         path.join(process.cwd(), 'node_modules/@payloadcms/db-postgres/dist/migrate.js'),
       ],
       {
@@ -80,6 +80,37 @@ async function runMigration() {
     return true;
   } catch (error) {
     console.error('❌ node migration failed:', error.message);
+  }
+
+  // Try running Payload migrate command directly
+  console.log('\n=== Attempting migration with payload migrate ===');
+
+  try {
+    const payload = spawn(
+      'npx',
+      ['payload', 'migrate'],
+      {
+        stdio: 'inherit',
+        env: process.env,
+        cwd: process.cwd(),
+      }
+    );
+
+    await new Promise((resolve, reject) => {
+      payload.on('close', (code) => {
+        if (code === 0) {
+          console.log('✅ Migration completed successfully with payload migrate');
+          resolve();
+        } else {
+          reject(new Error(`Migration failed with code ${code}`));
+        }
+      });
+      payload.on('error', reject);
+    });
+
+    return true;
+  } catch (error) {
+    console.error('❌ payload migrate failed:', error.message);
   }
 
   return false;
