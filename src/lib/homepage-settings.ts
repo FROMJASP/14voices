@@ -1,5 +1,4 @@
 import { getSafePayload } from '@/lib/safe-payload';
-import { OptimizedVoiceoverQueries } from '@/lib/database-optimizations';
 // Temporary interface until types are generated
 export interface HomepageSettings {
   hero: {
