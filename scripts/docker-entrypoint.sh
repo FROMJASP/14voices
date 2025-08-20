@@ -77,40 +77,24 @@ fi
 echo "Running Payload migrations..."
 if npx payload migrate; then
   echo "✅ Database migration completed successfully"
-  
-  # Run seeding if needed
-  if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
-    echo "🌱 Checking if seeding is needed..."
-    npx tsx -e "
-      const { seed } = require('./src/seed/index.ts');
-      seed().catch(err => {
-        console.error('Seeding error:', err);
-        process.exit(1);
-      });
-    " || echo "⚠️  Seeding skipped or already completed"
-  fi
 else
-  echo "❌ Database migration failed!"
-  echo "Trying alternative migration approach..."
-  # Try running migrations with Node directly
-  node -e "
-    const { getPayload } = require('payload');
-    const configPromise = require('./src/payload.config.ts');
-    
-    async function migrate() {
-      try {
-        const payload = await getPayload({
-          config: await configPromise.default || configPromise,
-        });
-        console.log('✅ Alternative migration completed');
-      } catch (err) {
-        console.error('Alternative migration failed:', err);
-        process.exit(1);
-      }
-    }
-    
-    migrate();
-  "
+  echo "⚠️  Payload migrate failed, trying to create missing tables manually..."
+  # Run our custom migration script to create missing tables
+  if [ -f "/app/scripts/run-payload-migrations.js" ]; then
+    node /app/scripts/run-payload-migrations.js || echo "⚠️  Manual table creation failed"
+  fi
+fi
+
+# Run seeding if needed
+if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
+  echo "🌱 Checking if seeding is needed..."
+  npx tsx -e "
+    const { seed } = require('./src/seed/index.ts');
+    seed().catch(err => {
+      console.error('Seeding error:', err);
+      process.exit(1);
+    });
+  " || echo "⚠️  Seeding skipped or already completed"
 fi
 
 # Start the application
