@@ -10,7 +10,8 @@ export function ClientConfigProvider({ children }: { children: React.ReactNode }
       const originalFetch = window.fetch;
       const serverUrl = getClientServerUrl();
 
-      window.fetch = async (input, init) => {
+      // Create a wrapper function that preserves the original fetch properties
+      const fetchWrapper = async (input: RequestInfo | URL, init?: RequestInit) => {
         if (typeof input === 'string' && input.startsWith('/api/')) {
           // Replace relative API paths with absolute URLs
           input = `${serverUrl}${input}`;
@@ -18,6 +19,20 @@ export function ClientConfigProvider({ children }: { children: React.ReactNode }
 
         return originalFetch(input, init);
       };
+
+      // Copy all properties from original fetch to maintain TypeScript compatibility
+      Object.setPrototypeOf(fetchWrapper, originalFetch);
+      Object.getOwnPropertyNames(originalFetch).forEach((prop) => {
+        if (prop !== 'length' && prop !== 'name' && prop !== 'prototype') {
+          try {
+            (fetchWrapper as any)[prop] = (originalFetch as any)[prop];
+          } catch (e) {
+            // Some properties might be read-only
+          }
+        }
+      });
+
+      window.fetch = fetchWrapper as typeof fetch;
     }
   }, []);
 

@@ -41,8 +41,6 @@ const nextConfig: NextConfig = {
     ],
     // Enable modern optimizations
     optimizeServerReact: true,
-    // Disable ISR/SSG for self-hosted deployments
-    isrMemoryCacheSize: 0,
   },
   // Performance optimizations
   compress: true,
