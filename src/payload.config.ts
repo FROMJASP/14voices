@@ -134,7 +134,13 @@ export default buildConfig({
   sharp,
   plugins: [
     // MinIO storage for self-hosted file uploads
-    ...(process.env.S3_ACCESS_KEY && process.env.S3_SECRET_KEY
+    // Only enable if S3 keys are set AND not dummy values
+    ...(process.env.S3_ACCESS_KEY && 
+        process.env.S3_SECRET_KEY && 
+        process.env.S3_ACCESS_KEY !== 'dummy' && 
+        process.env.S3_SECRET_KEY !== 'dummy' &&
+        !process.env.S3_ACCESS_KEY.includes('dummy-s3') &&
+        !process.env.S3_SECRET_KEY.includes('dummy-s3')
       ? [
           wrappedMinioStorage({
             collections: {

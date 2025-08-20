@@ -21,9 +21,9 @@ const importMapPath = path.join(
 );
 
 // Check if S3 storage should be included based on environment variables
-// For Docker builds, we check if S3 keys exist AND they're not dummy values
-const s3AccessKey = process.env.S3_ACCESS_KEY_ID || process.env.S3_ACCESS_KEY;
-const s3SecretKey = process.env.S3_SECRET_ACCESS_KEY || process.env.S3_SECRET_KEY;
+// Must match the logic in payload.config.ts exactly
+const s3AccessKey = process.env.S3_ACCESS_KEY;
+const s3SecretKey = process.env.S3_SECRET_KEY;
 const hasS3Config = 
   s3AccessKey && 
   s3SecretKey && 
