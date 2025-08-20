@@ -95,6 +95,12 @@ else
       echo "ℹ️  Some migration steps failed, but continuing..."
       echo "ℹ️  Payload will handle remaining setup on first request"
     fi
+    
+    # Run pages status fix migration
+    if [ -f "scripts/fix-pages-status.js" ]; then
+      echo "Running pages table migration..."
+      node scripts/fix-pages-status.js || echo "⚠️  Pages status migration had issues"
+    fi
   else
     # Fallback to old migration scripts if comprehensive one doesn't exist
     echo "Comprehensive migration script not found, using fallback approach..."
@@ -115,6 +121,12 @@ else
     if [ -f "scripts/comprehensive-db-migrate.js" ]; then
       echo "Running comprehensive db migrate..."
       node scripts/comprehensive-db-migrate.js || true
+    fi
+    
+    # Run pages status fix
+    if [ -f "scripts/fix-pages-status.js" ]; then
+      echo "Running pages table migration..."
+      node scripts/fix-pages-status.js || echo "⚠️  Pages status migration had issues"
     fi
   fi
 fi

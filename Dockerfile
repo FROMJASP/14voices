@@ -90,6 +90,7 @@ COPY --from=builder /app/scripts/comprehensive-migration.js ./scripts/comprehens
 COPY --from=builder /app/scripts/fix-column-naming.sql ./scripts/fix-column-naming.sql
 COPY --from=builder /app/scripts/manual-db-setup.sql ./scripts/manual-db-setup.sql
 COPY --from=builder /app/scripts/reset-payload.js ./scripts/reset-payload.js
+COPY --from=builder /app/scripts/fix-pages-status.js ./scripts/fix-pages-status.js
 COPY --from=builder /app/scripts/docker-entrypoint-fixed.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports
 COPY --from=builder /app/src ./src
