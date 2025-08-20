@@ -21,12 +21,22 @@ const importMapPath = path.join(
 );
 
 // Check if S3 storage should be included based on environment variables
-const hasS3Config = process.env.S3_ACCESS_KEY && process.env.S3_SECRET_KEY;
+// For Docker builds, we check if S3 keys exist AND they're not dummy values
+const s3AccessKey = process.env.S3_ACCESS_KEY_ID || process.env.S3_ACCESS_KEY;
+const s3SecretKey = process.env.S3_SECRET_ACCESS_KEY || process.env.S3_SECRET_KEY;
+const hasS3Config = 
+  s3AccessKey && 
+  s3SecretKey && 
+  s3AccessKey !== 'dummy' && 
+  s3SecretKey !== 'dummy' &&
+  !s3AccessKey.includes('dummy-s3') &&
+  !s3SecretKey.includes('dummy-s3');
 
 // Add debug logging
 console.log('S3 configuration check:');
-console.log('- S3_ACCESS_KEY exists:', !!process.env.S3_ACCESS_KEY);
-console.log('- S3_SECRET_KEY exists:', !!process.env.S3_SECRET_KEY);
+console.log('- S3_ACCESS_KEY exists:', !!s3AccessKey);
+console.log('- S3_SECRET_KEY exists:', !!s3SecretKey);
+console.log('- Keys are not dummy values:', s3AccessKey !== 'dummy' && s3SecretKey !== 'dummy');
 console.log('- Including S3 handler:', hasS3Config);
 
 // Build imports dynamically
