@@ -27,17 +27,17 @@ class QueryCache {
   generateKey(collection: string, query: any, dependencies?: string[]): string {
     const keyBase = `${collection}:${JSON.stringify(query)}`;
     const keyHash = Buffer.from(keyBase).toString('base64').slice(0, 32);
-    
+
     // Track dependencies for intelligent invalidation
     if (dependencies) {
-      dependencies.forEach(dep => {
+      dependencies.forEach((dep) => {
         if (!this.dependencyMap.has(dep)) {
           this.dependencyMap.set(dep, new Set());
         }
         this.dependencyMap.get(dep)!.add(keyHash);
       });
     }
-    
+
     return keyHash;
   }
 
@@ -66,27 +66,37 @@ const queryCache = new QueryCache();
 
 // Optimized voiceover queries with aggressive caching
 export class OptimizedVoiceoverQueries {
-  
   // Get homepage voiceovers with multi-layer caching
-  static async getHomepageVoiceovers(options: {
-    limit?: number;
-    includeUnavailable?: boolean;
-    cacheTTL?: number;
-  } = {}) {
+  static async getHomepageVoiceovers(
+    options: {
+      limit?: number;
+      includeUnavailable?: boolean;
+      cacheTTL?: number;
+    } = {}
+  ) {
     const { limit = 50, includeUnavailable = false, cacheTTL = 1000 * 60 * 30 } = options;
-    
-    const cacheKey = queryCache.generateKey('voiceovers-homepage', {
-      limit,
-      includeUnavailable,
-      status: 'active'
-    }, ['voiceovers', 'homepage']);
+
+    const cacheKey = queryCache.generateKey(
+      'voiceovers-homepage',
+      {
+        limit,
+        includeUnavailable,
+        status: 'active',
+      },
+      ['voiceovers', 'homepage']
+    );
 
     const startTime = performance.now();
-    
+
     // Try cache first
     const cached = await queryCache.get(cacheKey);
     if (cached && Array.isArray(cached)) {
-      this.recordMetrics(cacheKey, performance.now() - startTime, true, Array.isArray(cached) ? cached.length : 1);
+      this.recordMetrics(
+        cacheKey,
+        performance.now() - startTime,
+        true,
+        Array.isArray(cached) ? cached.length : 1
+      );
       return cached;
     }
 
@@ -96,55 +106,58 @@ export class OptimizedVoiceoverQueries {
       console.log('Payload not initialized, returning empty array');
       return [];
     }
-    
+
     // Use select to limit fields and reduce payload size
     const result = await payload.find({
       collection: 'voiceovers',
       where: {
         status: { equals: 'active' },
-        ...(includeUnavailable ? {} : {
-          or: [
-            { 'availability.isAvailable': { equals: true } },
-            { 'availability.isAvailable': { exists: false } }
-          ]
-        })
+        ...(includeUnavailable
+          ? {}
+          : {
+              or: [
+                { 'availability.isAvailable': { equals: true } },
+                { 'availability.isAvailable': { exists: false } },
+              ],
+            }),
       },
       limit,
       depth: 2,
       sort: '-updatedAt',
-      // Optimize by selecting only necessary fields
-      select: {
-        name: true,
-        slug: true,
-        profilePhoto: true,
-        status: true,
-        styleTags: true,
-      }
+      // Don't use select - it might be causing issues
+      // Return all fields for now
     });
 
     const transformedResult = result.docs;
-    
+
     // Cache the result
     await queryCache.set(cacheKey, transformedResult, cacheTTL);
-    
+
     this.recordMetrics(cacheKey, performance.now() - startTime, false, transformedResult.length);
     return transformedResult;
   }
 
   // Optimized single voiceover query with related data
-  static async getVoiceoverBySlug(slug: string, options: {
-    includeRelated?: boolean;
-    cacheTTL?: number;
-  } = {}) {
+  static async getVoiceoverBySlug(
+    slug: string,
+    options: {
+      includeRelated?: boolean;
+      cacheTTL?: number;
+    } = {}
+  ) {
     const { includeRelated = false, cacheTTL = 1000 * 60 * 60 } = options; // 1 hour cache
-    
-    const cacheKey = queryCache.generateKey('voiceover-detail', {
-      slug,
-      includeRelated
-    }, ['voiceovers', `voiceover-${slug}`]);
+
+    const cacheKey = queryCache.generateKey(
+      'voiceover-detail',
+      {
+        slug,
+        includeRelated,
+      },
+      ['voiceovers', `voiceover-${slug}`]
+    );
 
     const startTime = performance.now();
-    
+
     const cached = await queryCache.get(cacheKey);
     if (cached) {
       this.recordMetrics(cacheKey, performance.now() - startTime, true, 1);
@@ -155,7 +168,7 @@ export class OptimizedVoiceoverQueries {
     if (!payload) {
       return null;
     }
-    
+
     // Main voiceover query
     const voiceoverResult = await payload.find({
       collection: 'voiceovers',
@@ -169,12 +182,12 @@ export class OptimizedVoiceoverQueries {
     }
 
     const voiceover = voiceoverResult.docs[0];
-    let result = { voiceover, related: [] };
+    const result = { voiceover, related: [] };
 
     // Conditionally load related voiceovers
     if (includeRelated && voiceover.styleTags?.length) {
-      const relatedTags = voiceover.styleTags.map(st => st.tag);
-      
+      const relatedTags = voiceover.styleTags.map((st) => st.tag);
+
       const relatedResult = await payload.find({
         collection: 'voiceovers',
         where: {
@@ -182,49 +195,55 @@ export class OptimizedVoiceoverQueries {
             { id: { not_equals: voiceover.id } },
             { status: { equals: 'active' } },
             {
-              or: relatedTags.map(tag => ({
-                'styleTags.tag': { equals: tag }
-              }))
-            }
-          ]
+              or: relatedTags.map((tag) => ({
+                'styleTags.tag': { equals: tag },
+              })),
+            },
+          ],
         },
         limit: 6,
-        select: {
-          name: true,
-          slug: true,
-          profilePhoto: true,
-          styleTags: true,
-        }
       });
-      
+
       result.related = relatedResult.docs as any;
     }
 
     await queryCache.set(cacheKey, result, cacheTTL);
     this.recordMetrics(cacheKey, performance.now() - startTime, false, 1);
-    
+
     return result;
   }
 
   // Optimized search with fuzzy matching and caching
-  static async searchVoiceovers(query: string, options: {
-    limit?: number;
-    filters?: any;
-    cacheTTL?: number;
-  } = {}) {
+  static async searchVoiceovers(
+    query: string,
+    options: {
+      limit?: number;
+      filters?: any;
+      cacheTTL?: number;
+    } = {}
+  ) {
     const { limit = 20, filters = {}, cacheTTL = 1000 * 60 * 10 } = options; // 10 min cache
-    
-    const cacheKey = queryCache.generateKey('voiceover-search', {
-      query: query.toLowerCase().trim(),
-      limit,
-      filters
-    }, ['voiceovers', 'search']);
+
+    const cacheKey = queryCache.generateKey(
+      'voiceover-search',
+      {
+        query: query.toLowerCase().trim(),
+        limit,
+        filters,
+      },
+      ['voiceovers', 'search']
+    );
 
     const startTime = performance.now();
-    
+
     const cached = await queryCache.get(cacheKey);
     if (cached) {
-      this.recordMetrics(cacheKey, performance.now() - startTime, true, Array.isArray(cached) ? cached.length : 1);
+      this.recordMetrics(
+        cacheKey,
+        performance.now() - startTime,
+        true,
+        Array.isArray(cached) ? cached.length : 1
+      );
       return cached;
     }
 
@@ -232,55 +251,54 @@ export class OptimizedVoiceoverQueries {
     if (!payload) {
       return null;
     }
-    
+
     // Optimized search query with multiple search strategies
     const searchTerms = query.toLowerCase().trim().split(' ').filter(Boolean);
-    
-    const searchConditions = searchTerms.flatMap(term => [
+
+    const searchConditions = searchTerms.flatMap((term) => [
       { name: { like: term } } as any,
       { bio: { like: term } } as any,
       { 'styleTags.tag': { like: term } } as any,
-      { 'styleTags.customTag': { like: term } } as any
+      { 'styleTags.customTag': { like: term } } as any,
     ]);
 
-    const filterConditions: Where[] = Object.entries(filters).map(([key, value]) => ({ [key]: value }) as Where);
+    const filterConditions: Where[] = Object.entries(filters).map(
+      ([key, value]) => ({ [key]: value }) as Where
+    );
 
     const result = await payload.find({
       collection: 'voiceovers',
       where: {
-        and: [
-          { status: { equals: 'active' } },
-          { or: searchConditions },
-          ...filterConditions
-        ]
+        and: [{ status: { equals: 'active' } }, { or: searchConditions }, ...filterConditions],
       },
       limit,
-      select: {
-        name: true,
-        slug: true,
-        profilePhoto: true,
-        styleTags: true,
-      },
-      sort: '-updatedAt'
+      sort: '-updatedAt',
     });
 
     await queryCache.set(cacheKey, result.docs, cacheTTL);
     this.recordMetrics(cacheKey, performance.now() - startTime, false, result.docs.length);
-    
+
     return result.docs;
   }
 
   // Batch query optimization for multiple voiceovers
-  static async getVoiceoversByIds(ids: string[], options: {
-    includeUnavailable?: boolean;
-    cacheTTL?: number;
-  } = {}) {
+  static async getVoiceoversByIds(
+    ids: string[],
+    options: {
+      includeUnavailable?: boolean;
+      cacheTTL?: number;
+    } = {}
+  ) {
     const { includeUnavailable = false, cacheTTL = 1000 * 60 * 15 } = options;
-    
-    const cacheKey = queryCache.generateKey('voiceovers-batch', {
-      ids: ids.sort(), // Sort for consistent caching
-      includeUnavailable
-    }, ['voiceovers']);
+
+    const cacheKey = queryCache.generateKey(
+      'voiceovers-batch',
+      {
+        ids: ids.sort(), // Sort for consistent caching
+        includeUnavailable,
+      },
+      ['voiceovers']
+    );
 
     const cached = await queryCache.get(cacheKey);
     if (cached) return cached;
@@ -289,29 +307,25 @@ export class OptimizedVoiceoverQueries {
     if (!payload) {
       return null;
     }
-    
+
     const result = await payload.find({
       collection: 'voiceovers',
       where: {
         and: [
           { id: { in: ids } },
-          ...(includeUnavailable ? [] : [
-            {
-              or: [
-                { 'availability.isAvailable': { equals: true } },
-                { 'availability.isAvailable': { exists: false } }
-              ]
-            }
-          ])
-        ]
+          ...(includeUnavailable
+            ? []
+            : [
+                {
+                  or: [
+                    { 'availability.isAvailable': { equals: true } },
+                    { 'availability.isAvailable': { exists: false } },
+                  ],
+                },
+              ]),
+        ],
       },
       limit: ids.length,
-      select: {
-        name: true,
-        slug: true,
-        profilePhoto: true,
-        styleTags: true,
-      }
     });
 
     await queryCache.set(cacheKey, result.docs, cacheTTL);
@@ -319,13 +333,18 @@ export class OptimizedVoiceoverQueries {
   }
 
   // Analytics and performance monitoring
-  private static recordMetrics(queryKey: string, duration: number, cacheHit: boolean, resultCount: number) {
+  private static recordMetrics(
+    queryKey: string,
+    duration: number,
+    cacheHit: boolean,
+    resultCount: number
+  ) {
     queryMetrics.push({
       queryKey,
       duration,
       cacheHit,
       resultCount,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     // Keep only last 1000 metrics
@@ -341,14 +360,14 @@ export class OptimizedVoiceoverQueries {
 
   // Get performance analytics
   static getPerformanceMetrics() {
-    const recent = queryMetrics.filter(m => Date.now() - m.timestamp < 1000 * 60 * 60); // Last hour
-    
+    const recent = queryMetrics.filter((m) => Date.now() - m.timestamp < 1000 * 60 * 60); // Last hour
+
     return {
       totalQueries: recent.length,
-      cacheHitRate: recent.filter(m => m.cacheHit).length / recent.length,
+      cacheHitRate: recent.filter((m) => m.cacheHit).length / recent.length,
       averageQueryTime: recent.reduce((sum, m) => sum + m.duration, 0) / recent.length,
-      slowQueries: recent.filter(m => m.duration > 500).length,
-      totalResults: recent.reduce((sum, m) => sum + m.resultCount, 0)
+      slowQueries: recent.filter((m) => m.duration > 500).length,
+      totalResults: recent.reduce((sum, m) => sum + m.resultCount, 0),
     };
   }
 
@@ -369,16 +388,16 @@ export const RECOMMENDED_INDEXES = [
   'CREATE INDEX IF NOT EXISTS idx_voiceovers_status ON voiceovers(status)',
   'CREATE INDEX IF NOT EXISTS idx_voiceovers_slug ON voiceovers(slug)',
   'CREATE INDEX IF NOT EXISTS idx_voiceovers_updated_at ON voiceovers(updated_at)',
-  'CREATE INDEX IF NOT EXISTS idx_voiceovers_availability ON voiceovers((availability->\'isAvailable\'))',
-  'CREATE INDEX IF NOT EXISTS idx_voiceovers_search ON voiceovers USING gin(to_tsvector(\'english\', name || \' \' || bio))',
-  
+  "CREATE INDEX IF NOT EXISTS idx_voiceovers_availability ON voiceovers((availability->'isAvailable'))",
+  "CREATE INDEX IF NOT EXISTS idx_voiceovers_search ON voiceovers USING gin(to_tsvector('english', name || ' ' || bio))",
+
   // Style tags for filtering
   'CREATE INDEX IF NOT EXISTS idx_voiceovers_style_tags ON voiceovers USING gin((style_tags))',
-  
+
   // Demos collection
   'CREATE INDEX IF NOT EXISTS idx_demos_voiceover_id ON demos(voiceover_id)',
   'CREATE INDEX IF NOT EXISTS idx_demos_is_primary ON demos(is_primary)',
-  
+
   // Media collection
   'CREATE INDEX IF NOT EXISTS idx_media_filename ON media(filename)',
   'CREATE INDEX IF NOT EXISTS idx_media_size ON media(file_size)',
@@ -387,13 +406,13 @@ export const RECOMMENDED_INDEXES = [
 // Query plan analysis helper
 export async function analyzeQueryPerformance() {
   const metrics = OptimizedVoiceoverQueries.getPerformanceMetrics();
-  
+
   console.log('=== Database Query Performance Analysis ===');
   console.log(`Total queries in last hour: ${metrics.totalQueries}`);
   console.log(`Cache hit rate: ${(metrics.cacheHitRate * 100).toFixed(2)}%`);
   console.log(`Average query time: ${metrics.averageQueryTime.toFixed(2)}ms`);
   console.log(`Slow queries (>500ms): ${metrics.slowQueries}`);
   console.log(`Total results returned: ${metrics.totalResults}`);
-  
+
   return metrics;
 }

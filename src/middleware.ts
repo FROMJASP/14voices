@@ -3,8 +3,15 @@ import type { NextRequest } from 'next/server';
 import { buildCSPHeader, isBlockedPath, isBlockedUserAgent } from '@/config/security';
 import { rateLimitMiddleware, getEndpointType } from '@/middleware/rate-limit';
 import { getEdgeSafeRateLimiter, getRateLimitConfig } from '@/lib/rate-limiter/edge-safe';
+import { handleStaticFiles } from '@/middleware/static-files';
 
 export async function middleware(request: NextRequest) {
+  // Handle static file requests with proper headers
+  const staticResponse = handleStaticFiles(request);
+  if (staticResponse) {
+    return staticResponse;
+  }
+
   // Bypass security for admin panel to avoid CSP issues with uploads
   if (request.nextUrl.pathname.startsWith('/admin')) {
     console.log('[Middleware] Bypassing security for admin path:', request.nextUrl.pathname);
