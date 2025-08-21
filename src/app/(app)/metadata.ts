@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       // For blob URLs, we can't add query params, so we'll use the URL as-is
       // The blob URL itself changes when a new file is uploaded
       const iconUrl =
-        faviconUrl?.startsWith('blob:') || faviconUrl?.includes('.vercel-storage.com')
+        faviconUrl?.startsWith('blob:') || faviconUrl?.startsWith('http')
           ? faviconUrl
           : `${faviconUrl}?v=${timestamp}`;
 

@@ -41,7 +41,7 @@ cd 14voices
 bun install
 ```
 
-**Note**: The postinstall script automatically installs platform-specific dependencies (Sharp and Tailwind CSS oxide) for Linux/Vercel deployments.
+**Note**: The postinstall script automatically installs platform-specific dependencies.
 
 3. Set up environment variables:
 
@@ -139,7 +139,6 @@ bun dev:turbo             # With Turbopack for faster builds
 
 # Build & production
 bun run build             # Build for production
-bun run build:vercel      # Build with import map generation for Vercel
 bun start                 # Start production server
 
 # Code quality

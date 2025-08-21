@@ -55,7 +55,7 @@ services:
       /bin/sh -c "
       /usr/bin/mc alias set minio http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD;
       /usr/bin/mc mb --ignore-existing minio/fourteenvoices-media;
-      /usr/bin/mc anonymous set public minio/fourteenvoices-media;
+      # SECURITY: Do NOT set the bucket to public in production
       exit 0;
       "
     networks:
@@ -84,10 +84,10 @@ services:
       S3_BUCKET: ${S3_BUCKET:-fourteenvoices-media}
       S3_REGION: ${S3_REGION:-us-east-1}
       # Public URL for accessing files from outside Docker
-      S3_PUBLIC_URL: http://localhost:9000
+      S3_PUBLIC_URL: ${S3_PUBLIC_URL:-http://localhost:9000}
 
       # Application
-      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
       NODE_ENV: production
 
       # Add other required environment variables from .env.example

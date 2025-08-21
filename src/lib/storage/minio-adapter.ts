@@ -11,6 +11,11 @@ interface MinIOConfig {
   useSSL?: boolean;
   port?: number;
   publicUrl?: string;
+  // Performance optimizations
+  maxRetries?: number;
+  requestTimeout?: number;
+  enableMultipartUploads?: boolean;
+  partSize?: number;
 }
 
 export const minioStorage = (config: MinIOConfig): Plugin => {
@@ -41,6 +46,8 @@ export const minioStorage = (config: MinIOConfig): Plugin => {
       region, // MinIO requires a region even though it's not used
       endpoint: formattedEndpoint,
       forcePathStyle: true, // Required for MinIO
+      // Note: Some AWS SDK v3 options may not be supported by Payload's S3 adapter
+      // Keep configuration minimal for compatibility
     },
     bucket: bucketName,
     // If public URL is provided, use it for serving files

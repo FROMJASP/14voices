@@ -124,7 +124,16 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
+      // Optimized connection pooling for production performance
+      max: parseInt(process.env.DB_POOL_MAX || '20', 10), // Maximum number of connections
+      min: parseInt(process.env.DB_POOL_MIN || '5', 10), // Minimum number of connections
+      idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || '30000', 10), // 30 seconds
+      connectionTimeoutMillis: parseInt(process.env.DB_CONNECT_TIMEOUT || '10000', 10), // 10 seconds
+      // Enable keep-alive to detect broken connections
+      keepAlive: true,
+      keepAliveInitialDelayMillis: parseInt(process.env.DB_KEEPALIVE_DELAY || '10000', 10),
     },
+    schemaName: 'public',
   }),
   email: resendAdapter({
     defaultFromAddress: 'noreply@14voices.com',

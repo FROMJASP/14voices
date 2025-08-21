@@ -5,15 +5,10 @@ Sentry.init({
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   debug: process.env.NODE_ENV !== 'production',
   enabled: process.env.NODE_ENV === 'production',
-  release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-  environment: process.env.VERCEL_ENV || process.env.NODE_ENV,
+  environment: process.env.NODE_ENV,
 
   // Performance monitoring configuration
-  tracePropagationTargets: [
-    'localhost',
-    /^https:\/\/14voices\.com/,
-    /^https:\/\/[\w-]+\.vercel\.app/,
-  ],
+  tracePropagationTargets: ['localhost', /^https:\/\/14voices\.com/],
 
   // Error filtering and preprocessing
   beforeSend(event) {

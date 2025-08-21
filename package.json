@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev:debug": "NODE_OPTIONS='--inspect' next dev",
-    "dev:performance": "PERFORMANCE_TRACING=true next dev",
-    "dev:analyze": "ANALYZE=true next build",
-    "bundle:analyze": "ANALYZE=true next build && next start",
     "generate:types": "graphql-codegen --config codegen.yml",
     "validate:types": "tsc --noEmit -p tsconfig.typecheck.json",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
@@ -15,7 +11,6 @@
     "dev:turbo": "next dev --turbopack",
     "build": "node scripts/generate-importmap.js && next build",
     "build:with-migrate": "payload migrate && next build",
-    "build:vercel": "node scripts/validate-test-dependencies.js && node scripts/generate-importmap.js && npm install sharp --force && next build",
     "start": "next start",
     "lint": "next lint",
     "payload": "payload",

@@ -38,14 +38,75 @@ const nextConfig: NextConfig = {
       '@heroicons/react',
       'framer-motion',
       'gsap',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-tabs',
+      'clsx',
+      'class-variance-authority',
+      'tailwind-merge',
     ],
     // Enable modern optimizations
     optimizeServerReact: true,
+    // Enable modern JavaScript optimizations
+    reactCompiler: false, // React 19 feature - disabled for stability
+    // Enable partial prerendering for better performance
+    ppr: false, // Experimental - enable after testing
   },
   // Performance optimizations
   compress: true,
-  poweredByHeader: false,
-  generateEtags: false,
+  // Optimized headers for performance
+  headers: async () => [
+    {
+      source: '/(.*)',
+      headers: [
+        {
+          key: 'X-DNS-Prefetch-Control',
+          value: 'on',
+        },
+        {
+          key: 'X-Frame-Options',
+          value: 'DENY',
+        },
+        {
+          key: 'X-Content-Type-Options',
+          value: 'nosniff',
+        },
+        {
+          key: 'Referrer-Policy',
+          value: 'origin-when-cross-origin',
+        },
+      ],
+    },
+    {
+      source: '/uploads/(.*)',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=31536000, immutable',
+        },
+      ],
+    },
+    {
+      source: '/_next/static/(.*)',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=31536000, immutable',
+        },
+      ],
+    },
+    {
+      source: '/api/(.*)',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=300, s-maxage=600',
+        },
+      ],
+    },
+  ],
   turbopack: {
     resolveAlias: {
       // Optional: Add alias resolution for faster imports
@@ -75,37 +136,12 @@ const nextConfig: NextConfig = {
         })
       );
 
-      // Bundle analysis and optimization
+      // Basic optimization without complex chunk splitting to avoid conflicts
+      // Note: Advanced chunk splitting can be enabled after stability is ensured
       config.optimization = {
         ...config.optimization,
-        splitChunks: {
-          ...config.optimization.splitChunks,
-          chunks: 'all',
-          cacheGroups: {
-            ...config.optimization.splitChunks?.cacheGroups,
-            // Separate vendor chunks for better caching
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-              priority: 10,
-            },
-            // Separate audio/media processing libraries
-            audio: {
-              test: /[\\/]node_modules[\\/](standardized-audio-context|react-media-recorder)[\\/]/,
-              name: 'audio-vendor',
-              chunks: 'async',
-              priority: 15,
-            },
-            // UI libraries
-            ui: {
-              test: /[\\/]node_modules[\\/](@radix-ui|framer-motion|lucide-react)[\\/]/,
-              name: 'ui-vendor',
-              chunks: 'all',
-              priority: 12,
-            },
-          },
-        },
+        // Keep default Next.js chunk splitting for now
+        // splitChunks can be customized later once build is stable
       };
     }
 
@@ -152,11 +188,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'www.14voices.com',
-        pathname: '/api/media/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.vercel.app',
         pathname: '/api/media/**',
       },
       {

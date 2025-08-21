@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface BeautifulAudioPlayerProps {
+export interface BeautifulAudioPlayerProps {
   src: string;
   title?: string;
   artist?: string;
