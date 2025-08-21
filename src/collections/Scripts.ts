@@ -200,9 +200,8 @@ const Scripts: CollectionConfig = {
       'application/rtf',
       'application/vnd.apple.pages',
     ],
-    // Storage handled by wrapped Vercel adapter or local storage
-    disableLocalStorage:
-      process.env.NODE_ENV === 'production' && !!process.env.BLOB_READ_WRITE_TOKEN,
+    // Storage handled by MinIO adapter or local storage
+    disableLocalStorage: process.env.NODE_ENV === 'production' && !!process.env.S3_ACCESS_KEY,
   },
   hooks: {
     beforeOperation: [

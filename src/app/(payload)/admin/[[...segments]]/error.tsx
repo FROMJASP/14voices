@@ -51,10 +51,10 @@ export default function Error({
       <div style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#666' }}>
         <p>Common issues:</p>
         <ul>
-          <li>Database connection not configured (POSTGRES_URL)</li>
+          <li>Database connection not configured (DATABASE_URL)</li>
           <li>Missing PAYLOAD_SECRET environment variable</li>
           <li>Email service not configured (RESEND_API_KEY)</li>
-          <li>Vercel Blob storage not configured (BLOB_READ_WRITE_TOKEN)</li>
+          <li>MinIO/S3 storage not configured (S3_ACCESS_KEY)</li>
         </ul>
       </div>
     </div>

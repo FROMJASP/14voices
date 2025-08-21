@@ -7,7 +7,7 @@
 - **Database**: PostgreSQL (via @payloadcms/db-postgres)
 - **Styling**: Tailwind CSS v4
 - **Authentication**: Built-in Payload auth
-- **Media Storage**: Vercel Blob
+- **Media Storage**: MinIO (S3-compatible)
 - **Animation**: Motion (Framer Motion v12)
 - **Email**: Resend API with custom email marketing system
 - **TypeScript**: v5 with strict mode
@@ -22,7 +22,8 @@
 ### Prerequisites
 
 - Node.js 18+
-- PostgreSQL database (local or cloud)
+- PostgreSQL database (any provider or self-hosted)
+- MinIO or S3-compatible storage
 - Bun package manager (required, not npm/yarn)
 
 ### Installation
@@ -162,3 +163,62 @@ bun payload migrate            # Run database migrations
 # Database
 bun run seed              # Seed database with sample data
 ```
+
+## Deployment
+
+### Simplified Deployment Process
+
+The 14voices application has been redesigned for simplified, self-hosted deployment:
+
+#### Key Features
+
+- **Single Migration Script**: No more 22+ migration files - one script handles everything
+- **Self-Hosted Ready**: Uses standard PostgreSQL and MinIO (S3-compatible) storage
+- **Docker-First**: Optimized for Docker deployments with Coolify or similar platforms
+- **Automatic Setup**: Database migrations and seeding happen automatically on first deploy
+
+#### Quick Deploy with Coolify
+
+1. **Set up services**:
+   - PostgreSQL database
+   - MinIO for file storage
+
+2. **Deploy application**:
+   - Connect Git repository
+   - Set environment variables
+   - Deploy with Docker
+
+3. **Automatic setup**:
+   - Application waits for database
+   - Runs single migration script
+   - Seeds initial data
+   - Starts application
+
+#### Documentation
+
+- **[Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)** - Complete deployment instructions
+- **[Self-Hosted Guide](./docs/SELF_HOSTED_DEPLOYMENT.md)** - Coolify-specific setup
+- **[Migration Guide](./docs/DATABASE_MIGRATION_GUIDE.md)** - Database setup (simplified)
+- **[Troubleshooting](./docs/DEPLOYMENT_TROUBLESHOOTING.md)** - Common issues and solutions
+
+#### Environment Variables
+
+```env
+# Required
+DATABASE_URL=postgresql://user:pass@host:5432/db
+PAYLOAD_SECRET=32-char-secret
+S3_ENDPOINT=http://minio:9000
+S3_ACCESS_KEY=access-key
+S3_SECRET_KEY=secret-key
+S3_BUCKET=bucket-name
+RESEND_API_KEY=re_xxxxxxxxxxxx
+
+# Optional
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=secure-password
+REDIS_URL=redis://redis:6379
+```
+
+## Architecture
+
+For detailed information about the application architecture, domain-driven design, and technical decisions, see the [Architecture Documentation](./docs/architecture/).

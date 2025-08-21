@@ -1,4 +1,4 @@
-# Coolify Database Setup for 14voices
+# Coolify Database Setup for 14voices (Simplified)
 
 ## ⚠️ CRITICAL: Database Hostname Issue
 
@@ -10,6 +10,10 @@ In Coolify, the database hostname is NOT the service name you gave it. Coolify g
 2. Look for **"Internal Connection URL"**
 3. The hostname will be a random string (NOT `fourteenvoices-db`)
 4. Copy the entire Internal Connection URL and use it as your DATABASE_URL
+
+## Simplified Migration Process
+
+The application now uses a **single migration script** that handles all database setup automatically. No more complex migration procedures!
 
 ## Quick Fix for Current Deployment Issue
 
@@ -109,11 +113,11 @@ If you still see issues:
    pg_isready -h <actual-hostname> -p 5432 -U fourteenvoices
    ```
 
-### 7. Database Migration from Neon (Optional)
+### 7. Migration from Cloud Providers (Optional)
 
-If you have existing data in Neon that you want to migrate:
+If you have existing data from Neon, Vercel, or other providers:
 
-1. **Export from Neon**:
+1. **Export from existing database**:
 
    ```bash
    pg_dump YOUR_NEON_DATABASE_URL > neon_backup.sql

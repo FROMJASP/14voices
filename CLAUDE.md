@@ -238,7 +238,7 @@ bun run seed             # Seed database with sample data
 - **Package Manager**: Bun (required - npm/yarn will not work)
 - **Testing**: Vitest (unit) + Playwright (E2E)
 - **Email**: Resend API with custom email marketing system
-- **Storage**: Vercel Blob for media/documents
+- **Storage**: MinIO (S3-compatible) for media/documents
 - **Cache & Rate Limiting**: Redis (optional, with in-memory fallback)
 
 ### Project Structure
@@ -291,7 +291,7 @@ src/
 │   ├── cache/           # Redis caching layer
 │   ├── email/           # Email system utilities
 │   ├── rate-limiter/    # Rate limiting implementation
-│   └── storage/         # Blob storage utilities
+│   └── storage/         # MinIO storage utilities
 ├── middleware/           # Next.js middleware utilities
 ├── seed/                 # Database seeding scripts
 ├── types/                # TypeScript type definitions
@@ -576,103 +576,70 @@ DATABASE_URL=postgresql://fake:fake@fake:5432/fake
 
 ### Storage Configuration
 
-- **From Vercel Blob to MinIO**: The application now uses MinIO (S3-compatible) for file storage
-- **Environment Variables**: See `docs/SELF_HOSTED_DEPLOYMENT.md` for complete MinIO setup
+- **MinIO Storage**: The application uses MinIO (S3-compatible) for file storage
+- **Environment Variables**: See `docs/DEPLOYMENT_GUIDE.md` for complete setup
+- **Automatic Migration**: Single migration script handles all database setup
 
-## Vercel Deployment Considerations
+## Simplified Deployment Process
 
-### Package Manager Notes
+### Single Migration Approach
 
-**Important**: Bun is NOT supported on Vercel
+**Previous Issues**:
 
-- **Local Development**: Use Bun (`bun install`, `bun dev`, `bun test`)
-- **Vercel Production**: Automatically uses npm (configured in vercel.json)
-- **No manual npm commands needed** - Vercel handles the conversion
+- 22+ migration scripts causing confusion
+- Missing Payload CMS relationship tables
+- Complex dependency management
 
-### DevDependencies in Production
+**New Solution**:
 
-**Issue**: Vercel doesn't install devDependencies in production builds
+- **Single Migration Script**: `scripts/payload-migrate.js` handles all database setup
+- **Automatic Migrations**: Run automatically on first deployment
+- **Self-Hosted Ready**: No cloud provider dependencies
+- **Standard PostgreSQL**: Works with any PostgreSQL database
 
-**Solution**: Use conditional imports for optional dev tools:
+### Database Setup
 
-```typescript
-// Safe loading pattern for optional dependencies
-if (process.env.NODE_ENV === 'development') {
-  // Load dev-only dependencies here
-}
+The migration process is now fully automated:
+
+1. **Automatic on Deploy**: Docker entrypoint runs migrations
+2. **Idempotent**: Safe to run multiple times
+3. **Complete**: Creates all tables, indexes, and relationships
+4. **Seeding**: Optional admin user and sample data
+
+```bash
+# Manual migration (if needed)
+node scripts/payload-migrate.js
+
+# Or via Payload CLI
+bun payload migrate
 ```
 
-**Note**: Platform-specific native dependencies (sharp, lightningcss) are handled automatically by the postinstall script.
+### Environment Variables
 
-### Troubleshooting Vercel Builds
+**Required for Deployment**:
 
-1. **Module Not Found Errors**
-   - Check if the missing module is in devDependencies
-   - Move it to dependencies if imported in production code
-   - Run `bun install` after moving dependencies
+```env
+# Database
+DATABASE_URL=postgresql://user:password@host:5432/database
 
-2. **TypeScript Errors**
-   - Run `bun run typecheck` locally
-   - Fix all errors before pushing
-   - Ensure all type imports use `import type`
+# Payload CMS
+PAYLOAD_SECRET=<32+ character secret>
+NEXT_PUBLIC_SERVER_URL=https://yourdomain.com
 
-3. **Build Command Failures**
-   - Test with `bun run build:vercel` locally
-   - Check Vercel logs for specific error messages
-   - Verify all environment variables are set
+# Email
+RESEND_API_KEY=re_xxxxxxxxxxxx
 
-4. **Native Dependencies**
-   - Sharp, lightningcss handled by postinstall script
-   - Never manually install platform binaries
-   - Check postinstall.js runs successfully
+# Storage (MinIO/S3)
+S3_ENDPOINT=http://minio:9000
+S3_ACCESS_KEY=your-access-key
+S3_SECRET_KEY=your-secret-key
+S3_BUCKET=your-bucket-name
+S3_REGION=us-east-1
 
-### Emergency Build Fix Procedure
-
-If production build fails:
-
-1. **DON'T PANIC** - Follow this checklist:
-
-   ```bash
-   # 1. Pull latest changes
-   git pull origin main
-
-   # 2. Clean install
-   rm -rf node_modules bun.lockb
-   bun install
-
-   # 3. Run full validation
-   bun run validate:full
-
-   # 4. If validation passes but Vercel fails
-   # Check the specific error in Vercel logs
-   # Most common: dependency in wrong section
-   ```
-
-2. **For Dependency Errors**:
-   - Find the missing module in package.json
-   - If in devDependencies, move to dependencies
-   - Commit and push the fix
-
-3. **For TypeScript Errors**:
-   - Run `bun run typecheck`
-   - Fix all errors locally
-   - Test with `bun run build`
-
-4. **For Unknown Errors**:
-   - Check Vercel build logs carefully
-   - Compare with local build output
-   - Ensure environment variables match
-
-### Why Build Failures Keep Happening
-
-**Vercel's build environment is different from local development**:
-
-- **Package Manager**: Vercel uses npm, not Bun
-- **Dependencies**: Vercel doesn't install devDependencies in production
-- **Type Checking**: Type errors that TypeScript ignores locally can fail on Vercel
-- **Dynamic Imports**: Can fail if dependencies aren't properly categorized
-
-The enhanced validation system catches these differences before deployment.
+# Admin (for initial setup)
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=<strong-password>
+```
 
 ## MCP Server Instructions
 

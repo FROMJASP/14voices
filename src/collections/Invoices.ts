@@ -180,8 +180,7 @@ const Invoices: CollectionConfig = {
     filesRequiredOnCreate: false,
     mimeTypes: ['application/pdf'],
     // Storage handled by wrapped Vercel adapter or local storage
-    disableLocalStorage:
-      process.env.NODE_ENV === 'production' && !!process.env.BLOB_READ_WRITE_TOKEN,
+    disableLocalStorage: process.env.NODE_ENV === 'production' && !!process.env.S3_ACCESS_KEY,
     adminThumbnail: () => `/admin/assets/pdf-icon.svg`,
   },
   hooks: {

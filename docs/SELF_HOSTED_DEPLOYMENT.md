@@ -1,6 +1,6 @@
 # Self-Hosted Deployment Guide with Coolify
 
-This guide covers deploying 14voices on your Hetzner server using Coolify with MinIO for storage.
+This guide covers deploying 14voices using the simplified deployment process with Coolify. The application now uses a single migration script and standard self-hosted components.
 
 ## Prerequisites
 
@@ -65,31 +65,16 @@ This guide covers deploying 14voices on your Hetzner server using Coolify with M
    - Internal URL: `postgresql://postgres:password@postgres-14voices:5432/fourteenvoices`
    - Replace `password` with your actual PostgreSQL password
 
-### Migrating from Neon to Coolify PostgreSQL
+### Fresh Installation
 
-If you're switching from Neon Database to Coolify's PostgreSQL:
+For new deployments, the application automatically handles all database setup:
 
-1. **Export Data from Neon** (if you have existing data):
+1. **Automatic Migration**: Single migration script creates all required tables
+2. **Relationship Tables**: Properly handles Payload CMS relationships
+3. **Indexes and Constraints**: Sets up optimal database structure
+4. **Seeding**: Optional admin user and sample data creation
 
-   ```bash
-   # Export from Neon
-   pg_dump "your-neon-connection-string" > neon-backup.sql
-   ```
-
-2. **Import to Coolify PostgreSQL**:
-
-   ```bash
-   # Access your Coolify PostgreSQL container
-   docker exec -i postgres-14voices psql -U postgres -d fourteenvoices < neon-backup.sql
-   ```
-
-3. **Update Environment Variables**:
-   - Remove: `POSTGRES_URL` (Neon format)
-   - Update: `DATABASE_URL=postgresql://postgres:password@postgres-14voices:5432/fourteenvoices`
-
-4. **Redeploy Application** with new DATABASE_URL
-
-**Note**: If this is a fresh deployment, skip the migration steps - the application will automatically create all necessary tables.
+**Note**: No manual migration steps required - the application handles everything automatically.
 
 ## Step 3: Deploy the Application
 
@@ -147,13 +132,14 @@ If you're switching from Neon Database to Coolify's PostgreSQL:
 
 ## Step 4: Post-Deployment Setup
 
-**✅ Automatic Setup**: The application now automatically handles database migrations and seeding on first startup!
+**✅ Simplified Setup**: The application now uses a single, reliable migration approach!
 
 1. **Monitor First Deployment**
 
    The Docker container will automatically:
    - Wait for database to be ready
-   - Run Payload migrations to create all tables
+   - Run single migration script (`scripts/payload-migrate.js`)
+   - Create all tables, indexes, and relationships
    - Seed initial data (site settings, admin user if configured)
    - Start the application
 
@@ -163,8 +149,8 @@ If you're switching from Neon Database to Coolify's PostgreSQL:
    🚀 Starting 14voices application...
    Waiting for database to be ready...
    ✅ Database connection successful
-   🔄 Starting database migration...
-   📦 Attempting migration via Payload initialization...
+   🔄 Running database migration script...
+   📦 Creating tables and relationships...
    ✅ Migration completed successfully
    🌱 Running seed data...
    ✅ Seed data completed successfully
@@ -183,8 +169,11 @@ If you're switching from Neon Database to Coolify's PostgreSQL:
    # Access the container
    docker exec -it [container-name] sh
 
-   # Run custom migration script
-   node ./scripts/migrate-database.js
+   # Run migration script
+   node scripts/payload-migrate.js
+
+   # Or use Payload CLI
+   bun payload migrate
    ```
 
 3. **Verify Setup**
@@ -266,16 +255,17 @@ View logs in Coolify:
 
 ### Migration Issues
 
-**❌ Problem**: `TypeError: Cannot read properties of null (reading 'config')`
+**❌ Problem**: Migration failures or missing tables
 
-**✅ Solution**: This has been fixed! The application now uses a custom migration script that bypasses TypeScript config issues in Docker.
+**✅ Solution**: The application now uses a single, comprehensive migration script!
 
 **How it works**:
 
-- Custom migration script: `scripts/migrate-database.js`
-- Handles TypeScript files properly in production environment
-- Multiple fallback methods for maximum reliability
-- Automatic detection of existing migrations
+- Single migration script: `scripts/payload-migrate.js`
+- Creates all required tables in correct order
+- Handles relationship tables properly
+- Idempotent (safe to run multiple times)
+- Works reliably in Docker environments
 
 **❌ Problem**: `ECONNREFUSED` when connecting to database during migrations
 
@@ -284,7 +274,7 @@ View logs in Coolify:
 - Check your `DATABASE_URL` environment variable
 - Ensure PostgreSQL service is running in Coolify
 - Verify internal service names match Coolify configuration
-- The migration script waits for database connectivity before proceeding
+- The Docker entrypoint waits for database connectivity before proceeding
 
 ### Build Failures with Database Connection Errors
 
@@ -343,11 +333,28 @@ View logs in Coolify:
 - [ ] Rate limiting enabled (built-in)
 - [ ] CORS properly configured
 
+## Simplified Benefits
+
+**No More Complex Migrations**:
+
+- Single migration script handles everything
+- No more 22+ migration files
+- Reliable, tested approach
+- Works consistently across environments
+
+**Self-Hosted Ready**:
+
+- No cloud provider dependencies
+- Standard PostgreSQL and MinIO
+- Full control over your data
+- Predictable costs
+
 ## Support
 
 For issues specific to:
 
 - **Coolify**: Check Coolify documentation
-- **Application**: Check application logs
+- **Application**: Check application logs and use health endpoints
 - **MinIO**: Access MinIO console for diagnostics
 - **Database**: Use `pg_stat_activity` for connection issues
+- **Migration**: Single script makes debugging easier

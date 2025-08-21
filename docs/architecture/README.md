@@ -86,12 +86,12 @@ See the [Architecture Decision Records (ADRs)](./adr) for detailed documentation
 
 - **Framework**: Next.js 15.4.5 (App Router)
 - **CMS**: Payload CMS 3.49.1
-- **Database**: PostgreSQL (Neon)
+- **Database**: PostgreSQL (self-hosted or managed)
 - **ORM**: Drizzle (via Payload)
 - **Styling**: Tailwind CSS v4
 - **Email**: Resend API
-- **Storage**: Vercel Blob
-- **Cache**: Redis (Upstash)
+- **Storage**: MinIO (S3-compatible)
+- **Cache**: Redis (optional, with in-memory fallback)
 - **Monitoring**: Sentry + OpenTelemetry
 
 ## Security Architecture
@@ -117,12 +117,12 @@ See the [Architecture Decision Records (ADRs)](./adr) for detailed documentation
 
 ## Deployment Architecture
 
-- **Hosting**: Vercel
-- **Database**: Neon (PostgreSQL)
-- **Cache**: Upstash Redis
-- **Storage**: Vercel Blob
+- **Hosting**: Self-hosted (Coolify/Docker)
+- **Database**: PostgreSQL (any provider)
+- **Cache**: Redis (optional, with in-memory fallback)
+- **Storage**: MinIO (S3-compatible)
 - **Email**: Resend
-- **CDN**: Vercel Edge Network
+- **CDN**: Optional (Cloudflare, etc.)
 
 ## Development Guidelines
 

@@ -67,22 +67,20 @@ echo "Running database migrations..."
 cd /app
 export PATH="/app/node_modules/.bin:$PATH"
 
-# First, ensure tsx is available
-if ! command -v tsx &> /dev/null; then
-  echo "📦 Installing tsx for TypeScript support..."
-  npm install -g tsx
+# Run our comprehensive migration script first
+echo "🔧 Creating database tables..."
+if node /app/scripts/payload-migrate.js; then
+  echo "✅ Database tables created successfully"
+else
+  echo "⚠️  Failed to create database tables, but continuing..."
 fi
 
-# Run migrations using the Payload CLI directly
-echo "Running Payload migrations..."
+# Run Payload migrations
+echo "📦 Running Payload migrations..."
 if npx payload migrate; then
-  echo "✅ Database migration completed successfully"
+  echo "✅ Payload migrations completed successfully"
 else
-  echo "⚠️  Payload migrate failed, trying to create missing tables manually..."
-  # Run our custom migration script to create missing tables
-  if [ -f "/app/scripts/run-payload-migrations.js" ]; then
-    node /app/scripts/run-payload-migrations.js || echo "⚠️  Manual table creation failed"
-  fi
+  echo "⚠️  Payload migrations failed, but continuing..."
 fi
 
 # Run seeding if needed

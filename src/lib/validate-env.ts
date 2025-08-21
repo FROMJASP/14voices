@@ -29,9 +29,6 @@ const envSchema = z
     S3_REGION: z.string().optional(),
     S3_PUBLIC_URL: z.string().url().optional(),
 
-    // Vercel Blob Storage - Optional
-    BLOB_READ_WRITE_TOKEN: z.string().optional(),
-
     // Admin User - Optional for seeding
     ADMIN_EMAIL: z.string().email().optional(),
     ADMIN_PASSWORD: z.string().min(8).optional(),

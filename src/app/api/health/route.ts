@@ -57,7 +57,7 @@ export const GET = createApiHandler(
     }
 
     // Check storage (if configured)
-    if (process.env.BLOB_READ_WRITE_TOKEN || process.env.S3_ACCESS_KEY) {
+    if (process.env.S3_ACCESS_KEY) {
       try {
         // Basic storage configuration check
         checks.storage = true;
