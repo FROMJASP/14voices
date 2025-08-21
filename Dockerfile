@@ -78,20 +78,8 @@ COPY --from=builder /app/src/payload.config.ts ./src/payload.config.ts
 COPY --from=builder /app/package.json ./package.json
 
 # Copy migration and entrypoint scripts
-COPY --from=builder /app/scripts/run-migrations.js ./scripts/run-migrations.js
-COPY --from=builder /app/scripts/run-migrations-simple.js ./scripts/run-migrations-simple.js
-COPY --from=builder /app/scripts/run-migrations-prod.js ./scripts/run-migrations-prod.js
-COPY --from=builder /app/scripts/direct-migrate.js ./scripts/direct-migrate.js
-COPY --from=builder /app/scripts/direct-db-migrate.js ./scripts/direct-db-migrate.js
-COPY --from=builder /app/scripts/comprehensive-db-migrate.js ./scripts/comprehensive-db-migrate.js
-COPY --from=builder /app/scripts/quick-schema-fix.js ./scripts/quick-schema-fix.js
-COPY --from=builder /app/scripts/fix-column-naming.js ./scripts/fix-column-naming.js
-COPY --from=builder /app/scripts/comprehensive-migration.js ./scripts/comprehensive-migration.js
-COPY --from=builder /app/scripts/fix-column-naming.sql ./scripts/fix-column-naming.sql
-COPY --from=builder /app/scripts/manual-db-setup.sql ./scripts/manual-db-setup.sql
-COPY --from=builder /app/scripts/reset-payload.js ./scripts/reset-payload.js
-COPY --from=builder /app/scripts/fix-pages-status.js ./scripts/fix-pages-status.js
-COPY --from=builder /app/scripts/docker-entrypoint-fixed.sh /usr/local/bin/docker-entrypoint.sh
+COPY --from=builder /app/scripts/payload-migrate.js ./scripts/payload-migrate.js
+COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports
 COPY --from=builder /app/src ./src
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
