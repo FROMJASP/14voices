@@ -162,11 +162,11 @@ async function runMigrations() {
     `);
     console.log('✅ voiceovers_style_tags table created\n');
 
-    // 3. Create voiceovers__locales table (note: double underscore for Payload CMS)
-    console.log('🌍 Creating voiceovers__locales table...');
+    // 3. Create voiceovers_locales table (note: single underscore for Payload CMS v3)
+    console.log('🌍 Creating voiceovers_locales table...');
     try {
       await pool.query(`
-        CREATE TABLE IF NOT EXISTS voiceovers__locales (
+        CREATE TABLE IF NOT EXISTS voiceovers_locales (
           id SERIAL PRIMARY KEY,
           name text,
           description text,
@@ -183,26 +183,28 @@ async function runMigrations() {
         BEGIN
           IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'voiceovers') THEN
             IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
-              WHERE table_name = 'voiceovers__locales' 
-              AND constraint_name = 'voiceovers__locales__parent_id_fkey') THEN
-              ALTER TABLE voiceovers__locales 
-                ADD CONSTRAINT voiceovers__locales__parent_id_fkey 
+              WHERE table_name = 'voiceovers_locales' 
+              AND constraint_name = 'voiceovers_locales__parent_id_fkey') THEN
+              ALTER TABLE voiceovers_locales 
+                ADD CONSTRAINT voiceovers_locales__parent_id_fkey 
                 FOREIGN KEY (_parent_id) REFERENCES voiceovers(id) ON DELETE CASCADE;
             END IF;
           END IF;
         END $$;
       `);
     } catch (err) {
-      console.log('⚠️  Issue creating voiceovers__locales:', err.message);
+      console.log('⚠️  Issue creating voiceovers_locales:', err.message);
     }
 
     await pool.query(`
-      CREATE INDEX IF NOT EXISTS idx_voiceovers__locales_parent 
-        ON voiceovers__locales(_parent_id);
-      CREATE INDEX IF NOT EXISTS idx_voiceovers__locales_locale 
-        ON voiceovers__locales(_locale);
+      CREATE INDEX IF NOT EXISTS idx_voiceovers_locales_parent 
+        ON voiceovers_locales(_parent_id);
+      CREATE INDEX IF NOT EXISTS idx_voiceovers_locales_locale 
+        ON voiceovers_locales(_locale);
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_voiceovers_locales_unique 
+        ON voiceovers_locales(_locale, _parent_id);
     `);
-    console.log('✅ voiceovers__locales table created\n');
+    console.log('✅ voiceovers_locales table created\n');
 
     // 4. Add missing voiceover upload columns
     console.log('🎵 Adding voiceover upload columns...');

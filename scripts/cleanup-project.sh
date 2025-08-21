@@ -108,22 +108,21 @@ CSRF_SECRET=<generate-strong-secret>
 REDIS_URL=redis://redis:6379
 ```
 
-### Migration from Neon
+### Database Migration
 
-1. Export your Neon database URL:
+1. Prepare your database connection URL:
    ```bash
-   export NEON_DATABASE_URL="your-neon-url"
-   export DATABASE_URL="your-self-hosted-url"
+   export DATABASE_URL="your-postgresql-database-url"
    ```
 
-2. Run the migration script:
+2. Apply database migrations:
    ```bash
-   ./scripts/migrate-from-neon.sh
+   npx payload migrate
    ```
 
-3. Update your .env.local file to use the self-hosted DATABASE_URL
+3. Update your .env.local file to use the new database URL
 
-4. Deploy to Coolify and restart the application
+4. Deploy to your hosting platform and restart the application
 
 ### Payload CMS Migrations
 
@@ -154,7 +153,7 @@ echo "- Removed old migration scripts"
 echo "- Created consolidated DEPLOYMENT.md"
 echo ""
 echo -e "${YELLOW}Keep these essential files:${NC}"
-echo "- scripts/migrate-from-neon.sh (for migration)"
+# Removed Neon-specific migration reference
 echo "- scripts/docker-entrypoint-clean.sh (for Docker)"
 echo "- scripts/payload-migrate.js (backup migration)"
 echo "- CLAUDE.md (AI instructions)"
