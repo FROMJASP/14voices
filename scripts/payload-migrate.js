@@ -162,11 +162,11 @@ async function runMigrations() {
     `);
     console.log('✅ voiceovers_style_tags table created\n');
 
-    // 3. Create voiceovers_locales table
-    console.log('🌍 Creating voiceovers_locales table...');
+    // 3. Create voiceovers__locales table (note: double underscore for Payload CMS)
+    console.log('🌍 Creating voiceovers__locales table...');
     try {
       await pool.query(`
-        CREATE TABLE IF NOT EXISTS voiceovers_locales (
+        CREATE TABLE IF NOT EXISTS voiceovers__locales (
           id SERIAL PRIMARY KEY,
           name text,
           description text,
@@ -183,28 +183,117 @@ async function runMigrations() {
         BEGIN
           IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'voiceovers') THEN
             IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
-              WHERE table_name = 'voiceovers_locales' 
-              AND constraint_name = 'voiceovers_locales__parent_id_fkey') THEN
-              ALTER TABLE voiceovers_locales 
-                ADD CONSTRAINT voiceovers_locales__parent_id_fkey 
+              WHERE table_name = 'voiceovers__locales' 
+              AND constraint_name = 'voiceovers__locales__parent_id_fkey') THEN
+              ALTER TABLE voiceovers__locales 
+                ADD CONSTRAINT voiceovers__locales__parent_id_fkey 
                 FOREIGN KEY (_parent_id) REFERENCES voiceovers(id) ON DELETE CASCADE;
             END IF;
           END IF;
         END $$;
       `);
     } catch (err) {
-      console.log('⚠️  Issue creating voiceovers_locales:', err.message);
+      console.log('⚠️  Issue creating voiceovers__locales:', err.message);
     }
 
     await pool.query(`
-      CREATE INDEX IF NOT EXISTS idx_voiceovers_locales_parent 
-        ON voiceovers_locales(_parent_id);
-      CREATE INDEX IF NOT EXISTS idx_voiceovers_locales_locale 
-        ON voiceovers_locales(_locale);
+      CREATE INDEX IF NOT EXISTS idx_voiceovers__locales_parent 
+        ON voiceovers__locales(_parent_id);
+      CREATE INDEX IF NOT EXISTS idx_voiceovers__locales_locale 
+        ON voiceovers__locales(_locale);
     `);
-    console.log('✅ voiceovers_locales table created\n');
+    console.log('✅ voiceovers__locales table created\n');
 
-    // 4. Ensure pages table has status column
+    // 4. Add missing voiceover upload columns
+    console.log('🎵 Adding voiceover upload columns...');
+    try {
+      // Check if voiceovers table exists and add missing upload columns
+      await pool.query(`
+        DO $$ 
+        BEGIN
+          IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'voiceovers') THEN
+            -- Add full_demo_reel_id column if it doesn't exist
+            IF NOT EXISTS (
+              SELECT 1 FROM information_schema.columns 
+              WHERE table_name = 'voiceovers' AND column_name = 'full_demo_reel_id'
+            ) THEN
+              ALTER TABLE voiceovers ADD COLUMN full_demo_reel_id integer;
+              COMMENT ON COLUMN voiceovers.full_demo_reel_id IS 'Full demo reel audio file reference';
+            END IF;
+            
+            -- Add commercials_demo_id column if it doesn't exist
+            IF NOT EXISTS (
+              SELECT 1 FROM information_schema.columns 
+              WHERE table_name = 'voiceovers' AND column_name = 'commercials_demo_id'
+            ) THEN
+              ALTER TABLE voiceovers ADD COLUMN commercials_demo_id integer;
+              COMMENT ON COLUMN voiceovers.commercials_demo_id IS 'Commercials demo audio file reference';
+            END IF;
+            
+            -- Add narrative_demo_id column if it doesn't exist
+            IF NOT EXISTS (
+              SELECT 1 FROM information_schema.columns 
+              WHERE table_name = 'voiceovers' AND column_name = 'narrative_demo_id'
+            ) THEN
+              ALTER TABLE voiceovers ADD COLUMN narrative_demo_id integer;
+              COMMENT ON COLUMN voiceovers.narrative_demo_id IS 'Narrative demo audio file reference';
+            END IF;
+          END IF;
+        END $$;
+      `);
+
+      // Add foreign key constraints to media table if it exists
+      await pool.query(`
+        DO $$ 
+        BEGIN
+          IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'media') 
+             AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'voiceovers') THEN
+            
+            -- Add foreign key for full_demo_reel_id
+            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
+              WHERE table_name = 'voiceovers' 
+              AND constraint_name = 'voiceovers_full_demo_reel_id_fkey') THEN
+              ALTER TABLE voiceovers 
+                ADD CONSTRAINT voiceovers_full_demo_reel_id_fkey 
+                FOREIGN KEY (full_demo_reel_id) REFERENCES media(id) ON DELETE SET NULL;
+            END IF;
+            
+            -- Add foreign key for commercials_demo_id
+            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
+              WHERE table_name = 'voiceovers' 
+              AND constraint_name = 'voiceovers_commercials_demo_id_fkey') THEN
+              ALTER TABLE voiceovers 
+                ADD CONSTRAINT voiceovers_commercials_demo_id_fkey 
+                FOREIGN KEY (commercials_demo_id) REFERENCES media(id) ON DELETE SET NULL;
+            END IF;
+            
+            -- Add foreign key for narrative_demo_id
+            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
+              WHERE table_name = 'voiceovers' 
+              AND constraint_name = 'voiceovers_narrative_demo_id_fkey') THEN
+              ALTER TABLE voiceovers 
+                ADD CONSTRAINT voiceovers_narrative_demo_id_fkey 
+                FOREIGN KEY (narrative_demo_id) REFERENCES media(id) ON DELETE SET NULL;
+            END IF;
+          END IF;
+        END $$;
+      `);
+
+      // Create indexes for performance
+      await pool.query(`
+        CREATE INDEX IF NOT EXISTS idx_voiceovers_full_demo_reel_id 
+          ON voiceovers(full_demo_reel_id);
+        CREATE INDEX IF NOT EXISTS idx_voiceovers_commercials_demo_id 
+          ON voiceovers(commercials_demo_id);
+        CREATE INDEX IF NOT EXISTS idx_voiceovers_narrative_demo_id 
+          ON voiceovers(narrative_demo_id);
+      `);
+    } catch (err) {
+      console.log('⚠️  Issue adding voiceover upload columns:', err.message);
+    }
+    console.log('✅ voiceover upload columns verified\n');
+
+    // 5. Ensure pages table has status column
     console.log('📄 Checking pages table status column...');
     await pool.query(`
       DO $$ 
@@ -219,7 +308,7 @@ async function runMigrations() {
     `);
     console.log('✅ pages table status column verified\n');
 
-    // 5. Create payload_migrations table if it doesn't exist
+    // 6. Create payload_migrations table if it doesn't exist
     console.log('🔧 Creating payload_migrations table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS payload_migrations (
@@ -232,7 +321,7 @@ async function runMigrations() {
     `);
     console.log('✅ payload_migrations table created\n');
 
-    // 6. Create payload_preferences table if it doesn't exist
+    // 7. Create payload_preferences table if it doesn't exist
     console.log('⚙️  Creating payload_preferences table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS payload_preferences (

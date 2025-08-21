@@ -75,12 +75,28 @@ else
   echo "⚠️  Failed to create database tables, but continuing..."
 fi
 
-# Run Payload migrations
+# Run Payload migrations first
 echo "📦 Running Payload migrations..."
 if npx payload migrate; then
   echo "✅ Payload migrations completed successfully"
 else
   echo "⚠️  Payload migrations failed, but continuing..."
+fi
+
+# Run the complete schema migration AFTER Payload to fix any locales tables
+echo "🔄 Running complete schema migration to fix locale tables..."
+if node /app/scripts/complete-schema-migration.js; then
+  echo "✅ Schema migration completed successfully"
+else
+  echo "⚠️  Schema migration had issues, but continuing..."
+fi
+
+# Run comprehensive fix for all locales tables
+echo "🔧 Running comprehensive locales table fix..."
+if node /app/scripts/fix-all-locales-tables.js; then
+  echo "✅ All locales tables fixed successfully"
+else
+  echo "⚠️  Locales table fix had issues, but continuing..."
 fi
 
 # Run seeding if needed (skip for now due to module issues)

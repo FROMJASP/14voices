@@ -20,24 +20,10 @@ const importMapPath = path.join(
   'importMap.js'
 );
 
-// Check if S3 storage should be included based on environment variables
-// Must match the logic in payload.config.ts exactly
-const s3AccessKey = process.env.S3_ACCESS_KEY;
-const s3SecretKey = process.env.S3_SECRET_KEY;
-const hasS3Config = 
-  s3AccessKey && 
-  s3SecretKey && 
-  s3AccessKey !== 'dummy' && 
-  s3SecretKey !== 'dummy' &&
-  !s3AccessKey.includes('dummy-s3') &&
-  !s3SecretKey.includes('dummy-s3');
-
-// Add debug logging
-console.log('S3 configuration check:');
-console.log('- S3_ACCESS_KEY exists:', !!s3AccessKey);
-console.log('- S3_SECRET_KEY exists:', !!s3SecretKey);
-console.log('- Keys are not dummy values:', s3AccessKey !== 'dummy' && s3SecretKey !== 'dummy');
-console.log('- Including S3 handler:', hasS3Config);
+// Always include S3 storage components to avoid runtime errors
+// The S3 storage plugin is conditionally enabled in payload.config.ts,
+// but the components need to be available in the import map for when it's enabled
+console.log('Always including S3ClientUploadHandler in import map for production compatibility');
 
 // Build imports dynamically
 const baseImports = [
@@ -85,14 +71,9 @@ const baseImports = [
   `import { default as default_16e62c7e42dfe7700742ba3a13bf8900 } from '../../../components/admin/graphics/Icon'`,
   `import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../components/admin/graphics/Logo'`,
   `import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'`,
+  // Always include S3 handler to prevent runtime errors when S3 is enabled in production
+  `import { S3ClientUploadHandler as S3ClientUploadHandler_f7a8e9c3b2d1a5e8 } from '@payloadcms/storage-s3/client'`,
 ];
-
-// Add S3 import conditionally
-if (hasS3Config) {
-  baseImports.push(
-    `import { S3ClientUploadHandler as S3ClientUploadHandler_f7a8e9c3b2d1a5e8 } from '@payloadcms/storage-s3/client'`
-  );
-}
 
 // Build export map entries
 const baseExportEntries = [
@@ -140,14 +121,9 @@ const baseExportEntries = [
   `  "./components/admin/graphics/Icon#default": default_16e62c7e42dfe7700742ba3a13bf8900,`,
   `  "./components/admin/graphics/Logo#default": default_13338d86bf8cb9661b50b401726320cd,`,
   `  "./components/admin/Root#default": default_52fc470c96be62b5d8029b692894d144,`,
+  // Always include S3 handler to prevent runtime errors when S3 is enabled in production
+  `  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f7a8e9c3b2d1a5e8,`,
 ];
-
-// Add S3 export conditionally
-if (hasS3Config) {
-  baseExportEntries.push(
-    `  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f7a8e9c3b2d1a5e8,`
-  );
-}
 
 // Build the complete import map content
 const importMapContent = `${baseImports.join('\n')}

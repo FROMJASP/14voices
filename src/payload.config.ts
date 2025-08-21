@@ -3,7 +3,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { resendAdapter } from '@payloadcms/email-resend';
 // import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
-import { wrappedMinioStorage } from './lib/storage/minio-adapter';
+import { wrappedMinioStorage } from './lib/storage/minio-adapter.js';
 import { en } from '@payloadcms/translations/languages/en';
 import { nl } from '@payloadcms/translations/languages/nl';
 // import { i18n as customI18n } from './i18n/index';
@@ -135,12 +135,12 @@ export default buildConfig({
   plugins: [
     // MinIO storage for self-hosted file uploads
     // Only enable if S3 keys are set AND not dummy values
-    ...(process.env.S3_ACCESS_KEY && 
-        process.env.S3_SECRET_KEY && 
-        process.env.S3_ACCESS_KEY !== 'dummy' && 
-        process.env.S3_SECRET_KEY !== 'dummy' &&
-        !process.env.S3_ACCESS_KEY.includes('dummy-s3') &&
-        !process.env.S3_SECRET_KEY.includes('dummy-s3')
+    ...(process.env.S3_ACCESS_KEY &&
+    process.env.S3_SECRET_KEY &&
+    process.env.S3_ACCESS_KEY !== 'dummy' &&
+    process.env.S3_SECRET_KEY !== 'dummy' &&
+    !process.env.S3_ACCESS_KEY.includes('dummy-s3') &&
+    !process.env.S3_SECRET_KEY.includes('dummy-s3')
       ? [
           wrappedMinioStorage({
             collections: {
