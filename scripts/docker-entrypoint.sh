@@ -83,16 +83,9 @@ else
   echo "⚠️  Payload migrations failed, but continuing..."
 fi
 
-# Run seeding if needed
+# Run seeding if needed (skip for now due to module issues)
 if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
-  echo "🌱 Checking if seeding is needed..."
-  npx tsx -e "
-    const { seed } = require('./src/seed/index.ts');
-    seed().catch(err => {
-      console.error('Seeding error:', err);
-      process.exit(1);
-    });
-  " || echo "⚠️  Seeding skipped or already completed"
+  echo "🌱 Seeding: Skipping automatic seeding (can be done manually later)"
 fi
 
 # Start the application

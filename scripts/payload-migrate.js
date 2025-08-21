@@ -37,23 +37,74 @@ async function runMigrations() {
     await pool.query('SELECT 1');
     console.log('✅ Database connection established\n');
 
-    // Create missing voiceovers relationship tables
+    // First, let Payload create its base tables
+    console.log('🔄 Running Payload migrations...');
+    try {
+      // Try to run Payload's own migrations first
+      const { exec } = require('child_process');
+      await new Promise((resolve, reject) => {
+        exec('cd /app && npx payload migrate', (error, stdout, stderr) => {
+          if (error) {
+            console.log('⚠️  Payload migrations had issues, but continuing...');
+            console.log(stderr);
+            resolve(); // Continue even if Payload migrations fail
+          } else {
+            console.log('✅ Payload migrations completed');
+            resolve();
+          }
+        });
+      });
+    } catch (err) {
+      console.log('⚠️  Could not run Payload migrations, continuing with manual setup...');
+    }
+
+    // Now create missing relationship tables
     // These tables are required for the voiceovers collection to work properly
 
     // 1. Create voiceovers_additional_photos table
-    console.log('📸 Creating voiceovers_additional_photos table...');
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS voiceovers_additional_photos (
-        id SERIAL PRIMARY KEY,
-        _order integer NOT NULL,
-        _parent_id integer REFERENCES voiceovers(id) ON DELETE CASCADE,
-        photo_id integer REFERENCES media(id) ON DELETE SET NULL,
-        caption text,
-        _uuid text,
-        created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-        updated_at timestamp DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+    console.log('\n📸 Creating voiceovers_additional_photos table...');
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS voiceovers_additional_photos (
+          id SERIAL PRIMARY KEY,
+          _order integer NOT NULL,
+          _parent_id integer,
+          photo_id integer,
+          caption text,
+          _uuid text,
+          created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+          updated_at timestamp DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      // Try to add foreign keys if tables exist
+      await pool.query(`
+        DO $$ 
+        BEGIN
+          IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'voiceovers') THEN
+            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
+              WHERE table_name = 'voiceovers_additional_photos' 
+              AND constraint_name = 'voiceovers_additional_photos__parent_id_fkey') THEN
+              ALTER TABLE voiceovers_additional_photos 
+                ADD CONSTRAINT voiceovers_additional_photos__parent_id_fkey 
+                FOREIGN KEY (_parent_id) REFERENCES voiceovers(id) ON DELETE CASCADE;
+            END IF;
+          END IF;
+          
+          IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'media') THEN
+            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
+              WHERE table_name = 'voiceovers_additional_photos' 
+              AND constraint_name = 'voiceovers_additional_photos_photo_id_fkey') THEN
+              ALTER TABLE voiceovers_additional_photos 
+                ADD CONSTRAINT voiceovers_additional_photos_photo_id_fkey 
+                FOREIGN KEY (photo_id) REFERENCES media(id) ON DELETE SET NULL;
+            END IF;
+          END IF;
+        END $$;
+      `);
+    } catch (err) {
+      console.log('⚠️  Issue creating voiceovers_additional_photos:', err.message);
+    }
 
     // Create indexes for performance
     await pool.query(`
@@ -68,18 +119,38 @@ async function runMigrations() {
 
     // 2. Create voiceovers_style_tags table
     console.log('🏷️  Creating voiceovers_style_tags table...');
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS voiceovers_style_tags (
-        id SERIAL PRIMARY KEY,
-        _order integer NOT NULL,
-        _parent_id integer REFERENCES voiceovers(id) ON DELETE CASCADE,
-        tag text,
-        custom_tag text,
-        _uuid text,
-        created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-        updated_at timestamp DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS voiceovers_style_tags (
+          id SERIAL PRIMARY KEY,
+          _order integer NOT NULL,
+          _parent_id integer,
+          tag text,
+          custom_tag text,
+          _uuid text,
+          created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+          updated_at timestamp DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      // Add foreign key if voiceovers table exists
+      await pool.query(`
+        DO $$ 
+        BEGIN
+          IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'voiceovers') THEN
+            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
+              WHERE table_name = 'voiceovers_style_tags' 
+              AND constraint_name = 'voiceovers_style_tags__parent_id_fkey') THEN
+              ALTER TABLE voiceovers_style_tags 
+                ADD CONSTRAINT voiceovers_style_tags__parent_id_fkey 
+                FOREIGN KEY (_parent_id) REFERENCES voiceovers(id) ON DELETE CASCADE;
+            END IF;
+          END IF;
+        END $$;
+      `);
+    } catch (err) {
+      console.log('⚠️  Issue creating voiceovers_style_tags:', err.message);
+    }
 
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_voiceovers_style_tags_parent 
@@ -93,17 +164,37 @@ async function runMigrations() {
 
     // 3. Create voiceovers_locales table
     console.log('🌍 Creating voiceovers_locales table...');
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS voiceovers_locales (
-        id SERIAL PRIMARY KEY,
-        name text,
-        description text,
-        _locale text NOT NULL,
-        _parent_id integer REFERENCES voiceovers(id) ON DELETE CASCADE,
-        created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-        updated_at timestamp DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS voiceovers_locales (
+          id SERIAL PRIMARY KEY,
+          name text,
+          description text,
+          _locale text NOT NULL,
+          _parent_id integer,
+          created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+          updated_at timestamp DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      // Add foreign key if voiceovers table exists
+      await pool.query(`
+        DO $$ 
+        BEGIN
+          IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'voiceovers') THEN
+            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
+              WHERE table_name = 'voiceovers_locales' 
+              AND constraint_name = 'voiceovers_locales__parent_id_fkey') THEN
+              ALTER TABLE voiceovers_locales 
+                ADD CONSTRAINT voiceovers_locales__parent_id_fkey 
+                FOREIGN KEY (_parent_id) REFERENCES voiceovers(id) ON DELETE CASCADE;
+            END IF;
+          END IF;
+        END $$;
+      `);
+    } catch (err) {
+      console.log('⚠️  Issue creating voiceovers_locales:', err.message);
+    }
 
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_voiceovers_locales_parent 
