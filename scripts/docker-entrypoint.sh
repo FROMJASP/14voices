@@ -91,12 +91,16 @@ else
   echo "⚠️  Schema migration had issues, but continuing..."
 fi
 
-# Run comprehensive fix for all locales tables
-echo "🔧 Running comprehensive locales table fix..."
-if node /app/scripts/fix-all-locales-tables.js; then
-  echo "✅ All locales tables fixed successfully"
+# Run voiceovers table fix
+echo "🔧 Running voiceovers table fix..."
+if [ -f /app/scripts/fix-voiceovers-table-final.js ]; then
+  if node /app/scripts/fix-voiceovers-table-final.js; then
+    echo "✅ Voiceovers table fixed successfully"
+  else
+    echo "⚠️  Voiceovers table fix had issues, but continuing..."
+  fi
 else
-  echo "⚠️  Locales table fix had issues, but continuing..."
+  echo "⚠️  Fix script not found, skipping..."
 fi
 
 # Run seeding if needed (skip for now due to module issues)
