@@ -85,6 +85,7 @@ COPY --from=builder /app/scripts/check-database-schema.js ./scripts/check-databa
 COPY --from=builder /app/scripts/fix-production-issues.js ./scripts/fix-production-issues.js
 COPY --from=builder /app/scripts/fix-production-comprehensive.js ./scripts/fix-production-comprehensive.js
 COPY --from=builder /app/scripts/fix-all-missing-tables.js ./scripts/fix-all-missing-tables.js
+COPY --from=builder /app/scripts/generate-importmap.js ./scripts/generate-importmap.js
 COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports
 COPY --from=builder /app/src ./src

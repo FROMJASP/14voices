@@ -104,6 +104,16 @@ if [ -f /app/scripts/fix-all-missing-tables.js ]; then
   fi
 fi
 
+# Generate import map with proper S3 configuration check
+if [ -f /app/scripts/generate-importmap.js ]; then
+  echo "🗺️  Generating import map for production..."
+  if node /app/scripts/generate-importmap.js; then
+    echo "✅ Import map generated successfully"
+  else
+    echo "⚠️  Import map generation had issues, but continuing..."
+  fi
+fi
+
 # Then run other production fixes
 if [ -f /app/scripts/fix-production-comprehensive.js ]; then
   if node /app/scripts/fix-production-comprehensive.js; then
