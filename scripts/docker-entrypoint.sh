@@ -91,23 +91,23 @@ else
   echo "⚠️  Schema migration had issues, but continuing..."
 fi
 
-# Run production fixes (database schema and import map)
-echo "🚨 Running production fixes..."
-if [ -f /app/scripts/fix-production-issues.js ]; then
-  if node /app/scripts/fix-production-issues.js; then
-    echo "✅ Production fixes applied successfully"
+# Run comprehensive production fixes (database schema and import map)
+echo "🚨 Running comprehensive production fixes..."
+if [ -f /app/scripts/fix-production-comprehensive.js ]; then
+  if node /app/scripts/fix-production-comprehensive.js; then
+    echo "✅ Comprehensive production fixes applied successfully"
   else
-    echo "⚠️  Production fixes had issues, but continuing..."
+    echo "⚠️  Comprehensive production fixes had issues, but continuing..."
+  fi
+elif [ -f /app/scripts/fix-production-issues.js ]; then
+  echo "⚠️  Comprehensive fix script not found, trying standard fix..."
+  if node /app/scripts/fix-production-issues.js; then
+    echo "✅ Standard production fixes applied successfully"
+  else
+    echo "⚠️  Standard production fixes had issues, but continuing..."
   fi
 else
-  echo "⚠️  Production fix script not found, trying legacy fix..."
-  if [ -f /app/scripts/fix-voiceovers-table-final.js ]; then
-    if node /app/scripts/fix-voiceovers-table-final.js; then
-      echo "✅ Legacy fix applied"
-    else
-      echo "⚠️  Legacy fix had issues, but continuing..."
-    fi
-  fi
+  echo "⚠️  No production fix scripts found"
 fi
 
 # Run seeding if needed (skip for now due to module issues)
