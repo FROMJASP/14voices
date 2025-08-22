@@ -177,7 +177,7 @@ if (allIssues.length > 0) {
 log.section('🏗️  Testing production build...');
 try {
   log.info('This may take a few minutes...');
-  execSync('bun run build', { stdio: 'inherit' });
+  execSync('node scripts/build-for-validation.js', { stdio: 'inherit' });
   log.success('Production build succeeded');
 } catch {
   log.error('Production build failed');
