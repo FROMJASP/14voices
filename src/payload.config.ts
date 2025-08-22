@@ -133,7 +133,6 @@ export default buildConfig({
       keepAlive: true,
       keepAliveInitialDelayMillis: parseInt(process.env.DB_KEEPALIVE_DELAY || '10000', 10),
     },
-    schemaName: 'public',
   }),
   email: resendAdapter({
     defaultFromAddress: 'noreply@14voices.com',
