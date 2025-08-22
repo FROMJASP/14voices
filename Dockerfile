@@ -82,6 +82,7 @@ COPY --from=builder /app/scripts/payload-migrate.js ./scripts/payload-migrate.js
 COPY --from=builder /app/scripts/fix-voiceovers-locales.js ./scripts/fix-voiceovers-locales.js
 COPY --from=builder /app/scripts/complete-schema-migration.js ./scripts/complete-schema-migration.js
 COPY --from=builder /app/scripts/check-database-schema.js ./scripts/check-database-schema.js
+COPY --from=builder /app/scripts/fix-production-issues.js ./scripts/fix-production-issues.js
 COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports
 COPY --from=builder /app/src ./src

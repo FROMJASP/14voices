@@ -91,16 +91,23 @@ else
   echo "⚠️  Schema migration had issues, but continuing..."
 fi
 
-# Run voiceovers table fix
-echo "🔧 Running voiceovers table fix..."
-if [ -f /app/scripts/fix-voiceovers-table-final.js ]; then
-  if node /app/scripts/fix-voiceovers-table-final.js; then
-    echo "✅ Voiceovers table fixed successfully"
+# Run production fixes (database schema and import map)
+echo "🚨 Running production fixes..."
+if [ -f /app/scripts/fix-production-issues.js ]; then
+  if node /app/scripts/fix-production-issues.js; then
+    echo "✅ Production fixes applied successfully"
   else
-    echo "⚠️  Voiceovers table fix had issues, but continuing..."
+    echo "⚠️  Production fixes had issues, but continuing..."
   fi
 else
-  echo "⚠️  Fix script not found, skipping..."
+  echo "⚠️  Production fix script not found, trying legacy fix..."
+  if [ -f /app/scripts/fix-voiceovers-table-final.js ]; then
+    if node /app/scripts/fix-voiceovers-table-final.js; then
+      echo "✅ Legacy fix applied"
+    else
+      echo "⚠️  Legacy fix had issues, but continuing..."
+    fi
+  fi
 fi
 
 # Run seeding if needed (skip for now due to module issues)
