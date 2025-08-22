@@ -93,6 +93,18 @@ fi
 
 # Run comprehensive production fixes (database schema and import map)
 echo "🚨 Running comprehensive production fixes..."
+
+# First run the comprehensive table creation script
+if [ -f /app/scripts/fix-all-missing-tables.js ]; then
+  echo "🔧 Creating all missing tables..."
+  if node /app/scripts/fix-all-missing-tables.js; then
+    echo "✅ All missing tables created successfully"
+  else
+    echo "⚠️  Table creation had issues, but continuing..."
+  fi
+fi
+
+# Then run other production fixes
 if [ -f /app/scripts/fix-production-comprehensive.js ]; then
   if node /app/scripts/fix-production-comprehensive.js; then
     echo "✅ Comprehensive production fixes applied successfully"
