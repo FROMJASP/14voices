@@ -146,6 +146,25 @@ Refused to execute inline script because it violates the following Content Secur
 - Check that domain types match collection fields exactly
 - Import `Where` type when using Payload queries
 
+### Payload Package Version Mismatches
+
+**Problem**: "useUploadHandlers must be used within UploadHandlersProvider" error when using S3 storage
+
+**Cause**: Version mismatches between Payload packages break the upload handler context
+
+**Solution**: Keep ALL Payload packages at the same version:
+
+- Check package.json regularly for version discrepancies
+- When upgrading, update all @payloadcms/\* packages together
+- Remove @payloadcms/plugin-cloud-storage (deprecated in v3)
+
+**Prevention**:
+
+- Never mix Payload package versions
+- Use exact versions (3.53.0) instead of ranges (^3.53.0)
+- Run `bun update @payloadcms/*` to update all at once
+- Payload v3 is still in beta and requires frequent updates
+
 ### Dependency Issues
 
 **Problem**: Build fails with "Module not found" errors
