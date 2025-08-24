@@ -79,6 +79,8 @@ COPY --from=builder /app/package.json ./package.json
 
 # Copy migration and entrypoint scripts
 COPY --from=builder /app/scripts/payload-migrate.js ./scripts/payload-migrate.js
+COPY --from=builder /app/scripts/run-payload-migrations.js ./scripts/run-payload-migrations.js
+COPY --from=builder /app/scripts/generate-schema-migration.js ./scripts/generate-schema-migration.js
 COPY --from=builder /app/scripts/fix-voiceovers-locales.js ./scripts/fix-voiceovers-locales.js
 COPY --from=builder /app/scripts/complete-schema-migration.js ./scripts/complete-schema-migration.js
 COPY --from=builder /app/scripts/check-database-schema.js ./scripts/check-database-schema.js
@@ -87,7 +89,7 @@ COPY --from=builder /app/scripts/fix-production-comprehensive.js ./scripts/fix-p
 COPY --from=builder /app/scripts/fix-all-missing-tables.js ./scripts/fix-all-missing-tables.js
 COPY --from=builder /app/scripts/generate-importmap.js ./scripts/generate-importmap.js
 COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-# Also copy the entire src directory for TypeScript imports
+# Also copy the entire src directory for TypeScript imports and migrations
 COPY --from=builder /app/src ./src
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 

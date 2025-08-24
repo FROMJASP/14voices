@@ -67,40 +67,47 @@ echo "Running database migrations..."
 cd /app
 export PATH="/app/node_modules/.bin:$PATH"
 
-# Run our comprehensive migration script first
-echo "🔧 Creating database tables..."
-if node /app/scripts/payload-migrate.js; then
-  echo "✅ Database tables created successfully"
-else
-  echo "⚠️  Failed to create database tables, but continuing..."
-fi
-
-# Run Payload migrations first
-echo "📦 Running Payload migrations..."
-if npx payload migrate; then
-  echo "✅ Payload migrations completed successfully"
-else
-  echo "⚠️  Payload migrations failed, but continuing..."
-fi
-
-# Run the complete schema migration AFTER Payload to fix any locales tables
-echo "🔄 Running complete schema migration to fix locale tables..."
-if node /app/scripts/complete-schema-migration.js; then
-  echo "✅ Schema migration completed successfully"
-else
-  echo "⚠️  Schema migration had issues, but continuing..."
-fi
-
-# Run comprehensive production fixes (database schema and import map)
-echo "🚨 Running comprehensive production fixes..."
-
-# First run the comprehensive table creation script
-if [ -f /app/scripts/fix-all-missing-tables.js ]; then
-  echo "🔧 Creating all missing tables..."
-  if node /app/scripts/fix-all-missing-tables.js; then
-    echo "✅ All missing tables created successfully"
+# First generate the schema migration if needed
+echo "📝 Generating schema migration..."
+if [ -f /app/scripts/generate-schema-migration.js ]; then
+  if node /app/scripts/generate-schema-migration.js production-sync; then
+    echo "✅ Schema migration generated"
   else
-    echo "⚠️  Table creation had issues, but continuing..."
+    echo "⚠️  Schema migration generation had issues, but continuing..."
+  fi
+fi
+
+# Run Payload's built-in migration system
+# This will:
+# 1. Run any pending migrations from src/migrations/
+# 2. Automatically sync schema with collection definitions
+# 3. Create missing columns, tables, and relationships
+echo "🚀 Running Payload migrations (this handles all schema sync)..."
+if [ -f /app/scripts/run-payload-migrations.js ]; then
+  if node /app/scripts/run-payload-migrations.js; then
+    echo "✅ Payload migrations completed successfully"
+  else
+    echo "⚠️  Payload migrations had issues, but continuing..."
+  fi
+else
+  # Fallback to direct npx command if script doesn't exist
+  echo "📦 Running Payload migrations directly..."
+  if npx payload migrate; then
+    echo "✅ Payload migrations completed successfully"
+  else
+    echo "⚠️  Payload migrations failed, but continuing..."
+  fi
+fi
+
+# Run any additional fixes if needed
+echo "🔧 Running additional database fixes..."
+
+# Fix locale tables if needed (for backward compatibility)
+if [ -f /app/scripts/complete-schema-migration.js ]; then
+  if node /app/scripts/complete-schema-migration.js; then
+    echo "✅ Additional fixes completed"
+  else
+    echo "⚠️  Additional fixes had issues, but continuing..."
   fi
 fi
 

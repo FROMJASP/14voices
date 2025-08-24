@@ -2,6 +2,36 @@
 
 ## Recent Updates (January 2025)
 
+### Automatic Database Migrations (January 2025)
+
+**Problem Solved**: Production deployments were failing due to missing database columns when collections were updated.
+
+**Solution Implemented**: Rock-solid automatic migration system using Payload's built-in migration features.
+
+**How it works**:
+
+1. **Automatic Schema Sync** - On every deployment, Payload migrations run automatically
+2. **No Manual SQL** - Payload handles all schema changes based on collection definitions
+3. **Zero Downtime** - Migrations run during container startup before the app serves traffic
+
+**Key Components**:
+
+- `scripts/run-payload-migrations.js` - Robust migration runner with retry logic
+- `scripts/generate-schema-migration.js` - Creates migration files for complex changes
+- `src/migrations/` - Directory for custom migration files
+- Updated `docker-entrypoint.sh` - Automatically runs migrations on deployment
+
+**What this fixes**:
+
+- Missing columns errors (like `column pages.hero_type does not exist`)
+- Array field tables not being created
+- Relationship tables missing
+- Locale tables with wrong naming conventions
+
+**For developers**: Just modify your collections and deploy. The migration system handles everything automatically.
+
+## Recent Updates (January 2025)
+
 ### Navigation & Hero Section Redesign
 
 The navbar and hero section have been completely redesigned to match the mockup at `/public/mockups/navbar-hero-redesign/`:
