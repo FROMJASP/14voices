@@ -13,7 +13,6 @@
  */
 
 const { Pool } = require('pg');
-const fs = require('fs').promises;
 const path = require('path');
 
 console.log('🚨 Comprehensive Production Fix Script Starting...\n');
@@ -220,6 +219,25 @@ async function fixImportMapComprehensive() {
   }
 }
 
+async function fixServerComponentsRenderError() {
+  // Import the fix functions
+  const { fixProductionRenderError } = require('./fix-production-render-error');
+  const { fixAdminCreation } = require('./fix-admin-creation');
+
+  try {
+    console.log('\n🔧 Part 3: Fixing Server Components Render Error...\n');
+    await fixProductionRenderError();
+
+    console.log('\n🔧 Part 4: Fixing Admin User Creation...\n');
+    await fixAdminCreation();
+
+    return true;
+  } catch (error) {
+    console.error('❌ Error fixing server components:', error.message);
+    return false;
+  }
+}
+
 async function runComprehensiveFixes() {
   console.log('Environment check:');
   console.log(`- DATABASE_URL: ${process.env.DATABASE_URL ? 'Set' : 'Not set'}`);
@@ -239,6 +257,13 @@ async function runComprehensiveFixes() {
   const importFixed = await fixImportMapComprehensive();
   if (!importFixed) {
     console.error('⚠️  Import map fixes failed');
+    success = false;
+  }
+
+  // Fix server components render error and admin creation
+  const serverFixed = await fixServerComponentsRenderError();
+  if (!serverFixed) {
+    console.error('⚠️  Server components fixes failed, but continuing...');
     success = false;
   }
 
