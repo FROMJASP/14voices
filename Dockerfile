@@ -81,6 +81,7 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/scripts/payload-migrate.js ./scripts/payload-migrate.js
 COPY --from=builder /app/scripts/run-payload-migrations.js ./scripts/run-payload-migrations.js
 COPY --from=builder /app/scripts/generate-schema-migration.js ./scripts/generate-schema-migration.js
+COPY --from=builder /app/scripts/force-schema-sync.js ./scripts/force-schema-sync.js
 COPY --from=builder /app/scripts/fix-voiceovers-locales.js ./scripts/fix-voiceovers-locales.js
 COPY --from=builder /app/scripts/complete-schema-migration.js ./scripts/complete-schema-migration.js
 COPY --from=builder /app/scripts/check-database-schema.js ./scripts/check-database-schema.js

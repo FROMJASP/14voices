@@ -111,6 +111,16 @@ if [ -f /app/scripts/complete-schema-migration.js ]; then
   fi
 fi
 
+# Force schema sync to ensure all columns exist
+echo "🔨 Force syncing database schema..."
+if [ -f /app/scripts/force-schema-sync.js ]; then
+  if node /app/scripts/force-schema-sync.js; then
+    echo "✅ Schema force sync completed"
+  else
+    echo "⚠️  Schema force sync had issues, but continuing..."
+  fi
+fi
+
 # Generate import map with proper S3 configuration check
 if [ -f /app/scripts/generate-importmap.js ]; then
   echo "🗺️  Generating import map for production..."
