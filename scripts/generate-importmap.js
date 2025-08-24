@@ -85,12 +85,10 @@ const baseImports = [
   `import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'`,
 ];
 
-// Conditionally add S3 import
-if (hasValidS3) {
-  baseImports.push(
-    `import { S3ClientUploadHandler as S3ClientUploadHandler_f7a8e9c3b2d1a5e8 } from '@payloadcms/storage-s3/client'`
-  );
-}
+// Always include the S3 handler wrapper (it handles the conditional logic internally)
+baseImports.push(
+  `import { S3ClientUploadHandler_f7a8e9c3b2d1a5e8 } from '../../../lib/storage/s3-client-upload-handler'`
+);
 
 // Build export map entries (without trailing commas)
 const baseExportEntries = [
@@ -140,12 +138,10 @@ const baseExportEntries = [
   `  "./components/admin/Root#default": default_52fc470c96be62b5d8029b692894d144`,
 ];
 
-// Conditionally add S3 export entry
-if (hasValidS3) {
-  baseExportEntries.push(
-    `  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f7a8e9c3b2d1a5e8`
-  );
-}
+// Always include the S3 export entry (the wrapper handles conditional logic)
+baseExportEntries.push(
+  `  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f7a8e9c3b2d1a5e8`
+);
 
 // Build the complete import map content
 const allExportEntries = baseExportEntries.join(',\n');
