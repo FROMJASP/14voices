@@ -19,17 +19,40 @@ if [ -n "$COOLIFY_FQDN" ]; then
   echo "COOLIFY_FQDN: $COOLIFY_FQDN"
 fi
 
-# Use the new comprehensive initialization script
-if [ -f /app/scripts/coolify-init.js ]; then
-  echo "Running Coolify initialization..."
-  node /app/scripts/coolify-init.js
+# Try direct database initialization first (avoids undici error)
+if [ -f /app/scripts/direct-db-init.js ]; then
+  echo "Running direct database initialization..."
+  node /app/scripts/direct-db-init.js
   
-  if [ $? -ne 0 ]; then
-    echo "Coolify initialization failed!"
-    exit 1
+  if [ $? -eq 0 ]; then
+    echo "Direct initialization succeeded!"
+  else
+    echo "Direct initialization failed, trying Coolify init..."
+    
+    # Fallback to coolify-init
+    if [ -f /app/scripts/coolify-init.js ]; then
+      echo "Running Coolify initialization..."
+      node /app/scripts/coolify-init.js
+      
+      if [ $? -ne 0 ]; then
+        echo "Coolify initialization also failed!"
+        exit 1
+      fi
+    fi
   fi
 else
-  echo "WARNING: Coolify init script not found, falling back to legacy initialization..."
+  echo "WARNING: Direct init script not found, trying coolify-init..."
+  
+  if [ -f /app/scripts/coolify-init.js ]; then
+    echo "Running Coolify initialization..."
+    node /app/scripts/coolify-init.js
+    
+    if [ $? -ne 0 ]; then
+      echo "Coolify initialization failed!"
+      exit 1
+    fi
+  else
+    echo "WARNING: No init scripts found, falling back to legacy initialization..."
   
   # Legacy initialization code follows...
   

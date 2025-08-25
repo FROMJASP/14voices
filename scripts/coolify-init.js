@@ -206,7 +206,7 @@ async function ensureAdminUser() {
 
     // Create admin user with parameterized query
     const insertResult = await pool.query(
-      `INSERT INTO users (email, hash, salt, _verified, roles, "createdAt", "updatedAt") 
+      `INSERT INTO users (email, hash, salt, _verified, role, "createdAt", "updatedAt") 
        VALUES ($1, $2, $3, $4, $5, $6, $7) 
        RETURNING id`,
       [
@@ -214,7 +214,7 @@ async function ensureAdminUser() {
         hashedPassword,
         '', // empty salt for bcrypt
         true,
-        JSON.stringify({ admin: true }), // Payload v3 format
+        'admin', // Use string for role, not JSON
         new Date().toISOString(),
         new Date().toISOString(),
       ]

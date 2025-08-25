@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     hash VARCHAR(255),
     salt VARCHAR(255) DEFAULT '',
-    roles JSONB DEFAULT '{}'::jsonb,
+    role VARCHAR(50) DEFAULT 'user',
     _verified BOOLEAN DEFAULT false,
     "createdAt" TIMESTAMP DEFAULT NOW(),
     "updatedAt" TIMESTAMP DEFAULT NOW()
@@ -38,7 +38,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS "resetPasswordExpiration" TIMESTAMP D
 
 -- Create user indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_users_roles ON users(roles);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users("resetPasswordToken");
 
 -- Create payload_preferences table
@@ -58,7 +58,7 @@ INSERT INTO users (
     hash, 
     salt,
     _verified,
-    roles, 
+    role, 
     "createdAt", 
     "updatedAt"
 ) 
@@ -67,11 +67,11 @@ SELECT
     '$2b$12$8K5P6mVqj3V5OmVX9bFjN.rDj2XQi2CX3zHJMKL5iHWqXx2Y7kJ7K', -- ChangeMeImmediately123!
     '',
     true,
-    '{"admin": true}'::jsonb,
+    'admin',
     NOW(),
     NOW()
 WHERE NOT EXISTS (
-    SELECT 1 FROM users WHERE roles ? 'admin'
+    SELECT 1 FROM users WHERE role = 'admin'
 );
 
 -- =============================================================================
@@ -181,7 +181,7 @@ END $$;
 
 -- Show final status
 \echo '=== MIGRATION RESULTS ==='
-SELECT 'Admin Users' as category, COUNT(*) as count FROM users WHERE roles ? 'admin'
+SELECT 'Admin Users' as category, COUNT(*) as count FROM users WHERE role = 'admin'
 UNION ALL
 SELECT 'Total Users' as category, COUNT(*) as count FROM users
 UNION ALL  

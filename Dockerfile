@@ -95,6 +95,7 @@ COPY --from=builder /app/src/payload.config.ts ./src/payload.config.ts
 COPY --from=builder /app/package.json ./package.json
 
 # Copy migration and entrypoint scripts
+COPY --from=builder /app/scripts/direct-db-init.js ./scripts/direct-db-init.js
 COPY --from=builder /app/scripts/coolify-init.js ./scripts/coolify-init.js
 COPY --from=builder /app/scripts/payload-migrate.js ./scripts/payload-migrate.js
 COPY --from=builder /app/scripts/run-payload-migrations.js ./scripts/run-payload-migrations.js
@@ -127,6 +128,8 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
+# Workaround for undici CacheStorage error
+ENV NODE_OPTIONS="--no-experimental-global-webcrypto"
 
 # Switch to non-root user
 USER nextjs

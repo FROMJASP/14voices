@@ -131,7 +131,7 @@ async function fixUsersTable(pool) {
         email VARCHAR(255) UNIQUE NOT NULL,
         hash VARCHAR(255),
         salt VARCHAR(255),
-        roles JSONB DEFAULT '{}'::jsonb,
+        role VARCHAR(50) DEFAULT 'user',
         _verified BOOLEAN DEFAULT false,
         "createdAt" TIMESTAMP DEFAULT NOW(),
         "updatedAt" TIMESTAMP DEFAULT NOW()
@@ -144,7 +144,7 @@ async function fixUsersTable(pool) {
   const requiredColumns = [
     { name: 'hash', type: 'VARCHAR(255)', default: 'null' },
     { name: 'salt', type: 'VARCHAR(255)', default: "''" },
-    { name: 'roles', type: 'JSONB', default: "'{}'::jsonb" },
+    { name: 'role', type: 'VARCHAR(50)', default: "'user'" },
     { name: '_verified', type: 'BOOLEAN', default: 'null' },
     { name: 'loginAttempts', type: 'INTEGER', default: '0' },
     { name: 'lockUntil', type: 'TIMESTAMP', default: 'null' },
@@ -166,7 +166,7 @@ async function fixUsersTable(pool) {
   // Create necessary indexes
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)',
-    'CREATE INDEX IF NOT EXISTS idx_users_roles ON users(roles)',
+    'CREATE INDEX IF NOT EXISTS idx_users_role ON users(role)',
     'CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users("resetPasswordToken")',
   ];
 
@@ -388,7 +388,7 @@ async function ensureAdminUser(pool) {
   logSection('ENSURING ADMIN USER EXISTS');
 
   const adminCheck = await pool.query(`
-    SELECT COUNT(*) FROM users WHERE roles ? 'admin'
+    SELECT COUNT(*) FROM users WHERE role = 'admin'
   `);
 
   const adminCount = parseInt(adminCheck.rows[0].count);
@@ -412,7 +412,7 @@ async function ensureAdminUser(pool) {
           hash, 
           salt,
           _verified,
-          roles, 
+          role, 
           "createdAt", 
           "updatedAt"
         ) VALUES (
@@ -420,15 +420,15 @@ async function ensureAdminUser(pool) {
           $2, 
           '',
           true,
-          $3, 
+          'admin', 
           NOW(), 
           NOW()
         ) ON CONFLICT (email) DO UPDATE SET
           hash = $2,
-          roles = $3,
+          role = 'admin',
           "updatedAt" = NOW()
       `,
-        [email, hash, JSON.stringify({ admin: true })]
+        [email, hash]
       );
 
       logSuccess(`Admin user created: ${email}`);
@@ -601,7 +601,7 @@ async function main() {
 
       const finalChecks = await pool.query(`
         SELECT 
-          (SELECT COUNT(*) FROM users WHERE roles ? 'admin') as admin_count,
+          (SELECT COUNT(*) FROM users WHERE role = 'admin') as admin_count,
           (SELECT COUNT(*) FROM voiceovers) as voiceover_count,
           (SELECT COUNT(*) FROM globals WHERE "globalType" = 'homepage-settings') as homepage_settings_count
       `);
