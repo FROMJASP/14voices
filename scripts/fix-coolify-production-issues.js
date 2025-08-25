@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-require-imports */
- 
+
 /**
  * Comprehensive Production Fix Script for Coolify Deployment
  * Fixes all known issues with 14voices production deployment
@@ -129,10 +129,10 @@ async function fixUsersTable(pool) {
       CREATE TABLE users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255),
+        hash VARCHAR(255),
         salt VARCHAR(255),
-        role VARCHAR(50) DEFAULT 'user',
-        "emailVerified" BOOLEAN DEFAULT false,
+        roles JSONB DEFAULT '{}'::jsonb,
+        _verified BOOLEAN DEFAULT false,
         "createdAt" TIMESTAMP DEFAULT NOW(),
         "updatedAt" TIMESTAMP DEFAULT NOW()
       );
@@ -142,8 +142,9 @@ async function fixUsersTable(pool) {
 
   // Add Payload v3 required columns
   const requiredColumns = [
-    { name: 'emailVerified', type: 'BOOLEAN', default: 'false' },
+    { name: 'hash', type: 'VARCHAR(255)', default: 'null' },
     { name: 'salt', type: 'VARCHAR(255)', default: "''" },
+    { name: 'roles', type: 'JSONB', default: "'{}'::jsonb" },
     { name: '_verified', type: 'BOOLEAN', default: 'null' },
     { name: 'loginAttempts', type: 'INTEGER', default: '0' },
     { name: 'lockUntil', type: 'TIMESTAMP', default: 'null' },
@@ -165,7 +166,7 @@ async function fixUsersTable(pool) {
   // Create necessary indexes
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)',
-    'CREATE INDEX IF NOT EXISTS idx_users_role ON users(role)',
+    'CREATE INDEX IF NOT EXISTS idx_users_roles ON users(roles)',
     'CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users("resetPasswordToken")',
   ];
 
@@ -387,7 +388,7 @@ async function ensureAdminUser(pool) {
   logSection('ENSURING ADMIN USER EXISTS');
 
   const adminCheck = await pool.query(`
-    SELECT COUNT(*) FROM users WHERE role = 'admin'
+    SELECT COUNT(*) FROM users WHERE roles ? 'admin'
   `);
 
   const adminCount = parseInt(adminCheck.rows[0].count);
@@ -408,26 +409,26 @@ async function ensureAdminUser(pool) {
         `
         INSERT INTO users (
           email, 
-          "emailVerified", 
-          password, 
+          hash, 
           salt,
-          role, 
+          _verified,
+          roles, 
           "createdAt", 
           "updatedAt"
         ) VALUES (
           $1, 
-          true, 
           $2, 
           '',
-          'admin', 
+          true,
+          $3, 
           NOW(), 
           NOW()
         ) ON CONFLICT (email) DO UPDATE SET
-          password = $2,
-          role = 'admin',
+          hash = $2,
+          roles = $3,
           "updatedAt" = NOW()
       `,
-        [email, hash]
+        [email, hash, JSON.stringify({ admin: true })]
       );
 
       logSuccess(`Admin user created: ${email}`);
@@ -600,7 +601,7 @@ async function main() {
 
       const finalChecks = await pool.query(`
         SELECT 
-          (SELECT COUNT(*) FROM users WHERE role = 'admin') as admin_count,
+          (SELECT COUNT(*) FROM users WHERE roles ? 'admin') as admin_count,
           (SELECT COUNT(*) FROM voiceovers) as voiceover_count,
           (SELECT COUNT(*) FROM globals WHERE "globalType" = 'homepage-settings') as homepage_settings_count
       `);

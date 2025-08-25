@@ -21,10 +21,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255),
+    hash VARCHAR(255),
     salt VARCHAR(255) DEFAULT '',
-    role VARCHAR(50) DEFAULT 'user',
-    "emailVerified" BOOLEAN DEFAULT false,
+    roles JSONB DEFAULT '{}'::jsonb,
+    _verified BOOLEAN DEFAULT false,
     "createdAt" TIMESTAMP DEFAULT NOW(),
     "updatedAt" TIMESTAMP DEFAULT NOW()
 );
@@ -38,7 +38,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS "resetPasswordExpiration" TIMESTAMP D
 
 -- Create user indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS idx_users_roles ON users(roles);
 CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users("resetPasswordToken");
 
 -- Create payload_preferences table
@@ -55,23 +55,23 @@ CREATE TABLE IF NOT EXISTS payload_preferences (
 -- Hash generated with: bcrypt.hash('ChangeMeImmediately123!', 12)
 INSERT INTO users (
     email, 
-    "emailVerified", 
-    password, 
+    hash, 
     salt,
-    role, 
+    _verified,
+    roles, 
     "createdAt", 
     "updatedAt"
 ) 
 SELECT 
     'admin@14voices.com',
-    true,
     '$2b$12$8K5P6mVqj3V5OmVX9bFjN.rDj2XQi2CX3zHJMKL5iHWqXx2Y7kJ7K', -- ChangeMeImmediately123!
     '',
-    'admin',
+    true,
+    '{"admin": true}'::jsonb,
     NOW(),
     NOW()
 WHERE NOT EXISTS (
-    SELECT 1 FROM users WHERE role = 'admin'
+    SELECT 1 FROM users WHERE roles ? 'admin'
 );
 
 -- =============================================================================
@@ -181,7 +181,7 @@ END $$;
 
 -- Show final status
 \echo '=== MIGRATION RESULTS ==='
-SELECT 'Admin Users' as category, COUNT(*) as count FROM users WHERE role = 'admin'
+SELECT 'Admin Users' as category, COUNT(*) as count FROM users WHERE roles ? 'admin'
 UNION ALL
 SELECT 'Total Users' as category, COUNT(*) as count FROM users
 UNION ALL  

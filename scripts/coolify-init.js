@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-unused-vars */
- 
 
 /**
  * Coolify Production Initialization Script
@@ -207,14 +206,15 @@ async function ensureAdminUser() {
 
     // Create admin user with parameterized query
     const insertResult = await pool.query(
-      `INSERT INTO users (email, hash, verified, roles, "createdAt", "updatedAt") 
-       VALUES ($1, $2, $3, $4, $5, $6) 
+      `INSERT INTO users (email, hash, salt, _verified, roles, "createdAt", "updatedAt") 
+       VALUES ($1, $2, $3, $4, $5, $6, $7) 
        RETURNING id`,
       [
         process.env.ADMIN_EMAIL,
         hashedPassword,
+        '', // empty salt for bcrypt
         true,
-        JSON.stringify(['admin']),
+        JSON.stringify({ admin: true }), // Payload v3 format
         new Date().toISOString(),
         new Date().toISOString(),
       ]

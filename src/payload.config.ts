@@ -120,7 +120,14 @@ export default buildConfig({
   typescript: {
     outputFile: './src/payload-types.ts',
   },
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
+  serverURL: (() => {
+    const url = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
+    // Ensure URL has protocol
+    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+      return `https://${url}`;
+    }
+    return url;
+  })(),
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
