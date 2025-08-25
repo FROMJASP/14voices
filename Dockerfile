@@ -94,23 +94,8 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/src/payload.config.ts ./src/payload.config.ts
 COPY --from=builder /app/package.json ./package.json
 
-# Copy migration and entrypoint scripts
+# Copy only essential scripts
 COPY --from=builder /app/scripts/direct-db-init.js ./scripts/direct-db-init.js
-COPY --from=builder /app/scripts/coolify-init.js ./scripts/coolify-init.js
-COPY --from=builder /app/scripts/payload-migrate.js ./scripts/payload-migrate.js
-COPY --from=builder /app/scripts/run-payload-migrations.js ./scripts/run-payload-migrations.js
-COPY --from=builder /app/scripts/generate-schema-migration.js ./scripts/generate-schema-migration.js
-COPY --from=builder /app/scripts/force-schema-sync.js ./scripts/force-schema-sync.js
-COPY --from=builder /app/scripts/fix-voiceovers-locales.js ./scripts/fix-voiceovers-locales.js
-COPY --from=builder /app/scripts/complete-schema-migration.js ./scripts/complete-schema-migration.js
-COPY --from=builder /app/scripts/check-database-schema.js ./scripts/check-database-schema.js
-COPY --from=builder /app/scripts/fix-production-issues.js ./scripts/fix-production-issues.js
-COPY --from=builder /app/scripts/fix-production-comprehensive.js ./scripts/fix-production-comprehensive.js
-COPY --from=builder /app/scripts/fix-all-missing-tables.js ./scripts/fix-all-missing-tables.js
-COPY --from=builder /app/scripts/fix-production-render-error.js ./scripts/fix-production-render-error.js
-COPY --from=builder /app/scripts/fix-admin-creation.js ./scripts/fix-admin-creation.js
-COPY --from=builder /app/scripts/quick-production-fix.js ./scripts/quick-production-fix.js
-COPY --from=builder /app/scripts/fix-coolify-production-issues.js ./scripts/fix-coolify-production-issues.js
 COPY --from=builder /app/scripts/generate-importmap.js ./scripts/generate-importmap.js
 COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports and migrations
