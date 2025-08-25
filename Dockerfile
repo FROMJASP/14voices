@@ -13,6 +13,15 @@ RUN bun install --frozen-lockfile
 FROM oven/bun:1.1.38-alpine AS builder
 WORKDIR /app
 
+# Accept build arguments for production URLs
+# These will be provided by Coolify during build
+ARG NEXT_PUBLIC_SERVER_URL
+ARG COOLIFY_URL
+ARG COOLIFY_FQDN
+
+# Use the provided URL or fall back to localhost for local builds
+ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
+
 # Install Node.js 20 for Payload CLI compatibility
 RUN apk add --no-cache nodejs=~20 npm
 
@@ -36,13 +45,12 @@ ENV CSRF_SECRET=dummy-csrf-secret-for-build
 RUN npm install --os=linux --cpu=x64 sharp --force
 
 # Build the application using Docker-optimized build process
-RUN NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
-    DATABASE_URL=postgresql://fake:fake@fake:5432/fake \
+# Use the actual NEXT_PUBLIC_SERVER_URL from build args
+RUN DATABASE_URL=postgresql://fake:fake@fake:5432/fake \
     PAYLOAD_SECRET=dummy-secret-for-build \
     CSRF_SECRET=dummy-csrf-secret-for-build \
     RESEND_API_KEY=re_dummy_build_key \
     node scripts/validate-test-dependencies.js && \
-    NEXT_PUBLIC_SERVER_URL=http://localhost:3000 \
     DATABASE_URL=postgresql://fake:fake@fake:5432/fake \
     PAYLOAD_SECRET=dummy-secret-for-build \
     CSRF_SECRET=dummy-csrf-secret-for-build \
@@ -88,6 +96,9 @@ COPY --from=builder /app/scripts/check-database-schema.js ./scripts/check-databa
 COPY --from=builder /app/scripts/fix-production-issues.js ./scripts/fix-production-issues.js
 COPY --from=builder /app/scripts/fix-production-comprehensive.js ./scripts/fix-production-comprehensive.js
 COPY --from=builder /app/scripts/fix-all-missing-tables.js ./scripts/fix-all-missing-tables.js
+COPY --from=builder /app/scripts/fix-production-render-error.js ./scripts/fix-production-render-error.js
+COPY --from=builder /app/scripts/fix-admin-creation.js ./scripts/fix-admin-creation.js
+COPY --from=builder /app/scripts/quick-production-fix.js ./scripts/quick-production-fix.js
 COPY --from=builder /app/scripts/generate-importmap.js ./scripts/generate-importmap.js
 COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports and migrations

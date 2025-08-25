@@ -131,6 +131,16 @@ if [ -f /app/scripts/generate-importmap.js ]; then
   fi
 fi
 
+# Run quick production fix first (it's more reliable)
+if [ -f /app/scripts/quick-production-fix.js ]; then
+  echo "🚀 Running quick production fix..."
+  if node /app/scripts/quick-production-fix.js; then
+    echo "✅ Quick production fix completed successfully"
+  else
+    echo "⚠️  Quick production fix had issues, but continuing..."
+  fi
+fi
+
 # Then run other production fixes
 if [ -f /app/scripts/fix-production-comprehensive.js ]; then
   if node /app/scripts/fix-production-comprehensive.js; then
