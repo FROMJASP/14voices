@@ -13,14 +13,23 @@ RUN bun install --frozen-lockfile
 FROM oven/bun:1.1.38-alpine AS builder
 WORKDIR /app
 
-# Accept build arguments for production URLs
-# These will be provided by Coolify during build
+# CRITICAL FIX: Handle Coolify's environment variable approach
+# Coolify may not pass build args properly, so we need to handle both cases
 ARG NEXT_PUBLIC_SERVER_URL
 ARG COOLIFY_URL
 ARG COOLIFY_FQDN
 
-# Use the provided URL or fall back to localhost for local builds
-ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
+# If NEXT_PUBLIC_SERVER_URL is not provided as build arg, try to use COOLIFY_URL or COOLIFY_FQDN
+# This handles Coolify's dynamic URL assignment
+ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-${COOLIFY_URL:-${COOLIFY_FQDN:-http://localhost:3000}}}
+
+# Debug build environment
+RUN echo "=== BUILD ENVIRONMENT DEBUG ===" && \
+    echo "NEXT_PUBLIC_SERVER_URL ARG: '${NEXT_PUBLIC_SERVER_URL}'" && \
+    echo "COOLIFY_URL ARG: '${COOLIFY_URL}'" && \
+    echo "COOLIFY_FQDN ARG: '${COOLIFY_FQDN}'" && \
+    echo "Final NEXT_PUBLIC_SERVER_URL: '${NEXT_PUBLIC_SERVER_URL}'" && \
+    echo "==================================="
 
 # Install Node.js 20 for Payload CLI compatibility
 RUN apk add --no-cache nodejs=~20 npm
@@ -86,6 +95,7 @@ COPY --from=builder /app/src/payload.config.ts ./src/payload.config.ts
 COPY --from=builder /app/package.json ./package.json
 
 # Copy migration and entrypoint scripts
+COPY --from=builder /app/scripts/coolify-init.js ./scripts/coolify-init.js
 COPY --from=builder /app/scripts/payload-migrate.js ./scripts/payload-migrate.js
 COPY --from=builder /app/scripts/run-payload-migrations.js ./scripts/run-payload-migrations.js
 COPY --from=builder /app/scripts/generate-schema-migration.js ./scripts/generate-schema-migration.js
@@ -99,6 +109,7 @@ COPY --from=builder /app/scripts/fix-all-missing-tables.js ./scripts/fix-all-mis
 COPY --from=builder /app/scripts/fix-production-render-error.js ./scripts/fix-production-render-error.js
 COPY --from=builder /app/scripts/fix-admin-creation.js ./scripts/fix-admin-creation.js
 COPY --from=builder /app/scripts/quick-production-fix.js ./scripts/quick-production-fix.js
+COPY --from=builder /app/scripts/fix-coolify-production-issues.js ./scripts/fix-coolify-production-issues.js
 COPY --from=builder /app/scripts/generate-importmap.js ./scripts/generate-importmap.js
 COPY --from=builder /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 # Also copy the entire src directory for TypeScript imports and migrations

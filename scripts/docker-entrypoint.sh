@@ -1,28 +1,39 @@
 #!/bin/sh
 set -e
 
-echo "Starting application initialization..."
+echo "==================================="
+echo "14voices Docker Container Starting"
+echo "==================================="
+echo "Time: $(date)"
+echo "Node version: $(node --version)"
+echo "Bun version: $(bun --version)"
+echo "==================================="
 
-# Debug: Print DATABASE_URL (masked)
-echo "DATABASE_URL is set: ${DATABASE_URL:+yes}"
-if [ -n "$DATABASE_URL" ]; then
-  echo "DATABASE_URL length: $(echo -n "$DATABASE_URL" | wc -c)"
-  echo "DATABASE_URL format check: $(echo $DATABASE_URL | sed 's/:\/\/[^@]*@/:\/\/***:***@/g')"
-  # Check if DATABASE_URL starts with "DATABASE_URL="
-  if echo "$DATABASE_URL" | grep -q "^DATABASE_URL="; then
-    echo "ERROR: DATABASE_URL contains 'DATABASE_URL=' prefix!"
-    echo "This suggests the environment variable is not being set correctly in Coolify."
-    echo "Please check your Coolify environment variable configuration."
-    # Try to extract the actual URL
-    export DATABASE_URL=$(echo "$DATABASE_URL" | sed 's/^DATABASE_URL=//')
-    echo "Attempting to fix by removing prefix..."
-    echo "New DATABASE_URL format: $(echo $DATABASE_URL | sed 's/:\/\/[^@]*@/:\/\/***:***@/g')"
-  fi
-else
-  echo "WARNING: DATABASE_URL is not set!"
+# Check for Coolify-specific environment variables
+if [ -n "$COOLIFY_URL" ]; then
+  echo "Detected Coolify deployment"
+  echo "COOLIFY_URL: $COOLIFY_URL"
 fi
 
-# Wait for database to be ready
+if [ -n "$COOLIFY_FQDN" ]; then
+  echo "COOLIFY_FQDN: $COOLIFY_FQDN"
+fi
+
+# Use the new comprehensive initialization script
+if [ -f /app/scripts/coolify-init.js ]; then
+  echo "Running Coolify initialization..."
+  node /app/scripts/coolify-init.js
+  
+  if [ $? -ne 0 ]; then
+    echo "Coolify initialization failed!"
+    exit 1
+  fi
+else
+  echo "WARNING: Coolify init script not found, falling back to legacy initialization..."
+  
+  # Legacy initialization code follows...
+  
+  # Wait for database to be ready
 echo "Waiting for database to be ready..."
 MAX_RETRIES=30
 RETRY_COUNT=0
@@ -131,32 +142,54 @@ if [ -f /app/scripts/generate-importmap.js ]; then
   fi
 fi
 
-# Run quick production fix first (it's more reliable)
-if [ -f /app/scripts/quick-production-fix.js ]; then
-  echo "🚀 Running quick production fix..."
-  if node /app/scripts/quick-production-fix.js; then
-    echo "✅ Quick production fix completed successfully"
+# Run the new comprehensive Coolify fix (most reliable)
+if [ -f /app/scripts/fix-coolify-production-issues.js ]; then
+  echo "🚀 Running comprehensive Coolify production fix..."
+  if node /app/scripts/fix-coolify-production-issues.js; then
+    echo "✅ Comprehensive Coolify fix completed successfully"
   else
-    echo "⚠️  Quick production fix had issues, but continuing..."
-  fi
-fi
-
-# Then run other production fixes
-if [ -f /app/scripts/fix-production-comprehensive.js ]; then
-  if node /app/scripts/fix-production-comprehensive.js; then
-    echo "✅ Comprehensive production fixes applied successfully"
-  else
-    echo "⚠️  Comprehensive production fixes had issues, but continuing..."
-  fi
-elif [ -f /app/scripts/fix-production-issues.js ]; then
-  echo "⚠️  Comprehensive fix script not found, trying standard fix..."
-  if node /app/scripts/fix-production-issues.js; then
-    echo "✅ Standard production fixes applied successfully"
-  else
-    echo "⚠️  Standard production fixes had issues, but continuing..."
+    echo "⚠️  Comprehensive Coolify fix had issues, trying fallback..."
+    
+    # Fallback to quick fix if comprehensive fix fails
+    if [ -f /app/scripts/quick-production-fix.js ]; then
+      echo "🔄 Running fallback quick production fix..."
+      if node /app/scripts/quick-production-fix.js; then
+        echo "✅ Fallback fix completed successfully"
+      else
+        echo "⚠️  Fallback fix also had issues, but continuing..."
+      fi
+    fi
   fi
 else
-  echo "⚠️  No production fix scripts found"
+  echo "⚠️  Coolify fix script not found, trying legacy fixes..."
+  
+  # Run quick production fix first (it's more reliable)
+  if [ -f /app/scripts/quick-production-fix.js ]; then
+    echo "🚀 Running quick production fix..."
+    if node /app/scripts/quick-production-fix.js; then
+      echo "✅ Quick production fix completed successfully"
+    else
+      echo "⚠️  Quick production fix had issues, but continuing..."
+    fi
+  fi
+
+  # Then run other production fixes
+  if [ -f /app/scripts/fix-production-comprehensive.js ]; then
+    if node /app/scripts/fix-production-comprehensive.js; then
+      echo "✅ Comprehensive production fixes applied successfully"
+    else
+      echo "⚠️  Comprehensive production fixes had issues, but continuing..."
+    fi
+  elif [ -f /app/scripts/fix-production-issues.js ]; then
+    echo "⚠️  Comprehensive fix script not found, trying standard fix..."
+    if node /app/scripts/fix-production-issues.js; then
+      echo "✅ Standard production fixes applied successfully"
+    else
+      echo "⚠️  Standard production fixes had issues, but continuing..."
+    fi
+  else
+    echo "⚠️  No production fix scripts found"
+  fi
 fi
 
 # Run seeding if needed (skip for now due to module issues)
@@ -164,6 +197,11 @@ if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
   echo "🌱 Seeding: Skipping automatic seeding (can be done manually later)"
 fi
 
+fi
+
 # Start the application
+echo "==================================="
 echo "Starting Next.js application..."
+echo "NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}"
+echo "==================================="
 exec "$@"

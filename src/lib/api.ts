@@ -1,7 +1,8 @@
 import type { TransformedVoiceover as Voiceover, VoiceoverDemo } from '@/types/voiceover';
+import { getClientServerUrl } from './client-config';
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
+// CRITICAL FIX: Use the improved client config for proper URL resolution
+const API_URL = getClientServerUrl();
 
 export type { Voiceover, VoiceoverDemo };
 
