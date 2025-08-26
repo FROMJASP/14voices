@@ -5,8 +5,6 @@ import { Resend } from 'resend';
 import { z } from 'zod';
 import { validateRequest } from '@/lib/api-security';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // Email test validation schema
 const emailTestBodySchema = z.object({
   content: z.any(), // Rich text content
@@ -18,6 +16,9 @@ const emailTestBodySchema = z.object({
 
 async function POSTHandler(_req: NextRequest) {
   try {
+    // Initialize Resend inside the handler to avoid build-time execution
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     const user = await getServerSideUser();
 
     if (!user || user.role !== 'admin') {
