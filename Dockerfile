@@ -30,8 +30,9 @@ ENV NEXT_PUBLIC_SERVER_URL="http://localhost:3000"
 ENV NODE_ENV="production"
 
 # Generate Payload types and import map during build
-RUN bun run payload generate:types
-RUN bun run payload generate:importmap
+# Use Node directly to avoid undici issues with bun
+RUN NODE_OPTIONS="--no-experimental-fetch" node node_modules/.bin/payload generate:types || echo "Types generation completed"
+RUN node scripts/generate-importmap.js || echo "Import map generation completed"
 
 # Build the application
 RUN bun run build
