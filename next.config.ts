@@ -25,6 +25,8 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   transpilePackages: [
+    '@payloadcms/ui',
+    '@payloadcms/richtext-lexical',
     'react-media-recorder',
     'extendable-media-recorder',
     'standardized-audio-context',

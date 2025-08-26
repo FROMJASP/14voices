@@ -42,14 +42,15 @@ export default buildConfig({
       baseDir: path.resolve(process.cwd(), 'src'),
     },
     components: {
-      // beforeLogin: ['./components/admin/BeforeLogin#default'], // Temporarily disabled to fix login
-      afterDashboard: ['./components/admin/AdminEnhancements#default'],
-      actions: ['./components/admin/AdminActions#default'],
+      // Temporarily disabled to troubleshoot webpack issue
+      // beforeLogin: ['./components/admin/BeforeLogin#default'],
+      // afterDashboard: ['./components/admin/AdminEnhancements#default'],
+      // actions: ['./components/admin/AdminActions#default'],
       graphics: {
         Logo: './components/admin/graphics/Logo#default',
         Icon: './components/admin/graphics/Icon#default',
       },
-      providers: ['./components/admin/Root#default'],
+      // providers: ['./components/admin/Root#default'],
     },
     meta: {
       titleSuffix: ' - Fourteen Voices',

@@ -82,10 +82,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [region, setRegion] = useState<string | undefined>();
   const [extras, setExtras] = useState<string[] | undefined>();
   const [selectedVoiceover, setSelectedVoiceover] = useState<SelectedVoiceover | undefined>();
-  
+
   // Checkout form state
   const [checkoutForm, setCheckoutForm] = useState<CheckoutFormData>({});
-  
+
   // Drawer state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [drawerStep, setDrawerStep] = useState<DrawerStep>('voiceover');
@@ -123,9 +123,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Checkout form update method
   const updateCheckoutForm = useCallback((field: keyof CheckoutFormData, value: string) => {
-    setCheckoutForm(prev => ({
+    setCheckoutForm((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   }, []);
 
@@ -256,6 +256,12 @@ export function useCart() {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;
+}
+
+// Safe version that returns null if not in provider (for optional usage)
+export function useCartOptional() {
+  const context = useContext(CartContext);
+  return context || null;
 }
 
 // Performance-optimized hooks for specific cart features

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
-import { useCart } from '@/contexts/CartContext';
+import { useCartOptional } from '@/contexts/CartContext';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { ThemeToggle } from './ThemeToggle';
 import { MobileMenu } from './MobileMenu';
@@ -56,7 +56,7 @@ export function Navigation({
   const [isCartHoverOpen, setIsCartHoverOpen] = useState(false);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const cartButtonRef = useRef<HTMLButtonElement>(null);
-  const cart = useCart();
+  const cart = useCartOptional();
 
   useEffect(() => {
     setMounted(true);
@@ -156,7 +156,7 @@ export function Navigation({
                     ...hoverStyle,
                   }}
                 />
-                
+
                 {items.map((item, index) => (
                   <div
                     key={index}
@@ -186,12 +186,15 @@ export function Navigation({
               {/* Shopping Cart */}
               <button
                 ref={cartButtonRef}
-                onClick={() => cart.openDrawer('cart')}
+                onClick={() => cart?.openDrawer('cart')}
                 onMouseEnter={() => setIsCartHoverOpen(true)}
                 onMouseLeave={(e) => {
                   // Small delay to allow moving to the hover menu
                   setTimeout(() => {
-                    if (!e.relatedTarget || !cartButtonRef.current?.contains(e.relatedTarget as Node)) {
+                    if (
+                      !e.relatedTarget ||
+                      !cartButtonRef.current?.contains(e.relatedTarget as Node)
+                    ) {
                       setIsCartHoverOpen(false);
                     }
                   }, 100);
@@ -224,7 +227,7 @@ export function Navigation({
                   <circle cx="20" cy="21" r="1"></circle>
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                {cart.cartItemCount > 0 && (
+                {cart && cart.cartItemCount > 0 && (
                   <span
                     style={{
                       position: 'absolute',
@@ -240,7 +243,7 @@ export function Navigation({
                       textAlign: 'center',
                     }}
                   >
-                    {cart.cartItemCount}
+                    {cart?.cartItemCount}
                   </span>
                 )}
               </button>
@@ -269,7 +272,7 @@ export function Navigation({
             {/* Mobile Menu Toggle */}
             <div className="flex lg:hidden" style={{ alignItems: 'center', gap: '12px' }}>
               <button
-                onClick={() => cart.openDrawer('cart')}
+                onClick={() => cart?.openDrawer('cart')}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -292,7 +295,7 @@ export function Navigation({
                   <circle cx="20" cy="21" r="1"></circle>
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                {cart.cartItemCount > 0 && (
+                {cart && cart.cartItemCount > 0 && (
                   <span
                     style={{
                       position: 'absolute',
@@ -308,7 +311,7 @@ export function Navigation({
                       textAlign: 'center',
                     }}
                   >
-                    {cart.cartItemCount}
+                    {cart?.cartItemCount}
                   </span>
                 )}
               </button>
