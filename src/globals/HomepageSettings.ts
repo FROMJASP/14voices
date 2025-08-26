@@ -120,7 +120,7 @@ export const HomepageSettings: GlobalConfig = {
                   type: 'upload',
                   relationTo: 'media',
                   label: 'Hero Image',
-                  required: true,
+                  required: false,
                   admin: {
                     description:
                       'Main image displayed in the oval-shaped container on the right (recommended: high-quality portrait photo, minimum 400x500px)',

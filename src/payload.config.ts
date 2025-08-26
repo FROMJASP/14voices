@@ -150,28 +150,16 @@ export default buildConfig({
   sharp,
   plugins: [
     // MinIO storage for self-hosted file uploads
-    // Only enable if S3 keys are set AND not dummy values
-    ...(process.env.S3_ACCESS_KEY &&
-    process.env.S3_SECRET_KEY &&
-    process.env.S3_ACCESS_KEY !== 'dummy' &&
-    process.env.S3_SECRET_KEY !== 'dummy' &&
-    !process.env.S3_ACCESS_KEY.includes('dummy-s3') &&
-    !process.env.S3_SECRET_KEY.includes('dummy-s3')
-      ? [
-          wrappedMinioStorage({
-            collections: {
-              media: true,
-              scripts: true,
-              invoices: true,
-            },
-            endpoint: process.env.S3_ENDPOINT || 'http://localhost:9000',
-            accessKeyId: process.env.S3_ACCESS_KEY,
-            secretAccessKey: process.env.S3_SECRET_KEY,
-            bucketName: process.env.S3_BUCKET || 'fourteenvoices-media',
-            region: process.env.S3_REGION || 'us-east-1',
-            publicUrl: process.env.S3_PUBLIC_URL,
-          }),
-        ]
-      : []),
+    wrappedMinioStorage({
+      collections: {
+        media: true,
+      },
+      endpoint: process.env.S3_ENDPOINT || 'http://localhost:9000',
+      accessKeyId: process.env.S3_ACCESS_KEY || '',
+      secretAccessKey: process.env.S3_SECRET_KEY || '',
+      bucketName: process.env.S3_BUCKET || 'fourteenvoices-media',
+      region: process.env.S3_REGION || 'us-east-1',
+      publicUrl: process.env.S3_PUBLIC_URL,
+    }),
   ],
 });
