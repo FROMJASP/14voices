@@ -28,6 +28,7 @@ COPY . .
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake"
 ENV NEXT_PUBLIC_SERVER_URL="http://localhost:3000"
 ENV NODE_ENV="production"
+ENV PAYLOAD_SECRET="fake-secret-for-build-only-replace-in-production"
 
 # Generate Payload types and import map during build
 # Use Node directly to avoid undici issues with bun
