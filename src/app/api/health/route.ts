@@ -1,12 +1,59 @@
 import { getSafePayload, getPayloadStatus, resetPayloadInstance } from '@/lib/safe-payload';
 import { createApiHandler } from '@/lib/api/handlers';
 import globalCache from '@/lib/cache';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { Pool } from 'pg';
 
+// Lightweight health check for container orchestration
+export async function HEAD() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+    },
+  });
+}
+
+// Quick health check endpoint optimized for Coolify/container health probes
 export const GET = createApiHandler(
   async (request: NextRequest) => {
     const searchParams = new URL(request.url).searchParams;
     const reset = searchParams.get('reset');
+    const quick = searchParams.get('quick');
+
+    // Quick mode for container health checks (faster response)
+    if (quick === 'true') {
+      const checks: Record<string, string> = {
+        server: 'ok',
+        timestamp: new Date().toISOString(),
+      };
+      
+      // Simple database connectivity check with short timeout
+      if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('fake:fake@fake')) {
+        const pool = new Pool({
+          connectionString: process.env.DATABASE_URL,
+          connectionTimeoutMillis: 3000,
+          query_timeout: 3000,
+        });
+        
+        try {
+          await pool.query('SELECT 1');
+          checks['database'] = 'ok';
+        } catch (error) {
+          checks['database'] = 'error';
+        } finally {
+          await pool.end();
+        }
+      }
+      
+      const isHealthy = checks.server === 'ok' && 
+                       (checks['database'] === 'ok' || !checks['database']);
+      
+      return {
+        status: isHealthy ? 'healthy' : 'unhealthy',
+        checks,
+      };
+    }
 
     // Allow manual reset via query parameter (for debugging)
     if (reset === 'true') {
