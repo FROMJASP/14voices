@@ -17,8 +17,6 @@
     "payload:generate:types": "NODE_OPTIONS=\"--no-experimental-fetch\" payload generate:types",
     "payload:generate:importmap": "payload generate:importmap",
     "payload:migrate": "payload migrate",
-    "migrate": "node scripts/payload-migration-runner.js",
-    "migrate:generate": "node scripts/generate-payload-migration.js",
     "seed": "tsx src/seed/run-seed.ts",
     "seed:old": "tsx src/seed/index.ts",
     "seed:alt": "tsx src/seed/index-nextjs.ts",
@@ -41,8 +39,6 @@
     "validate": "bun run lint && bun run format:check && bun run typecheck && bun run test",
     "validate:build": "node scripts/validate-test-dependencies.js && bun run typecheck && bun run build",
     "validate:full": "bun run validate && bun run validate:deps && bun run validate:architecture && bun run validate:build",
-    "validate:deployment": "node scripts/validate-deployment.js",
-    "test:migration": "node scripts/test-migration-system.js",
     "validate:pre-push": "node scripts/validate-build-pre-push.js",
     "ci:validate": "bun run lint && bun run format:check && bun run test && bun run test:e2e"
   },
