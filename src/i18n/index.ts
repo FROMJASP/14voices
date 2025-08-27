@@ -1,5 +1,5 @@
-import nlTranslations from '../translations/nl.json' with { type: 'json' };
-import enTranslations from '../translations/en.json' with { type: 'json' };
+import nlTranslations from '../translations/nl.json';
+import enTranslations from '../translations/en.json';
 
 export const i18n = {
   supportedLanguages: {
