@@ -9,7 +9,6 @@ interface MinIOConfig {
   bucketName: string;
   region?: string;
   useSSL?: boolean;
-  port?: number;
   publicUrl?: string;
   // Performance optimizations
   maxRetries?: number;
@@ -28,33 +27,12 @@ export const minioStorage = (config: MinIOConfig): Plugin => {
     useSSL = false,
     publicUrl,
     collections,
-    port,
   } = config;
 
   // Parse endpoint to ensure proper format
   let formattedEndpoint = endpoint;
-
-  // Handle URL parsing more robustly
-  try {
-    const url = new URL(endpoint);
-    // If a specific port is provided in config, use it
-    if (port) {
-      url.port = String(port);
-    }
-    formattedEndpoint = url.toString();
-  } catch {
-    // If endpoint is not a valid URL, construct it
-    if (!endpoint.startsWith('http://') && !endpoint.startsWith('https://')) {
-      const protocol = useSSL ? 'https://' : 'http://';
-      // Add port if specified
-      const portSuffix = port ? `:${port}` : '';
-      formattedEndpoint = `${protocol}${endpoint}${portSuffix}`;
-    } else if (port) {
-      // If endpoint has protocol but we need to add/change port
-      const url = new URL(endpoint);
-      url.port = String(port);
-      formattedEndpoint = url.toString();
-    }
+  if (!endpoint.startsWith('http://') && !endpoint.startsWith('https://')) {
+    formattedEndpoint = useSSL ? `https://${endpoint}` : `http://${endpoint}`;
   }
 
   // Remove trailing slash if present
@@ -107,7 +85,6 @@ export const wrappedMinioStorage = (config: {
   region?: string;
   useSSL?: boolean;
   publicUrl?: string;
-  port?: number;
 }): Plugin => {
   try {
     return minioStorage(config);
