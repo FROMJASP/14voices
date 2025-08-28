@@ -14,7 +14,7 @@
     "lint": "next lint",
     "payload": "payload",
     "payload:generate:types": "NODE_OPTIONS=\"--no-experimental-fetch\" payload generate:types",
-    "payload:generate:importmap": "payload generate:importmap",
+    "payload:generate:importmap": "NODE_OPTIONS=\"--import tsx\" payload generate:importmap",
     "payload:migrate": "payload migrate",
     "seed": "tsx src/seed/run-seed.ts",
     "seed:old": "tsx src/seed/index.ts",
