@@ -6,7 +6,7 @@
 - **Hosting**: Vercel
 - **Database**: Neon (PostgreSQL)
 - **CMS**: Payload CMS 3.53.0
-- **Storage**: MinIO (S3-compatible, self-hosted)
+- **Storage**: MinIO (S3-compatible, self-hosted on a VPS running Coolify)
 - **Styling**: Tailwind CSS v4
 - **Animations**: Motion (Framer Motion)
 - **Package Manager**: Bun (required)

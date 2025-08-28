@@ -149,17 +149,24 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
-    // MinIO storage for self-hosted file uploads
-    wrappedMinioStorage({
-      collections: {
-        media: true,
-      },
-      endpoint: process.env.S3_ENDPOINT || 'http://localhost:9000',
-      accessKeyId: process.env.S3_ACCESS_KEY || '',
-      secretAccessKey: process.env.S3_SECRET_KEY || '',
-      bucketName: process.env.S3_BUCKET || 'fourteenvoices-media',
-      region: process.env.S3_REGION || 'us-east-1',
-      publicUrl: process.env.S3_PUBLIC_URL,
-    }),
+    // MinIO storage for self-hosted file uploads - only if properly configured
+    ...(process.env.S3_ACCESS_KEY &&
+    process.env.S3_SECRET_KEY &&
+    process.env.S3_ENDPOINT &&
+    process.env.S3_BUCKET
+      ? [
+          wrappedMinioStorage({
+            collections: {
+              media: true,
+            },
+            endpoint: process.env.S3_ENDPOINT,
+            accessKeyId: process.env.S3_ACCESS_KEY,
+            secretAccessKey: process.env.S3_SECRET_KEY,
+            bucketName: process.env.S3_BUCKET,
+            region: process.env.S3_REGION || 'us-east-1',
+            publicUrl: process.env.S3_PUBLIC_URL,
+          }),
+        ]
+      : []),
   ],
 });
