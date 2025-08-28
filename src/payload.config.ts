@@ -158,6 +158,8 @@ export default buildConfig({
           wrappedMinioStorage({
             collections: {
               media: true,
+              scripts: true,
+              invoices: true,
             },
             endpoint: process.env.S3_ENDPOINT,
             accessKeyId: process.env.S3_ACCESS_KEY,
