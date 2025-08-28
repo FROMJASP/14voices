@@ -87,18 +87,6 @@ export const wrappedMinioStorage = (config: {
   publicUrl?: string;
 }): Plugin => {
   try {
-    // Log configuration for debugging (mask sensitive data)
-    console.log('[MinIO Storage] Initializing with config:', {
-      endpoint: config.endpoint,
-      bucket: config.bucketName,
-      region: config.region || 'us-east-1',
-      publicUrl: config.publicUrl || 'Not set',
-      hasAccessKey: !!config.accessKeyId && config.accessKeyId.length > 0,
-      hasSecretKey: !!config.secretAccessKey && config.secretAccessKey.length > 0,
-      accessKeyLength: config.accessKeyId?.length || 0,
-      collections: Object.keys(config.collections),
-    });
-
     return minioStorage(config);
   } catch (error) {
     console.error('Failed to initialize MinIO storage:', error);

@@ -4,24 +4,6 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { resendAdapter } from '@payloadcms/email-resend';
 // import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { wrappedMinioStorage } from './lib/storage/minio-adapter';
-
-// Debug S3 configuration at startup
-if (process.env.NODE_ENV === 'production') {
-  console.log('[Payload Config] S3 Environment Variables Check:', {
-    hasS3Endpoint: !!process.env.S3_ENDPOINT,
-    hasS3AccessKey: !!process.env.S3_ACCESS_KEY,
-    hasS3SecretKey: !!process.env.S3_SECRET_KEY,
-    hasS3Bucket: !!process.env.S3_BUCKET,
-    s3EndpointValue: process.env.S3_ENDPOINT || 'NOT SET',
-    s3BucketValue: process.env.S3_BUCKET || 'NOT SET',
-    willInitializeStorage: !!(
-      process.env.S3_ACCESS_KEY &&
-      process.env.S3_SECRET_KEY &&
-      process.env.S3_ENDPOINT &&
-      process.env.S3_BUCKET
-    ),
-  });
-}
 import { en } from '@payloadcms/translations/languages/en';
 import { nl } from '@payloadcms/translations/languages/nl';
 // import { i18n as customI18n } from './i18n/index';
@@ -167,26 +149,19 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
-    // MinIO storage for self-hosted file uploads - only if properly configured
-    ...(process.env.S3_ACCESS_KEY &&
-    process.env.S3_SECRET_KEY &&
-    process.env.S3_ENDPOINT &&
-    process.env.S3_BUCKET
-      ? [
-          wrappedMinioStorage({
-            collections: {
-              media: true,
-              scripts: true,
-              invoices: true,
-            },
-            endpoint: process.env.S3_ENDPOINT,
-            accessKeyId: process.env.S3_ACCESS_KEY,
-            secretAccessKey: process.env.S3_SECRET_KEY,
-            bucketName: process.env.S3_BUCKET,
-            region: process.env.S3_REGION || 'us-east-1',
-            publicUrl: process.env.S3_PUBLIC_URL,
-          }),
-        ]
-      : []),
+    // MinIO storage for self-hosted file uploads
+    wrappedMinioStorage({
+      collections: {
+        media: true,
+        scripts: true,
+        invoices: true,
+      },
+      endpoint: process.env.S3_ENDPOINT || 'http://localhost:9000',
+      accessKeyId: process.env.S3_ACCESS_KEY || '',
+      secretAccessKey: process.env.S3_SECRET_KEY || '',
+      bucketName: process.env.S3_BUCKET || 'fourteenvoices-media',
+      region: process.env.S3_REGION || 'us-east-1',
+      publicUrl: process.env.S3_PUBLIC_URL,
+    }),
   ],
 });
