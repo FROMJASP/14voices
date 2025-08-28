@@ -123,8 +123,8 @@ const Users: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'email',
-    defaultColumns: ['avatar', 'name', 'role', 'status', 'department', 'lastLogin'],
-    listSearchableFields: ['name', 'email', 'department', 'jobTitle'],
+    defaultColumns: ['avatar', 'name', 'email', 'lastLogin'],
+    listSearchableFields: ['name', 'email', 'jobTitle'],
     group: 'System',
     pagination: {
       defaultLimit: 25,
@@ -204,26 +204,6 @@ const Users: CollectionConfig = {
       },
     },
     {
-      name: 'status',
-      type: 'select',
-      required: true,
-      defaultValue: 'active',
-      options: [
-        { label: 'Active', value: 'active' },
-        { label: 'Inactive', value: 'inactive' },
-        { label: 'Suspended', value: 'suspended' },
-      ],
-      admin: {
-        description: 'User account status',
-        components: {
-          Cell: './components/admin/cells/UserStatusCell#UserStatusCell',
-        },
-      },
-      access: {
-        update: ({ req: { user } }) => user?.role === 'admin',
-      },
-    },
-    {
       name: 'role',
       type: 'select',
       required: true,
@@ -237,38 +217,26 @@ const Users: CollectionConfig = {
         components: {
           Cell: './components/admin/cells/UserRoleCell#UserRoleCell',
         },
+        hidden: true, // Hide from the account page but keep for system use
       },
       access: {
         update: ({ req: { user } }) => user?.role === 'admin',
       },
     },
     {
-      name: 'department',
-      type: 'select',
-      options: [
-        { label: 'Management', value: 'management' },
-        { label: 'Production', value: 'production' },
-        { label: 'Marketing', value: 'marketing' },
-        { label: 'Finance', value: 'finance' },
-        { label: 'Support', value: 'support' },
-        { label: 'Other', value: 'other' },
-      ],
-      admin: {
-        description: 'Department or team the user belongs to',
-      },
-    },
-    {
       name: 'jobTitle',
       type: 'text',
-      admin: {
-        description: 'Job title or position',
+      label: {
+        en: 'Job Title',
+        nl: 'Functietitel',
       },
     },
     {
       name: 'phone',
       type: 'text',
-      admin: {
-        description: 'Phone number (including country code)',
+      label: {
+        en: 'Phone',
+        nl: 'Telefoonnummer',
       },
       validate: (value: unknown) => {
         if (!value || typeof value !== 'string') return true;
@@ -289,26 +257,6 @@ const Users: CollectionConfig = {
       maxLength: 500,
     },
     {
-      name: 'timezone',
-      type: 'select',
-      defaultValue: 'Europe/Amsterdam',
-      options: [
-        { label: 'Europe/Amsterdam', value: 'Europe/Amsterdam' },
-        { label: 'Europe/London', value: 'Europe/London' },
-        { label: 'Europe/Paris', value: 'Europe/Paris' },
-        { label: 'Europe/Berlin', value: 'Europe/Berlin' },
-        { label: 'America/New_York', value: 'America/New_York' },
-        { label: 'America/Chicago', value: 'America/Chicago' },
-        { label: 'America/Los_Angeles', value: 'America/Los_Angeles' },
-        { label: 'Asia/Tokyo', value: 'Asia/Tokyo' },
-        { label: 'Asia/Shanghai', value: 'Asia/Shanghai' },
-        { label: 'Australia/Sydney', value: 'Australia/Sydney' },
-      ],
-      admin: {
-        description: 'User timezone preference',
-      },
-    },
-    {
       name: 'socialLinks',
       type: 'group',
       admin: {
@@ -318,29 +266,17 @@ const Users: CollectionConfig = {
         {
           name: 'linkedin',
           type: 'text',
+          label: 'LinkedIn',
           admin: {
             placeholder: 'https://linkedin.com/in/username',
           },
         },
         {
-          name: 'twitter',
+          name: 'instagram',
           type: 'text',
+          label: 'Instagram',
           admin: {
-            placeholder: 'https://twitter.com/username',
-          },
-        },
-        {
-          name: 'github',
-          type: 'text',
-          admin: {
-            placeholder: 'https://github.com/username',
-          },
-        },
-        {
-          name: 'website',
-          type: 'text',
-          admin: {
-            placeholder: 'https://example.com',
+            placeholder: 'https://instagram.com/username',
           },
         },
       ],
@@ -349,7 +285,7 @@ const Users: CollectionConfig = {
       name: 'preferredLanguage',
       type: 'select',
       defaultValue: 'nl',
-      label: 'Preferred Language',
+      label: 'Taal / Language',
       options: [
         { label: 'Nederlands', value: 'nl' },
         { label: 'English', value: 'en' },
@@ -360,231 +296,46 @@ const Users: CollectionConfig = {
       },
     },
     {
-      name: 'emailPreferences',
-      type: 'group',
-      fields: [
-        {
-          name: 'unsubscribed',
-          type: 'checkbox',
-          defaultValue: false,
-          admin: {
-            description: 'User has unsubscribed from all emails',
-          },
-        },
-        {
-          name: 'marketing',
-          type: 'checkbox',
-          defaultValue: true,
-          admin: {
-            description: 'Receive marketing emails',
-          },
-        },
-        {
-          name: 'transactional',
-          type: 'checkbox',
-          defaultValue: true,
-          admin: {
-            description: 'Receive transactional emails (bookings, invoices)',
-          },
-        },
-        {
-          name: 'updates',
-          type: 'checkbox',
-          defaultValue: true,
-          admin: {
-            description: 'Receive product updates and announcements',
-          },
-        },
-      ],
-    },
-    {
-      name: 'security',
-      type: 'group',
-      admin: {
-        description: 'Security and authentication settings',
+      name: 'adminTheme',
+      type: 'radio',
+      defaultValue: 'auto',
+      label: {
+        en: 'Theme',
+        nl: 'Thema',
       },
-      fields: [
-        {
-          name: 'lastLogin',
-          type: 'date',
-          admin: {
-            description: 'Last successful login timestamp',
-            readOnly: true,
-            date: {
-              displayFormat: 'dd MMM yyyy HH:mm',
-            },
-          },
-        },
-        {
-          name: 'loginCount',
-          type: 'number',
-          defaultValue: 0,
-          admin: {
-            description: 'Total number of successful logins',
-            readOnly: true,
-          },
-        },
-        {
-          name: 'twoFactorEnabled',
-          type: 'checkbox',
-          defaultValue: false,
-          admin: {
-            description: 'Two-factor authentication enabled',
-          },
-        },
-        {
-          name: 'passwordChangedAt',
-          type: 'date',
-          admin: {
-            description: 'Last password change timestamp',
-            readOnly: true,
-            date: {
-              displayFormat: 'dd MMM yyyy HH:mm',
-            },
-          },
-        },
-        {
-          name: 'loginHistory',
-          type: 'array',
-          admin: {
-            description: 'Recent login history',
-            readOnly: true,
-          },
-          fields: [
-            {
-              name: 'timestamp',
-              type: 'date',
-              required: true,
-            },
-            {
-              name: 'ipAddress',
-              type: 'text',
-            },
-            {
-              name: 'userAgent',
-              type: 'text',
-            },
-            {
-              name: 'success',
-              type: 'checkbox',
-              defaultValue: true,
-            },
-          ],
-          maxRows: 10,
-        },
+      options: [
+        { label: { en: 'System', nl: 'Systeem' }, value: 'auto' },
+        { label: { en: 'Light', nl: 'Licht' }, value: 'light' },
+        { label: { en: 'Dark', nl: 'Donker' }, value: 'dark' },
       ],
-    },
-    {
-      name: 'lastLogin',
-      type: 'date',
-      virtual: true,
       admin: {
-        description: 'Last login time',
-        components: {
-          Cell: './components/admin/cells/UserLastSeenCell#UserLastSeenCell',
-        },
+        position: 'sidebar',
+        layout: 'vertical',
       },
       hooks: {
-        afterRead: [
-          ({ data }: { data?: Record<string, unknown> }) => {
-            const security = data?.security as { lastLogin?: string } | undefined;
-            return security?.lastLogin || data?.createdAt || null;
+        afterChange: [
+          async ({ value, req }) => {
+            // Store theme preference in localStorage via a client-side script
+            if (req?.user) {
+              // The actual theme switching will be handled by a client component
+              return value;
+            }
+            return value;
           },
         ],
       },
     },
     {
-      name: 'notifications',
-      type: 'group',
+      name: 'lastLogin',
+      type: 'date',
       admin: {
-        description: 'Notification preferences (in-app, push, SMS)',
+        description: 'Last login time',
+        components: {
+          Cell: './components/admin/cells/UserLastSeenCell#UserLastSeenCell',
+        },
+        readOnly: true,
+        hidden: true,
       },
-      fields: [
-        {
-          name: 'inApp',
-          type: 'checkbox',
-          defaultValue: true,
-          admin: {
-            description: 'Receive in-app notifications',
-          },
-        },
-        {
-          name: 'push',
-          type: 'checkbox',
-          defaultValue: false,
-          admin: {
-            description: 'Receive push notifications',
-          },
-        },
-        {
-          name: 'sms',
-          type: 'checkbox',
-          defaultValue: false,
-          admin: {
-            description: 'Receive SMS notifications',
-          },
-        },
-      ],
-    },
-    {
-      name: 'metadata',
-      type: 'group',
-      admin: {
-        description: 'Additional metadata and notes',
-      },
-      fields: [
-        {
-          name: 'tags',
-          type: 'array',
-          admin: {
-            description: 'Tags for categorization',
-          },
-          fields: [
-            {
-              name: 'tag',
-              type: 'text',
-              required: true,
-            },
-          ],
-        },
-        {
-          name: 'notes',
-          type: 'textarea',
-          admin: {
-            description: 'Private notes about this user (admin only)',
-            rows: 4,
-          },
-          access: {
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-          },
-        },
-        {
-          name: 'customFields',
-          type: 'json',
-          admin: {
-            description: 'Custom fields for additional data',
-          },
-        },
-        {
-          name: 'createdBy',
-          type: 'relationship',
-          relationTo: 'users',
-          admin: {
-            description: 'User who created this account',
-            readOnly: true,
-          },
-        },
-        {
-          name: 'updatedBy',
-          type: 'relationship',
-          relationTo: 'users',
-          admin: {
-            description: 'Last user who updated this account',
-            readOnly: true,
-          },
-        },
-      ],
     },
   ],
   hooks: {

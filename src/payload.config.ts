@@ -6,7 +6,7 @@ import { resendAdapter } from '@payloadcms/email-resend';
 import { wrappedMinioStorage } from './lib/storage/minio-adapter';
 import { en } from '@payloadcms/translations/languages/en';
 import { nl } from '@payloadcms/translations/languages/nl';
-// import { i18n as customI18n } from './i18n/index';
+import { i18n as customI18n } from './i18n/index';
 import sharp from 'sharp';
 import Users from './collections/Users';
 import Media from './collections/Media';
@@ -50,7 +50,8 @@ export default buildConfig({
         Logo: './components/admin/graphics/Logo#default',
         Icon: './components/admin/graphics/Icon#default',
       },
-      // providers: ['./components/admin/Root#default'],
+      // providers: ['./components/admin/AdminProvider#default'],
+      afterDashboard: ['./components/admin/AccountWrapper#default'],
     },
     meta: {
       titleSuffix: ' - Fourteen Voices',
@@ -80,10 +81,10 @@ export default buildConfig({
     supportedLanguages: { en, nl },
     translations: {
       en: {
-        // ...customI18n.supportedLanguages.en.translations,
+        ...customI18n.supportedLanguages.en.translations,
       },
       nl: {
-        // ...customI18n.supportedLanguages.nl.translations,
+        ...customI18n.supportedLanguages.nl.translations,
       },
     },
   },

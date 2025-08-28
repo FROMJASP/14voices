@@ -3,12 +3,30 @@
 import React from 'react';
 import { useAuth } from '@payloadcms/ui';
 import { getInitials } from '@/lib/initials';
+import ThemeSwitcher from './ThemeSwitcher';
 
 export default function AccountWrapper() {
-  const { user } = useAuth();
+  // Hooks must be called unconditionally
+  const authResult = React.useMemo(() => {
+    try {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const auth = useAuth();
+      return { user: auth.user, error: null };
+    } catch (err) {
+      return { user: null, error: err };
+    }
+  }, []);
 
-  // Get the avatar URL from user data
-  const avatarUrl = user?.image || user?.avatar?.url || user?.avatarURL;
+  const { user } = authResult;
+
+  // Get the avatar URL from user data - check different possible structures
+  const avatarUrl =
+    user?.avatarURL || // Virtual field with resolved URL
+    user?.avatar?.url || // Direct media relationship
+    (typeof user?.avatar === 'object' && user?.avatar?.filename
+      ? `/api/media/file/${user.avatar.filename}`
+      : null) ||
+    user?.image; // Fallback
   const displayName = user?.name || user?.email || 'User';
 
   // Override the default Payload account icon with custom styles
@@ -141,5 +159,5 @@ export default function AccountWrapper() {
     };
   }, [avatarUrl, displayName, user]);
 
-  return null;
+  return <ThemeSwitcher />;
 }

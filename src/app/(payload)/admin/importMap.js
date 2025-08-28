@@ -1,6 +1,5 @@
 import { UserInfoCell as UserInfoCell_2498c455506837329098564ecaa127bb } from '../../../components/admin/cells/UserInfoCell'
 import { UserAvatarCell as UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd } from '../../../components/admin/cells/UserAvatarCell'
-import { UserStatusCell as UserStatusCell_d564d781689a1acdfcdc133ddfd7dec7 } from '../../../components/admin/cells/UserStatusCell'
 import { UserRoleCell as UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d } from '../../../components/admin/cells/UserRoleCell'
 import { UserLastSeenCell as UserLastSeenCell_b5d142be42099c385752cb29940d2ee5 } from '../../../components/admin/cells/UserLastSeenCell'
 import { NameCell as NameCell_9c0639e919331889896aa9ea1c557661 } from '../../../components/admin/cells/NameCell'
@@ -41,12 +40,12 @@ import { FAQManageField as FAQManageField_c31ab92e894b3afef28b224c7ea21b03 } fro
 import { MaintenanceModePreview as MaintenanceModePreview_ce87e2b6034154f861907fa106f8514e } from '../../../components/admin/MaintenanceModePreview'
 import { default as default_16e62c7e42dfe7700742ba3a13bf8900 } from '../../../components/admin/graphics/Icon'
 import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../components/admin/graphics/Logo'
+import { default as default_836f88f46dad20d30d7cf8fe59f4d67a } from '../../../components/admin/AccountWrapper'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
   "./components/admin/cells/UserInfoCell#UserInfoCell": UserInfoCell_2498c455506837329098564ecaa127bb,
   "./components/admin/cells/UserAvatarCell#UserAvatarCell": UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd,
-  "./components/admin/cells/UserStatusCell#UserStatusCell": UserStatusCell_d564d781689a1acdfcdc133ddfd7dec7,
   "./components/admin/cells/UserRoleCell#UserRoleCell": UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d,
   "./components/admin/cells/UserLastSeenCell#UserLastSeenCell": UserLastSeenCell_b5d142be42099c385752cb29940d2ee5,
   "./components/admin/cells/NameCell#NameCell": NameCell_9c0639e919331889896aa9ea1c557661,
@@ -87,5 +86,6 @@ export const importMap = {
   "./components/admin/MaintenanceModePreview#MaintenanceModePreview": MaintenanceModePreview_ce87e2b6034154f861907fa106f8514e,
   "./components/admin/graphics/Icon#default": default_16e62c7e42dfe7700742ba3a13bf8900,
   "./components/admin/graphics/Logo#default": default_13338d86bf8cb9661b50b401726320cd,
+  "./components/admin/AccountWrapper#default": default_836f88f46dad20d30d7cf8fe59f4d67a,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }
