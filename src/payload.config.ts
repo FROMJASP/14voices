@@ -160,6 +160,10 @@ export default buildConfig({
       bucketName: process.env.S3_BUCKET || 'fourteenvoices-media',
       region: process.env.S3_REGION || 'us-east-1',
       publicUrl: process.env.S3_PUBLIC_URL,
+      // Auto-detect SSL from endpoint URL
+      useSSL: process.env.S3_ENDPOINT?.startsWith('https://') || false,
+      // Add API port if specified (for MinIO deployments with separate API/console ports)
+      ...(process.env.S3_API_PORT && { port: parseInt(process.env.S3_API_PORT, 10) }),
     }),
   ],
 });
