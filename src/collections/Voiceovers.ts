@@ -24,9 +24,15 @@ const Voiceovers: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
-      localized: true,
+      label: {
+        en: 'First Name',
+        nl: 'Voornaam',
+      },
       admin: {
-        description: 'The name of the voiceover artist',
+        description: {
+          en: 'Only the first name of the voiceover',
+          nl: 'Alleen de voornaam van de voice-over',
+        },
         width: '25%',
         components: {
           Cell: './components/admin/cells/NameCell#NameCell',
@@ -34,9 +40,9 @@ const Voiceovers: CollectionConfig = {
       },
       validate: (async (value, { req, id }) => {
         if (!value) return 'Name is required';
-        
+
         const firstName = value.split(' ')[0].toLowerCase();
-        
+
         // Check for existing voiceovers with the same first name
         const existingVoiceovers = await req.payload.find({
           collection: 'voiceovers',
@@ -47,17 +53,17 @@ const Voiceovers: CollectionConfig = {
           },
           limit: 1000,
         });
-        
+
         const duplicateFirstNames = existingVoiceovers.docs.filter((vo: any) => {
           const existingFirstName = vo.name?.split(' ')[0].toLowerCase();
           return existingFirstName === firstName;
         });
-        
+
         if (duplicateFirstNames.length > 0) {
           const duplicateNames = duplicateFirstNames.map((vo: any) => vo.name).join(', ');
           return `WARNING: Another voiceover with the same first name "${firstName}" already exists: ${duplicateNames}. This will cause URL conflicts! Please use a different first name or add a middle initial/nickname.`;
         }
-        
+
         return true;
       }) as TextFieldSingleValidation,
     },
@@ -67,7 +73,10 @@ const Voiceovers: CollectionConfig = {
       required: true,
       unique: true,
       admin: {
-        description: 'URL-friendly version of the first name (automatically generated from the first name only). Example: "Peter Smit" becomes "peter"',
+        description: {
+          en: "Every voiceover has its own page and this the URL that will be automatically generated based on the first name of the voiceover. E.g. 'peter' becomes 14voices.com/peter",
+          nl: "Iedere voice-over heeft zijn/haar eigen pagina en dit is de URL die automatisch gegeneerd wordt op basis van de voornaam. 'Peter' wordt bijvoorbeeld 14voices.com/peter",
+        },
         position: 'sidebar',
         readOnly: true,
       },
@@ -90,17 +99,30 @@ const Voiceovers: CollectionConfig = {
     {
       name: 'description',
       type: 'textarea',
-      localized: true,
+      label: {
+        en: 'Bio',
+        nl: 'Bio',
+      },
       admin: {
-        description: 'Optional description or bio',
+        description: {
+          en: "Optional bio shown on the voiceover's page",
+          nl: 'Optionele bio getoond op de pagina van de voice-over',
+        },
       },
     },
     {
       name: 'profilePhoto',
       type: 'upload',
       relationTo: 'media',
+      label: {
+        en: 'Profile Photo',
+        nl: 'Profielfoto',
+      },
       admin: {
-        description: 'Primary profile photo for this voiceover artist',
+        description: {
+          en: 'Profile photo of the voiceover',
+          nl: 'Foto van de voiceover',
+        },
         disableListColumn: true,
       },
       validate: (value: unknown, { data }: { data?: Record<string, unknown> }) => {
@@ -113,8 +135,25 @@ const Voiceovers: CollectionConfig = {
     {
       name: 'additionalPhotos',
       type: 'array',
+      label: {
+        en: 'Additional Photos',
+        nl: "Extra foto's",
+      },
       admin: {
-        description: 'Additional profile photos',
+        description: {
+          en: 'Additional profile photos',
+          nl: "Extra profielfoto's",
+        },
+      },
+      labels: {
+        singular: {
+          en: 'Additional Photo',
+          nl: 'Extra foto',
+        },
+        plural: {
+          en: 'Additional Photos',
+          nl: "Extra foto's",
+        },
       },
       fields: [
         {
@@ -138,7 +177,10 @@ const Voiceovers: CollectionConfig = {
       required: true,
       minRows: 3,
       admin: {
-        description: 'Select at least 3 style tags',
+        description: {
+          en: 'Select at least 3 style tags',
+          nl: 'Selecteer minstens 3 style tags',
+        },
         components: {
           Cell: './components/admin/cells/StyleTagsCell#StyleTagsCell',
         },
@@ -232,8 +274,10 @@ const Voiceovers: CollectionConfig = {
         { label: 'Archived', value: 'archived' },
       ],
       admin: {
-        description:
-          "Controls where this voiceover appears on the website. More Voices (uit het archief) = Deze voiceover wordt getoond in de 'uit het archief' sectie onder de 14 stemmen die in het groot worden getoond",
+        description: {
+          en: "Controls where this voiceover appears on the website. More Voices (uit het archief) = Deze voiceover wordt getoond in de 'uit het archief' sectie onder de 14 stemmen die in het groot worden getoond",
+          nl: "Met de status bepaal je of de voice-over wel of niet wordt getoond op de website. Voice-overs die tot een eerdere lichting behoren en nog steeds op de website willen staan, kun je als 'More voices (uit het archief)' invullen. Zij worden dan op een andere plek dan de voorkant van de website getoond.",
+        },
         width: '15%',
         components: {
           Cell: './components/admin/cells/StatusCell#StatusCell',
@@ -245,9 +289,16 @@ const Voiceovers: CollectionConfig = {
       type: 'relationship',
       relationTo: 'cohorts',
       hasMany: false,
+      required: true,
+      label: {
+        en: 'Cohort',
+        nl: 'Lichting/Groep',
+      },
       admin: {
-        description:
-          'Optional cohort this voiceover belongs to (each 3-6 months we have a new cohort)',
+        description: {
+          en: 'The cohort/group this voiceover belongs to (each 3-6 months we have a new cohort/group)',
+          nl: 'De lichting/groep waar deze voice-over toe behoort. Iedere 3 à 6 maanden hebben we een nieuwe lichting/groep.',
+        },
         width: '20%',
         components: {
           Cell: './components/admin/cells/CohortCell#CohortCell',
@@ -257,7 +308,10 @@ const Voiceovers: CollectionConfig = {
     {
       type: 'group',
       name: 'availability',
-      label: 'Availability',
+      label: {
+        en: 'Availability',
+        nl: 'Beschikbaarheid',
+      },
       admin: {
         components: {
           Cell: './components/admin/cells/AvailabilityCell#AvailabilityCell',
@@ -265,11 +319,43 @@ const Voiceovers: CollectionConfig = {
       },
       fields: [
         {
+          name: 'availabilityWarning',
+          type: 'ui',
+          admin: {
+            condition: (data) => data?.status === 'draft' || data?.status === 'archived',
+            components: {
+              Field: {
+                path: './components/admin/fields/WarningMessage#WarningMessage',
+                clientProps: {
+                  message: {
+                    en: 'Change the status in order to set the availability',
+                    nl: 'Pas de status aan om de beschikbaarheid in te vullen.',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
           name: 'isAvailable',
           type: 'checkbox',
           defaultValue: true,
+          label: {
+            en: 'Is Available',
+            nl: 'Is beschikbaar',
+          },
           admin: {
-            description: 'Is this voiceover currently available for bookings?',
+            description: {
+              en: 'Is this voiceover currently available for bookings?',
+              nl: 'Is deze voice-over beschikbaar om geboekt te worden? Zo niet, uncheck dan deze box zodat bezoekers weten dat deze stem tijdelijk niet geboekt kan worden.',
+            },
+            condition: (data) => {
+              if (data?.status === 'draft' || data?.status === 'archived') {
+                return false;
+              }
+              return true;
+            },
+            readOnly: false,
           },
         },
         {
@@ -294,8 +380,20 @@ const Voiceovers: CollectionConfig = {
   hooks: {
     beforeValidate: [
       ({ data }) => {
+        // Force isAvailable to false when status is draft or archived
+        if (data?.status === 'draft' || data?.status === 'archived') {
+          if (!data.availability) {
+            data.availability = {};
+          }
+          data.availability.isAvailable = false;
+        }
+
         // Auto-reactivate based on availability dates
-        if (data?.availability?.unavailableUntil) {
+        if (
+          data?.availability?.unavailableUntil &&
+          data?.status !== 'draft' &&
+          data?.status !== 'archived'
+        ) {
           const today = new Date();
           const unavailableUntil = new Date(data.availability.unavailableUntil);
           if (today > unavailableUntil) {
