@@ -2,8 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { Bricolage_Grotesque } from 'next/font/google';
-import { useVoiceover } from '@/contexts/VoiceoverContext';
-import { useCart } from '@/contexts/CartContext';
+import { useVoiceoverStore, useCartStore, useCheckoutStore } from '@/stores';
 import { PriceCalculatorHeader } from './PriceCalculatorHeader';
 import { PriceCalculatorContent } from './PriceCalculatorContent';
 import { PriceCalculatorFooter } from './PriceCalculatorFooter';
@@ -23,17 +22,13 @@ const bricolageGrotesque = Bricolage_Grotesque({
  * Handles production selection, price calculation, and cart management
  */
 export const UnifiedPriceCalculatorOptimized = React.memo(() => {
-  const { selectedVoiceover } = useVoiceover();
-  const {
-    setProductionName,
-    setWordCount,
-    setRegion,
-    setExtras,
-    setCartTotal,
-    cartItems,
-    setCartItems,
-    setCartItemCount,
-  } = useCart();
+  const selectedVoiceover = useVoiceoverStore((state) => state.selectedVoiceover);
+  const setProductionName = useCheckoutStore((state) => state.setProductionName);
+  const setWordCount = useCheckoutStore((state) => state.setWordCount);
+  const setRegion = useCheckoutStore((state) => state.setRegion);
+  const setExtras = useCheckoutStore((state) => state.setExtras);
+  const cartItems = useCartStore((state) => state.items);
+  const addItem = useCartStore((state) => state.addItem);
 
   const [showCalculator, setShowCalculator] = useState(false);
   const [showCart, setShowCart] = useState(false);
@@ -42,58 +37,41 @@ export const UnifiedPriceCalculatorOptimized = React.memo(() => {
     setShowCalculator(true);
   }, []);
 
+  const clearCart = useCartStore((state) => state.clearCart);
+  const resetProductionConfig = useCheckoutStore((state) => state.resetProductionConfig);
+
   const handleReset = useCallback(() => {
     setShowCalculator(false);
-    setProductionName('');
-    setWordCount('');
-    setRegion('');
-    setExtras([]);
-    setCartItems([]);
-    setCartItemCount(0);
-    setCartTotal(0);
-  }, [
-    setProductionName,
-    setWordCount,
-    setRegion,
-    setExtras,
-    setCartItems,
-    setCartItemCount,
-    setCartTotal,
-  ]);
+    resetProductionConfig();
+    clearCart();
+  }, [resetProductionConfig, clearCart]);
 
   const handleAddToCart = useCallback(
     (data: CartFormData) => {
       const production = productionData[data.productionIndex];
 
-      // Update cart context
+      // Update checkout configuration
       setProductionName(production.name);
       setWordCount(data.selectedWords || '');
       setRegion(data.selectedRegion || '');
       setExtras(Array.from(data.selectedOptions));
-      setCartTotal(data.total);
 
-      // Create cart items
+      // Create cart items and add them
       const items = createCartItems(
         production,
         data.selectedWords || '',
         data.selectedOptions,
         data.selectedRegion
       );
-      setCartItems(items);
-      setCartItemCount(items.length);
+
+      // Clear cart before adding new items
+      clearCart();
+      items.forEach((item) => addItem(item));
 
       // Show success message
       alert('Product toegevoegd aan winkelwagen! Kies nu een stem.');
     },
-    [
-      setProductionName,
-      setWordCount,
-      setRegion,
-      setExtras,
-      setCartTotal,
-      setCartItems,
-      setCartItemCount,
-    ]
+    [setProductionName, setWordCount, setRegion, setExtras, clearCart, addItem]
   );
 
   const handleProductionChange = useCallback(() => {

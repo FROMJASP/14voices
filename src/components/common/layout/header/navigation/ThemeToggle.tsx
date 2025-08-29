@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from 'next-themes';
+import { useThemeStore } from '@/stores';
 import { Sun, Moon } from 'lucide-react';
 
 interface ThemeToggleProps {
@@ -8,14 +8,12 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ className = '' }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme();
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-
     // Check if browser supports View Transitions API
     if (!document.startViewTransition) {
-      setTheme(newTheme);
+      toggleTheme();
       return;
     }
 
@@ -33,7 +31,7 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
 
     // Use View Transitions API for smooth theme change
     const transition = document.startViewTransition(() => {
-      setTheme(newTheme);
+      toggleTheme();
     });
 
     // Clean up after transition

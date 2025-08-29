@@ -14,7 +14,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { Bricolage_Grotesque } from 'next/font/google';
-import { useVoiceover } from '@/contexts/VoiceoverContext';
+import { useVoiceoverStore } from '@/stores';
 import Image from 'next/image';
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -54,7 +54,7 @@ export function CartDrawer({
   region,
   extras,
 }: CartDrawerProps) {
-  const { selectedVoiceover } = useVoiceover();
+  const selectedVoiceover = useVoiceoverStore((state) => state.selectedVoiceover);
   const [mounted, setMounted] = useState(false);
 
   // Debug logging

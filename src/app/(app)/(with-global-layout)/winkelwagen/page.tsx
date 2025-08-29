@@ -21,7 +21,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCart } from '@/contexts/CartContext';
+import { useCartStore, useCheckoutStore, useDrawerStore } from '@/stores';
 
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -48,16 +48,14 @@ interface OrderFormData {
 
 export default function CartPage() {
   const router = useRouter();
-  const {
-    cartItems,
-    cartTotal,
-    selectedVoiceover,
-    productionName,
-    wordCount,
-    region,
-    removeItem,
-    clearCart,
-  } = useCart();
+  const cartItems = useCartStore((state) => state.items);
+  const cartTotal = useCartStore((state) => state.total);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const productionName = useCheckoutStore((state) => state.productionConfig.productionName);
+  const wordCount = useCheckoutStore((state) => state.productionConfig.wordCount);
+  const region = useCheckoutStore((state) => state.productionConfig.region);
+  const selectedVoiceover = useDrawerStore((state) => state.selectedVoiceover);
 
   const [formData, setFormData] = useState<OrderFormData>({
     scriptText: '',
@@ -72,8 +70,11 @@ export default function CartPage() {
 
   // Calculate word count automatically from script text
   useEffect(() => {
-    const words = formData.scriptText.trim().split(/\s+/).filter(word => word.length > 0);
-    setFormData(prev => ({
+    const words = formData.scriptText
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0);
+    setFormData((prev) => ({
       ...prev,
       wordCount: formData.scriptText.trim() ? words.length : 0,
     }));
@@ -88,7 +89,7 @@ export default function CartPage() {
   // Calculate subtotals
   const extrasSubtotal = useMemo(() => {
     return cartItems
-      .filter(item => item.id.startsWith('option-'))
+      .filter((item) => item.id.startsWith('option-'))
       .reduce((sum, item) => sum + item.price, 0);
   }, [cartItems]);
 
@@ -100,11 +101,11 @@ export default function CartPage() {
     }
 
     setIsProcessing(true);
-    
+
     try {
       // Simulate order processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       setShowSuccess(true);
       setTimeout(() => {
         clearCart();
@@ -131,7 +132,7 @@ export default function CartPage() {
           >
             <CheckCircle2 className="w-12 h-12 text-green-600" />
           </motion.div>
-          
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -141,7 +142,7 @@ export default function CartPage() {
           >
             Bestelling ontvangen!
           </motion.h1>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -150,7 +151,7 @@ export default function CartPage() {
           >
             We nemen binnen 24 uur contact met je op om de details door te spreken.
           </motion.p>
-          
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -171,7 +172,7 @@ export default function CartPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 
+              <h1
                 className="text-3xl lg:text-4xl font-bold text-text-primary"
                 style={{ fontFamily: 'var(--font-instrument-serif)' }}
               >
@@ -181,7 +182,7 @@ export default function CartPage() {
                 Voltooi je bestelling en voeg je projectdetails toe
               </p>
             </div>
-            
+
             <div className="flex items-center gap-4">
               {!isEmpty && (
                 <button
@@ -192,7 +193,7 @@ export default function CartPage() {
                   Wis winkelwagen
                 </button>
               )}
-              
+
               <Link
                 href="/voiceovers"
                 className="text-sm text-primary hover:text-primary-hover transition-colors font-medium flex items-center gap-2"
@@ -212,11 +213,10 @@ export default function CartPage() {
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-surface flex items-center justify-center">
               <ShoppingCart className="w-12 h-12 text-text-muted" />
             </div>
-            <h2 className="text-2xl font-bold text-text-primary mb-4">
-              Je winkelwagen is leeg
-            </h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-4">Je winkelwagen is leeg</h2>
             <p className="text-text-secondary mb-8 max-w-md mx-auto">
-              Ontdek onze professionele voice-over artiesten en selecteer de perfecte stem voor jouw project.
+              Ontdek onze professionele voice-over artiesten en selecteer de perfecte stem voor jouw
+              project.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -272,7 +272,9 @@ export default function CartPage() {
                           )}
                           <div>
                             <h3 className="font-bold text-text-primary text-lg">Stemacteur</h3>
-                            <p className="text-text-primary font-semibold">{selectedVoiceover.name}</p>
+                            <p className="text-text-primary font-semibold">
+                              {selectedVoiceover.name}
+                            </p>
                             <p className="text-sm text-text-secondary">Professionele voice-over</p>
                           </div>
                         </div>
@@ -297,11 +299,15 @@ export default function CartPage() {
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="font-bold text-text-primary text-lg mb-2">Productieconfiguratie</h3>
+                          <h3 className="font-bold text-text-primary text-lg mb-2">
+                            Productieconfiguratie
+                          </h3>
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
                               <Package className="w-4 h-4 text-primary" />
-                              <span className="font-semibold text-text-primary">{productionName}</span>
+                              <span className="font-semibold text-text-primary">
+                                {productionName}
+                              </span>
                             </div>
                             {wordCount && (
                               <div className="flex items-center gap-2">
@@ -319,7 +325,7 @@ export default function CartPage() {
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-bold text-text-primary">
-                            €{cartItems.find(item => item.name === productionName)?.price || 0}
+                            €{cartItems.find((item) => item.name === productionName)?.price || 0}
                           </p>
                         </div>
                       </div>
@@ -327,43 +333,45 @@ export default function CartPage() {
                   )}
 
                   {/* Additional Items */}
-                  {cartItems.filter(item => item.id !== 'production' && item.name !== productionName).map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 * (index + 2) }}
-                      className="bg-background rounded-xl p-4 border border-border"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            {item.id.startsWith('option-') ? (
-                              <Plus className="w-5 h-5 text-primary" />
-                            ) : (
-                              <Package className="w-5 h-5 text-primary" />
-                            )}
+                  {cartItems
+                    .filter((item) => item.id !== 'production' && item.name !== productionName)
+                    .map((item, index) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * (index + 2) }}
+                        className="bg-background rounded-xl p-4 border border-border"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                              {item.id.startsWith('option-') ? (
+                                <Plus className="w-5 h-5 text-primary" />
+                              ) : (
+                                <Package className="w-5 h-5 text-primary" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-text-primary">{item.name}</p>
+                              {item.id.startsWith('option-') && (
+                                <p className="text-sm text-text-secondary">Extra optie</p>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-semibold text-text-primary">{item.name}</p>
-                            {item.id.startsWith('option-') && (
-                              <p className="text-sm text-text-secondary">Extra optie</p>
-                            )}
+                          <div className="flex items-center gap-4">
+                            <span className="font-bold text-text-primary">€{item.price}</span>
+                            <button
+                              onClick={() => removeItem(item.id)}
+                              className="p-2 text-text-muted hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
+                              aria-label={`Verwijder ${item.name}`}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className="font-bold text-text-primary">€{item.price}</span>
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="p-2 text-text-muted hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
-                            aria-label={`Verwijder ${item.name}`}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    ))}
                 </div>
               </div>
 
@@ -377,14 +385,19 @@ export default function CartPage() {
                 <div className="space-y-6">
                   {/* Script Text Area */}
                   <div>
-                    <label htmlFor="scriptText" className="block text-sm font-semibold text-text-primary mb-2">
+                    <label
+                      htmlFor="scriptText"
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                    >
                       Script tekst *
                     </label>
                     <div className="relative">
                       <textarea
                         id="scriptText"
                         value={formData.scriptText}
-                        onChange={(e) => setFormData(prev => ({ ...prev, scriptText: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, scriptText: e.target.value }))
+                        }
                         placeholder="Plak hier de tekst die ingesproken moet worden..."
                         className="w-full h-32 px-4 py-3 rounded-lg border border-border bg-background text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                         required
@@ -400,13 +413,18 @@ export default function CartPage() {
 
                   {/* Tone of Voice */}
                   <div>
-                    <label htmlFor="toneOfVoice" className="block text-sm font-semibold text-text-primary mb-2">
+                    <label
+                      htmlFor="toneOfVoice"
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                    >
                       Beschrijf de tone of voice die je wil
                     </label>
                     <textarea
                       id="toneOfVoice"
                       value={formData.toneOfVoice}
-                      onChange={(e) => setFormData(prev => ({ ...prev, toneOfVoice: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, toneOfVoice: e.target.value }))
+                      }
                       placeholder="Bijvoorbeeld: Warm en vriendelijk, professioneel, energiek, rustig en vertrouwenswaardig..."
                       className="w-full h-24 px-4 py-3 rounded-lg border border-border bg-background text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                     />
@@ -417,13 +435,18 @@ export default function CartPage() {
 
                   {/* Reference Examples */}
                   <div>
-                    <label htmlFor="referenceExamples" className="block text-sm font-semibold text-text-primary mb-2">
+                    <label
+                      htmlFor="referenceExamples"
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                    >
                       Referentie voorbeelden (optioneel)
                     </label>
                     <textarea
                       id="referenceExamples"
                       value={formData.referenceExamples}
-                      onChange={(e) => setFormData(prev => ({ ...prev, referenceExamples: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, referenceExamples: e.target.value }))
+                      }
                       placeholder="Links naar video's, audio's of beschrijvingen van vergelijkbare producties..."
                       className="w-full h-20 px-4 py-3 rounded-lg border border-border bg-background text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                     />
@@ -434,14 +457,19 @@ export default function CartPage() {
 
                   {/* Delivery Date */}
                   <div>
-                    <label htmlFor="deliveryDate" className="block text-sm font-semibold text-text-primary mb-2">
+                    <label
+                      htmlFor="deliveryDate"
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                    >
                       Gewenste opleverdatum
                     </label>
                     <input
                       type="date"
                       id="deliveryDate"
                       value={formData.deliveryDate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, deliveryDate: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, deliveryDate: e.target.value }))
+                      }
                       className="px-4 py-3 rounded-lg border border-border bg-background text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                       min={new Date().toISOString().split('T')[0]}
                     />

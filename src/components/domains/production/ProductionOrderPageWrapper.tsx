@@ -1,6 +1,5 @@
 'use client';
 
-import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { ProductionOrderPage } from './ProductionOrderPage';
 import type { TransformedVoiceover } from '@/types/voiceover';
 import { useEffect } from 'react';
@@ -40,12 +39,10 @@ export function ProductionOrderPageWrapper({
   }
 
   return (
-    <VoiceoverProvider>
-      <ProductionOrderPage
-        productionIndex={productionIndex}
-        voiceovers={voiceovers}
-        hideCloseButton={hideCloseButton}
-      />
-    </VoiceoverProvider>
+    <ProductionOrderPage
+      productionIndex={productionIndex}
+      voiceovers={voiceovers}
+      hideCloseButton={hideCloseButton}
+    />
   );
 }

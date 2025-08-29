@@ -7,8 +7,7 @@ import { ChevronDown, Check, ShoppingCart, Users, Mic, CheckCircle2, X } from 'l
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useVoiceover } from '@/contexts/VoiceoverContext';
-import { useCart } from '@/contexts/CartContext';
+import { useVoiceoverStore, useCartStore, useCheckoutStore, useDrawerStore } from '@/stores';
 import type { TransformedVoiceover } from '@/types/voiceover';
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -472,17 +471,15 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
   });
 
   const router = useRouter();
-  const {
-    setCartItems,
-    setCartItemCount,
-    setCartTotal,
-    setProductionName,
-    setWordCount,
-    setRegion,
-    setExtras,
-    setSelectedVoiceover: setCartSelectedVoiceover,
-  } = useCart();
-  const { selectedVoiceover, setSelectedVoiceover } = useVoiceover();
+  const clearCart = useCartStore((state) => state.clearCart);
+  const addItem = useCartStore((state) => state.addItem);
+  const setProductionName = useCheckoutStore((state) => state.setProductionName);
+  const setWordCount = useCheckoutStore((state) => state.setWordCount);
+  const setRegion = useCheckoutStore((state) => state.setRegion);
+  const setExtras = useCheckoutStore((state) => state.setExtras);
+  const selectedVoiceover = useVoiceoverStore((state) => state.selectedVoiceover);
+  const setSelectedVoiceover = useVoiceoverStore((state) => state.setSelectedVoiceover);
+  const openDrawer = useDrawerStore((state) => state.openDrawer);
 
   const [selectedWords, setSelectedWords] = useState<string | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
@@ -617,10 +614,7 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
       }
     });
 
-    // Update cart context
-    setCartItems(newCartItems);
-    setCartItemCount(newCartItems.length + 1); // +1 for voiceover
-    setCartTotal(calculateTotal());
+    // Update checkout configuration
     setProductionName(production.name);
     setWordCount(
       selectedWords
@@ -629,16 +623,20 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
     );
     setRegion(selectedRegion || undefined);
     setExtras(Array.from(selectedOptions));
-    setCartSelectedVoiceover(
-      selectedVoiceover
-        ? {
-            id: selectedVoiceover.id,
-            name: selectedVoiceover.name,
-            slug: selectedVoiceover.name.toLowerCase().replace(/\s+/g, '-'),
-            profilePhoto: selectedVoiceover.profilePhoto,
-          }
-        : undefined
-    );
+
+    // Clear cart and add new items
+    clearCart();
+    newCartItems.forEach((item) => addItem(item));
+
+    // Open drawer with voiceover selection
+    if (selectedVoiceover) {
+      openDrawer('production', {
+        id: selectedVoiceover.id,
+        name: selectedVoiceover.name,
+        slug: selectedVoiceover.name.toLowerCase().replace(/\s+/g, '-'),
+        profilePhoto: selectedVoiceover.profilePhoto,
+      });
+    }
 
     alert('Product toegevoegd aan winkelwagen!');
   }, [
@@ -648,14 +646,13 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
     selectedRegion,
     selectedOptions,
     calculateTotal,
-    setCartItems,
-    setCartItemCount,
-    setCartTotal,
+    clearCart,
+    addItem,
     setProductionName,
     setWordCount,
     setRegion,
     setExtras,
-    setCartSelectedVoiceover,
+    openDrawer,
   ]);
 
   const toggleAccordion = useCallback((item: string) => {

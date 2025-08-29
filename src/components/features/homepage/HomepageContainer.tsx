@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback, lazy, Suspense, memo } from 'react';
 import { usePathname } from 'next/navigation';
-import { VoiceoverProvider } from '@/contexts/VoiceoverContext';
 import { UnifiedPriceCalculatorOptimized } from '@/components/domains/pricing';
 import { HeroSection } from './HeroSection';
 import FAQSection from './FAQSection'; // Uses default export (client wrapper)
@@ -54,28 +53,28 @@ const DrawerLoadingFallback = memo(() => (
 DrawerLoadingFallback.displayName = 'DrawerLoadingFallback';
 
 // Memoized main content to prevent re-renders when drawer state changes
-const MainContent = memo(({ heroSettings, voiceovers }: { heroSettings: HomepageSettings; voiceovers: any[] }) => {
-  return (
-    <div>
-      <HeroSection heroSettings={heroSettings} />
-      <section id="voiceovers" className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Onze Stemacteurs
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Vind de perfecte stem voor jouw project
-            </p>
+const MainContent = memo(
+  ({ heroSettings, voiceovers }: { heroSettings: HomepageSettings; voiceovers: any[] }) => {
+    return (
+      <div>
+        <HeroSection heroSettings={heroSettings} />
+        <section id="voiceovers" className="py-16 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="mb-8">
+              <h2 className="text-4xl font-bold text-foreground mb-4">Onze Stemacteurs</h2>
+              <p className="text-lg text-muted-foreground">
+                Vind de perfecte stem voor jouw project
+              </p>
+            </div>
+            <OptimizedVoiceoverGrid voiceovers={voiceovers} />
           </div>
-          <OptimizedVoiceoverGrid voiceovers={voiceovers} />
-        </div>
-      </section>
-      <UnifiedPriceCalculatorOptimized />
-      <FAQSection />
-    </div>
-  );
-});
+        </section>
+        <UnifiedPriceCalculatorOptimized />
+        <FAQSection />
+      </div>
+    );
+  }
+);
 
 MainContent.displayName = 'MainContent';
 
@@ -112,7 +111,7 @@ export const HomepageWithDrawerOptimized = memo(function HomepageWithDrawer({
   );
 
   return (
-    <VoiceoverProvider>
+    <>
       <MainContent heroSettings={heroSettings} voiceovers={voiceovers} />
 
       {/* Only render production drawer when needed */}
@@ -135,6 +134,6 @@ export const HomepageWithDrawerOptimized = memo(function HomepageWithDrawer({
           </ProductionDrawerOptimized>
         </Suspense>
       )}
-    </VoiceoverProvider>
+    </>
   );
 });

@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useTheme } from 'next-themes';
+import { useThemeStore } from '@/stores';
 import type { HomepageSettings } from '@/lib/homepage-settings';
 
 interface HeroSectionProps {
@@ -33,7 +33,7 @@ const staggerChild = {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
   const { hero } = heroSettings;
-  const { theme } = useTheme();
+  const theme = useThemeStore((state) => state.resolvedTheme);
 
   // Parse title into specific parts for proper display
   // Expected format: "Vind de stem die jouw merk laat spreken."

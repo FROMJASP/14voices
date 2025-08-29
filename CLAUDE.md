@@ -12,6 +12,7 @@
 - **Package Manager**: Bun (required)
 - **Email**: Resend API
 - **Error Tracking**: Sentry
+- **Global State Management**: Zustand
 
 ## Development Commands
 
@@ -60,18 +61,13 @@ src/
 
 ## Deployment
 
-1. Push to main branch
-2. Vercel automatically builds and deploys
-3. Database migrations run automatically via Payload
-
-## Key Patterns
-
-- Use Server Components by default
-- Domain-Driven Design for business logic
-- Type safety with generated Payload types
-- Validate inputs with Zod schemas
+1. ALWAYS think about the importMap before pushing code
+2. Push to main branch
+3. Vercel automatically builds and deploys
+4. Database migrations run automatically via Payload
 
 ## Important Notes
 
 - **Payload importMap**: The file `src/app/(payload)/admin/importMap.js` is auto-generated but MUST be committed to git
 - **Admin panel errors**: Clear cache with `rm -rf .next` and regenerate importMap if needed
+- Never change our .env.local without our permission

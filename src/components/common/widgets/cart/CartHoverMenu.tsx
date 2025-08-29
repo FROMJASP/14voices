@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { X, Trash2 } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
+import { useCartStore } from '@/stores';
 
 interface CartHoverMenuProps {
   isVisible: boolean;
@@ -88,7 +88,7 @@ const CartItemDisplay = ({ item, onRemove }: CartItemDisplayProps) => {
         >
           {item.name}
         </h4>
-        
+
         {/* Production details */}
         <div style={{ marginBottom: '8px' }}>
           {item.details.map((detail, index) => (
@@ -148,7 +148,11 @@ const CartItemDisplay = ({ item, onRemove }: CartItemDisplayProps) => {
 };
 
 export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuProps) {
-  const cart = useCart();
+  const cartItems = useCartStore((state) => state.items);
+  const cartItemCount = useCartStore((state) => state.itemCount);
+  const cartTotal = useCartStore((state) => state.total);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const clearCart = useCartStore((state) => state.clearCart);
   const menuRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -168,7 +172,7 @@ export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuP
       document.addEventListener('keydown', handleEscape);
       return () => document.removeEventListener('keydown', handleEscape);
     }
-    
+
     return undefined;
   }, [isVisible, onClose]);
 
@@ -190,7 +194,7 @@ export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuP
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-    
+
     return undefined;
   }, [isVisible, onClose, triggerRef]);
 
@@ -249,7 +253,8 @@ export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuP
               backgroundColor: 'var(--background)',
               border: '1px solid var(--border)',
               borderRadius: '12px',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+              boxShadow:
+                '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
               zIndex: 50,
               overflow: 'hidden',
               display: 'flex',
@@ -274,9 +279,9 @@ export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuP
                   margin: 0,
                 }}
               >
-                Winkelwagen ({cart.cartItemCount})
+                Winkelwagen ({cartItemCount})
               </h3>
-              
+
               <button
                 onClick={onClose}
                 style={{
@@ -308,7 +313,7 @@ export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuP
                 maxHeight: '400px',
               }}
             >
-              {cart.cartItems.length === 0 ? (
+              {cartItems.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -350,25 +355,19 @@ export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuP
                   <p style={{ fontSize: '16px', fontWeight: '500', margin: '0 0 8px 0' }}>
                     Je winkelwagen is leeg
                   </p>
-                  <p style={{ fontSize: '14px', margin: 0 }}>
-                    Voeg voice-overs toe om te beginnen
-                  </p>
+                  <p style={{ fontSize: '14px', margin: 0 }}>Voeg voice-overs toe om te beginnen</p>
                 </motion.div>
               ) : (
                 <AnimatePresence mode="popLayout">
-                  {cart.cartItems.map((item) => (
-                    <CartItemDisplay
-                      key={item.id}
-                      item={item}
-                      onRemove={cart.removeItem}
-                    />
+                  {cartItems.map((item) => (
+                    <CartItemDisplay key={item.id} item={item} onRemove={removeItem} />
                   ))}
                 </AnimatePresence>
               )}
             </div>
 
             {/* Footer with Total and Actions */}
-            {cart.cartItems.length > 0 && (
+            {cartItems.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -404,7 +403,7 @@ export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuP
                       color: 'var(--primary)',
                     }}
                   >
-                    {formatTotal(cart.cartTotal)}
+                    {formatTotal(cartTotal)}
                   </span>
                 </div>
 
@@ -431,9 +430,9 @@ export function CartHoverMenu({ isVisible, onClose, triggerRef }: CartHoverMenuP
                   >
                     Naar winkelwagen
                   </Link>
-                  
+
                   <button
-                    onClick={cart.clearCart}
+                    onClick={clearCart}
                     style={{
                       padding: '12px',
                       backgroundColor: 'transparent',

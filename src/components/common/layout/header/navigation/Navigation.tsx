@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
-import { useCartOptional } from '@/contexts/CartContext';
+import { useCartStore, useDrawerStore } from '@/stores';
 import { useScrollLock } from '@/hooks/useScrollLock';
 import { ThemeToggle } from './ThemeToggle';
 import { MobileMenu } from './MobileMenu';
@@ -56,7 +56,8 @@ export function Navigation({
   const [isCartHoverOpen, setIsCartHoverOpen] = useState(false);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const cartButtonRef = useRef<HTMLButtonElement>(null);
-  const cart = useCartOptional();
+  const cartItemCount = useCartStore((state) => state.itemCount);
+  const openDrawer = useDrawerStore((state) => state.openDrawer);
 
   useEffect(() => {
     setMounted(true);
@@ -186,7 +187,7 @@ export function Navigation({
               {/* Shopping Cart */}
               <button
                 ref={cartButtonRef}
-                onClick={() => cart?.openDrawer('cart')}
+                onClick={() => openDrawer('cart')}
                 onMouseEnter={() => setIsCartHoverOpen(true)}
                 onMouseLeave={(e) => {
                   // Small delay to allow moving to the hover menu
@@ -227,7 +228,7 @@ export function Navigation({
                   <circle cx="20" cy="21" r="1"></circle>
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                {cart && cart.cartItemCount > 0 && (
+                {cartItemCount > 0 && (
                   <span
                     style={{
                       position: 'absolute',
@@ -243,7 +244,7 @@ export function Navigation({
                       textAlign: 'center',
                     }}
                   >
-                    {cart?.cartItemCount}
+                    {cartItemCount}
                   </span>
                 )}
               </button>
@@ -272,7 +273,7 @@ export function Navigation({
             {/* Mobile Menu Toggle */}
             <div className="flex lg:hidden" style={{ alignItems: 'center', gap: '12px' }}>
               <button
-                onClick={() => cart?.openDrawer('cart')}
+                onClick={() => openDrawer('cart')}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -295,7 +296,7 @@ export function Navigation({
                   <circle cx="20" cy="21" r="1"></circle>
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                {cart && cart.cartItemCount > 0 && (
+                {cartItemCount > 0 && (
                   <span
                     style={{
                       position: 'absolute',
@@ -311,7 +312,7 @@ export function Navigation({
                       textAlign: 'center',
                     }}
                   >
-                    {cart?.cartItemCount}
+                    {cartItemCount}
                   </span>
                 )}
               </button>
