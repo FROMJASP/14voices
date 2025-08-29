@@ -292,7 +292,6 @@ const Users: CollectionConfig = {
       ],
       admin: {
         description: 'Your preferred language for the admin interface',
-        position: 'sidebar',
       },
     },
     {
@@ -309,7 +308,6 @@ const Users: CollectionConfig = {
         { label: { en: 'Dark', nl: 'Donker' }, value: 'dark' },
       ],
       admin: {
-        position: 'sidebar',
         layout: 'vertical',
       },
       hooks: {

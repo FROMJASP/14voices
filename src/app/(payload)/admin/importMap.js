@@ -38,9 +38,9 @@ import { SeverityCell as SeverityCell_64ee1493040fd92be0ee14a8c149537a } from '.
 import { default as default_0e63ca13049e5fd88da5304cfad30e1e } from '@/components/admin/EmailAnalytics'
 import { FAQManageField as FAQManageField_c31ab92e894b3afef28b224c7ea21b03 } from '@/components/admin/ui/FAQManageField'
 import { MaintenanceModePreview as MaintenanceModePreview_ce87e2b6034154f861907fa106f8514e } from '../../../components/admin/MaintenanceModePreview'
+import { default as default_3a876ee42d71cfab00ced64d3d270372 } from '../../../components/admin/CustomAvatar'
 import { default as default_16e62c7e42dfe7700742ba3a13bf8900 } from '../../../components/admin/graphics/Icon'
 import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../components/admin/graphics/Logo'
-import { default as default_836f88f46dad20d30d7cf8fe59f4d67a } from '../../../components/admin/AccountWrapper'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
@@ -84,8 +84,8 @@ export const importMap = {
   "@/components/admin/EmailAnalytics#default": default_0e63ca13049e5fd88da5304cfad30e1e,
   "@/components/admin/ui/FAQManageField#FAQManageField": FAQManageField_c31ab92e894b3afef28b224c7ea21b03,
   "./components/admin/MaintenanceModePreview#MaintenanceModePreview": MaintenanceModePreview_ce87e2b6034154f861907fa106f8514e,
+  "./components/admin/CustomAvatar#default": default_3a876ee42d71cfab00ced64d3d270372,
   "./components/admin/graphics/Icon#default": default_16e62c7e42dfe7700742ba3a13bf8900,
   "./components/admin/graphics/Logo#default": default_13338d86bf8cb9661b50b401726320cd,
-  "./components/admin/AccountWrapper#default": default_836f88f46dad20d30d7cf8fe59f4d67a,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

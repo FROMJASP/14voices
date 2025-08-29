@@ -38,6 +38,9 @@ import path from 'path';
 export default buildConfig({
   admin: {
     user: Users.slug,
+    avatar: {
+      Component: './components/admin/CustomAvatar#default',
+    },
     importMap: {
       baseDir: path.resolve(process.cwd(), 'src'),
     },
@@ -45,13 +48,11 @@ export default buildConfig({
       // Temporarily disabled to troubleshoot webpack issue
       // beforeLogin: ['./components/admin/BeforeLogin#default'],
       // afterDashboard: ['./components/admin/AdminEnhancements#default'],
-      // actions: ['./components/admin/AdminActions#default'],
       graphics: {
         Logo: './components/admin/graphics/Logo#default',
         Icon: './components/admin/graphics/Icon#default',
       },
       // providers: ['./components/admin/AdminProvider#default'],
-      afterDashboard: ['./components/admin/AccountWrapper#default'],
     },
     meta: {
       titleSuffix: ' - Fourteen Voices',

@@ -3,21 +3,18 @@
 import React from 'react';
 import { useAuth } from '@payloadcms/ui';
 import { getInitials } from '@/lib/initials';
-import ThemeSwitcher from './ThemeSwitcher';
 
 export default function AccountWrapper() {
-  // Hooks must be called unconditionally
-  const authResult = React.useMemo(() => {
-    try {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const auth = useAuth();
-      return { user: auth.user, error: null };
-    } catch (err) {
-      return { user: null, error: err };
-    }
-  }, []);
+  // Get user data from Payload's useAuth hook - call directly in component body
+  let user = null;
 
-  const { user } = authResult;
+  try {
+    const auth = useAuth();
+    user = auth.user;
+  } catch (err) {
+    // Fallback if hook is not available
+    console.debug('AccountWrapper: useAuth hook not available');
+  }
 
   // Get the avatar URL from user data - check different possible structures
   const avatarUrl =
@@ -159,5 +156,5 @@ export default function AccountWrapper() {
     };
   }, [avatarUrl, displayName, user]);
 
-  return <ThemeSwitcher />;
+  return null;
 }

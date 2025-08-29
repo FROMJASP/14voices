@@ -1,32 +1,26 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useAuth, useTheme } from '@payloadcms/ui';
 
-export default function ThemeSwitcher() {
-  // Hooks must be called unconditionally - wrap in useMemo for safe access
-  const authResult = useMemo(() => {
-    try {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const auth = useAuth();
-      return { user: auth.user, error: null };
-    } catch (err) {
-      return { user: null, error: err };
-    }
-  }, []);
+export default function ThemeApplier() {
+  // Get hooks directly in component body
+  let user = null;
+  let setTheme: ((theme: 'light' | 'dark') => void) | null = null;
 
-  const themeResult = useMemo(() => {
-    try {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const theme = useTheme();
-      return { setTheme: theme.setTheme, error: null };
-    } catch (err) {
-      return { setTheme: null, error: err };
-    }
-  }, []);
+  try {
+    const auth = useAuth();
+    user = auth.user;
+  } catch (err) {
+    console.debug('ThemeApplier: useAuth hook not available');
+  }
 
-  const { user } = authResult;
-  const { setTheme } = themeResult;
+  try {
+    const theme = useTheme();
+    setTheme = theme.setTheme;
+  } catch (err) {
+    console.debug('ThemeApplier: useTheme hook not available');
+  }
 
   // Apply theme when user preference changes
   useEffect(() => {
