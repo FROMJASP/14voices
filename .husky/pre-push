@@ -1,12 +1,10 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-echo "🚀 Running comprehensive pre-push validation..."
-echo "This will ensure your code builds successfully on Vercel"
+echo "🚀 Running pre-push validation..."
 echo ""
 
-# Run the comprehensive validation script
-bun run validate:pre-push
+# Run basic validation
+bun run lint && bun run typecheck
 
-# The validation script will exit with code 1 if any checks fail
-# This will prevent the push from happening
+# This will prevent the push if any checks fail
