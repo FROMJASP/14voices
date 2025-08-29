@@ -3,16 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { ReactMediaRecorder } from 'react-media-recorder';
-import { 
-  Upload, 
-  Mic, 
-  Square, 
-  Play, 
-  Pause,
-  X,
-  FileAudio,
-  AlertCircle
-} from 'lucide-react';
+import { Upload, Mic, Square, Play, Pause, X, FileAudio, AlertCircle } from 'lucide-react';
 import { Label } from '@/components/ui/Label';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SimpleEditor } from '@/components/ui/kibo-ui/editor';
@@ -25,12 +16,12 @@ interface AudioNotesProps {
   placeholder?: string;
 }
 
-export function AudioNotes({ 
-  textValue, 
-  onTextChange, 
+export function AudioNotes({
+  textValue,
+  onTextChange,
   audioFile,
   onAudioFileChange,
-  placeholder = "Wil je bijvoorbeeld dat het rustig wordt ingesproken of zijn er woorden die op een bepaalde manier uitgesproken moeten worden?"
+  placeholder = 'Wil je bijvoorbeeld dat het rustig wordt ingesproken of zijn er woorden die op een bepaalde manier uitgesproken moeten worden?',
 }: AudioNotesProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(null);
@@ -44,20 +35,21 @@ export function AudioNotes({
       'audio/mpeg': ['.mp3'],
       'audio/mp4': ['.m4a'],
       'audio/ogg': ['.ogg'],
-      'audio/wav': ['.wav']
+      'audio/wav': ['.wav'],
     },
     maxFiles: 1,
     maxSize: 50 * 1024 * 1024, // 50MB max
     onDrop: async (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
-        
+
         // Check audio duration
         const audioUrl = URL.createObjectURL(file);
         const audio = new Audio(audioUrl);
-        
+
         audio.addEventListener('loadedmetadata', () => {
-          if (audio.duration > 180) { // 3 minutes = 180 seconds
+          if (audio.duration > 180) {
+            // 3 minutes = 180 seconds
             alert('Het audiobestand mag maximaal 3 minuten lang zijn.');
             URL.revokeObjectURL(audioUrl);
           } else {
@@ -67,7 +59,7 @@ export function AudioNotes({
           }
         });
       }
-    }
+    },
   });
 
   // Handle play/pause
@@ -102,17 +94,11 @@ export function AudioNotes({
 
   return (
     <div className="space-y-4">
-      <Label className="text-sm font-medium text-foreground">
-        4. Instructies (optioneel)
-      </Label>
-      
+      <Label className="text-sm font-medium text-foreground">4. Instructies (optioneel)</Label>
+
       {/* Text input with TipTap editor */}
       <div>
-        <SimpleEditor
-          content={textValue}
-          onChange={onTextChange}
-          placeholder={placeholder}
-        />
+        <SimpleEditor content={textValue} onChange={onTextChange} placeholder={placeholder} />
         <p className="text-xs text-muted-foreground mt-2">
           Je kunt hier instructies typen en/of een audiobestand uploaden met aanwijzingen
         </p>
@@ -142,16 +128,14 @@ export function AudioNotes({
                 <Play className="w-5 h-5 text-primary ml-0.5" />
               )}
             </button>
-            
+
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground">
                 {audioFile ? audioFile.name : 'Opgenomen audio'}
               </p>
-              <p className="text-xs text-muted-foreground">
-                Duur: {formatDuration(audioDuration)}
-              </p>
+              <p className="text-xs text-muted-foreground">Duur: {formatDuration(audioDuration)}</p>
             </div>
-            
+
             <button
               onClick={() => {
                 onAudioFileChange(null);
@@ -162,7 +146,7 @@ export function AudioNotes({
             >
               <X className="w-4 h-4" />
             </button>
-            
+
             <audio
               ref={audioRef}
               src={currentAudioUrl}
@@ -181,38 +165,30 @@ export function AudioNotes({
             <div
               {...getRootProps()}
               className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                isDragActive 
-                  ? 'border-primary bg-primary/5' 
+                isDragActive
+                  ? 'border-primary bg-primary/5'
                   : 'border-border hover:border-border/60 hover:bg-muted/30'
               }`}
             >
               <input {...getInputProps()} />
               <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
               <p className="text-sm font-medium text-foreground">Upload audiobestand</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                MP3, M4A, OGG (max. 3 min)
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">MP3, M4A, OGG (max. 3 min)</p>
             </div>
 
             {/* Audio recording */}
             <ReactMediaRecorder
               audio
-              render={({ status, startRecording, stopRecording, mediaBlobUrl }) => {
-                // Update recording state
-                useEffect(() => {
-                  setIsRecording(status === 'recording');
-                  
-                  if (status === 'stopped' && mediaBlobUrl) {
-                    // Convert blob URL to File
-                    fetch(mediaBlobUrl)
-                      .then(res => res.blob())
-                      .then(blob => {
-                        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
-                        onAudioFileChange(file);
-                        setRecordedAudioUrl(mediaBlobUrl);
-                      });
-                  }
-                }, [status, mediaBlobUrl]);
+              onStop={(blobUrl, blob) => {
+                setRecordedAudioUrl(blobUrl);
+                const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+                onAudioFileChange(file);
+              }}
+              render={({ status, startRecording, stopRecording }) => {
+                const recordingActive = status === 'recording';
+                if (recordingActive !== isRecording) {
+                  setIsRecording(recordingActive);
+                }
 
                 return (
                   <button
