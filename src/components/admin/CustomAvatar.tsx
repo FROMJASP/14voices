@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@payloadcms/ui';
 import { getInitials } from '@/lib/initials';
-import ThemeApplier from './ThemeApplier';
 import LocaleHider from './LocaleHider';
 
 const CustomAvatar: React.FC = () => {
@@ -38,10 +37,7 @@ const CustomAvatar: React.FC = () => {
     !imageError &&
     (user.image || // This is set by the addImageProperty hook
       user.avatarURL || // This is set by the resolveAvatarURL hook
-      (user.avatar && typeof user.avatar === 'object' && user.avatar.url) ||
-      (user.avatar && typeof user.avatar === 'object' && user.avatar.filename
-        ? `/api/media/file/${user.avatar.filename}`
-        : null));
+      (user.avatar && typeof user.avatar === 'object' && user.avatar.url));
 
   // Generate color based on name
   const getAvatarColor = () => {
@@ -95,7 +91,6 @@ const CustomAvatar: React.FC = () => {
   if (avatarUrl && !imageError) {
     return (
       <>
-        <ThemeApplier />
         <LocaleHider />
         <div style={styles.wrapper}>
           <img
@@ -111,7 +106,6 @@ const CustomAvatar: React.FC = () => {
 
   return (
     <>
-      <ThemeApplier />
       <LocaleHider />
       <div style={styles.wrapper}>
         <span style={styles.initials}>{initials}</span>

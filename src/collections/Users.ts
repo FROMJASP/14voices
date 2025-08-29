@@ -146,6 +146,10 @@ const Users: CollectionConfig = {
     {
       name: 'name',
       type: 'text',
+      label: {
+        en: 'Full name',
+        nl: 'Volledige naam',
+      },
       admin: {
         components: {
           Cell: './components/admin/cells/UserInfoCell#UserInfoCell',
@@ -280,48 +284,6 @@ const Users: CollectionConfig = {
           },
         },
       ],
-    },
-    {
-      name: 'preferredLanguage',
-      type: 'select',
-      defaultValue: 'nl',
-      label: 'Taal / Language',
-      options: [
-        { label: 'Nederlands', value: 'nl' },
-        { label: 'English', value: 'en' },
-      ],
-      admin: {
-        description: 'Your preferred language for the admin interface',
-      },
-    },
-    {
-      name: 'adminTheme',
-      type: 'radio',
-      defaultValue: 'auto',
-      label: {
-        en: 'Theme',
-        nl: 'Thema',
-      },
-      options: [
-        { label: { en: 'System', nl: 'Systeem' }, value: 'auto' },
-        { label: { en: 'Light', nl: 'Licht' }, value: 'light' },
-        { label: { en: 'Dark', nl: 'Donker' }, value: 'dark' },
-      ],
-      admin: {
-        layout: 'vertical',
-      },
-      hooks: {
-        afterChange: [
-          async ({ value, req }) => {
-            // Store theme preference in localStorage via a client-side script
-            if (req?.user) {
-              // The actual theme switching will be handled by a client component
-              return value;
-            }
-            return value;
-          },
-        ],
-      },
     },
     {
       name: 'lastLogin',
