@@ -25,11 +25,11 @@ export function SimpleDemoPlayer({
   const [progress, setProgress] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  
+
   const currentDemo = demos[currentDemoIndex];
 
   // Cleanup on unmount
@@ -67,7 +67,7 @@ export function SimpleDemoPlayer({
     setCurrentTime(0);
     setDuration(0);
     setProgress(0);
-    
+
     if (progressInterval.current) {
       clearInterval(progressInterval.current);
     }
@@ -89,15 +89,15 @@ export function SimpleDemoPlayer({
       }
     } else {
       // Stop all other audio elements
-      document.querySelectorAll('audio').forEach(audio => audio.pause());
+      document.querySelectorAll('audio').forEach((audio) => audio.pause());
 
       if (!audioRef.current || audioRef.current.src !== currentDemo.audioFile.url) {
         audioRef.current = new Audio(currentDemo.audioFile.url);
-        
+
         audioRef.current.addEventListener('loadedmetadata', () => {
           setDuration(audioRef.current?.duration || 0);
         });
-        
+
         audioRef.current.addEventListener('ended', () => {
           setIsPlaying(false);
           setProgress(0);
@@ -105,16 +105,16 @@ export function SimpleDemoPlayer({
           if (progressInterval.current) {
             clearInterval(progressInterval.current);
           }
-          
+
           // Auto-play next if available
           if (currentDemoIndex < demos.length - 1) {
             setTimeout(() => {
-              setCurrentDemoIndex(prev => prev + 1);
+              setCurrentDemoIndex((prev) => prev + 1);
             }, 500);
           }
         });
       }
-      
+
       audioRef.current.play();
       setIsPlaying(true);
 
@@ -131,12 +131,12 @@ export function SimpleDemoPlayer({
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current) return;
-    
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
     const newTime = (percentage / 100) * audioRef.current.duration;
-    
+
     audioRef.current.currentTime = newTime;
     setProgress(percentage);
     setCurrentTime(newTime);
@@ -148,7 +148,7 @@ export function SimpleDemoPlayer({
         audioRef.current.pause();
         audioRef.current = null;
       }
-      setCurrentDemoIndex(prev => prev - 1);
+      setCurrentDemoIndex((prev) => prev - 1);
     }
   };
 
@@ -158,7 +158,7 @@ export function SimpleDemoPlayer({
         audioRef.current.pause();
         audioRef.current = null;
       }
-      setCurrentDemoIndex(prev => prev + 1);
+      setCurrentDemoIndex((prev) => prev + 1);
     }
   };
 
@@ -189,7 +189,7 @@ export function SimpleDemoPlayer({
   if (!demos.length) {
     return (
       <div className={`text-center py-8 text-muted-foreground ${className}`}>
-        <p className="text-sm">Geen demo's beschikbaar</p>
+        <p className="text-sm">Geen demo&apos;s beschikbaar</p>
       </div>
     );
   }
@@ -201,9 +201,9 @@ export function SimpleDemoPlayer({
       className={`bg-surface rounded-2xl border border-border overflow-hidden ${className}`}
     >
       <motion.div
-        animate={{ 
+        animate={{
           height: isExpanded ? 'auto' : 'auto',
-          padding: isExpanded ? '24px' : '16px'
+          padding: isExpanded ? '24px' : '16px',
         }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
       >
@@ -218,7 +218,7 @@ export function SimpleDemoPlayer({
               >
                 <Play className="w-5 h-5 ml-0.5" />
               </button>
-              
+
               {/* Demo Info */}
               <div className="min-w-0">
                 <h3 className="font-medium text-foreground truncate">{currentDemo.title}</h3>
@@ -227,11 +227,9 @@ export function SimpleDemoPlayer({
                 </p>
               </div>
             </div>
-            
+
             {/* Expand hint */}
-            <p className="text-xs text-muted-foreground hidden sm:block">
-              Klik om af te spelen
-            </p>
+            <p className="text-xs text-muted-foreground hidden sm:block">Klik om af te spelen</p>
           </div>
         )}
 
@@ -254,7 +252,7 @@ export function SimpleDemoPlayer({
                         {currentDemo.title}
                       </motion.h3>
                     </AnimatePresence>
-                    
+
                     {/* Dropdown for demo selection */}
                     {demos.length > 1 && (
                       <div className="relative" ref={dropdownRef}>
@@ -262,10 +260,14 @@ export function SimpleDemoPlayer({
                           onClick={() => setShowDropdown(!showDropdown)}
                           className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg border border-border hover:bg-muted/50 transition-colors"
                         >
-                          <span>{currentDemoIndex + 1} / {demos.length}</span>
-                          <ChevronDown className={`w-4 h-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+                          <span>
+                            {currentDemoIndex + 1} / {demos.length}
+                          </span>
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`}
+                          />
                         </button>
-                        
+
                         <AnimatePresence>
                           {showDropdown && (
                             <motion.div
@@ -297,7 +299,9 @@ export function SimpleDemoPlayer({
                                     )}
                                   </div>
                                   {demo.description && (
-                                    <p className="text-xs text-muted-foreground mt-1">{demo.description}</p>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      {demo.description}
+                                    </p>
                                   )}
                                 </button>
                               ))}
@@ -307,11 +311,9 @@ export function SimpleDemoPlayer({
                       </div>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {artistName}
-                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">{artistName}</p>
                 </div>
-                
+
                 {/* Collapse button */}
                 <button
                   onClick={() => {
@@ -335,11 +337,11 @@ export function SimpleDemoPlayer({
             {/* Player Controls */}
             <div className="space-y-4">
               {/* Progress Bar */}
-              <div 
+              <div
                 className="relative h-2 bg-muted rounded-full cursor-pointer group"
                 onClick={handleProgressClick}
               >
-                <motion.div 
+                <motion.div
                   className="absolute inset-y-0 left-0 bg-primary rounded-full"
                   style={{ width: `${progress}%` }}
                 />
