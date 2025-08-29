@@ -7,7 +7,7 @@ let initializationError: Error | null = null;
 let isInitializing = false;
 let lastInitAttempt = 0;
 
-// Retry configuration for Docker/production environments
+// Retry configuration for production environments
 const RETRY_DELAY = 30000; // 30 seconds between retries
 const MAX_RETRIES = 5; // Maximum number of retries
 let retryCount = 0;
@@ -15,7 +15,7 @@ let retryCount = 0;
 /**
  * Safe wrapper around getPayload that handles initialization errors gracefully
  * This is especially important for initial deployments when the database might not be fully set up
- * Includes retry logic for Docker environments where database startup may be delayed
+ * Includes retry logic for production environments where database connections may be delayed
  */
 export async function getSafePayload(): Promise<BasePayload | null> {
   const now = Date.now();

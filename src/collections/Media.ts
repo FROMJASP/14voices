@@ -106,6 +106,8 @@ const Media: CollectionConfig = {
     ],
     // Storage handled by hybrid adapter
     disableLocalStorage: process.env.NODE_ENV === 'production' && !!process.env.S3_ACCESS_KEY,
+    // Disable Payload's file handler since we serve files directly from S3
+    handlers: [],
   },
   hooks: {
     beforeChange: [
@@ -212,6 +214,20 @@ const Media: CollectionConfig = {
         }
 
         return data;
+      },
+    ],
+    afterRead: [
+      async ({ doc }) => {
+        // Ensure URL is always populated correctly
+        // This prevents Payload from trying to use /api/media/file/
+        if (doc && !doc.url && doc.filename) {
+          // If we have S3_PUBLIC_URL, use it to construct the URL
+          const publicUrl = process.env.S3_PUBLIC_URL;
+          if (publicUrl) {
+            doc.url = `${publicUrl}/media/${doc.filename}`;
+          }
+        }
+        return doc;
       },
     ],
     afterChange: [

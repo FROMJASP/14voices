@@ -18,8 +18,6 @@ const withBundleAnalyzer = (config: NextConfig): NextConfig => {
 };
 
 const nextConfig: NextConfig = {
-  // Enable standalone output for Docker deployment
-  output: 'standalone',
   eslint: {
     // Disable ESLint during production builds to avoid dependency issues
     ignoreDuringBuilds: true,

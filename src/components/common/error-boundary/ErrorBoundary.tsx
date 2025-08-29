@@ -44,9 +44,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     const { onError, level = 'component' } = this.props;
-    
+
     this.errorCounter++;
-    
+
     // Log the error
     logger.error(`React ErrorBoundary caught error at ${level} level`, error, {
       action: 'error_boundary',
@@ -140,11 +140,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     // Wrap in a key to force re-mount on reset
-    return isolate ? (
-      <div key={this.state.errorBoundaryKey}>{children}</div>
-    ) : (
-      children
-    );
+    return isolate ? <div key={this.state.errorBoundaryKey}>{children}</div> : children;
   }
 }
 
@@ -177,7 +173,7 @@ function ErrorFallback({ error, level, onReset }: ErrorFallbackProps) {
           </div>
           <h1 className="text-2xl font-semibold text-text-primary mb-2">Something went wrong</h1>
           <p className="text-text-secondary mb-6">
-            We're sorry for the inconvenience. Please try refreshing the page.
+            We&apos;re sorry for the inconvenience. Please try refreshing the page.
           </p>
           {process.env.NODE_ENV === 'development' && (
             <details className="mb-6 text-left">
@@ -226,7 +222,7 @@ function ErrorFallback({ error, level, onReset }: ErrorFallbackProps) {
             d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p className="text-text-secondary mb-4">This section couldn't be loaded</p>
+        <p className="text-text-secondary mb-4">This section couldn&apos;t be loaded</p>
         <button
           onClick={onReset}
           className="text-sm text-primary hover:text-primary/80 transition-colors"

@@ -20,15 +20,18 @@ export default function AccountWrapper() {
   const avatarUrl =
     user?.avatarURL || // Virtual field with resolved URL
     user?.avatar?.url || // Direct media relationship
-    (typeof user?.avatar === 'object' && user?.avatar?.filename
-      ? `/api/media/file/${user.avatar.filename}`
-      : null) ||
     user?.image; // Fallback
   const displayName = user?.name || user?.email || 'User';
 
   // Override the default Payload account icon with custom styles
   React.useEffect(() => {
     const updateAccountIcon = () => {
+      // Early exit if avatar already exists
+      const existingCustomAvatar = document.querySelector('.custom-avatar-wrapper');
+      if (existingCustomAvatar) {
+        return;
+      }
+
       // Try multiple selectors to find the account link
       const selectors = [
         'nav a[href*="/admin/account"]',
@@ -93,7 +96,8 @@ export default function AccountWrapper() {
         }
 
         // Check if we already added our avatar
-        if (!accountLink.querySelector('.custom-avatar-wrapper')) {
+        const existingAvatar = accountLink.querySelector('.custom-avatar-wrapper');
+        if (!existingAvatar) {
           // Look for any child elements that might contain the icon
           const iconContainer = accountLink.querySelector('span, div') || accountLink;
 
@@ -140,18 +144,58 @@ export default function AccountWrapper() {
     const timeouts = [100, 500, 1000];
     const timers = timeouts.map((delay) => setTimeout(updateAccountIcon, delay));
 
-    // Watch for DOM changes
-    const observer = new MutationObserver(() => {
-      updateAccountIcon();
+    // Watch for DOM changes, but with better control to prevent infinite loops
+    let isUpdating = false;
+    let observerTimeout: NodeJS.Timeout | null = null;
+
+    const observer = new MutationObserver((mutations) => {
+      // Skip if we're already updating
+      if (isUpdating) return;
+
+      // Check if any mutation is related to account elements
+      const hasAccountChanges = mutations.some((mutation) => {
+        // Check if the mutation affects account-related elements
+        const target = mutation.target as HTMLElement;
+        return (
+          target.querySelector &&
+          (target.querySelector('a[href*="/admin/account"]') ||
+            target.querySelector('.custom-avatar-wrapper') ||
+            mutation.addedNodes.length > 0)
+        );
+      });
+
+      if (!hasAccountChanges) return;
+
+      // Debounce updates to prevent rapid firing
+      if (observerTimeout) {
+        clearTimeout(observerTimeout);
+      }
+
+      observerTimeout = setTimeout(() => {
+        isUpdating = true;
+        updateAccountIcon();
+        // Reset flag after DOM settles
+        setTimeout(() => {
+          isUpdating = false;
+        }, 100);
+      }, 100);
     });
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    // Observe only the navigation area to reduce observer overhead
+    const navElement = document.querySelector('nav');
+    if (navElement) {
+      observer.observe(navElement, {
+        childList: true,
+        subtree: true,
+        attributes: false,
+      });
+    }
 
     return () => {
       timers.forEach(clearTimeout);
+      if (observerTimeout) {
+        clearTimeout(observerTimeout);
+      }
       observer.disconnect();
     };
   }, [avatarUrl, displayName, user]);
