@@ -28,21 +28,21 @@ export const FAQManageField: React.FC = () => {
   const fetchFAQs = async () => {
     try {
       setLoading(true);
-      // Using Payload's collection REST API directly
-      const response = await fetch(`/api/faq?limit=100&sort=order&depth=0`, {
+      // Using Payload's built-in admin API
+      const response = await fetch(`/admin/api/faq?limit=100&sort=order&depth=0`, {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `JWT ${token}` } : {}),
+          ...(token ? { Authorization: `JWT ${token}` } : {}),
         },
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('FAQ fetch error:', errorText);
         throw new Error('Failed to fetch FAQs');
       }
-      
+
       const data = await response.json();
       // Handle both the custom API response and Payload's standard response
       if (data.items) {
@@ -61,14 +61,14 @@ export const FAQManageField: React.FC = () => {
 
   const deleteFAQ = async (id: string) => {
     if (!confirm('Are you sure you want to delete this FAQ?')) return;
-    
+
     try {
-      const response = await fetch(`/api/faq/${id}`, {
+      const response = await fetch(`/admin/api/faq/${id}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `JWT ${token}` } : {}),
+          ...(token ? { Authorization: `JWT ${token}` } : {}),
         },
       });
       if (!response.ok) throw new Error('Failed to delete FAQ');
@@ -81,11 +81,11 @@ export const FAQManageField: React.FC = () => {
 
   const togglePublished = async (id: string, published: boolean) => {
     try {
-      const response = await fetch(`/api/faq/${id}`, {
+      const response = await fetch(`/admin/api/faq/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `JWT ${token}` } : {}),
+          ...(token ? { Authorization: `JWT ${token}` } : {}),
         },
         credentials: 'include',
         body: JSON.stringify({ published: !published }),
@@ -107,24 +107,23 @@ export const FAQManageField: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        Loading FAQs...
-      </div>
-    );
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading FAQs...</div>;
   }
 
   if (error) {
-    return (
-      <div style={{ padding: '20px', color: 'var(--theme-error-500)' }}>
-        Error: {error}
-      </div>
-    );
+    return <div style={{ padding: '20px', color: 'var(--theme-error-500)' }}>Error: {error}</div>;
   }
 
   return (
     <div>
-      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <h3 style={{ margin: 0 }}>FAQ Management</h3>
         <Link
           href="/admin/collections/faq/create"
@@ -193,7 +192,9 @@ export const FAQManageField: React.FC = () => {
                 <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Order</th>
                 <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Question</th>
                 <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Category</th>
-                <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600' }}>Published</th>
+                <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600' }}>
+                  Published
+                </th>
                 <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600' }}>Actions</th>
               </tr>
             </thead>
@@ -207,7 +208,9 @@ export const FAQManageField: React.FC = () => {
                 >
                   <td style={{ padding: '12px', width: '60px' }}>{faq.order}</td>
                   <td style={{ padding: '12px', maxWidth: '400px' }}>
-                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div
+                      style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    >
                       {faq.question}
                     </div>
                   </td>
@@ -232,7 +235,9 @@ export const FAQManageField: React.FC = () => {
                         border: 'none',
                         cursor: 'pointer',
                         padding: '4px',
-                        color: faq.published ? 'var(--theme-success-600)' : 'var(--theme-text-muted)',
+                        color: faq.published
+                          ? 'var(--theme-success-600)'
+                          : 'var(--theme-text-muted)',
                       }}
                       title={faq.published ? 'Published' : 'Unpublished'}
                     >
