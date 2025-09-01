@@ -19,7 +19,6 @@ export async function seedSiteSettings(payload: Payload) {
       slug: 'site-settings',
       data: {
         siteName: '14voices',
-        tagline: 'Professional Voice-Over Services',
         siteUrl: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
         language: 'en',
         contact: {

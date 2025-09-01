@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@payloadcms/ui';
+import { useAuth, useTranslation } from '@payloadcms/ui';
 import { toast } from 'sonner';
 
 interface FAQ {
@@ -18,18 +18,51 @@ export const FAQManageField: React.FC = () => {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // const config = useConfig(); // Currently unused
+  const [draggedItem, setDraggedItem] = useState<FAQ | null>(null);
+  const [categories, setCategories] = useState<Record<string, string>>({});
   const { token } = useAuth();
+  const { i18n } = useTranslation();
 
   useEffect(() => {
-    fetchFAQs();
+    fetchFAQsAndCategories();
   }, []);
+
+  const fetchFAQsAndCategories = async () => {
+    await Promise.all([fetchFAQs(), fetchCategories()]);
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`/api/public/faq-settings`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `JWT ${token}` } : {}),
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const categoryMap: Record<string, string> = {};
+        
+        if (data.categories) {
+          data.categories.forEach((cat: any) => {
+            categoryMap[cat.slug] = cat.name;
+          });
+        }
+        
+        setCategories(categoryMap);
+      }
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  };
 
   const fetchFAQs = async () => {
     try {
       setLoading(true);
-      // Using Payload's built-in admin API
-      const response = await fetch(`/admin/api/faq?limit=100&sort=order&depth=0`, {
+      // Using Payload's default REST API endpoint
+      const response = await fetch(`/api/faq?limit=100&sort=order`, {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
@@ -44,14 +77,8 @@ export const FAQManageField: React.FC = () => {
       }
 
       const data = await response.json();
-      // Handle both the custom API response and Payload's standard response
-      if (data.items) {
-        // Custom API response
-        setFaqs(data.items || []);
-      } else {
-        // Payload standard response
-        setFaqs(data.docs || []);
-      }
+      // Payload standard response
+      setFaqs(data.docs || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load FAQs');
     } finally {
@@ -60,10 +87,13 @@ export const FAQManageField: React.FC = () => {
   };
 
   const deleteFAQ = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this FAQ?')) return;
+    const confirmMessage = i18n.language === 'nl' 
+      ? 'Weet je zeker dat je deze FAQ wilt verwijderen?' 
+      : 'Are you sure you want to delete this FAQ?';
+    if (!confirm(confirmMessage)) return;
 
     try {
-      const response = await fetch(`/admin/api/faq/${id}`, {
+      const response = await fetch(`/api/faq/${id}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -72,16 +102,16 @@ export const FAQManageField: React.FC = () => {
         },
       });
       if (!response.ok) throw new Error('Failed to delete FAQ');
-      toast.success('FAQ deleted successfully');
+      toast.success(i18n.language === 'nl' ? 'FAQ succesvol verwijderd' : 'FAQ deleted successfully');
       await fetchFAQs();
     } catch (err) {
-      toast.error('Failed to delete FAQ');
+      toast.error(i18n.language === 'nl' ? 'Fout bij verwijderen FAQ' : 'Failed to delete FAQ');
     }
   };
 
   const togglePublished = async (id: string, published: boolean) => {
     try {
-      const response = await fetch(`/admin/api/faq/${id}`, {
+      const response = await fetch(`/api/faq/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -91,27 +121,85 @@ export const FAQManageField: React.FC = () => {
         body: JSON.stringify({ published: !published }),
       });
       if (!response.ok) throw new Error('Failed to update FAQ');
-      toast.success(`FAQ ${!published ? 'published' : 'unpublished'} successfully`);
+      toast.success(
+        i18n.language === 'nl' 
+          ? `FAQ succesvol ${!published ? 'gepubliceerd' : 'gedepubliceerd'}`
+          : `FAQ ${!published ? 'published' : 'unpublished'} successfully`
+      );
       await fetchFAQs();
     } catch (err) {
-      toast.error('Failed to update FAQ');
+      toast.error(i18n.language === 'nl' ? 'Fout bij bijwerken FAQ' : 'Failed to update FAQ');
     }
   };
 
-  const categoryLabels: Record<string, string> = {
-    general: 'Algemeen',
-    pricing: 'Prijzen',
-    delivery: 'Levering',
-    technical: 'Technisch',
-    rights: 'Rechten',
+  const getCategoryName = (categorySlug: string): string => {
+    return categories[categorySlug] || categorySlug;
+  };
+
+  const handleDragStart = (e: React.DragEvent, faq: FAQ) => {
+    setDraggedItem(faq);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetFaq: FAQ) => {
+    e.preventDefault();
+    
+    if (!draggedItem || draggedItem.id === targetFaq.id) return;
+
+    const updatedFAQs = [...faqs];
+    const draggedIndex = updatedFAQs.findIndex(f => f.id === draggedItem.id);
+    const targetIndex = updatedFAQs.findIndex(f => f.id === targetFaq.id);
+
+    // Remove dragged item
+    updatedFAQs.splice(draggedIndex, 1);
+    // Insert at new position
+    updatedFAQs.splice(targetIndex, 0, draggedItem);
+
+    // Update order values
+    const reorderedFAQs = updatedFAQs.map((faq, index) => ({
+      ...faq,
+      order: index * 10
+    }));
+
+    setFaqs(reorderedFAQs);
+
+    // Update order in the backend
+    try {
+      for (const faq of reorderedFAQs) {
+        await fetch(`/api/faq/${faq.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `JWT ${token}` } : {}),
+          },
+          credentials: 'include',
+          body: JSON.stringify({ order: faq.order }),
+        });
+      }
+      toast.success(i18n.language === 'nl' ? 'Volgorde bijgewerkt' : 'Order updated');
+    } catch (err) {
+      toast.error(i18n.language === 'nl' ? 'Fout bij bijwerken volgorde' : 'Failed to update order');
+      await fetchFAQs(); // Reload original order
+    }
+
+    setDraggedItem(null);
   };
 
   if (loading) {
-    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading FAQs...</div>;
+    return <div style={{ padding: '20px', textAlign: 'center' }}>
+      {i18n.language === 'nl' ? 'FAQs laden...' : 'Loading FAQs...'}
+    </div>;
   }
 
   if (error) {
-    return <div style={{ padding: '20px', color: 'var(--theme-error-500)' }}>Error: {error}</div>;
+    return <div style={{ padding: '20px', color: 'var(--theme-error-500)' }}>
+      {i18n.language === 'nl' ? 'Fout: ' : 'Error: '}{error}
+    </div>;
   }
 
   return (
@@ -119,13 +207,20 @@ export const FAQManageField: React.FC = () => {
       <div
         style={{
           marginBottom: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
         }}
       >
-        <h3 style={{ margin: 0 }}>FAQ Management</h3>
-        <Link
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '10px',
+          }}
+        >
+          <h3 style={{ margin: 0 }}>
+            {i18n.language === 'nl' ? 'FAQ Beheer' : 'FAQ Management'}
+          </h3>
+          <Link
           href="/admin/collections/faq/create"
           target="_blank"
           rel="noopener noreferrer"
@@ -140,8 +235,31 @@ export const FAQManageField: React.FC = () => {
             fontWeight: '500',
           }}
         >
-          Add New FAQ
+          {i18n.language === 'nl' ? 'Nieuwe FAQ Toevoegen' : 'Add New FAQ'}
         </Link>
+        </div>
+        <p style={{ 
+          margin: '0 0 10px 0', 
+          fontSize: '14px', 
+          color: 'var(--theme-text-muted)' 
+        }}>
+          {i18n.language === 'nl' 
+            ? 'Voor meer opties zoals bulkacties en geavanceerd filteren, ga naar de '
+            : 'For more options like bulk actions and advanced filtering, go to the '
+          }
+          <Link 
+            href="/admin/collections/faq" 
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ 
+              color: 'var(--theme-primary-600)', 
+              textDecoration: 'underline' 
+            }}
+          >
+            {i18n.language === 'nl' ? 'volledige FAQ collectie' : 'full FAQ collection'}
+          </Link>
+          {i18n.language === 'nl' ? '.' : '.'}
+        </p>
       </div>
 
       {faqs.length === 0 ? (
@@ -153,7 +271,9 @@ export const FAQManageField: React.FC = () => {
             textAlign: 'center',
           }}
         >
-          <p style={{ marginBottom: '20px' }}>No FAQ items found.</p>
+          <p style={{ marginBottom: '20px' }}>
+            {i18n.language === 'nl' ? 'Geen FAQ items gevonden.' : 'No FAQ items found.'}
+          </p>
           <Link
             href="/admin/collections/faq/create"
             target="_blank"
@@ -169,7 +289,7 @@ export const FAQManageField: React.FC = () => {
               fontWeight: '500',
             }}
           >
-            Create Your First FAQ
+            {i18n.language === 'nl' ? 'Maak je Eerste FAQ' : 'Create Your First FAQ'}
           </Link>
         </div>
       ) : (
@@ -189,24 +309,45 @@ export const FAQManageField: React.FC = () => {
           >
             <thead>
               <tr style={{ backgroundColor: 'var(--theme-bg)' }}>
-                <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Order</th>
-                <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Question</th>
-                <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Category</th>
-                <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600' }}>
-                  Published
+                <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>
+                  {i18n.language === 'nl' ? 'Volgorde' : 'Order'}
                 </th>
-                <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600' }}>Actions</th>
+                <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>
+                  {i18n.language === 'nl' ? 'Vraag' : 'Question'}
+                </th>
+                <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>
+                  {i18n.language === 'nl' ? 'Categorie' : 'Category'}
+                </th>
+                <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600' }}>
+                  {i18n.language === 'nl' ? 'Gepubliceerd' : 'Published'}
+                </th>
+                <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600' }}>
+                  {i18n.language === 'nl' ? 'Acties' : 'Actions'}
+                </th>
               </tr>
             </thead>
             <tbody>
               {faqs.map((faq, index) => (
                 <tr
                   key={faq.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, faq)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, faq)}
                   style={{
                     borderTop: index > 0 ? '1px solid var(--theme-border)' : undefined,
+                    cursor: 'move',
+                    opacity: draggedItem?.id === faq.id ? 0.5 : 1,
                   }}
                 >
-                  <td style={{ padding: '12px', width: '60px' }}>{faq.order}</td>
+                  <td style={{ padding: '12px', width: '80px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ cursor: 'grab', color: 'var(--theme-text-muted)' }} title={i18n.language === 'nl' ? 'Sleep om te verplaatsen' : 'Drag to reorder'}>
+                        ⋮⋮
+                      </span>
+                      {index + 1}
+                    </div>
+                  </td>
                   <td style={{ padding: '12px', maxWidth: '400px' }}>
                     <div
                       style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
@@ -224,7 +365,7 @@ export const FAQManageField: React.FC = () => {
                         fontSize: '12px',
                       }}
                     >
-                      {categoryLabels[faq.category] || faq.category}
+                      {getCategoryName(faq.category)}
                     </span>
                   </td>
                   <td style={{ padding: '12px', width: '100px', textAlign: 'center' }}>
@@ -239,7 +380,10 @@ export const FAQManageField: React.FC = () => {
                           ? 'var(--theme-success-600)'
                           : 'var(--theme-text-muted)',
                       }}
-                      title={faq.published ? 'Published' : 'Unpublished'}
+                      title={faq.published 
+                        ? (i18n.language === 'nl' ? 'Gepubliceerd' : 'Published')
+                        : (i18n.language === 'nl' ? 'Niet gepubliceerd' : 'Unpublished')
+                      }
                     >
                       {faq.published ? '✓' : '○'}
                     </button>
@@ -260,7 +404,7 @@ export const FAQManageField: React.FC = () => {
                           border: '1px solid var(--theme-border)',
                         }}
                       >
-                        Edit
+                        {i18n.language === 'nl' ? 'Bewerken' : 'Edit'}
                       </Link>
                       <button
                         onClick={() => deleteFAQ(faq.id)}
@@ -274,7 +418,7 @@ export const FAQManageField: React.FC = () => {
                           cursor: 'pointer',
                         }}
                       >
-                        Delete
+                        {i18n.language === 'nl' ? 'Verwijderen' : 'Delete'}
                       </button>
                     </div>
                   </td>
@@ -295,7 +439,11 @@ export const FAQManageField: React.FC = () => {
           color: 'var(--theme-info-700)',
         }}
       >
-        <strong>Tip:</strong> FAQs are sorted by their order number. Lower numbers appear first.
+        <strong>{i18n.language === 'nl' ? 'Tip:' : 'Tip:'}</strong>{' '}
+        {i18n.language === 'nl' 
+          ? 'Sleep en plaats FAQ items om de volgorde te wijzigen.'
+          : 'Drag and drop FAQ items to change their order.'
+        }
       </div>
     </div>
   );

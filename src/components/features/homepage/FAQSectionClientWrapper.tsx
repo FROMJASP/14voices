@@ -34,7 +34,7 @@ export function FAQSectionClientWrapper() {
   useEffect(() => {
     async function fetchFAQData() {
       try {
-        const response = await fetch('/api/faq');
+        const response = await fetch('/api/public/faq');
 
         if (!response.ok) {
           throw new Error('Failed to fetch FAQ data');

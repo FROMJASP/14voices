@@ -32,6 +32,10 @@
       "singular": "Voiceover",
       "plural": "Voiceovers"
     },
+    "groups": {
+      "singular": "Group",
+      "plural": "Groups"
+    },
     "pages": {
       "singular": "Page",
       "plural": "Pages"
@@ -71,6 +75,10 @@
     "blog-posts": {
       "singular": "Blog Post",
       "plural": "Blog Posts"
+    },
+    "faq": {
+      "singular": "FAQ",
+      "plural": "FAQ"
     }
   },
   "fields": {
@@ -153,6 +161,40 @@
       "draft": "Draft (Not Ready)",
       "more-voices": "More Voices",
       "archived": "Archived"
+    }
+  },
+  "faq": {
+    "fields": {
+      "question": "Question",
+      "answer": "Answer",
+      "category": "Category",
+      "order": "Display Order",
+      "published": "Published"
+    },
+    "descriptions": {
+      "question": "The question that visitors frequently ask",
+      "answer": "Detailed answer to the question",
+      "category": "Category to group related questions",
+      "order": "Lower numbers appear first (0, 1, 2, ...)",
+      "published": "Only published FAQ items will be shown on the website"
+    },
+    "categories": {
+      "general": "General",
+      "pricing": "Pricing",
+      "delivery": "Delivery",
+      "technical": "Technical",
+      "rights": "Rights"
+    }
+  },
+  "pages": {
+    "deleteConfirmation": {
+      "title": "Confirm Page Deletion",
+      "warning": "This action cannot be undone. This will permanently delete the page and all its content.",
+      "instruction": "To confirm deletion, please type the page title: {{title}}",
+      "typeTitle": "Type page title",
+      "placeholder": "Enter page title to confirm",
+      "error": "The entered title does not match. Please try again.",
+      "homePageError": "The home page cannot be deleted."
     }
   }
 }

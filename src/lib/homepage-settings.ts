@@ -1,4 +1,6 @@
 import { getSafePayload } from '@/lib/safe-payload';
+import type { Page } from '@/payload-types';
+
 // Temporary interface until types are generated
 export interface HomepageSettings {
   hero: {
@@ -47,10 +49,42 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
       throw new Error('Payload not initialized');
     }
 
-    const settings = (await payload.findGlobal({
-      slug: 'homepage-settings' as any,
+    // Find the homepage (page with slug 'home')
+    const pages = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: {
+          equals: 'home',
+        },
+      },
+      limit: 1,
       depth: 2,
-    })) as HomepageSettings;
+    });
+
+    const homePage = pages.docs[0] as Page | undefined;
+
+    if (!homePage || !homePage.hero || homePage.hero.type !== 'homepage') {
+      throw new Error('Homepage not found or hero not configured');
+    }
+
+    // Transform the page data to match HomepageSettings interface
+    const settings: HomepageSettings = {
+      hero: {
+        processSteps: homePage.hero.processSteps || [],
+        title: homePage.hero.title || '',
+        description: homePage.hero.description || '',
+        primaryButton: homePage.hero.primaryButton || {
+          text: 'Ontdek stemmen',
+          url: '#voiceovers',
+        },
+        secondaryButton: homePage.hero.secondaryButton || {
+          text: 'Hoe wij werken',
+          url: '/hoe-het-werkt',
+        },
+        heroImage: homePage.hero.heroImage || '/header-image.png',
+        stats: homePage.hero.stats || [],
+      },
+    };
 
     // Cache the settings
     cachedSettings = settings;

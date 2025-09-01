@@ -1,14 +1,22 @@
 import type { CollectionConfig } from 'payload';
 import { formatSlug } from '../utilities/formatSlug';
 import { pageEditorConfig } from '../fields/lexical/pageEditorConfig';
+import { getCollectionLabels } from '../i18n';
+
+const labels = getCollectionLabels('pages');
 
 const Pages: CollectionConfig = {
   slug: 'pages',
+  labels: {
+    singular: labels.singular,
+    plural: labels.plural,
+  },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'status', 'updatedAt'],
     listSearchableFields: ['title', 'slug'],
     group: 'Content',
+    description: 'Manage site pages. Note: The home page cannot be deleted.',
     livePreview: {
       url: ({ data }) => `${process.env.NEXT_PUBLIC_SERVER_URL}/${data.slug}`,
     },
@@ -35,7 +43,17 @@ const Pages: CollectionConfig = {
     },
     create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
     update: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
-    delete: ({ req: { user } }) => user?.role === 'admin',
+    delete: ({ req: { user } }) => {
+      // Only admins can delete pages
+      if (user?.role !== 'admin') return false;
+      
+      // Prevent deletion of home page
+      return {
+        slug: {
+          not_equals: 'home',
+        },
+      };
+    },
   },
   versions: {
     drafts: true,
@@ -93,20 +111,59 @@ const Pages: CollectionConfig = {
                     { label: 'With Image', value: 'image' },
                     { label: 'Video Background', value: 'video' },
                     { label: 'Gradient', value: 'gradient' },
+                    { label: 'Homepage Hero', value: 'homepage' },
+                  ],
+                },
+                // Homepage-specific fields
+                {
+                  name: 'processSteps',
+                  type: 'array',
+                  label: 'Process Steps',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
+                    description: 'The small process steps displayed at the top of the hero',
+                    initCollapsed: false,
+                  },
+                  defaultValue: [
+                    { text: '1. Kies de stem' },
+                    { text: '2. Upload script' },
+                    { text: '3. Ontvang audio' },
+                  ],
+                  fields: [
+                    {
+                      name: 'text',
+                      type: 'text',
+                      required: true,
+                      admin: {
+                        description: 'Text for this step (e.g., "1. Kies de stem")',
+                      },
+                    },
                   ],
                 },
                 {
                   name: 'title',
-                  type: 'text',
+                  type: 'textarea',
                   admin: {
                     condition: (_data, siblingData) => siblingData?.type !== 'none',
+                    description: 'Hero title text',
+                    rows: 3,
                   },
                 },
                 {
                   name: 'subtitle',
                   type: 'text',
                   admin: {
-                    condition: (_data, siblingData) => siblingData?.type !== 'none',
+                    condition: (_data, siblingData) => siblingData?.type !== 'none' && siblingData?.type !== 'homepage',
+                  },
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  label: 'Description',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
+                    description: 'Hero description text',
+                    rows: 4,
                   },
                 },
                 {
@@ -118,6 +175,16 @@ const Pages: CollectionConfig = {
                   },
                 },
                 {
+                  name: 'heroImage',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Hero Image',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
+                    description: 'Main image displayed in the oval-shaped container on the right (recommended: high-quality portrait photo, minimum 400x500px)',
+                  },
+                },
+                {
                   name: 'videoUrl',
                   type: 'text',
                   admin: {
@@ -125,11 +192,68 @@ const Pages: CollectionConfig = {
                     description: 'YouTube or Vimeo URL',
                   },
                 },
+                // Homepage buttons
+                {
+                  name: 'primaryButton',
+                  type: 'group',
+                  label: 'Primary Button',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
+                  },
+                  fields: [
+                    {
+                      name: 'text',
+                      type: 'text',
+                      required: true,
+                      defaultValue: 'Ontdek stemmen',
+                      admin: {
+                        description: 'Text for the primary call-to-action button',
+                      },
+                    },
+                    {
+                      name: 'url',
+                      type: 'text',
+                      required: true,
+                      defaultValue: '#voiceovers',
+                      admin: {
+                        description: 'URL for the primary button (e.g., #voiceovers, /voiceovers)',
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'secondaryButton',
+                  type: 'group',
+                  label: 'Secondary Button',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
+                  },
+                  fields: [
+                    {
+                      name: 'text',
+                      type: 'text',
+                      required: true,
+                      defaultValue: 'Hoe wij werken',
+                      admin: {
+                        description: 'Text for the secondary button',
+                      },
+                    },
+                    {
+                      name: 'url',
+                      type: 'text',
+                      required: true,
+                      defaultValue: '/hoe-het-werkt',
+                      admin: {
+                        description: 'URL for the secondary button',
+                      },
+                    },
+                  ],
+                },
                 {
                   name: 'cta',
                   type: 'group',
                   admin: {
-                    condition: (_data, siblingData) => siblingData?.type !== 'none',
+                    condition: (_data, siblingData) => siblingData?.type !== 'none' && siblingData?.type !== 'homepage',
                   },
                   fields: [
                     {
@@ -149,6 +273,40 @@ const Pages: CollectionConfig = {
                         { label: 'Secondary', value: 'secondary' },
                         { label: 'Outline', value: 'outline' },
                       ],
+                    },
+                  ],
+                },
+                // Homepage stats
+                {
+                  name: 'stats',
+                  type: 'array',
+                  label: 'Statistics',
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
+                    description: 'Statistics displayed below the buttons',
+                    initCollapsed: false,
+                  },
+                  defaultValue: [
+                    { number: '14', label: 'Stemacteurs' },
+                    { number: '<48u', label: 'Snelle levering' },
+                    { number: '9.1/10', label: 'Klantbeoordeling' },
+                  ],
+                  fields: [
+                    {
+                      name: 'number',
+                      type: 'text',
+                      required: true,
+                      admin: {
+                        description: 'The statistic number/value (e.g., "14", "<48u", "9.1/10")',
+                      },
+                    },
+                    {
+                      name: 'label',
+                      type: 'text',
+                      required: true,
+                      admin: {
+                        description: 'The statistic label (e.g., "Stemacteurs", "Snelle levering")',
+                      },
                     },
                   ],
                 },
@@ -669,6 +827,22 @@ const Pages: CollectionConfig = {
           data.slug = 'home';
         }
         return data;
+      },
+    ],
+    beforeDelete: [
+      async ({ req, id }) => {
+        // Get the document to check if it's the home page
+        const page = await req.payload.findByID({
+          collection: 'pages',
+          id,
+        });
+        
+        if (page.slug === 'home') {
+          throw new Error('The home page cannot be deleted. It is a required page for the website.');
+        }
+        
+        // For other pages, add a warning message (this will show in the UI)
+        req.payload.logger.warn(`Page "${page.title}" (${page.slug}) is being deleted by user ${req.user?.email}`);
       },
     ],
   },

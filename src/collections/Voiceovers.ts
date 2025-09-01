@@ -1,11 +1,18 @@
 import type { CollectionConfig } from 'payload';
 import type { TextFieldSingleValidation } from 'payload';
+import { getCollectionLabels } from '../i18n';
+
+const labels = getCollectionLabels('voiceovers');
 
 const Voiceovers: CollectionConfig = {
   slug: 'voiceovers',
+  labels: {
+    singular: labels.singular,
+    plural: labels.plural,
+  },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'status', 'availability', 'styleTags', 'demos', 'cohort'],
+    defaultColumns: ['name', 'status', 'availability', 'styleTags', 'demos', 'group'],
     listSearchableFields: ['name', 'description'],
     group: 'Content',
     pagination: {
@@ -21,52 +28,52 @@ const Voiceovers: CollectionConfig = {
   },
   fields: [
     {
-      name: 'name',
-      type: 'text',
-      required: true,
-      label: {
-        en: 'First Name',
-        nl: 'Voornaam',
-      },
-      admin: {
-        description: {
-          en: 'Only the first name of the voiceover',
-          nl: 'Alleen de voornaam van de voice-over',
-        },
-        width: '25%',
-        components: {
-          Cell: './components/admin/cells/NameCell#NameCell',
-        },
-      },
-      validate: (async (value, { req, id }) => {
-        if (!value) return 'Name is required';
+              name: 'name',
+              type: 'text',
+              required: true,
+              label: {
+                en: 'First Name',
+                nl: 'Voornaam',
+              },
+              admin: {
+                description: {
+                  en: 'Only the first name of the voiceover',
+                  nl: 'Alleen de voornaam van de voice-over',
+                },
+                width: '25%',
+                components: {
+                  Cell: './components/admin/cells/NameCell#NameCell',
+                },
+              },
+              validate: (async (value, { req, id }) => {
+                if (!value) return 'Name is required';
 
-        const firstName = value.split(' ')[0].toLowerCase();
+                const firstName = value.split(' ')[0].toLowerCase();
 
-        // Check for existing voiceovers with the same first name
-        const existingVoiceovers = await req.payload.find({
-          collection: 'voiceovers',
-          where: {
-            id: {
-              not_equals: id || '0', // Exclude current record when updating
+                // Check for existing voiceovers with the same first name
+                const existingVoiceovers = await req.payload.find({
+                  collection: 'voiceovers',
+                  where: {
+                    id: {
+                      not_equals: id || '0', // Exclude current record when updating
+                    },
+                  },
+                  limit: 1000,
+                });
+
+                const duplicateFirstNames = existingVoiceovers.docs.filter((vo: any) => {
+                  const existingFirstName = vo.name?.split(' ')[0].toLowerCase();
+                  return existingFirstName === firstName;
+                });
+
+                if (duplicateFirstNames.length > 0) {
+                  const duplicateNames = duplicateFirstNames.map((vo: any) => vo.name).join(', ');
+                  return `WARNING: Another voiceover with the same first name "${firstName}" already exists: ${duplicateNames}. This will cause URL conflicts! Please use a different first name or add a middle initial/nickname.`;
+                }
+
+                return true;
+              }) as TextFieldSingleValidation,
             },
-          },
-          limit: 1000,
-        });
-
-        const duplicateFirstNames = existingVoiceovers.docs.filter((vo: any) => {
-          const existingFirstName = vo.name?.split(' ')[0].toLowerCase();
-          return existingFirstName === firstName;
-        });
-
-        if (duplicateFirstNames.length > 0) {
-          const duplicateNames = duplicateFirstNames.map((vo: any) => vo.name).join(', ');
-          return `WARNING: Another voiceover with the same first name "${firstName}" already exists: ${duplicateNames}. This will cause URL conflicts! Please use a different first name or add a middle initial/nickname.`;
-        }
-
-        return true;
-      }) as TextFieldSingleValidation,
-    },
     {
       name: 'slug',
       type: 'text',
@@ -285,24 +292,20 @@ const Voiceovers: CollectionConfig = {
       },
     },
     {
-      name: 'cohort',
+      name: 'group',
       type: 'relationship',
-      relationTo: 'cohorts',
-      hasMany: false,
+      relationTo: 'groups',
       required: true,
       label: {
-        en: 'Cohort',
-        nl: 'Lichting/Groep',
+        en: 'Group',
+        nl: 'Groep',
       },
       admin: {
         description: {
-          en: 'The cohort/group this voiceover belongs to (each 3-6 months we have a new cohort/group)',
-          nl: 'De lichting/groep waar deze voice-over toe behoort. Iedere 3 à 6 maanden hebben we een nieuwe lichting/groep.',
+          en: 'The group/cohort this voiceover belongs to',
+          nl: 'De groep/lichting waar deze voice-over toe behoort',
         },
         width: '20%',
-        components: {
-          Cell: './components/admin/cells/CohortCell#CohortCell',
-        },
       },
     },
     {
@@ -403,24 +406,6 @@ const Voiceovers: CollectionConfig = {
           }
         }
         return data;
-      },
-    ],
-    afterRead: [
-      async ({ doc, req }) => {
-        // Always populate cohort if it's just an ID
-        if (doc.cohort && typeof doc.cohort === 'string') {
-          try {
-            const cohort = await req.payload.findByID({
-              collection: 'cohorts',
-              id: doc.cohort,
-              depth: 0,
-            });
-            doc.cohort = cohort;
-          } catch {
-            // Cohort might be deleted, leave as is
-          }
-        }
-        return doc;
       },
     ],
   },

@@ -1,10 +1,10 @@
 import type { CollectionConfig } from 'payload';
-import { getCollectionLabels, getFAQFieldLabel, getFAQFieldDescription } from '../i18n';
+import { getCollectionLabels, getFAQFieldLabel, getFAQCategoryLabel } from '../i18n';
 import { defaultFAQCategories } from '../lib/faq-categories';
 
 const labels = getCollectionLabels('faq');
 
-export const FAQ: CollectionConfig = {
+const FAQ: CollectionConfig = {
   slug: 'faq',
   labels: {
     singular: labels.singular,
@@ -13,10 +13,6 @@ export const FAQ: CollectionConfig = {
   admin: {
     useAsTitle: 'question',
     defaultColumns: ['question', 'category', 'order', 'published'],
-    description: {
-      en: 'Manage frequently asked questions and configure how they appear on the homepage',
-      nl: 'Beheer veelgestelde vragen en configureer hoe ze op de homepage worden weergegeven',
-    },
     group: 'Content',
   },
   access: {
@@ -31,28 +27,22 @@ export const FAQ: CollectionConfig = {
       type: 'text',
       required: true,
       label: getFAQFieldLabel('question'),
-      admin: {
-        description: getFAQFieldDescription('question'),
-      },
     },
     {
       name: 'answer',
       type: 'richText',
       required: true,
       label: getFAQFieldLabel('answer'),
-      admin: {
-        description: getFAQFieldDescription('answer'),
-      },
     },
     {
       name: 'category',
       type: 'select',
       label: getFAQFieldLabel('category'),
       defaultValue: 'general',
-      options: defaultFAQCategories,
-      admin: {
-        description: getFAQFieldDescription('category'),
-      },
+      options: defaultFAQCategories.map(cat => ({
+        label: getFAQCategoryLabel(cat.value),
+        value: cat.value,
+      })),
     },
     {
       name: 'order',
@@ -60,7 +50,6 @@ export const FAQ: CollectionConfig = {
       defaultValue: 0,
       label: getFAQFieldLabel('order'),
       admin: {
-        description: getFAQFieldDescription('order'),
         components: {
           Cell: '@/components/admin/cells/OrderCell#OrderCell',
         },
@@ -71,9 +60,6 @@ export const FAQ: CollectionConfig = {
       type: 'checkbox',
       defaultValue: true,
       label: getFAQFieldLabel('published'),
-      admin: {
-        description: getFAQFieldDescription('published'),
-      },
     },
   ],
   hooks: {
@@ -88,3 +74,5 @@ export const FAQ: CollectionConfig = {
     ],
   },
 };
+
+export default FAQ;

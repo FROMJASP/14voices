@@ -24,13 +24,13 @@ async function getFAQData() {
   try {
     const payload = await getPayload({ config: configPromise });
     
-    // Get site settings for FAQ configuration
-    const siteSettings = await payload.findGlobal({
-      slug: 'site-settings',
+    // Get FAQ settings from the dedicated FAQ settings global
+    const faqSettingsGlobal = await payload.findGlobal({
+      slug: 'faq-settings',
     });
 
     // @ts-expect-error - FAQ settings will be available after schema regeneration
-    const faqSettings: FAQSettings = siteSettings?.faq || {
+    const faqSettings: FAQSettings = faqSettingsGlobal?.settings || {
       enabled: true,
       title: 'Veelgestelde vragen',
       description: 'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',

@@ -79,6 +79,8 @@ export const i18n = {
         'general:logout': 'Uitloggen',
         'general:payloadSettings': 'CMS Instellingen',
         'general:cmsSettings': 'CMS Instellingen',
+        'collections:groups:noResults': 'Geen groepen gevonden of er bestaat geen groep met de hierboven gespecificeerde filters.',
+        'general:createNew': 'Nieuwe {{label}} aanmaken',
       },
     },
     en: {
@@ -88,6 +90,8 @@ export const i18n = {
         'authentication:otherSettings': 'CMS Settings',
         'general:payloadSettings': 'CMS Settings',
         'general:cmsSettings': 'CMS Settings',
+        'collections:groups:noResults': 'No groups found or there does not exist a group based on the filters specified above.',
+        'general:createNew': 'Create new {{label}}',
       },
     },
   },
@@ -129,5 +133,29 @@ export function getGroupLabel(group: string) {
   return {
     nl: nlTranslations.groups[group as keyof typeof nlTranslations.groups] || group,
     en: enTranslations.groups[group as keyof typeof enTranslations.groups] || group,
+  };
+}
+
+// Helper function to get FAQ-specific field labels
+export function getFAQFieldLabel(field: string) {
+  return {
+    nl: nlTranslations.faq?.fields?.[field as keyof typeof nlTranslations.faq.fields] || field,
+    en: enTranslations.faq?.fields?.[field as keyof typeof enTranslations.faq.fields] || field,
+  };
+}
+
+// Helper function to get FAQ-specific field descriptions
+export function getFAQFieldDescription(field: string) {
+  return {
+    nl: nlTranslations.faq?.descriptions?.[field as keyof typeof nlTranslations.faq.descriptions] || '',
+    en: enTranslations.faq?.descriptions?.[field as keyof typeof enTranslations.faq.descriptions] || '',
+  };
+}
+
+// Helper function to get FAQ category labels
+export function getFAQCategoryLabel(category: string) {
+  return {
+    nl: nlTranslations.faq?.categories?.[category as keyof typeof nlTranslations.faq.categories] || category,
+    en: enTranslations.faq?.categories?.[category as keyof typeof enTranslations.faq.categories] || category,
   };
 }

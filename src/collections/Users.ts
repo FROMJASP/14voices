@@ -255,7 +255,7 @@ const Users: CollectionConfig = {
       name: 'bio',
       type: 'textarea',
       admin: {
-        description: 'Short biography or description',
+        description: { en: 'Short bio about yourself', nl: 'Korte bio over jezelf' },
         rows: 4,
       },
       maxLength: 500,
@@ -264,7 +264,7 @@ const Users: CollectionConfig = {
       name: 'socialLinks',
       type: 'group',
       admin: {
-        description: 'Social media profiles',
+        description: {en: 'Social media profiles', nl: 'Social media profielen'},
       },
       fields: [
         {

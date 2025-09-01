@@ -32,6 +32,10 @@
       "singular": "Voice-over",
       "plural": "Voice-overs"
     },
+    "groups": {
+      "singular": "Groep",
+      "plural": "Groepen"
+    },
     "pages": {
       "singular": "Pagina",
       "plural": "Pagina's"
@@ -71,6 +75,10 @@
     "blog-posts": {
       "singular": "Blog Artikel",
       "plural": "Blog Artikelen"
+    },
+    "faq": {
+      "singular": "Veelgestelde vraag",
+      "plural": "Veelgestelde vragen"
     }
   },
   "fields": {
@@ -153,6 +161,40 @@
       "draft": "Concept (Niet Klaar)",
       "more-voices": "Meer Stemmen",
       "archived": "Gearchiveerd"
+    }
+  },
+  "faq": {
+    "fields": {
+      "question": "Vraag",
+      "answer": "Antwoord",
+      "category": "Categorie",
+      "order": "Volgorde",
+      "published": "Gepubliceerd"
+    },
+    "descriptions": {
+      "question": "De vraag die bezoekers vaak stellen",
+      "answer": "Gedetailleerd antwoord op de vraag",
+      "category": "Categorie om gerelateerde vragen te groeperen",
+      "order": "Lagere nummers verschijnen eerst (0, 1, 2, ...)",
+      "published": "Alleen gepubliceerde FAQ-items worden op de website getoond"
+    },
+    "categories": {
+      "general": "Algemeen",
+      "pricing": "Prijzen",
+      "delivery": "Levering",
+      "technical": "Technisch",
+      "rights": "Rechten"
+    }
+  },
+  "pages": {
+    "deleteConfirmation": {
+      "title": "Bevestig pagina verwijdering",
+      "warning": "Deze actie kan niet ongedaan worden gemaakt. Dit zal de pagina en alle inhoud permanent verwijderen.",
+      "instruction": "Om het verwijderen te bevestigen, typ de paginatitel: {{title}}",
+      "typeTitle": "Typ paginatitel",
+      "placeholder": "Voer paginatitel in om te bevestigen",
+      "error": "De ingevoerde titel komt niet overeen. Probeer het opnieuw.",
+      "homePageError": "De homepagina kan niet worden verwijderd."
     }
   }
 }

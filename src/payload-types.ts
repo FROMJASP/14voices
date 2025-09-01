@@ -69,7 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
-    cohorts: Cohort;
+    groups: Group;
     voiceovers: Voiceover;
     bookings: Booking;
     scripts: Script;
@@ -79,7 +79,7 @@ export interface Config {
     forms: Form;
     'form-submissions': FormSubmission;
     testimonials: Testimonial;
-    faq: FAQ;
+    faq: Faq;
     'email-components': EmailComponent;
     'email-templates': EmailTemplate;
     'email-sequences': EmailSequence;
@@ -97,7 +97,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    cohorts: CohortsSelect<false> | CohortsSelect<true>;
+    groups: GroupsSelect<false> | GroupsSelect<true>;
     voiceovers: VoiceoversSelect<false> | VoiceoversSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
     scripts: ScriptsSelect<false> | ScriptsSelect<true>;
@@ -107,6 +107,7 @@ export interface Config {
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
     'email-components': EmailComponentsSelect<false> | EmailComponentsSelect<true>;
     'email-templates': EmailTemplatesSelect<false> | EmailTemplatesSelect<true>;
     'email-sequences': EmailSequencesSelect<false> | EmailSequencesSelect<true>;
@@ -125,10 +126,12 @@ export interface Config {
   };
   globals: {
     'email-settings': EmailSetting;
+    'faq-settings': FaqSetting;
     'site-settings': SiteSetting;
   };
   globalsSelect: {
     'email-settings': EmailSettingsSelect<false> | EmailSettingsSelect<true>;
+    'faq-settings': FaqSettingsSelect<false> | FaqSettingsSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: 'nl' | 'en';
@@ -174,167 +177,24 @@ export interface User {
    * Color for default avatar when no image is uploaded
    */
   avatarColor?: string | null;
-  /**
-   * User account status
-   */
-  status: 'active' | 'inactive' | 'suspended';
   role: 'admin' | 'editor' | 'user';
-  /**
-   * Department or team the user belongs to
-   */
-  department?: ('management' | 'production' | 'marketing' | 'finance' | 'support' | 'other') | null;
-  /**
-   * Job title or position
-   */
   jobTitle?: string | null;
-  /**
-   * Phone number (including country code)
-   */
   phone?: string | null;
   /**
-   * Short biography or description
+   * Short bio about yourself
    */
   bio?: string | null;
-  /**
-   * User timezone preference
-   */
-  timezone?:
-    | (
-        | 'Europe/Amsterdam'
-        | 'Europe/London'
-        | 'Europe/Paris'
-        | 'Europe/Berlin'
-        | 'America/New_York'
-        | 'America/Chicago'
-        | 'America/Los_Angeles'
-        | 'Asia/Tokyo'
-        | 'Asia/Shanghai'
-        | 'Australia/Sydney'
-      )
-    | null;
   /**
    * Social media profiles
    */
   socialLinks?: {
     linkedin?: string | null;
-    twitter?: string | null;
-    github?: string | null;
-    website?: string | null;
-  };
-  /**
-   * Your preferred language for the admin interface
-   */
-  preferredLanguage?: ('nl' | 'en') | null;
-  emailPreferences?: {
-    /**
-     * User has unsubscribed from all emails
-     */
-    unsubscribed?: boolean | null;
-    /**
-     * Receive marketing emails
-     */
-    marketing?: boolean | null;
-    /**
-     * Receive transactional emails (bookings, invoices)
-     */
-    transactional?: boolean | null;
-    /**
-     * Receive product updates and announcements
-     */
-    updates?: boolean | null;
-  };
-  /**
-   * Security and authentication settings
-   */
-  security?: {
-    /**
-     * Last successful login timestamp
-     */
-    lastLogin?: string | null;
-    /**
-     * Total number of successful logins
-     */
-    loginCount?: number | null;
-    /**
-     * Two-factor authentication enabled
-     */
-    twoFactorEnabled?: boolean | null;
-    /**
-     * Last password change timestamp
-     */
-    passwordChangedAt?: string | null;
-    /**
-     * Recent login history
-     */
-    loginHistory?:
-      | {
-          timestamp: string;
-          ipAddress?: string | null;
-          userAgent?: string | null;
-          success?: boolean | null;
-          id?: string | null;
-        }[]
-      | null;
+    instagram?: string | null;
   };
   /**
    * Last login time
    */
   lastLogin?: string | null;
-  /**
-   * Notification preferences (in-app, push, SMS)
-   */
-  notifications?: {
-    /**
-     * Receive in-app notifications
-     */
-    inApp?: boolean | null;
-    /**
-     * Receive push notifications
-     */
-    push?: boolean | null;
-    /**
-     * Receive SMS notifications
-     */
-    sms?: boolean | null;
-  };
-  /**
-   * Additional metadata and notes
-   */
-  metadata?: {
-    /**
-     * Tags for categorization
-     */
-    tags?:
-      | {
-          tag: string;
-          id?: string | null;
-        }[]
-      | null;
-    /**
-     * Private notes about this user (admin only)
-     */
-    notes?: string | null;
-    /**
-     * Custom fields for additional data
-     */
-    customFields?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-    /**
-     * User who created this account
-     */
-    createdBy?: (number | null) | User;
-    /**
-     * Last user who updated this account
-     */
-    updatedBy?: (number | null) | User;
-  };
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -362,12 +222,12 @@ export interface Media {
   /**
    * Alternative text for images (required for accessibility)
    */
-  alt?: string | null;
+  alt: string;
   /**
-   * Optional caption for audio files
+   * Optional caption for media files
    */
   caption?: string | null;
-  uploadedBy: number | User;
+  uploadedBy?: (number | null) | User;
   scanStatus?: ('pending' | 'safe' | 'suspicious' | 'blocked') | null;
   scanDetails?:
     | {
@@ -418,9 +278,9 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "cohorts".
+ * via the `definition` "groups".
  */
-export interface Cohort {
+export interface Group {
   id: number;
   /**
    * Name of the cohort (e.g., "November 2025", "Summer Voices")
@@ -431,10 +291,6 @@ export interface Cohort {
    */
   slug: string;
   /**
-   * Color for the cohort badge
-   */
-  color: 'blue' | 'purple' | 'green' | 'yellow' | 'red' | 'pink' | 'orange' | 'teal' | 'indigo' | 'gray';
-  /**
    * Optional description of this cohort
    */
   description?: string | null;
@@ -442,6 +298,7 @@ export interface Cohort {
    * Whether this cohort is currently active
    */
   isActive?: boolean | null;
+  voiceoverCount?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -452,19 +309,19 @@ export interface Cohort {
 export interface Voiceover {
   id: number;
   /**
-   * The name of the voiceover artist
+   * Only the first name of the voiceover
    */
   name: string;
   /**
-   * URL-friendly version of the name
+   * Every voiceover has its own page and this the URL that will be automatically generated based on the first name of the voiceover. E.g. 'peter' becomes 14voices.com/peter
    */
   slug: string;
   /**
-   * Optional description or bio
+   * Optional bio shown on the voiceover's page
    */
   description?: string | null;
   /**
-   * Primary profile photo for this voiceover artist
+   * Profile photo of the voiceover
    */
   profilePhoto?: (number | null) | Media;
   /**
@@ -522,9 +379,9 @@ export interface Voiceover {
    */
   status: 'active' | 'draft' | 'more-voices' | 'archived';
   /**
-   * Optional cohort this voiceover belongs to (each 3-6 months we have a new cohort)
+   * The group/cohort this voiceover belongs to
    */
-  cohort?: (number | null) | Cohort;
+  group: number | Group;
   availability?: {
     /**
      * Is this voiceover currently available for bookings?
@@ -851,6 +708,8 @@ export interface Meta {
   noIndex?: boolean | null;
 }
 /**
+ * Manage site pages. Note: The home page cannot be deleted.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -865,19 +724,78 @@ export interface Page {
    */
   slug: string;
   hero?: {
-    type?: ('none' | 'simple' | 'image' | 'video' | 'gradient') | null;
+    type?: ('none' | 'simple' | 'image' | 'video' | 'gradient' | 'homepage') | null;
+    /**
+     * The small process steps displayed at the top of the hero
+     */
+    processSteps?:
+      | {
+          /**
+           * Text for this step (e.g., "1. Kies de stem")
+           */
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Hero title text
+     */
     title?: string | null;
     subtitle?: string | null;
+    /**
+     * Hero description text
+     */
+    description?: string | null;
     image?: (number | null) | Media;
+    /**
+     * Main image displayed in the oval-shaped container on the right (recommended: high-quality portrait photo, minimum 400x500px)
+     */
+    heroImage?: (number | null) | Media;
     /**
      * YouTube or Vimeo URL
      */
     videoUrl?: string | null;
+    primaryButton?: {
+      /**
+       * Text for the primary call-to-action button
+       */
+      text: string;
+      /**
+       * URL for the primary button (e.g., #voiceovers, /voiceovers)
+       */
+      url: string;
+    };
+    secondaryButton?: {
+      /**
+       * Text for the secondary button
+       */
+      text: string;
+      /**
+       * URL for the secondary button
+       */
+      url: string;
+    };
     cta?: {
       text?: string | null;
       link?: string | null;
       style?: ('primary' | 'secondary' | 'outline') | null;
     };
+    /**
+     * Statistics displayed below the buttons
+     */
+    stats?:
+      | {
+          /**
+           * The statistic number/value (e.g., "14", "<48u", "9.1/10")
+           */
+          number: string;
+          /**
+           * The statistic label (e.g., "Stemacteurs", "Snelle levering")
+           */
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Main page content
@@ -1186,20 +1104,6 @@ export interface Testimonial {
   updatedAt: string;
   createdAt: string;
 }
-
-export interface FAQ {
-  id: string;
-  question: string;
-  answer?: {
-    [k: string]: unknown;
-  } | null;
-  category?: ('general' | 'pricing' | 'technical' | 'delivery' | 'other') | null;
-  order?: number | null;
-  published?: boolean | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms".
@@ -1402,6 +1306,51 @@ export interface FormSubmission {
   createdAt: string;
 }
 /**
+ * Manage frequently asked questions and configure how they appear on the homepage
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  /**
+   * The question that visitors frequently ask
+   */
+  question: string;
+  /**
+   * Detailed answer to the question
+   */
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Category to group related questions
+   */
+  category?: ('general' | 'pricing' | 'delivery' | 'technical' | 'rights') | null;
+  /**
+   * Lower numbers appear first (0, 1, 2, ...)
+   */
+  order?: number | null;
+  /**
+   * Only published FAQ items will be shown on the website
+   */
+  published?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "email-components".
  */
@@ -1590,7 +1539,7 @@ export interface EmailSequence {
  */
 export interface EmailLog {
   id: number;
-  recipient: number | User;
+  recipient?: (number | null) | User;
   /**
    * Email address (denormalized for queries)
    */
@@ -2089,8 +2038,8 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'cohorts';
-        value: number | Cohort;
+        relationTo: 'groups';
+        value: number | Group;
       } | null)
     | ({
         relationTo: 'voiceovers';
@@ -2127,6 +2076,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'testimonials';
         value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'faq';
+        value: number | Faq;
       } | null)
     | ({
         relationTo: 'email-components';
@@ -2215,69 +2168,17 @@ export interface UsersSelect<T extends boolean = true> {
   avatar?: T;
   avatarURL?: T;
   avatarColor?: T;
-  status?: T;
   role?: T;
-  department?: T;
   jobTitle?: T;
   phone?: T;
   bio?: T;
-  timezone?: T;
   socialLinks?:
     | T
     | {
         linkedin?: T;
-        twitter?: T;
-        github?: T;
-        website?: T;
-      };
-  preferredLanguage?: T;
-  emailPreferences?:
-    | T
-    | {
-        unsubscribed?: T;
-        marketing?: T;
-        transactional?: T;
-        updates?: T;
-      };
-  security?:
-    | T
-    | {
-        lastLogin?: T;
-        loginCount?: T;
-        twoFactorEnabled?: T;
-        passwordChangedAt?: T;
-        loginHistory?:
-          | T
-          | {
-              timestamp?: T;
-              ipAddress?: T;
-              userAgent?: T;
-              success?: T;
-              id?: T;
-            };
+        instagram?: T;
       };
   lastLogin?: T;
-  notifications?:
-    | T
-    | {
-        inApp?: T;
-        push?: T;
-        sms?: T;
-      };
-  metadata?:
-    | T
-    | {
-        tags?:
-          | T
-          | {
-              tag?: T;
-              id?: T;
-            };
-        notes?: T;
-        customFields?: T;
-        createdBy?: T;
-        updatedBy?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -2353,14 +2254,14 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "cohorts_select".
+ * via the `definition` "groups_select".
  */
-export interface CohortsSelect<T extends boolean = true> {
+export interface GroupsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
-  color?: T;
   description?: T;
   isActive?: T;
+  voiceoverCount?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2391,7 +2292,7 @@ export interface VoiceoversSelect<T extends boolean = true> {
   commercialsDemo?: T;
   narrativeDemo?: T;
   status?: T;
-  cohort?: T;
+  group?: T;
   availability?:
     | T
     | {
@@ -2559,16 +2460,43 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        processSteps?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
         title?: T;
         subtitle?: T;
+        description?: T;
         image?: T;
+        heroImage?: T;
         videoUrl?: T;
+        primaryButton?:
+          | T
+          | {
+              text?: T;
+              url?: T;
+            };
+        secondaryButton?:
+          | T
+          | {
+              text?: T;
+              url?: T;
+            };
         cta?:
           | T
           | {
               text?: T;
               link?: T;
               style?: T;
+            };
+        stats?:
+          | T
+          | {
+              number?: T;
+              label?: T;
+              id?: T;
             };
       };
   content?: T;
@@ -2830,6 +2758,19 @@ export interface TestimonialsSelect<T extends boolean = true> {
             };
       };
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  order?: T;
+  published?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3235,39 +3176,103 @@ export interface EmailSetting {
   createdAt?: string | null;
 }
 /**
+ * Configure how the FAQ section appears on the homepage
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-settings".
+ */
+export interface FaqSetting {
+  id: number;
+  settings?: {
+    /**
+     * Show the FAQ section on the homepage
+     */
+    enabled?: boolean | null;
+    /**
+     * Title displayed above the FAQ section
+     */
+    title?: string | null;
+    /**
+     * Optional description text below the title
+     */
+    description?: string | null;
+    /**
+     * Maximum number of FAQ items to display on the homepage (1-50)
+     */
+    itemsToShow?: number | null;
+    /**
+     * Allow visitors to filter FAQ items by category
+     */
+    showCategories?: boolean | null;
+    /**
+     * Automatically expand the first FAQ item when the section loads
+     */
+    expandFirst?: boolean | null;
+    /**
+     * Allow multiple FAQ items to be expanded at the same time
+     */
+    multipleOpen?: boolean | null;
+  };
+  /**
+   * Define categories for organizing FAQ items. Drag to reorder.
+   */
+  categories?:
+    | {
+        /**
+         * Display name for the category
+         */
+        name: string;
+        /**
+         * URL-friendly identifier (auto-generated from name)
+         */
+        slug: string;
+        /**
+         * Optional description of what types of questions belong in this category
+         */
+        description?: string | null;
+        /**
+         * Whether this category is visible on the website
+         */
+        published?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
 export interface SiteSetting {
   id: number;
   /**
-   * The name of your website
+   * The name of the website. This appears in browser tabs, search results, and when sharing links on social media. Important for SEO and brand recognition.
    */
   siteName: string;
   /**
-   * A short tagline or description
-   */
-  tagline?: string | null;
-  /**
-   * Site logo for header
+   * The company logo that appears in the website header. Recommended size: 200x50 pixels. Used for brand identity and navigation. For best results, use SVG or PNG with transparent background.
    */
   logo?: (number | null) | Media;
   /**
-   * Upload a custom favicon (recommended: 32x32px SVG or PNG). If no favicon is uploaded, a default dark "14" icon will be used.
+   * The small icon that appears in browser tabs and bookmarks. Recommended: 32x32px SVG or PNG. If no favicon is uploaded, a default dark "14" icon will be used. Important for brand recognition and professional appearance.
    */
   favicon?: (number | null) | Media;
   /**
-   * Full site URL (e.g., https://14voices.com)
+   * The complete URL of the website (e.g., https://14voices.com). Used for generating absolute URLs in sitemaps, RSS feeds, and social media meta tags. Critical for SEO and proper functioning of sharing features.
    */
   siteUrl: string;
-  language?: ('en' | 'es' | 'fr' | 'de') | null;
+  /**
+   * The default language for the website content. This affects the language declaration in HTML, helping search engines understand the content language. Important for SEO and accessibility. Does not change CMS interface language.
+   */
+  language?: ('nl' | 'en' | 'es' | 'fr' | 'de') | null;
   contact?: {
     /**
-     * Primary contact email
+     * Primary contact email address for business inquiries. This appears in the footer and contact sections of the website.
      */
     email?: string | null;
     /**
-     * Primary contact phone
+     * Primary contact phone number. Include country code for international visibility (e.g., +31 6 12345678).
      */
     phone?: string | null;
     address?: {
@@ -3278,47 +3283,50 @@ export interface SiteSetting {
       country?: string | null;
     };
     /**
-     * Business hours (one per line)
+     * Business hours (one per line). Example:
+     * Monday-Friday: 9:00-17:00
+     * Saturday: 10:00-15:00
+     * Sunday: Closed
      */
     hours?: string | null;
   };
   socialLinks?: {
     /**
-     * Facebook page URL
+     * Complete URL to your Facebook page (e.g., https://facebook.com/14voices).
      */
     facebook?: string | null;
     /**
-     * Twitter/X profile URL
+     * Complete URL to your Twitter/X profile (e.g., https://x.com/14voices).
      */
     twitter?: string | null;
     /**
-     * Instagram profile URL
+     * Complete URL to your Instagram profile (e.g., https://instagram.com/14voices).
      */
     instagram?: string | null;
     /**
-     * LinkedIn profile URL
+     * Complete URL to your LinkedIn company page or profile (e.g., https://linkedin.com/company/14voices).
      */
     linkedin?: string | null;
     /**
-     * YouTube channel URL
+     * Complete URL to your YouTube channel (e.g., https://youtube.com/@14voices).
      */
     youtube?: string | null;
     /**
-     * TikTok profile URL
+     * Complete URL to your TikTok profile (e.g., https://tiktok.com/@14voices).
      */
     tiktok?: string | null;
   };
   defaultSeo?: {
     /**
-     * Default page title template (e.g., %s | 14voices)
+     * Template for browser tab titles. Use %s where the page-specific title should appear (e.g., "%s | 14voices"). This template is used when pages don't have their own custom title. Important for SEO and user navigation.
      */
     title?: string | null;
     /**
-     * Default meta description
+     * Default description for search engine results. Used when pages don't have their own description. Should be 150-160 characters for optimal display. This text appears under the page title in search results.
      */
     description?: string | null;
     /**
-     * Default keywords
+     * Default keywords for SEO. While less important for modern SEO, they can still help with content categorization. Focus on 5-10 relevant keywords that describe your business.
      */
     keywords?:
       | {
@@ -3327,77 +3335,168 @@ export interface SiteSetting {
         }[]
       | null;
     /**
-     * Default social sharing image
+     * Default image shown when pages are shared on social media. Recommended size: 1200x630 pixels. Used when pages don't have their own social image. Important for engagement on Facebook, LinkedIn, etc.
      */
     image?: (number | null) | Media;
   };
   openGraph?: {
     /**
-     * OG site name
+     * Site name for Open Graph protocol (Facebook, LinkedIn, etc.). Usually the same as your site name. This appears above the page title when shared on social media.
      */
     siteName?: string | null;
+    /**
+     * Type of content for Open Graph. "Website" for general pages, "Article" for blog posts and news. This helps social media platforms display your content appropriately.
+     */
     type?: ('website' | 'article') | null;
   };
   twitterCard?: {
+    /**
+     * How content appears when shared on Twitter/X. "Summary" shows a small square image, "Summary Large Image" shows a large rectangular image. Large image typically gets more engagement.
+     */
     cardType?: ('summary' | 'summary_large_image') | null;
     /**
-     * Twitter handle (e.g., @14voices)
+     * Your Twitter/X username including the @ symbol (e.g., @14voices). This links shared content back to your Twitter/X account and can increase followers.
      */
     handle?: string | null;
   };
   analytics?: {
     /**
-     * Google Analytics 4 Measurement ID (e.g., G-XXXXXXXXXX)
+     * Google Analytics 4 Measurement ID (e.g., G-XXXXXXXXXX). Find this in your Google Analytics property settings.
      */
     googleAnalyticsId?: string | null;
     /**
-     * Google Tag Manager ID (e.g., GTM-XXXXXX)
+     * Google Tag Manager Container ID (e.g., GTM-XXXXXX). Find this in your GTM container settings.
      */
     googleTagManagerId?: string | null;
     /**
-     * Facebook Pixel ID
+     * Facebook/Meta Pixel ID. Find this in your Facebook Business Manager under Events Manager.
      */
     facebookPixelId?: string | null;
     customScripts?: {
       /**
-       * Scripts to inject in <head>
+       * Scripts to inject in the <head> section. Be careful: incorrect scripts can break your site.
        */
       headScripts?: string | null;
       /**
-       * Scripts to inject before </body>
+       * Scripts to inject before the closing </body> tag. Always test after adding new scripts.
        */
       bodyScripts?: string | null;
     };
   };
-  banner?: {
+  branding?: {
     /**
-     * Show the announcement banner at the top of the site
+     * Choose between text logo or image logo
+     */
+    logoType?: ('text' | 'image') | null;
+    /**
+     * Text to display as logo
+     */
+    logoText?: string | null;
+    /**
+     * Image to use as logo (recommended: SVG or PNG with transparent background)
+     */
+    logoImage?: (number | null) | Media;
+    /**
+     * Optional: Different logo for dark mode (if not provided, same logo will be used)
+     */
+    logoImageDark?: (number | null) | Media;
+  };
+  navigation?: {
+    /**
+     * Navigation items to display in the main menu
+     */
+    mainMenuItems?:
+      | {
+          /**
+           * Display text for the menu item
+           */
+          label: string;
+          /**
+           * URL path (e.g., /voiceovers) or anchor (#voiceovers)
+           */
+          url: string;
+          /**
+           * Show dropdown arrow (dropdown content can be configured later)
+           */
+          hasDropdown?: boolean | null;
+          /**
+           * Open link in a new tab/window
+           */
+          openInNewTab?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Text for the login link
+     */
+    loginText?: string | null;
+    /**
+     * URL for the login link
+     */
+    loginUrl?: string | null;
+    /**
+     * Text for the call-to-action button (only visible when user is logged in)
+     */
+    ctaButtonText?: string | null;
+    /**
+     * URL for the call-to-action button (button only shows when user is logged in)
+     */
+    ctaButtonUrl?: string | null;
+  };
+  topBar?: {
+    /**
+     * Show the top bar with contact details and quick links
      */
     enabled?: boolean | null;
     /**
-     * Banner message (use **text** for bold/italic styling)
+     * WhatsApp number for contact (include country code). Default: +31 6 12345678
      */
-    message?: string | null;
+    whatsappNumber?: string | null;
     /**
-     * Type of link for the banner
+     * Configure the tooltip that appears when hovering over the WhatsApp number
      */
-    linkType?: ('none' | 'custom' | 'page') | null;
+    whatsappTooltip?: {
+      /**
+       * Show a tooltip when hovering over the WhatsApp number
+       */
+      enabled?: boolean | null;
+      /**
+       * Title text for the tooltip. Default: "Stuur ons een WhatsApp"
+       */
+      title?: string | null;
+      /**
+       * Message text for the tooltip. Default: "We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen."
+       */
+      message?: string | null;
+      /**
+       * Optional image to show in the tooltip (recommended: 80x80px)
+       */
+      image?: (number | null) | Media;
+    };
     /**
-     * Custom URL for the banner link
+     * Primary contact email address. Default: casting@14voices.com
      */
-    linkUrl?: string | null;
+    email?: string | null;
     /**
-     * Internal page to link to
+     * Navigation links to display in the top bar. Default links: "Veelgestelde vragen" (/veelgestelde-vragen) and "Blog" (/blog)
      */
-    linkPage?: (number | null) | Page;
-    /**
-     * Allow users to dismiss the banner
-     */
-    dismissible?: boolean | null;
-    /**
-     * Visual style of the banner
-     */
-    style?: ('gradient' | 'solid' | 'subtle') | null;
+    quickLinks?:
+      | {
+          /**
+           * Display text for the link
+           */
+          label: string;
+          /**
+           * URL path (e.g., /veelgestelde-vragen) or external URL
+           */
+          url: string;
+          /**
+           * Open link in a new tab/window
+           */
+          openInNewTab?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   features?: {
     /**
@@ -3410,17 +3509,20 @@ export interface SiteSetting {
     enableBlog?: boolean | null;
     maintenanceMode?: boolean | null;
     /**
-     * Main heading for the maintenance page
+     * Main heading displayed on the maintenance page
      */
     maintenanceTitle?: string | null;
     /**
-     * Main message to show during maintenance
+     * Main message to show visitors during maintenance
      */
     maintenanceMessage?: string | null;
     /**
-     * Label above contact email
+     * Label displayed above the contact email during maintenance
      */
     maintenanceContactLabel?: string | null;
+    /**
+     * Display contact email on the maintenance page
+     */
     showContactEmail?: boolean | null;
   };
   updatedAt?: string | null;
@@ -3457,11 +3559,39 @@ export interface EmailSettingsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-settings_select".
+ */
+export interface FaqSettingsSelect<T extends boolean = true> {
+  settings?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        description?: T;
+        itemsToShow?: T;
+        showCategories?: T;
+        expandFirst?: T;
+        multipleOpen?: T;
+      };
+  categories?:
+    | T
+    | {
+        name?: T;
+        slug?: T;
+        description?: T;
+        published?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
-  tagline?: T;
   logo?: T;
   favicon?: T;
   siteUrl?: T;
@@ -3530,16 +3660,53 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               bodyScripts?: T;
             };
       };
-  banner?:
+  branding?:
+    | T
+    | {
+        logoType?: T;
+        logoText?: T;
+        logoImage?: T;
+        logoImageDark?: T;
+      };
+  navigation?:
+    | T
+    | {
+        mainMenuItems?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              hasDropdown?: T;
+              openInNewTab?: T;
+              id?: T;
+            };
+        loginText?: T;
+        loginUrl?: T;
+        ctaButtonText?: T;
+        ctaButtonUrl?: T;
+      };
+  topBar?:
     | T
     | {
         enabled?: T;
-        message?: T;
-        linkType?: T;
-        linkUrl?: T;
-        linkPage?: T;
-        dismissible?: T;
-        style?: T;
+        whatsappNumber?: T;
+        whatsappTooltip?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              message?: T;
+              image?: T;
+            };
+        email?: T;
+        quickLinks?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              openInNewTab?: T;
+              id?: T;
+            };
       };
   features?:
     | T

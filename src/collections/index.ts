@@ -1,7 +1,7 @@
 export { default as Users } from './Users';
 export { default as Media } from './Media';
 export { default as Voiceovers } from './Voiceovers';
-export { default as Cohorts } from './Cohorts';
+export { default as Groups } from './Groups';
 export { default as Scripts } from './Scripts';
 export { Bookings } from './Bookings';
 export { default as Invoices } from './Invoices';
@@ -18,3 +18,4 @@ export { default as EmailJobs } from './EmailJobs';
 export { default as EmailCampaigns } from './EmailCampaigns';
 export { default as EmailAudiences } from './EmailAudiences';
 export { default as EmailContacts } from './EmailContacts';
+export { default as FAQ } from './FAQ';

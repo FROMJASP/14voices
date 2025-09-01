@@ -3,7 +3,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { resendAdapter } from '@payloadcms/email-resend';
 // import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
-import { wrappedMinioStorage } from './lib/storage/minio-adapter';
+import { wrappedMinioStorage } from '@root/lib/storage/minio-adapter';
 import { en } from '@payloadcms/translations/languages/en';
 import { nl } from '@payloadcms/translations/languages/nl';
 import { i18n as customI18n } from './i18n/index';
@@ -11,7 +11,7 @@ import sharp from 'sharp';
 import Users from './collections/Users';
 import Media from './collections/Media';
 import Voiceovers from './collections/Voiceovers';
-import Cohorts from './collections/Cohorts';
+import Groups from './collections/Groups';
 import Scripts from './collections/Scripts';
 import { Bookings } from './collections/Bookings';
 import Invoices from './collections/Invoices';
@@ -29,10 +29,10 @@ import Forms from './collections/Forms';
 import FormSubmissions from './collections/FormSubmissions';
 import Testimonials from './collections/Testimonials';
 import SecurityLogs from './collections/SecurityLogs';
-import { FAQ } from './collections/FAQ';
+import FAQ from './collections/FAQ';
 import { EmailSettings } from './globals/EmailSettings';
+import { FAQSettings } from './globals/FAQSettings';
 import { SiteSettings } from './globals/SiteSettings';
-import { HomepageSettings } from './globals/HomepageSettings';
 import path from 'path';
 
 export default buildConfig({
@@ -92,7 +92,7 @@ export default buildConfig({
   collections: [
     Users,
     Media, // General media repository
-    Cohorts,
+    Groups,
     Voiceovers,
     Bookings,
     Scripts,
@@ -113,7 +113,7 @@ export default buildConfig({
     EmailContacts,
     SecurityLogs,
   ],
-  globals: [EmailSettings, SiteSettings, HomepageSettings],
+  globals: [EmailSettings, FAQSettings, SiteSettings],
   editor: lexicalEditor(),
   secret:
     process.env.PAYLOAD_SECRET ||
