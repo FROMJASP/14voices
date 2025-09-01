@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { FAQSectionClient } from './FAQSection.client';
@@ -35,23 +35,43 @@ export function FAQSectionClientWrapper() {
     async function fetchFAQData() {
       try {
         const response = await fetch('/api/faq');
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch FAQ data');
         }
 
         const data = await response.json();
-        setFaqData(data);
+        console.log('FAQ API Response:', data); // Debug log
+
+        // Ensure data has the expected structure
+        const faqData: FAQData = {
+          settings: {
+            enabled: data?.settings?.enabled ?? false,
+            title: data?.settings?.title || 'Veelgestelde vragen',
+            description:
+              data?.settings?.description ||
+              'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
+            showCategories: data?.settings?.showCategories ?? false,
+            itemsToShow: data?.settings?.itemsToShow || 10,
+          },
+          items: Array.isArray(data?.items) ? data.items : [],
+        };
+
+        console.log('Processed FAQ Data:', faqData); // Debug log
+        setFaqData(faqData);
       } catch (err) {
         console.error('Error fetching FAQ data:', err);
         setError(err instanceof Error ? err.message : 'Unknown error');
-        
+
         // Set fallback data
         setFaqData({
           settings: {
-            enabled: true,
+            enabled: false,
             title: 'Veelgestelde vragen',
-            description: 'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
+            description:
+              'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
+            showCategories: false,
+            itemsToShow: 10,
           },
           items: [],
         });
@@ -80,8 +100,8 @@ export function FAQSectionClientWrapper() {
     return null; // Don't render if there's an error and no fallback data
   }
 
-  if (!faqData || !faqData.settings.enabled) {
-    return null; // FAQ is disabled
+  if (!faqData || !faqData.settings || !faqData.settings.enabled) {
+    return null; // FAQ is disabled or settings not available
   }
 
   return <FAQSectionClient settings={faqData.settings} items={faqData.items} />;
