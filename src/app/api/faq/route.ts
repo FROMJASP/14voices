@@ -8,7 +8,7 @@ export async function GET() {
 
     // Get FAQ settings from HomepageSettings global
     const homepageSettings = await payload.findGlobal({
-      slug: 'homepage-settings',
+      slug: 'homepage-settings' as any,
       depth: 0,
     });
 
