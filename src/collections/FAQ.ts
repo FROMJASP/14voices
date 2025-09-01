@@ -1,15 +1,23 @@
 import type { CollectionConfig } from 'payload';
+import { getCollectionLabels, getFAQFieldLabel, getFAQFieldDescription } from '../i18n';
+import { defaultFAQCategories } from '../lib/faq-categories';
+
+const labels = getCollectionLabels('faq');
 
 export const FAQ: CollectionConfig = {
   slug: 'faq',
   labels: {
-    singular: 'FAQ Item',
-    plural: 'FAQ Items',
+    singular: labels.singular,
+    plural: labels.plural,
   },
   admin: {
     useAsTitle: 'question',
     defaultColumns: ['question', 'category', 'order', 'published'],
-    description: 'Manage frequently asked questions for the website',
+    description: {
+      en: 'Manage frequently asked questions and configure how they appear on the homepage',
+      nl: 'Beheer veelgestelde vragen en configureer hoe ze op de homepage worden weergegeven',
+    },
+    group: 'Content',
   },
   access: {
     read: () => true,
@@ -22,52 +30,49 @@ export const FAQ: CollectionConfig = {
       name: 'question',
       type: 'text',
       required: true,
-      label: 'Question',
+      label: getFAQFieldLabel('question'),
       admin: {
-        description: 'The question that visitors frequently ask',
+        description: getFAQFieldDescription('question'),
       },
     },
     {
       name: 'answer',
       type: 'richText',
       required: true,
-      label: 'Answer',
+      label: getFAQFieldLabel('answer'),
       admin: {
-        description: 'Detailed answer to the question',
+        description: getFAQFieldDescription('answer'),
       },
     },
     {
       name: 'category',
       type: 'select',
-      label: 'Category',
+      label: getFAQFieldLabel('category'),
       defaultValue: 'general',
-      options: [
-        { label: 'Algemeen', value: 'general' },
-        { label: 'Prijzen', value: 'pricing' },
-        { label: 'Levering', value: 'delivery' },
-        { label: 'Technisch', value: 'technical' },
-        { label: 'Rechten', value: 'rights' },
-      ],
+      options: defaultFAQCategories,
       admin: {
-        description: 'Category to group related questions',
+        description: getFAQFieldDescription('category'),
       },
     },
     {
       name: 'order',
       type: 'number',
       defaultValue: 0,
-      label: 'Display Order',
+      label: getFAQFieldLabel('order'),
       admin: {
-        description: 'Lower numbers appear first (0, 1, 2, ...)',
+        description: getFAQFieldDescription('order'),
+        components: {
+          Cell: '@/components/admin/cells/OrderCell#OrderCell',
+        },
       },
     },
     {
       name: 'published',
       type: 'checkbox',
       defaultValue: true,
-      label: 'Published',
+      label: getFAQFieldLabel('published'),
       admin: {
-        description: 'Only published FAQ items will be shown on the website',
+        description: getFAQFieldDescription('published'),
       },
     },
   ],
