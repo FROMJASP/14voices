@@ -3,6 +3,7 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import globalCache from '@/lib/cache';
 import type { InfoNavbarData } from '@/components/common/layout/header/info-navbar';
+import type { LogoSettings } from '@/components/common/layout/header/logo';
 
 async function getInfoNavbarData(): Promise<InfoNavbarData> {
   const cacheKey = 'site-settings:top-bar';
@@ -94,8 +95,62 @@ async function getInfoNavbarData(): Promise<InfoNavbarData> {
   );
 }
 
-export default async function WithGlobalLayout({ children }: { children: React.ReactNode }) {
-  const infoNavbarData = await getInfoNavbarData();
+async function getLogoSettings(): Promise<LogoSettings> {
+  const cacheKey = 'site-settings:logo';
+  const cacheTTL = 1000 * 60 * 30; // 30 minutes cache
 
-  return <GlobalLayout infoNavbarData={infoNavbarData}>{children}</GlobalLayout>;
+  const defaultLogoSettings: LogoSettings = {
+    logoType: 'text',
+    logoText: 'FourteenVoices',
+    logoFont: 'instrument-serif',
+  };
+
+  // During build time with fake database URL, return defaults
+  if (process.env.DATABASE_URL?.includes('fake:fake@fake')) {
+    return defaultLogoSettings;
+  }
+
+  return await globalCache.wrap(
+    cacheKey,
+    async () => {
+      try {
+        const payload = await getPayload({ config: configPromise });
+        const siteSettings = await payload.findGlobal({
+          slug: 'site-settings',
+        });
+
+        // @ts-expect-error - branding types will be available after schema regeneration
+        if (siteSettings?.branding) {
+          // @ts-expect-error - branding types will be available after schema regeneration
+          const { branding } = siteSettings;
+
+          return {
+            logoType: branding.logoType || defaultLogoSettings.logoType,
+            logoText: branding.logoText || defaultLogoSettings.logoText,
+            logoFont: branding.logoFont || defaultLogoSettings.logoFont,
+            logoImage: branding.logoImage,
+            logoImageDark: branding.logoImageDark,
+          };
+        }
+      } catch (error) {
+        console.error('Failed to fetch logo settings:', error);
+      }
+
+      return defaultLogoSettings;
+    },
+    cacheTTL
+  );
+}
+
+export default async function WithGlobalLayout({ children }: { children: React.ReactNode }) {
+  const [infoNavbarData, logoSettings] = await Promise.all([
+    getInfoNavbarData(),
+    getLogoSettings(),
+  ]);
+
+  return (
+    <GlobalLayout infoNavbarData={infoNavbarData} logoSettings={logoSettings}>
+      {children}
+    </GlobalLayout>
+  );
 }

@@ -33,17 +33,24 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { PageTitleCell as PageTitleCell_672964606649d829c3d8d5ceb1579103 } from '../../../components/admin/cells/PageTitleCell'
+import { DateCell as DateCell_0089d93088416af0dfd832e408990326 } from '../../../components/admin/cells/DateCell'
+import { PagesList as PagesList_4fb21428ba2c94b4be1638c77bb40e3d } from '../../../components/admin/views/PagesList'
 import { OrderCell as OrderCell_3275d1149d4aec1af72bdef957c1e1c1 } from '@/components/admin/cells/OrderCell'
 import { default as default_26ff0c3c8c64756354667624f7216f27 } from '@/components/admin/EmailPreview'
 import { SecurityEventTypeCell as SecurityEventTypeCell_7d889b1ff63bec18bb82b7d6911cf087 } from '../../../components/admin/cells/SecurityEventTypeCell'
 import { SeverityCell as SeverityCell_64ee1493040fd92be0ee14a8c149537a } from '../../../components/admin/cells/SeverityCell'
 import { default as default_0e63ca13049e5fd88da5304cfad30e1e } from '@/components/admin/EmailAnalytics'
 import { LogoPreview as LogoPreview_afc21c0b0260ffbfd93eddd9f437a5f4 } from '@/components/admin/ui/LogoPreview'
+import { ColorPickerFieldComponent as ColorPickerFieldComponent_95f860801d0381344387ae1d8e2f4d24 } from '@innovixx/payload-color-picker-field/components'
 import { MaintenanceModePreview as MaintenanceModePreview_ce87e2b6034154f861907fa106f8514e } from '../../../components/admin/MaintenanceModePreview'
 import { default as default_3a876ee42d71cfab00ced64d3d270372 } from '../../../components/admin/CustomAvatar'
 import { default as default_16e62c7e42dfe7700742ba3a13bf8900 } from '../../../components/admin/graphics/Icon'
 import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../components/admin/graphics/Logo'
+import { default as default_cc0bf669a4a39ae97ac9df948983a5f4 } from '../../../components/admin/AdminEnhancements'
+import { default as default_24b53340c847bf8d73acd711c069ef0d } from '../../../components/admin/AdminProvider'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
+import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'
 
 export const importMap = {
   "./components/admin/cells/UserInfoCell#UserInfoCell": UserInfoCell_2498c455506837329098564ecaa127bb,
@@ -81,15 +88,22 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/components/admin/cells/PageTitleCell#PageTitleCell": PageTitleCell_672964606649d829c3d8d5ceb1579103,
+  "/components/admin/cells/DateCell#DateCell": DateCell_0089d93088416af0dfd832e408990326,
+  "/components/admin/views/PagesList#PagesList": PagesList_4fb21428ba2c94b4be1638c77bb40e3d,
   "@/components/admin/cells/OrderCell#OrderCell": OrderCell_3275d1149d4aec1af72bdef957c1e1c1,
   "@/components/admin/EmailPreview#default": default_26ff0c3c8c64756354667624f7216f27,
   "./components/admin/cells/SecurityEventTypeCell#SecurityEventTypeCell": SecurityEventTypeCell_7d889b1ff63bec18bb82b7d6911cf087,
   "./components/admin/cells/SeverityCell#SeverityCell": SeverityCell_64ee1493040fd92be0ee14a8c149537a,
   "@/components/admin/EmailAnalytics#default": default_0e63ca13049e5fd88da5304cfad30e1e,
   "@/components/admin/ui/LogoPreview#LogoPreview": LogoPreview_afc21c0b0260ffbfd93eddd9f437a5f4,
+  "@innovixx/payload-color-picker-field/components#ColorPickerFieldComponent": ColorPickerFieldComponent_95f860801d0381344387ae1d8e2f4d24,
   "./components/admin/MaintenanceModePreview#MaintenanceModePreview": MaintenanceModePreview_ce87e2b6034154f861907fa106f8514e,
   "./components/admin/CustomAvatar#default": default_3a876ee42d71cfab00ced64d3d270372,
   "./components/admin/graphics/Icon#default": default_16e62c7e42dfe7700742ba3a13bf8900,
   "./components/admin/graphics/Logo#default": default_13338d86bf8cb9661b50b401726320cd,
-  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
+  "./components/admin/AdminEnhancements#default": default_cc0bf669a4a39ae97ac9df948983a5f4,
+  "./components/admin/AdminProvider#default": default_24b53340c847bf8d73acd711c069ef0d,
+  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
+  "./components/admin/Root#default": default_52fc470c96be62b5d8029b692894d144
 }

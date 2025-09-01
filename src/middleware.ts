@@ -12,10 +12,29 @@ export async function middleware(request: NextRequest) {
     return staticResponse;
   }
 
-  // Bypass security for admin panel to avoid CSP issues with uploads
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    console.log('[Middleware] Bypassing security for admin path:', request.nextUrl.pathname);
-    return NextResponse.next();
+  // Special handling for admin panel and preview requests
+  const isAdminPath = request.nextUrl.pathname.startsWith('/admin');
+  const isPreviewRequest =
+    request.headers.get('sec-fetch-dest') === 'iframe' ||
+    request.headers.get('referer')?.includes('/admin');
+
+  if (isAdminPath || isPreviewRequest) {
+    console.log('[Middleware] Special handling for admin/preview path:', request.nextUrl.pathname);
+    const response = NextResponse.next();
+
+    // Add security headers but with modified CSP for admin panel
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('X-XSS-Protection', '1; mode=block');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+    // Build CSP for admin panel with frame-ancestors allowing same-origin
+    const adminCSP = buildCSPHeader().replace("frame-ancestors 'none'", "frame-ancestors 'self'");
+    response.headers.set('Content-Security-Policy', adminCSP);
+
+    // Allow framing from same origin for preview functionality
+    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+
+    return response;
   }
 
   // Block suspicious user agents

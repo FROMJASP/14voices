@@ -12,4 +12,7 @@ export { UserInfoCell } from './UserInfoCell';
 export { UserRoleCell } from './UserRoleCell';
 export { UserLastSeenCell } from './UserLastSeenCell';
 export { OrderCell } from './OrderCell';
-export { GroupCell } from './GroupCell';
+export { PageTitleCell } from './PageTitleCell';
+export { SecurityEventTypeCell } from './SecurityEventTypeCell';
+export { SeverityCell } from './SeverityCell';
+export { DateCell } from './DateCell';

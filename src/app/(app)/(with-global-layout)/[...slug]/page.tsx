@@ -1,13 +1,16 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { PageRenderer } from '@/components/common/widgets';
+import { PageRenderer, PreviewLoading } from '@/components/common/widgets';
 import type { Page } from '@/payload-types';
+import { Suspense } from 'react';
+import { headers } from 'next/headers';
 
 interface PageProps {
   params: Promise<{
     slug: string[];
   }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 // Disable static generation for self-hosted deployments
@@ -92,26 +95,68 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const { slug: slugArray } = await params;
+  const resolvedSearchParams = await searchParams;
   const slug = slugArray?.join('/') || 'home';
   const payload = await getPayload({ config: configPromise });
 
-  const pages = await payload.find({
-    collection: 'pages',
-    where: {
-      slug: {
-        equals: slug,
-      },
-      status: {
-        equals: 'published',
-      },
-    },
-    limit: 1,
-    depth: 2,
-  });
+  // Check if we're in preview mode
+  const isPreview = resolvedSearchParams?.preview === 'true';
+  const previewID = resolvedSearchParams?.id as string | undefined;
+  const locale = (resolvedSearchParams?.locale as string) || 'nl';
 
-  const page = pages.docs[0] as Page | undefined;
+  console.log('Preview mode:', { isPreview, previewID, locale, slug });
+
+  let page: Page | undefined;
+
+  // If we have a preview ID, fetch by ID for live preview
+  if (isPreview && previewID) {
+    try {
+      page = (await payload.findByID({
+        collection: 'pages',
+        id: previewID,
+        depth: 2,
+        draft: true,
+      })) as Page;
+    } catch (error) {
+      console.error('Error fetching preview page:', error);
+    }
+  }
+
+  // Otherwise, fetch by slug
+  if (!page) {
+    const pages = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: {
+          equals: slug,
+        },
+        ...(isPreview
+          ? {}
+          : {
+              status: {
+                equals: 'published',
+              },
+            }),
+      },
+      limit: 1,
+      depth: 2,
+      draft: isPreview,
+    });
+
+    page = pages.docs[0] as Page | undefined;
+  }
+
+  // Debug logging
+  console.log('Page query:', { slug, isPreview, previewID });
+  console.log('Found page:', {
+    id: page?.id,
+    title: page?.hero?.title,
+    description: page?.hero?.description,
+    status: page?.status,
+    _version: (page as any)?._version,
+  });
 
   if (!page) {
     notFound();
@@ -142,5 +187,9 @@ export default async function Page({ params }: PageProps) {
     content: page.content ? nullToUndefined(page.content) : undefined,
   };
 
-  return <PageRenderer page={transformedPage as any} />;
+  return (
+    <Suspense fallback={<PreviewLoading />}>
+      <PageRenderer page={transformedPage as any} />
+    </Suspense>
+  );
 }

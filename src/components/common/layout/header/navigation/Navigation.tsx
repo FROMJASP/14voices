@@ -10,6 +10,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { MobileMenu } from './MobileMenu';
 import { NavigationItem } from './NavigationItem';
 import { CartHoverMenu } from '@/components/common/widgets/cart';
+import { Logo } from '../logo';
 import type { NavigationProps, MenuItem } from './Navigation.types';
 
 // Font configurations
@@ -46,6 +47,7 @@ export function Navigation({
     ctaButtonText: 'Mijn omgeving',
     ctaButtonUrl: '/dashboard',
   },
+  logoSettings,
   infoNavbarData,
   className = '',
 }: NavigationProps) {
@@ -121,19 +123,7 @@ export function Navigation({
             {/* Left: Logo + Navigation Menu */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
               {/* Logo */}
-              <Link
-                href="/"
-                className="font-instrument-serif"
-                style={{
-                  textDecoration: 'none',
-                  fontSize: '32px',
-                  fontWeight: '400',
-                  color: 'var(--text-primary)',
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                FourteenVoices
-              </Link>
+              <Logo settings={logoSettings} />
 
               {/* Navigation Menu - Desktop */}
               <div

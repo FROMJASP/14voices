@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload';
+import { colorPickerField } from '@innovixx/payload-color-picker-field';
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -34,36 +35,6 @@ export const SiteSettings: GlobalConfig = {
               },
             },
             {
-              name: 'logo',
-              type: 'upload',
-              relationTo: 'media',
-              label: {
-                en: 'Logo',
-                nl: 'Logo',
-              },
-              admin: {
-                description: {
-                  en: 'The company logo that appears in the website header. Recommended size: 200x50 pixels. Used for brand identity and navigation. For best results, use SVG or PNG with transparent background.',
-                  nl: 'Het bedrijfslogo dat in de website header verschijnt. Aanbevolen formaat: 200x50 pixels. Gebruikt voor merkidentiteit en navigatie. Voor beste resultaten, gebruik SVG of PNG met transparante achtergrond.',
-                },
-              },
-            },
-            {
-              name: 'favicon',
-              type: 'upload',
-              relationTo: 'media',
-              label: {
-                en: 'Favicon',
-                nl: 'Favicon',
-              },
-              admin: {
-                description: {
-                  en: 'The small icon that appears in browser tabs and bookmarks. Recommended: 32x32px SVG or PNG. If no favicon is uploaded, a default dark "14" icon will be used. Important for brand recognition and professional appearance.',
-                  nl: 'Het kleine pictogram dat verschijnt in browser tabbladen en bladwijzers. Aanbevolen: 32x32px SVG of PNG. Als er geen favicon wordt geüpload, wordt een standaard donker "14" pictogram gebruikt. Belangrijk voor merkherkenning en professionele uitstraling.',
-                },
-              },
-            },
-            {
               name: 'siteUrl',
               type: 'text',
               required: true,
@@ -87,40 +58,40 @@ export const SiteSettings: GlobalConfig = {
                 nl: 'Taal',
               },
               options: [
-                { 
+                {
                   label: {
                     en: 'Dutch',
                     nl: 'Nederlands',
                   },
-                  value: 'nl' 
+                  value: 'nl',
                 },
-                { 
+                {
                   label: {
                     en: 'English',
                     nl: 'Engels',
                   },
-                  value: 'en' 
+                  value: 'en',
                 },
-                { 
+                {
                   label: {
                     en: 'Spanish',
                     nl: 'Spaans',
                   },
-                  value: 'es' 
+                  value: 'es',
                 },
-                { 
+                {
                   label: {
                     en: 'French',
                     nl: 'Frans',
                   },
-                  value: 'fr' 
+                  value: 'fr',
                 },
-                { 
+                {
                   label: {
                     en: 'German',
                     nl: 'Duits',
                   },
-                  value: 'de' 
+                  value: 'de',
                 },
               ],
               admin: {
@@ -378,8 +349,8 @@ export const SiteSettings: GlobalConfig = {
                   },
                   admin: {
                     description: {
-                      en: 'Default description for search engine results. Used when pages don\'t have their own description. Should be 150-160 characters for optimal display. This text appears under the page title in search results.',
-                      nl: 'Standaard beschrijving voor zoekmachine resultaten. Gebruikt wanneer pagina\'s geen eigen beschrijving hebben. Moet 150-160 tekens zijn voor optimale weergave. Deze tekst verschijnt onder de paginatitel in zoekresultaten.',
+                      en: "Default description for search engine results. Used when pages don't have their own description. Should be 150-160 characters for optimal display. This text appears under the page title in search results.",
+                      nl: "Standaard beschrijving voor zoekmachine resultaten. Gebruikt wanneer pagina's geen eigen beschrijving hebben. Moet 150-160 tekens zijn voor optimale weergave. Deze tekst verschijnt onder de paginatitel in zoekresultaten.",
                     },
                   },
                 },
@@ -417,8 +388,8 @@ export const SiteSettings: GlobalConfig = {
                   },
                   admin: {
                     description: {
-                      en: 'Default image shown when pages are shared on social media. Recommended size: 1200x630 pixels. Used when pages don\'t have their own social image. Important for engagement on Facebook, LinkedIn, etc.',
-                      nl: 'Standaard afbeelding die wordt getoond wanneer pagina\'s worden gedeeld op sociale media. Aanbevolen formaat: 1200x630 pixels. Gebruikt wanneer pagina\'s geen eigen sociale afbeelding hebben. Belangrijk voor betrokkenheid op Facebook, LinkedIn, etc.',
+                      en: "Default image shown when pages are shared on social media. Recommended size: 1200x630 pixels. Used when pages don't have their own social image. Important for engagement on Facebook, LinkedIn, etc.",
+                      nl: "Standaard afbeelding die wordt getoond wanneer pagina's worden gedeeld op sociale media. Aanbevolen formaat: 1200x630 pixels. Gebruikt wanneer pagina's geen eigen sociale afbeelding hebben. Belangrijk voor betrokkenheid op Facebook, LinkedIn, etc.",
                     },
                   },
                 },
@@ -455,19 +426,19 @@ export const SiteSettings: GlobalConfig = {
                   },
                   defaultValue: 'website',
                   options: [
-                    { 
+                    {
                       label: {
                         en: 'Website',
                         nl: 'Website',
-                      }, 
-                      value: 'website' 
+                      },
+                      value: 'website',
                     },
-                    { 
+                    {
                       label: {
                         en: 'Article',
                         nl: 'Artikel',
-                      }, 
-                      value: 'article' 
+                      },
+                      value: 'article',
                     },
                   ],
                   admin: {
@@ -496,19 +467,19 @@ export const SiteSettings: GlobalConfig = {
                   },
                   defaultValue: 'summary_large_image',
                   options: [
-                    { 
+                    {
                       label: {
                         en: 'Summary',
                         nl: 'Samenvatting',
-                      }, 
-                      value: 'summary' 
+                      },
+                      value: 'summary',
                     },
-                    { 
+                    {
                       label: {
                         en: 'Summary Large Image',
                         nl: 'Samenvatting met Grote Afbeelding',
-                      }, 
-                      value: 'summary_large_image' 
+                      },
+                      value: 'summary_large_image',
                     },
                   ],
                   admin: {
@@ -663,6 +634,36 @@ export const SiteSettings: GlobalConfig = {
                   },
                 },
                 {
+                  name: 'logoFont',
+                  type: 'select',
+                  defaultValue: 'instrument-serif',
+                  label: {
+                    en: 'Logo Font',
+                    nl: 'Logo Lettertype',
+                  },
+                  options: [
+                    {
+                      label: 'Instrument Serif (Default)',
+                      value: 'instrument-serif',
+                    },
+                    {
+                      label: 'Bricolage Grotesque',
+                      value: 'bricolage-grotesque',
+                    },
+                    {
+                      label: 'Geist Mono',
+                      value: 'geist-mono',
+                    },
+                  ],
+                  admin: {
+                    condition: (_data, siblingData) => siblingData?.logoType === 'text',
+                    description: {
+                      en: 'Font family for the text logo',
+                      nl: 'Lettertype voor het tekstlogo',
+                    },
+                  },
+                },
+                {
                   name: 'logoImage',
                   type: 'upload',
                   relationTo: 'media',
@@ -688,6 +689,35 @@ export const SiteSettings: GlobalConfig = {
                   admin: {
                     components: {
                       Field: '@/components/admin/ui/LogoPreview#LogoPreview',
+                    },
+                  },
+                },
+                colorPickerField({
+                  name: 'brandColor',
+                  defaultValue: '#6366f1',
+                  label: {
+                    en: 'Brand Color',
+                    nl: 'Merkkleur',
+                  },
+                  admin: {
+                    description: {
+                      en: 'Primary brand color used throughout the website. This color will be available in the text editor for highlighting important words.',
+                      nl: 'Primaire merkkleur gebruikt door de hele website. Deze kleur zal beschikbaar zijn in de tekstbewerker voor het markeren van belangrijke woorden.',
+                    },
+                  },
+                }),
+                {
+                  name: 'favicon',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: {
+                    en: 'Favicon',
+                    nl: 'Favicon',
+                  },
+                  admin: {
+                    description: {
+                      en: 'The small icon that appears in browser tabs and bookmarks. Recommended: 32x32px SVG or PNG. If no favicon is uploaded, a default dark "14" icon will be used. Important for brand recognition and professional appearance.',
+                      nl: 'Het kleine pictogram dat verschijnt in browser tabbladen en bladwijzers. Aanbevolen: 32x32px SVG of PNG. Als er geen favicon wordt geüpload, wordt een standaard donker "14" pictogram gebruikt. Belangrijk voor merkherkenning en professionele uitstraling.',
                     },
                   },
                 },
@@ -881,8 +911,10 @@ export const SiteSettings: GlobalConfig = {
                   type: 'group',
                   label: 'WhatsApp Tooltip',
                   admin: {
-                    condition: (_data, siblingData) => siblingData?.enabled === true && siblingData?.whatsappNumber,
-                    description: 'Configure the tooltip that appears when hovering over the WhatsApp number',
+                    condition: (_data, siblingData) =>
+                      siblingData?.enabled === true && siblingData?.whatsappNumber,
+                    description:
+                      'Configure the tooltip that appears when hovering over the WhatsApp number',
                   },
                   fields: [
                     {
@@ -900,16 +932,19 @@ export const SiteSettings: GlobalConfig = {
                       defaultValue: 'Stuur ons een WhatsApp',
                       admin: {
                         condition: (_data, siblingData) => siblingData?.enabled === true,
-                        description: 'Title text for the tooltip. Default: "Stuur ons een WhatsApp"',
+                        description:
+                          'Title text for the tooltip. Default: "Stuur ons een WhatsApp"',
                       },
                     },
                     {
                       name: 'message',
                       type: 'textarea',
-                      defaultValue: 'We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen.',
+                      defaultValue:
+                        'We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen.',
                       admin: {
                         condition: (_data, siblingData) => siblingData?.enabled === true,
-                        description: 'Message text for the tooltip. Default: "We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen."',
+                        description:
+                          'Message text for the tooltip. Default: "We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen."',
                       },
                     },
                     {
@@ -938,7 +973,8 @@ export const SiteSettings: GlobalConfig = {
                   label: 'Quick Links',
                   admin: {
                     condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description: 'Navigation links to display in the top bar. Default links: "Veelgestelde vragen" (/veelgestelde-vragen) and "Blog" (/blog)',
+                    description:
+                      'Navigation links to display in the top bar. Default links: "Veelgestelde vragen" (/veelgestelde-vragen) and "Blog" (/blog)',
                     initCollapsed: false,
                   },
                   defaultValue: [

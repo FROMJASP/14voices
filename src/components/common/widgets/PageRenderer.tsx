@@ -1,5 +1,11 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import type { Page } from '@/payload-types';
+import { PageHeroSection } from './PageHeroSection';
+import { HeroSection } from '@/components/features/homepage/HeroSection';
+import { transformHeroDataForHomepage } from '@/lib/homepage-utils';
+import { PreviewLoading } from './PreviewLoading';
 
 // Define section type union for all possible section types
 type PageSection = {
@@ -69,8 +75,50 @@ interface PageRendererProps {
 }
 
 export function PageRenderer({ page }: PageRendererProps): React.ReactElement {
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Log the page data to debug
+  useEffect(() => {
+    console.log('PageRenderer received page data:', page);
+    console.log('Hero data:', page.hero);
+  }, [page]);
+
+  // Check if this is the homepage
+  const isHomepage = page.slug === 'home';
+
+  // For homepage hero, render without article wrapper to maintain proper styling
+  if (isHomepage && page.hero?.type === 'homepage') {
+    return (
+      <div
+        className="homepage-preview"
+        style={
+          {
+            // Ensure CSS variables are available in preview
+            '--primary': '#6366f1',
+            '--text-primary': '#1a1a1a',
+            '--text-secondary': '#6b7280',
+            '--text-muted': '#9ca3af',
+            '--background': '#ffffff',
+            '--foreground': '#1a1a1a',
+          } as React.CSSProperties
+        }
+      >
+        <HeroSection heroSettings={transformHeroDataForHomepage(page)} />
+        {/* Optionally render other homepage sections if needed for preview */}
+        {page.sections && page.sections.length > 0 && (
+          <div className="sections-container">{/* Render sections... */}</div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <article className="page-content">
+      {/* Render hero section if present */}
+      {page.hero && page.hero.type && page.hero.type !== 'none' && (
+        <PageHeroSection hero={page.hero} />
+      )}
+
       {page.content ? (
         <div className="prose prose-lg mx-auto max-w-4xl px-4 py-8">
           {/* Render rich text content here */}

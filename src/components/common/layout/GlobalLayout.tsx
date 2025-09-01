@@ -4,17 +4,20 @@ import { Navigation } from '@/components/common/layout/header/navigation';
 import { Footer } from './footer';
 import { InfoNavbar, type InfoNavbarData } from '@/components/common/layout/header/info-navbar';
 import { ClientFaviconUpdater } from '@/components/common/layout/ClientFaviconUpdater';
+import type { LogoSettings } from '@/components/common/layout/header/logo';
 
 interface GlobalLayoutProps {
   children: React.ReactNode;
   showInfoNavbar?: boolean;
   infoNavbarData?: InfoNavbarData;
+  logoSettings?: LogoSettings;
 }
 
 export function GlobalLayout({
   children,
   showInfoNavbar = true,
   infoNavbarData,
+  logoSettings,
 }: GlobalLayoutProps) {
   return (
     <>
@@ -27,7 +30,7 @@ export function GlobalLayout({
         {showInfoNavbar && infoNavbarData && <InfoNavbar data={infoNavbarData} />}
 
         {/* Navigation */}
-        <Navigation infoNavbarData={infoNavbarData} />
+        <Navigation infoNavbarData={infoNavbarData} logoSettings={logoSettings} />
 
         {/* Main content area */}
         <main className="flex-1">{children}</main>
@@ -35,7 +38,6 @@ export function GlobalLayout({
         {/* Footer */}
         <Footer />
       </div>
-
     </>
   );
 }

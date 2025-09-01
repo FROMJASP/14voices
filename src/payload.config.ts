@@ -47,12 +47,17 @@ export default buildConfig({
     components: {
       // Temporarily disabled to troubleshoot webpack issue
       // beforeLogin: ['./components/admin/BeforeLogin#default'],
-      // afterDashboard: ['./components/admin/AdminEnhancements#default'],
+      afterDashboard: ['./components/admin/AdminEnhancements#default'],
       graphics: {
         Logo: './components/admin/graphics/Logo#default',
         Icon: './components/admin/graphics/Icon#default',
       },
-      // providers: ['./components/admin/AdminProvider#default'],
+      providers: ['./components/admin/AdminProvider#default'],
+      views: {
+        root: {
+          Component: './components/admin/Root#default',
+        },
+      },
     },
     meta: {
       titleSuffix: ' - Fourteen Voices',
@@ -63,6 +68,7 @@ export default buildConfig({
         icon: '/favicon.svg',
       },
     },
+    dateFormat: 'dd MMMM, yyyy - HH:mm',
   },
   localization: {
     locales: [

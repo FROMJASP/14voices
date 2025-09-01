@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-import { Instrument_Serif } from 'next/font/google';
+import { Instrument_Serif, Bricolage_Grotesque, Geist_Mono } from 'next/font/google';
 
 const instrumentSerif = Instrument_Serif({
   weight: ['400'],
@@ -14,9 +14,24 @@ const instrumentSerif = Instrument_Serif({
   variable: '--font-instrument-serif',
 });
 
+const bricolageGrotesque = Bricolage_Grotesque({
+  weight: ['700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-bricolage',
+});
+
+const geistMono = Geist_Mono({
+  weight: ['700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-geist-mono',
+});
+
 export interface LogoSettings {
   logoType?: 'text' | 'image';
   logoText?: string;
+  logoFont?: 'instrument-serif' | 'bricolage-grotesque' | 'geist-mono';
   logoImage?: {
     url?: string;
     alt?: string;
@@ -40,6 +55,7 @@ export function Logo({
   settings = {
     logoType: 'text',
     logoText: 'FourteenVoices',
+    logoFont: 'instrument-serif',
   },
   className = '',
 }: LogoProps) {
@@ -79,12 +95,23 @@ export function Logo({
         />
       ) : (
         <span
-          className={`${instrumentSerif.variable}`}
+          className={`${
+            settings.logoFont === 'bricolage-grotesque'
+              ? bricolageGrotesque.variable
+              : settings.logoFont === 'geist-mono'
+                ? geistMono.variable
+                : instrumentSerif.variable
+          }`}
           style={{
-            fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif',
+            fontFamily:
+              settings.logoFont === 'bricolage-grotesque'
+                ? 'var(--font-bricolage), "Bricolage Grotesque", sans-serif'
+                : settings.logoFont === 'geist-mono'
+                  ? 'var(--font-geist-mono), "Geist Mono", monospace'
+                  : 'var(--font-instrument-serif), "Instrument Serif", serif',
             fontSize: '32px',
-            fontWeight: 400,
-            letterSpacing: '-0.02em',
+            fontWeight: settings.logoFont === 'instrument-serif' ? 400 : 700,
+            letterSpacing: settings.logoFont === 'instrument-serif' ? '-0.02em' : '-0.5px',
             color: 'var(--text-primary)',
             lineHeight: 1,
           }}

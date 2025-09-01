@@ -1,0 +1,14 @@
+/* Hide original date text while we format it */
+td time[datetime],
+td:has(time[datetime]),
+td[data-col='updatedAt'],
+td[data-col='createdAt'],
+td[data-col='publishedDate'] {
+  position: relative;
+}
+
+/* Style for formatted dates */
+.date-formatted {
+  font-size: 14px;
+  color: var(--theme-text);
+}
