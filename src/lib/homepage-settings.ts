@@ -38,7 +38,7 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
 
   try {
     const payload = await getSafePayload();
-    
+
     if (!payload) {
       console.log('Payload not initialized, returning fallback settings');
       // Return cached settings if available
@@ -63,8 +63,15 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
 
     const homePage = pages.docs[0] as Page | undefined;
 
-    if (!homePage || !homePage.hero || homePage.hero.type !== 'homepage') {
+    if (!homePage || !homePage.hero) {
       throw new Error('Homepage not found or hero not configured');
+    }
+
+    // Accept any hero type but warn if not homepage type
+    if (homePage.hero.type !== 'homepage') {
+      console.warn(
+        `Homepage hero type is "${homePage.hero.type}" instead of "homepage". Using fallback values for missing fields.`
+      );
     }
 
     // Transform the page data to match HomepageSettings interface
@@ -81,7 +88,10 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
           text: 'Hoe wij werken',
           url: '/hoe-het-werkt',
         },
-        heroImage: homePage.hero.heroImage || '/header-image.png',
+        heroImage:
+          typeof homePage.hero.heroImage === 'object' && homePage.hero.heroImage?.url
+            ? homePage.hero.heroImage.url
+            : '/header-image.png',
         stats: homePage.hero.stats || [],
       },
     };
@@ -103,9 +113,9 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
     return {
       hero: {
         processSteps: [
-          { text: '1. Kies de stem' },
-          { text: '2. Upload script' },
-          { text: '3. Ontvang audio' },
+          { text: 'Kies de stem' },
+          { text: 'Upload script' },
+          { text: 'Ontvang audio' },
         ],
         title: 'Vind de stem die jouw merk laat spreken.',
         description:

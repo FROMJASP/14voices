@@ -46,7 +46,7 @@ export function FAQSectionClientWrapper() {
         // Ensure data has the expected structure
         const faqData: FAQData = {
           settings: {
-            enabled: data?.settings?.enabled ?? false,
+            enabled: data?.settings?.enabled ?? true, // Changed default from false to true
             title: data?.settings?.title || 'Veelgestelde vragen',
             description:
               data?.settings?.description ||
@@ -66,7 +66,7 @@ export function FAQSectionClientWrapper() {
         // Set fallback data
         setFaqData({
           settings: {
-            enabled: false,
+            enabled: true, // Changed to true so FAQ section shows even on error
             title: 'Veelgestelde vragen',
             description:
               'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
