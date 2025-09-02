@@ -32,6 +32,35 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
     ? extractTextFromLexical(heroWithRichText.descriptionRichText)
     : hero.description || '';
 
+  // Extract hero image URL with multiple fallback strategies
+  let heroImageUrl = '/header-image.png'; // default fallback
+
+  // First check for the virtual heroImageURL field
+  if (heroWithRichText.heroImageURL) {
+    heroImageUrl = heroWithRichText.heroImageURL;
+  }
+  // Then check the heroImage field
+  else if (hero.heroImage) {
+    if (typeof hero.heroImage === 'string') {
+      // If it's just an ID (not populated), we can't use it directly
+      // The virtual field should have resolved this, but as a fallback
+      heroImageUrl = '/header-image.png';
+    } else if (typeof hero.heroImage === 'object') {
+      const heroImageObj = hero.heroImage as any;
+
+      // Try different possible URL properties
+      if (heroImageObj.url) {
+        heroImageUrl = heroImageObj.url;
+      } else if (heroImageObj.filename && process.env.NEXT_PUBLIC_S3_PUBLIC_URL) {
+        // Construct URL from filename if we have the S3 public URL
+        heroImageUrl = `${process.env.NEXT_PUBLIC_S3_PUBLIC_URL}/media/${heroImageObj.filename}`;
+      } else if (heroImageObj.filename) {
+        // Fallback to local media path
+        heroImageUrl = `/media/${heroImageObj.filename}`;
+      }
+    }
+  }
+
   return {
     hero: {
       // Use rich text fields first, fall back to legacy fields
@@ -46,10 +75,7 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
         text: '',
         url: '',
       },
-      heroImage:
-        typeof hero.heroImage === 'object' && hero.heroImage?.url
-          ? hero.heroImage.url
-          : '/header-image.png',
+      heroImage: heroImageUrl,
       stats: hero.stats || [],
     },
   };

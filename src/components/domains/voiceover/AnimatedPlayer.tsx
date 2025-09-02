@@ -6,13 +6,15 @@ import { useRouter } from 'next/navigation';
 import { Play, Pause, ChevronLeft, ChevronRight, X, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { TransformedVoiceover } from '@/types/voiceover';
+import { useAudioStore } from '@/store/audioStore';
 
 interface AnimatedPlayerProps {
   voiceover: TransformedVoiceover;
   onClose: () => void;
+  autoPlay?: boolean;
 }
 
-export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
+export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: AnimatedPlayerProps) {
   const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentDemoIndex, setCurrentDemoIndex] = useState(0);
@@ -20,129 +22,180 @@ export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
-  
+
+  const { registerAudio, unregisterAudio, pauseOthers, setCurrentlyPlaying } = useAudioStore();
+
   const firstName = voiceover.name.split(' ')[0];
   const currentDemo = voiceover.demos[currentDemoIndex];
+  const playerId = `${voiceover.id}-${currentDemoIndex}`;
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        unregisterAudio(playerId);
       }
       if (progressInterval.current) {
         clearInterval(progressInterval.current);
       }
+      setCurrentlyPlaying(null);
     };
-  }, []);
+  }, [playerId, unregisterAudio, setCurrentlyPlaying]);
 
-  // Listen for other players and pause this one
+  // Create and load audio on mount
   useEffect(() => {
-    const handleOtherPlay = (event: CustomEvent) => {
-      if (event.detail.id !== voiceover.id && audioRef.current) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-        if (progressInterval.current) {
-          clearInterval(progressInterval.current);
-        }
+    if (!currentDemo || !currentDemo.audioFile?.url) {
+      return;
+    }
+
+    // Create audio element immediately
+    const audio = new Audio();
+    audio.preload = 'auto'; // Change to 'auto' for better loading
+
+    // Set up event listeners
+    const handleCanPlay = () => {
+      if (autoPlay && !hasAutoPlayed) {
+        setHasAutoPlayed(true);
+        audio
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+            setIsLoading(false);
+            setCurrentlyPlaying(playerId);
+
+            // Start progress tracking
+            progressInterval.current = setInterval(() => {
+              if (!isNaN(audio.duration)) {
+                const currentProgress = (audio.currentTime / audio.duration) * 100;
+                setProgress(currentProgress);
+                setCurrentTime(audio.currentTime);
+              }
+            }, 100);
+          })
+          .catch((error) => {
+            console.error('Failed to play audio:', error);
+            setIsLoading(false);
+          });
       }
     };
 
-    window.addEventListener('voiceover-play', handleOtherPlay as EventListener);
-    return () => {
-      window.removeEventListener('voiceover-play', handleOtherPlay as EventListener);
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration || 0);
     };
-  }, [voiceover.id]);
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setProgress(0);
+      setCurrentTime(0);
+      setCurrentlyPlaying(null);
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+      }
+    };
+
+    const handleError = (e: Event) => {
+      console.error('Audio load error:', e);
+      setIsLoading(false);
+      setCurrentlyPlaying(null);
+    };
+
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+
+    // Set source and register
+    audio.src = currentDemo.audioFile.url;
+    audioRef.current = audio;
+    registerAudio(playerId, audio);
+    pauseOthers(playerId);
+
+    // Load the audio
+    audio.load();
+
+    // Cleanup
+    return () => {
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.pause();
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPlay, currentDemo, playerId]);
 
   const handlePlayPause = async () => {
-    if (!currentDemo) return;
+    if (!currentDemo || !audioRef.current) return;
 
-    if (isPlaying && audioRef.current) {
+    if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
+      setCurrentlyPlaying(null);
       if (progressInterval.current) {
         clearInterval(progressInterval.current);
       }
     } else {
       try {
         setIsLoading(true);
-        
-        // Stop all other audio and notify other players
-        document.querySelectorAll('audio').forEach(audio => audio.pause());
-        window.dispatchEvent(new CustomEvent('voiceover-play', { detail: { id: voiceover.id } }));
 
-        // Create or update audio element
-        if (!audioRef.current || audioRef.current.src !== currentDemo.audioFile.url) {
-          if (audioRef.current) {
-            audioRef.current.pause();
-          }
-          
-          audioRef.current = new Audio();
-          audioRef.current.preload = 'metadata';
-          
-          audioRef.current.addEventListener('loadedmetadata', () => {
-            setDuration(audioRef.current?.duration || 0);
-            setIsLoading(false);
-          });
-          
-          audioRef.current.addEventListener('ended', () => {
-            setIsPlaying(false);
-            setProgress(0);
-            setCurrentTime(0);
-            if (progressInterval.current) {
-              clearInterval(progressInterval.current);
-            }
-          });
-          
-          audioRef.current.addEventListener('error', () => {
-            setIsLoading(false);
-            console.error('Audio load error');
-          });
-          
-          audioRef.current.src = currentDemo.audioFile.url;
-        }
-        
+        // Pause all other audio using the store
+        pauseOthers(playerId);
+        setCurrentlyPlaying(playerId);
+
         await audioRef.current.play();
         setIsPlaying(true);
+        setIsLoading(false);
 
         // Update progress
+        if (progressInterval.current) {
+          clearInterval(progressInterval.current);
+        }
         progressInterval.current = setInterval(() => {
           if (audioRef.current && !isNaN(audioRef.current.duration)) {
-            const currentProgress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
+            const currentProgress =
+              (audioRef.current.currentTime / audioRef.current.duration) * 100;
             setProgress(currentProgress);
             setCurrentTime(audioRef.current.currentTime);
           }
         }, 100);
-        
       } catch (error) {
         console.error('Audio play error:', error);
         setIsLoading(false);
+        setCurrentlyPlaying(null);
       }
     }
   };
 
   const handleDemoChange = (direction: 'prev' | 'next') => {
-    const newIndex = direction === 'next' 
-      ? Math.min(currentDemoIndex + 1, voiceover.demos.length - 1)
-      : Math.max(currentDemoIndex - 1, 0);
-    
+    const newIndex =
+      direction === 'next'
+        ? Math.min(currentDemoIndex + 1, voiceover.demos.length - 1)
+        : Math.max(currentDemoIndex - 1, 0);
+
     if (newIndex !== currentDemoIndex) {
       // Stop current audio
       if (audioRef.current) {
         audioRef.current.pause();
-        audioRef.current = null;
+        unregisterAudio(playerId);
       }
-      
+
       // Reset state
       setCurrentDemoIndex(newIndex);
       setIsPlaying(false);
       setProgress(0);
       setCurrentTime(0);
       setDuration(0);
-      
+      setCurrentlyPlaying(null);
+      setHasAutoPlayed(false); // This will trigger a re-render and new audio creation
+
       if (progressInterval.current) {
         clearInterval(progressInterval.current);
       }
@@ -151,12 +204,12 @@ export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current) return;
-    
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
     const newTime = (percentage / 100) * audioRef.current.duration;
-    
+
     audioRef.current.currentTime = newTime;
     setProgress(percentage);
     setCurrentTime(newTime);
@@ -171,7 +224,7 @@ export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
 
   const handleDownload = async () => {
     if (!currentDemo) return;
-    
+
     try {
       const response = await fetch(currentDemo.audioFile.url);
       const blob = await response.blob();
@@ -234,7 +287,7 @@ export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         className="w-full"
       >
         {/* Choose button */}
@@ -292,7 +345,7 @@ export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
 
         {/* Progress bar */}
         <div className="mb-2 px-4">
-          <div 
+          <div
             className="relative h-1 bg-white/20 rounded-full cursor-pointer"
             onClick={handleProgressClick}
             role="progressbar"
@@ -300,7 +353,7 @@ export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
             aria-valuemin={0}
             aria-valuemax={100}
           >
-            <motion.div 
+            <motion.div
               className="absolute inset-y-0 left-0 bg-white rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
@@ -311,7 +364,9 @@ export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
 
         {/* Time and download */}
         <div className="flex items-center justify-between text-white/80 text-xs px-4">
-          <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
+          <span>
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </span>
           <button
             onClick={handleDownload}
             className="p-1.5 rounded-full transition-colors hover:bg-white/10"
@@ -326,7 +381,9 @@ export function AnimatedPlayer({ voiceover, onClose }: AnimatedPlayerProps) {
           <span className="text-xs text-white/60">
             {currentDemo?.title}
             {voiceover.demos.length > 1 && (
-              <span className="ml-2">({currentDemoIndex + 1}/{voiceover.demos.length})</span>
+              <span className="ml-2">
+                ({currentDemoIndex + 1}/{voiceover.demos.length})
+              </span>
             )}
           </span>
         </div>

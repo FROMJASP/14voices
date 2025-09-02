@@ -457,6 +457,61 @@ const Pages: CollectionConfig = {
                     },
                   ],
                 },
+                {
+                  name: 'heroImageURL',
+                  type: 'text',
+                  virtual: true,
+                  admin: {
+                    hidden: true,
+                  },
+                  hooks: {
+                    afterRead: [
+                      async ({ siblingData, req }) => {
+                        // Only process if we have a heroImage
+                        if (!siblingData?.heroImage) return null;
+
+                        // If heroImage is just an ID string, fetch the media
+                        if (typeof siblingData.heroImage === 'string') {
+                          try {
+                            const media = await req.payload.findByID({
+                              collection: 'media',
+                              id: siblingData.heroImage,
+                              depth: 0,
+                            });
+
+                            if (media?.url) {
+                              return media.url;
+                            } else if (media?.filename) {
+                              const publicUrl = process.env.S3_PUBLIC_URL;
+                              if (publicUrl) {
+                                return `${publicUrl}/media/${media.filename}`;
+                              }
+                              return `/media/${media.filename}`;
+                            }
+                          } catch (error) {
+                            console.error('Error fetching hero image media:', error);
+                          }
+                        }
+                        // If heroImage is already populated as an object
+                        else if (typeof siblingData.heroImage === 'object') {
+                          const heroImageObj = siblingData.heroImage as any;
+
+                          if (heroImageObj.url) {
+                            return heroImageObj.url;
+                          } else if (heroImageObj.filename) {
+                            const publicUrl = process.env.S3_PUBLIC_URL;
+                            if (publicUrl) {
+                              return `${publicUrl}/media/${heroImageObj.filename}`;
+                            }
+                            return `/media/${heroImageObj.filename}`;
+                          }
+                        }
+
+                        return null;
+                      },
+                    ],
+                  },
+                },
                 // Homepage stats
                 {
                   name: 'stats',
@@ -526,6 +581,10 @@ const Pages: CollectionConfig = {
                   en: 'Main page content',
                   nl: 'Hoofdinhoud van de pagina',
                 },
+                condition: (data) => {
+                  // Hide content field for homepage since it uses a custom layout
+                  return data.slug !== 'home';
+                },
               },
             },
             {
@@ -539,6 +598,10 @@ const Pages: CollectionConfig = {
                 description: {
                   en: 'Add content sections to build your page',
                   nl: 'Voeg inhoudssecties toe om je pagina op te bouwen',
+                },
+                condition: (data) => {
+                  // Hide sections field for homepage since it uses a custom layout
+                  return data.slug !== 'home';
                 },
               },
               fields: [

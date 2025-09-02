@@ -72,18 +72,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
 
   const titleParts = parseTitle(hero.title);
 
-  // Handle image URL extraction
-  const getImageUrl = (): string => {
-    if (typeof hero.heroImage === 'string') {
-      return hero.heroImage;
-    }
-    if (hero.heroImage && typeof hero.heroImage === 'object' && hero.heroImage.url) {
-      return hero.heroImage.url;
-    }
-    return '/header-image.png'; // fallback
-  };
-
-  const imageUrl = getImageUrl();
+  // Handle image URL extraction - should already be resolved by transformHeroDataForHomepage
+  const imageUrl = hero.heroImage || '/header-image.png';
 
   return (
     <section className="hero bg-background px-6 py-10">

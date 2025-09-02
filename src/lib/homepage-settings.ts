@@ -15,7 +15,7 @@ export interface HomepageSettings {
       text: string;
       url: string;
     };
-    heroImage: string | { url: string };
+    heroImage: string;
     stats?: Array<{
       number: string;
       label: string;

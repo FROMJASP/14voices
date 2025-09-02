@@ -153,9 +153,27 @@ export default async function Page({ params }: PageProps) {
         : page.sections?.map((section) => nullToUndefined(section)),
   } as Page & { content?: unknown; sections?: any[] };
 
+  // Fetch voiceovers if this is the homepage
+  let voiceovers = null;
+  if (slug === 'home') {
+    // Fetch voiceovers directly from Payload during SSR
+    const voiceoverResults = await payload.find({
+      collection: 'voiceovers',
+      where: {
+        status: {
+          in: ['active', 'more-voices'],
+        },
+      },
+      depth: 2,
+      limit: 100,
+    });
+
+    voiceovers = voiceoverResults.docs;
+  }
+
   return (
     <Suspense fallback={<PreviewLoading />}>
-      <PageRenderer page={transformedPage} />
+      <PageRenderer page={transformedPage} voiceovers={voiceovers} />
     </Suspense>
   );
 }

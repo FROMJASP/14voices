@@ -7,6 +7,9 @@ import { HeroSection } from '@/components/features/homepage/HeroSection';
 import { transformHeroDataForHomepage } from '@/lib/homepage-utils';
 import { useLivePreview } from '@payloadcms/live-preview-react';
 import { useRouter } from 'next/navigation';
+import { VoiceoverSection } from '@/components/features/homepage/VoiceoverSection';
+import { transformVoiceoverData } from '@/lib/voiceover-utils';
+import type { PayloadVoiceover } from '@/types/voiceover';
 
 // Define section type union for all possible section types
 type PageSection = {
@@ -73,9 +76,13 @@ interface PageRendererProps {
     content?: unknown;
     sections?: PageSection[];
   };
+  voiceovers?: any[] | null;
 }
 
-export function PageRenderer({ page: initialPage }: PageRendererProps): React.ReactElement {
+export function PageRenderer({
+  page: initialPage,
+  voiceovers: initialVoiceovers,
+}: PageRendererProps): React.ReactElement {
   const router = useRouter();
 
   // Use live preview hook with proper configuration
@@ -84,6 +91,9 @@ export function PageRenderer({ page: initialPage }: PageRendererProps): React.Re
     serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
     depth: 2,
   });
+
+  // Preserve voiceovers from props - they shouldn't be affected by live preview
+  const voiceovers = initialVoiceovers;
 
   // Refresh the page when save is triggered
   useEffect(() => {
@@ -105,6 +115,21 @@ export function PageRenderer({ page: initialPage }: PageRendererProps): React.Re
     return isHomepage && page.hero?.type === 'homepage' ? transformHeroDataForHomepage(page) : null;
   }, [page, isHomepage]);
 
+  // Transform voiceovers data if needed
+  const transformedVoiceovers = React.useMemo(() => {
+    if (!voiceovers || voiceovers.length === 0) return [];
+
+    // Check if voiceovers are already transformed (have tags array)
+    if (voiceovers[0].tags && Array.isArray(voiceovers[0].tags)) {
+      return voiceovers;
+    }
+
+    // Transform Payload voiceovers to the expected format
+    return voiceovers.map((voiceover, index) =>
+      transformVoiceoverData(voiceover as PayloadVoiceover, index)
+    );
+  }, [voiceovers]);
+
   // For homepage hero, render without article wrapper to maintain proper styling
   if (isHomepage && page.hero?.type === 'homepage' && heroSettings) {
     return (
@@ -123,6 +148,10 @@ export function PageRenderer({ page: initialPage }: PageRendererProps): React.Re
         }
       >
         <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
+
+        {/* Render voiceovers section */}
+        <VoiceoverSection initialVoiceovers={transformedVoiceovers} />
+
         {/* Optionally render other homepage sections if needed for preview */}
         {page.sections && page.sections.length > 0 && (
           <div className="sections-container">{/* Render sections... */}</div>
