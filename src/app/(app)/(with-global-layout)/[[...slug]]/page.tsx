@@ -78,7 +78,8 @@ export default async function Page({ params }: PageProps) {
   const payload = await getPayload({ config: configPromise });
 
   // Check if we're in Payload's live preview iframe
-  const isLivePreview = headers().get('x-payload-live-preview') === 'true';
+  const headersList = await headers();
+  const isLivePreview = headersList.get('x-payload-live-preview') === 'true';
 
   let page: Page | undefined;
 
