@@ -61,7 +61,9 @@ const MainContent = memo(
         <section id="voiceovers" className="py-16 bg-background">
           <div className="container mx-auto px-4">
             <div className="mb-8">
-              <h2 className="text-4xl font-bold text-foreground mb-4">Onze Stemacteurs</h2>
+              <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+                Onze Stemacteurs
+              </h2>
             </div>
             <OptimizedVoiceoverGrid voiceovers={voiceovers} />
           </div>

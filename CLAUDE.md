@@ -81,6 +81,21 @@ To change column order in Payload CMS admin tables:
 3. For more control, use DOM manipulation in a `beforeListTable` component (see `PagesList.tsx`)
 4. Column reordering happens client-side after the table renders
 
+## Dark Mode Implementation
+
+When implementing dark mode, ensure all components use CSS variables instead of hardcoded colors:
+
+1. **Never hardcode CSS variables in inline styles** - This overrides the dark mode CSS
+2. **Use theme-aware utility classes** - `bg-background`, `text-foreground`, etc.
+3. **For custom colors, use CSS variables** - `var(--primary)`, `var(--text-primary)`, etc.
+4. **Main wrapper elements need proper classes** - Add `bg-background text-foreground` to layout wrappers
+
+Common issues:
+
+- PageRenderer had hardcoded light mode CSS variables in inline styles
+- Buttons using hardcoded Tailwind classes like `bg-gray-900 dark:bg-white`
+- Missing background/text classes on main layout elements
+
 ## Custom Payload CMS Cell Components
 
 When creating custom cell components for Payload admin tables:

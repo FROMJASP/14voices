@@ -807,7 +807,7 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
                           </span>
                         )}
                         <ChevronDown
-                          className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform ${voiceDropdownOpen ? 'rotate-180' : ''}`}
+                          className={`w-5 h-5 text-muted-foreground transition-transform ${voiceDropdownOpen ? 'rotate-180' : ''}`}
                         />
                       </button>
 
@@ -896,7 +896,7 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
                           {selectedWords || 'Selecteer een optie'}
                         </span>
                         <ChevronDown
-                          className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${wordsDropdownOpen ? 'rotate-180' : ''}`}
+                          className={`w-4 h-4 text-muted-foreground transition-transform ${wordsDropdownOpen ? 'rotate-180' : ''}`}
                         />
                       </button>
 
@@ -1000,7 +1000,7 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
                                       +€{option.price}
                                     </span>
                                     <ChevronDown
-                                      className={`w-3.5 h-3.5 text-gray-400 dark:text-gray-500 transition-transform ${
+                                      className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${
                                         isOpen ? 'rotate-180' : ''
                                       }`}
                                     />

@@ -25,7 +25,7 @@ export function GlobalLayout({
       <ClientFaviconUpdater />
 
       {/* Simple, clean layout with info navbar, navbar, content, and footer */}
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background text-foreground">
         {/* Info Navbar */}
         {showInfoNavbar && infoNavbarData && <InfoNavbar data={infoNavbarData} />}
 
@@ -33,7 +33,7 @@ export function GlobalLayout({
         <Navigation infoNavbarData={infoNavbarData} logoSettings={logoSettings} />
 
         {/* Main content area */}
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 bg-background text-foreground">{children}</main>
 
         {/* Footer */}
         <Footer />

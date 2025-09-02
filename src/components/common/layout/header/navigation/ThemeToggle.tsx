@@ -23,6 +23,15 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
     setTheme(newTheme);
+
+    // Force update the data-theme attribute for compatibility
+    const resolvedTheme =
+      newTheme === 'system'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+        : newTheme;
+    document.documentElement.setAttribute('data-theme', resolvedTheme);
   };
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {

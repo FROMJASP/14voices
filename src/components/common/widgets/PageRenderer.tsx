@@ -133,20 +133,7 @@ export function PageRenderer({
   // For homepage hero, render without article wrapper to maintain proper styling
   if (isHomepage && page.hero?.type === 'homepage' && heroSettings) {
     return (
-      <div
-        className="homepage-preview"
-        style={
-          {
-            // Ensure CSS variables are available in preview
-            '--primary': '#6366f1',
-            '--text-primary': '#1a1a1a',
-            '--text-secondary': '#6b7280',
-            '--text-muted': '#9ca3af',
-            '--background': '#ffffff',
-            '--foreground': '#1a1a1a',
-          } as React.CSSProperties
-        }
-      >
+      <div className="homepage-preview">
         <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
 
         {/* Render voiceovers section */}
@@ -164,7 +151,7 @@ export function PageRenderer({
   }
 
   return (
-    <article className="page-content">
+    <article className="page-content bg-background text-foreground">
       {/* Render hero section if present */}
       {page.hero && page.hero.type && page.hero.type !== 'none' && (
         <PageHeroSection hero={page.hero} />
@@ -262,7 +249,7 @@ export function PageRenderer({
                           </h2>
                         )}
                         {section.contactSubheading && (
-                          <p className="text-xl mb-12 text-center text-gray-600 dark:text-gray-400">
+                          <p className="text-xl mb-12 text-center text-muted-foreground">
                             {section.contactSubheading}
                           </p>
                         )}
@@ -296,9 +283,7 @@ export function PageRenderer({
                             <div>
                               <h3 className="text-xl font-semibold mb-4">Send us a message</h3>
                               {/* Contact form would go here */}
-                              <p className="text-gray-600 dark:text-gray-400">
-                                Contact form coming soon...
-                              </p>
+                              <p className="text-muted-foreground">Contact form coming soon...</p>
                             </div>
                           )}
                         </div>
@@ -317,7 +302,7 @@ export function PageRenderer({
                         </h2>
                       )}
                       {section.pricingSubheading && (
-                        <p className="text-xl mb-12 text-center text-gray-600 dark:text-gray-400">
+                        <p className="text-xl mb-12 text-center text-muted-foreground">
                           {section.pricingSubheading}
                         </p>
                       )}
@@ -329,7 +314,7 @@ export function PageRenderer({
                               className={`border rounded-lg p-8 ${
                                 plan.highlighted
                                   ? 'border-primary shadow-lg scale-105'
-                                  : 'border-gray-200 dark:border-gray-700'
+                                  : 'border-border'
                               }`}
                             >
                               {plan.highlighted && (
@@ -340,9 +325,7 @@ export function PageRenderer({
                               <h3 className="text-2xl font-bold mt-4">{plan.name}</h3>
                               <p className="text-3xl font-bold mt-2 mb-4">{plan.price}</p>
                               {plan.description && (
-                                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                                  {plan.description}
-                                </p>
+                                <p className="text-muted-foreground mb-6">{plan.description}</p>
                               )}
                               {plan.features && plan.features.length > 0 && (
                                 <ul className="mb-8 space-y-2">
@@ -370,7 +353,7 @@ export function PageRenderer({
                                   className={`block text-center py-3 px-6 rounded-lg font-medium transition-colors ${
                                     plan.highlighted
                                       ? 'bg-primary text-white hover:bg-primary/90'
-                                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                      : 'bg-muted text-foreground hover:bg-muted/80'
                                   }`}
                                 >
                                   {plan.buttonText}
@@ -386,7 +369,7 @@ export function PageRenderer({
 
               case 'testimonials':
                 return (
-                  <section key={index} className="py-16 bg-gray-50 dark:bg-gray-900">
+                  <section key={index} className="py-16 bg-surface">
                     <div className="container mx-auto px-4">
                       {section.testimonialsHeading && (
                         <h2 className="text-3xl font-bold mb-4 text-center">
@@ -394,12 +377,12 @@ export function PageRenderer({
                         </h2>
                       )}
                       {section.testimonialsSubheading && (
-                        <p className="text-xl mb-12 text-center text-gray-600 dark:text-gray-400">
+                        <p className="text-xl mb-12 text-center text-muted-foreground">
                           {section.testimonialsSubheading}
                         </p>
                       )}
                       {/* Testimonials would be fetched and rendered here based on source */}
-                      <div className="text-center text-gray-600 dark:text-gray-400">
+                      <div className="text-center text-muted-foreground">
                         <p>Testimonials coming soon...</p>
                       </div>
                     </div>
@@ -416,7 +399,7 @@ export function PageRenderer({
                         </h2>
                       )}
                       {section.faqSubheading && (
-                        <p className="text-xl mb-12 text-center text-gray-600 dark:text-gray-400">
+                        <p className="text-xl mb-12 text-center text-muted-foreground">
                           {section.faqSubheading}
                         </p>
                       )}
@@ -426,7 +409,7 @@ export function PageRenderer({
                             (faq: { question: string; answer?: unknown }, faqIndex: number) => (
                               <details
                                 key={faqIndex}
-                                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                                className="border border-border rounded-lg p-4"
                               >
                                 <summary className="font-semibold cursor-pointer">
                                   {faq.question}
@@ -453,7 +436,7 @@ export function PageRenderer({
                         </h2>
                       )}
                       {/* Gallery images would be rendered here */}
-                      <div className="text-center text-gray-600 dark:text-gray-400">
+                      <div className="text-center text-muted-foreground">
                         <p>Gallery coming soon...</p>
                       </div>
                     </div>

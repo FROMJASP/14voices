@@ -137,7 +137,7 @@ export const OptimizedVideo = memo(function OptimizedVideo({
         style={{ width, height }}
       >
         <div className="text-center p-4">
-          <div className="text-gray-400 dark:text-gray-500 mb-2">
+          <div className="text-muted-foreground mb-2">
             <svg
               className="w-12 h-12 mx-auto"
               fill="none"
@@ -152,7 +152,7 @@ export const OptimizedVideo = memo(function OptimizedVideo({
               />
             </svg>
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Video failed to load</p>
+          <p className="text-sm text-muted-foreground">Video failed to load</p>
         </div>
       </div>
     );
@@ -178,7 +178,7 @@ export const OptimizedVideo = memo(function OptimizedVideo({
           />
         ) : (
           <div className="text-center p-4">
-            <div className="text-gray-400 dark:text-gray-500 mb-2">
+            <div className="text-muted-foreground mb-2">
               <svg
                 className="w-12 h-12 mx-auto"
                 fill="none"
@@ -193,7 +193,7 @@ export const OptimizedVideo = memo(function OptimizedVideo({
                 />
               </svg>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Loading video...</p>
+            <p className="text-sm text-muted-foreground">Loading video...</p>
           </div>
         )}
       </div>

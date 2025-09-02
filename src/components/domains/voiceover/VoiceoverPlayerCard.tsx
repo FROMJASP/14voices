@@ -211,7 +211,10 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
             )}
 
             {/* Player overlay */}
-            <div className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col justify-between p-4">
+            <div
+              className="absolute inset-0 backdrop-blur-sm flex flex-col justify-between p-4"
+              style={{ backgroundColor: 'var(--background)' + '99' }}
+            >
               {/* Top section with name and close button */}
               <div className="flex items-start justify-between">
                 <div>

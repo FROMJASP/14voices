@@ -243,7 +243,7 @@ export function VoiceoverHero({
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <User className="w-24 h-24 text-gray-600 dark:text-gray-400" />
+                <User className="w-24 h-24 text-muted-foreground" />
               </div>
             )}
 
@@ -310,7 +310,7 @@ export function VoiceoverHero({
             <div className="text-center mt-2">
               <h3 className="text-white font-medium text-sm">{currentDemo.title}</h3>
               {demos.length > 1 && (
-                <span className="text-xs text-gray-400 dark:text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   Track {currentDemoIndex + 1} of {demos.length}
                 </span>
               )}

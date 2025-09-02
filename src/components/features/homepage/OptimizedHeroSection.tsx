@@ -117,7 +117,31 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
             <div className="hero-actions flex flex-row gap-3 mb-8 flex-wrap sm:flex-nowrap">
               <Link
                 href={hero.primaryButton.url}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-[10px] font-semibold text-[15px] transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                className="flex-1 sm:flex-none"
+                style={{
+                  backgroundColor: 'var(--foreground)',
+                  color: 'var(--background)',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontWeight: '600',
+                  fontSize: '15px',
+                  transition: 'all 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  border: 'none',
+                  minWidth: 'fit-content',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
                 prefetch={false} // Don't prefetch unless critical
               >
                 {hero.primaryButton.text}
@@ -139,7 +163,29 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
 
               <Link
                 href={hero.secondaryButton.url}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-transparent border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-[10px] font-semibold text-[15px] transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                className="flex-1 sm:flex-none"
+                style={{
+                  backgroundColor: 'transparent',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border)',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontWeight: '600',
+                  fontSize: '15px',
+                  transition: 'all 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  minWidth: 'fit-content',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--surface)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
                 prefetch={false}
               >
                 <svg
@@ -199,9 +245,10 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
           {/* Right Content - Image (Hidden on mobile, shown on md+) */}
           <div className="hero-image relative hidden md:block">
             <div
-              className="image-wrapper relative mx-auto md:ml-auto max-w-[320px] md:max-w-[380px] lg:max-w-[420px] aspect-[4/5] overflow-hidden border-2 border-gray-200 dark:border-gray-700"
+              className="image-wrapper relative mx-auto md:ml-auto max-w-[320px] md:max-w-[380px] lg:max-w-[420px] aspect-[4/5] overflow-hidden border-2"
               style={{
                 backgroundColor: 'var(--surface)',
+                borderColor: 'var(--border)',
                 borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
               }}
             >

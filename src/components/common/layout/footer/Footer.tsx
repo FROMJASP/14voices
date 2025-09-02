@@ -115,7 +115,7 @@ export function Footer({
 
   return (
     <div
-      className={`relative h-full sm:pt-14 pt-8 bg-[#fcf9f5] dark:bg-background text-foreground ${bricolageGrotesque.variable}`}
+      className={`relative h-full sm:pt-14 pt-8 bg-[#fcf9f5] dark:bg-[#0f0f0f] text-foreground ${bricolageGrotesque.variable}`}
       ref={container}
     >
       <div className="sm:container px-4 mx-auto">

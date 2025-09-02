@@ -4,7 +4,7 @@
 /* Google Fonts Import for Bricolage Grotesque and Instrument Serif */
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
 
-@custom-variant dark (.dark &);
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -229,6 +229,7 @@
 }
 
 /* Dark mode variables - Matching mockup */
+:root.dark,
 .dark,
 [data-theme='dark'] {
   --text-primary: #f9fafb;

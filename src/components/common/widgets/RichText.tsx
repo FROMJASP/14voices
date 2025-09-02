@@ -106,7 +106,7 @@ export function RichText({ content, className }: RichTextProps) {
               className={`${alignment === 'full' ? 'w-full' : ''}`}
             />
             {caption && (
-              <figcaption className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
+              <figcaption className="text-sm text-muted-foreground mt-2 text-center">
                 {caption}
               </figcaption>
             )}
@@ -129,9 +129,7 @@ export function RichText({ content, className }: RichTextProps) {
               allowFullScreen
             />
             {embedCaption && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
-                {embedCaption}
-              </p>
+              <p className="text-sm text-muted-foreground mt-2 text-center">{embedCaption}</p>
             )}
           </div>
         );
