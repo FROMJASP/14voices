@@ -25,9 +25,7 @@ export function ClientConfigProvider({ children }: { children: React.ReactNode }
       Object.getOwnPropertyNames(originalFetch).forEach((prop) => {
         if (prop !== 'length' && prop !== 'name' && prop !== 'prototype') {
           try {
-            (fetchWrapper as Record<string, unknown>)[prop] = (
-              originalFetch as Record<string, unknown>
-            )[prop];
+            (fetchWrapper as any)[prop] = (originalFetch as any)[prop];
           } catch {
             // Some properties might be read-only
           }

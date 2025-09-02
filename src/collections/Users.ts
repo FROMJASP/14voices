@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 import { afterUserCreate } from '@/hooks/emailTriggers';
 import { resolveAvatarURL, addImageProperty } from '@/hooks/userAvatar';
+import { afterLoginHook } from '@/hooks/afterLogin';
 
 const Users: CollectionConfig = {
   slug: 'users',
