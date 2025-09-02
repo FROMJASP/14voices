@@ -3,16 +3,24 @@
 import React, { memo, useMemo } from 'react';
 import type { DefaultCellComponentProps } from 'payload';
 import { useDarkMode } from '@/hooks/useDarkMode';
+import { useTranslation } from '@payloadcms/ui';
 
 export const UserLastSeenCell: React.FC<DefaultCellComponentProps> = memo(({ rowData }) => {
   const isDark = useDarkMode();
+  const { i18n } = useTranslation();
+  const locale = i18n.language;
 
-  const lastLogin = rowData?.security?.lastLogin;
+  const lastLogin = rowData?.lastLogin;
   const createdAt = rowData?.createdAt;
 
   const { timeAgo, fullDate } = useMemo(() => {
     const dateToUse = lastLogin || createdAt;
-    if (!dateToUse) return { timeAgo: 'Never', fullDate: 'Never logged in' };
+    if (!dateToUse) {
+      return {
+        timeAgo: locale === 'nl' ? 'Nooit' : 'Never',
+        fullDate: locale === 'nl' ? 'Nooit ingelogd' : 'Never logged in',
+      };
+    }
 
     const date = new Date(dateToUse);
     const now = new Date();
@@ -23,20 +31,25 @@ export const UserLastSeenCell: React.FC<DefaultCellComponentProps> = memo(({ row
 
     let timeAgo = '';
     if (diffInMinutes < 1) {
-      timeAgo = 'Just now';
+      timeAgo = locale === 'nl' ? 'Zojuist' : 'Just now';
     } else if (diffInMinutes < 60) {
-      timeAgo = `${diffInMinutes}m ago`;
+      timeAgo = locale === 'nl' ? `${diffInMinutes}m geleden` : `${diffInMinutes}m ago`;
     } else if (diffInHours < 24) {
-      timeAgo = `${diffInHours}h ago`;
+      timeAgo = locale === 'nl' ? `${diffInHours}u geleden` : `${diffInHours}h ago`;
     } else if (diffInDays < 7) {
-      timeAgo = `${diffInDays}d ago`;
+      timeAgo = locale === 'nl' ? `${diffInDays}d geleden` : `${diffInDays}d ago`;
     } else if (diffInDays < 30) {
-      timeAgo = `${Math.floor(diffInDays / 7)}w ago`;
+      timeAgo =
+        locale === 'nl'
+          ? `${Math.floor(diffInDays / 7)}w geleden`
+          : `${Math.floor(diffInDays / 7)}w ago`;
     } else {
-      timeAgo = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const localeCode = locale === 'nl' ? 'nl-NL' : 'en-US';
+      timeAgo = date.toLocaleDateString(localeCode, { month: 'short', day: 'numeric' });
     }
 
-    const fullDate = date.toLocaleString('en-US', {
+    const localeCode = locale === 'nl' ? 'nl-NL' : 'en-US';
+    const fullDate = date.toLocaleString(localeCode, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -45,7 +58,7 @@ export const UserLastSeenCell: React.FC<DefaultCellComponentProps> = memo(({ row
     });
 
     return { timeAgo, fullDate };
-  }, [lastLogin, createdAt]);
+  }, [lastLogin, createdAt, locale]);
 
   const isOnline = useMemo(() => {
     if (!lastLogin) return false;

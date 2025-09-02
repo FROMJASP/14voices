@@ -304,6 +304,10 @@ const Users: CollectionConfig = {
     {
       name: 'lastLogin',
       type: 'date',
+      label: {
+        en: 'Last login',
+        nl: 'Laatste login',
+      },
       admin: {
         description: 'Last login time',
         components: {
@@ -327,6 +331,7 @@ const Users: CollectionConfig = {
       },
     ],
     afterChange: [afterUserCreate],
+    afterLogin: [afterLoginHook],
     beforeRead: [
       async ({ doc, req }) => {
         // Force populate avatar if it's just an ID
