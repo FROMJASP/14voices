@@ -8,19 +8,24 @@ export const UserAvatarCell: React.FC<DefaultCellComponentProps> = memo(({ cellD
   const isDark = useDarkMode();
 
   const { imageUrl, initials, avatarColor } = useMemo(() => {
-    // Check for avatarURL (which includes default avatar)
-    if (rowData?.avatarURL) {
+    // Check if cellData is a populated media object
+    if (cellData && typeof cellData === 'object' && cellData.url) {
+      return { imageUrl: cellData.url, initials: null, avatarColor: null };
+    }
+
+    // Check avatarURL which should be resolved server-side
+    if (rowData?.avatarURL && !rowData.avatarURL.includes('data:image/svg')) {
       return { imageUrl: rowData.avatarURL, initials: null, avatarColor: null };
     }
 
-    // Check for uploaded avatar
-    if (cellData) {
-      if (typeof cellData === 'object' && cellData.url) {
-        return { imageUrl: cellData.url, initials: null, avatarColor: null };
-      }
+    // Check image property (fallback)
+    if (rowData?.image && !rowData.image.includes('data:image/svg')) {
+      return { imageUrl: rowData.image, initials: null, avatarColor: null };
     }
 
-    // Generate initials
+    // If we only have an ID, we can't fetch it client-side
+    // The server-side hooks should have resolved this
+    // Generate initials as fallback
     const name = rowData?.name || rowData?.email || 'U';
     const parts = name.trim().split(' ').filter(Boolean);
     let initials = 'U';
@@ -43,9 +48,10 @@ export const UserAvatarCell: React.FC<DefaultCellComponentProps> = memo(({ cellD
       style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        padding: '8px 0',
+        justifyContent: 'flex-start',
+        width: '60px',
+        minWidth: '60px',
+        padding: '8px 12px',
       }}
     >
       {imageUrl ? (
@@ -54,32 +60,40 @@ export const UserAvatarCell: React.FC<DefaultCellComponentProps> = memo(({ cellD
           src={imageUrl}
           alt="Avatar"
           style={{
-            width: '36px',
-            height: '36px',
+            width: '32px',
+            height: '32px',
             borderRadius: '50%',
             objectFit: 'cover',
             border: isDark ? '2px solid #374151' : '2px solid #e5e7eb',
-          }}
-        />
-      ) : (
-        <div
-          style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            backgroundColor: avatarColor,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '14px',
-            fontWeight: '600',
-            color: 'white',
             flexShrink: 0,
           }}
-        >
-          {initials}
-        </div>
-      )}
+          onError={(e) => {
+            // Hide broken image and show initials instead
+            e.currentTarget.style.display = 'none';
+            const initialsDiv = e.currentTarget.nextElementSibling as HTMLElement;
+            if (initialsDiv) {
+              initialsDiv.style.display = 'flex';
+            }
+          }}
+        />
+      ) : null}
+      <div
+        style={{
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          backgroundColor: avatarColor,
+          display: imageUrl ? 'none' : 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '13px',
+          fontWeight: '600',
+          color: 'white',
+          flexShrink: 0,
+        }}
+      >
+        {initials}
+      </div>
     </div>
   );
 });

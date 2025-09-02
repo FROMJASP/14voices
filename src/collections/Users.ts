@@ -15,7 +15,7 @@ const Users: CollectionConfig = {
     },
   },
   auth: {
-    depth: 1, // Ensure avatar relationship is populated
+    depth: 2, // Ensure avatar relationship is populated
     forgotPassword: {
       generateEmailHTML: (args) => {
         const { token, user } = args || {};
@@ -133,12 +133,17 @@ const Users: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'email',
-    defaultColumns: ['avatar', 'name', 'email', 'lastLogin'],
+    defaultColumns: ['avatar', 'name', 'phone', 'lastLogin'],
     listSearchableFields: ['name', 'email', 'jobTitle'],
     group: 'Account Management',
     pagination: {
       defaultLimit: 25,
       limits: [10, 25, 50, 100],
+    },
+    components: {
+      views: {
+        list: './components/admin/lists/UsersList#UsersList',
+      },
     },
   },
   access: {
@@ -157,8 +162,8 @@ const Users: CollectionConfig = {
       name: 'name',
       type: 'text',
       label: {
-        en: 'Full name',
-        nl: 'Volledige naam',
+        en: 'Name & Email',
+        nl: 'Naam & E-mail',
       },
       admin: {
         components: {
@@ -252,6 +257,11 @@ const Users: CollectionConfig = {
         en: 'Phone',
         nl: 'Telefoonnummer',
       },
+      admin: {
+        components: {
+          Cell: './components/admin/cells/PhoneCell#PhoneCell',
+        },
+      },
       validate: (value: unknown) => {
         if (!value || typeof value !== 'string') return true;
         const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
@@ -309,7 +319,38 @@ const Users: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeOperation: [
+      async ({ args, operation }) => {
+        // Ensure avatar is populated in find operations
+        if (operation === 'find' || operation === 'findByID') {
+          if (!args.depth || args.depth < 1) {
+            args.depth = 1;
+          }
+        }
+        return args;
+      },
+    ],
     afterChange: [afterUserCreate],
+    beforeRead: [
+      async ({ doc, req }) => {
+        // Force populate avatar if it's just an ID
+        if (doc?.avatar && typeof doc.avatar === 'string') {
+          try {
+            const media = await req.payload.findByID({
+              collection: 'media',
+              id: doc.avatar,
+              depth: 0,
+            });
+            if (media) {
+              doc.avatar = media;
+            }
+          } catch (error) {
+            console.error('Error populating avatar in beforeRead:', error);
+          }
+        }
+        return doc;
+      },
+    ],
     afterRead: [
       async ({ doc, req }) => {
         // Ensure avatar is properly populated for the admin UI

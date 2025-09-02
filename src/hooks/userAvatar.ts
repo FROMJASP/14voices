@@ -41,21 +41,40 @@ const generateDefaultAvatar = (name?: string, color?: string): string => {
  * Hook to provide a resolved avatar URL for the user
  * This will be used by Payload's admin UI to display the correct avatar
  */
-export const resolveAvatarURL: FieldHook = async ({ data, req }) => {
+export const resolveAvatarURL: FieldHook = async ({ data, req, originalDoc }) => {
+  // Try to get avatar from data or originalDoc
+  const avatarValue = data?.avatar ?? originalDoc?.avatar;
+
   // If user has uploaded avatar, return its URL
-  if (data?.avatar && typeof data.avatar === 'object' && data.avatar.url) {
-    return data.avatar.url;
+  if (avatarValue && typeof avatarValue === 'object' && avatarValue.url) {
+    return avatarValue.url;
   }
 
-  // If avatar is just an ID, we need to fetch the media document
-  if (data?.avatar && typeof data.avatar === 'string') {
+  // If avatar is just an ID (string or number), we need to fetch the media document
+  if (avatarValue && (typeof avatarValue === 'string' || typeof avatarValue === 'number')) {
     try {
       const media = await req.payload.findByID({
         collection: 'media',
-        id: data.avatar,
+        id: String(avatarValue),
+        depth: 0,
       });
       if (media?.url) {
         return media.url;
+      }
+      // If no URL but has filename, construct it
+      if (media?.filename) {
+        const publicUrl = process.env.S3_PUBLIC_URL;
+        const bucket = process.env.S3_BUCKET || 'fourteenvoices';
+        if (publicUrl) {
+          const url = publicUrl.includes(bucket)
+            ? `${publicUrl}/media/${media.filename}`
+            : `${publicUrl}/${bucket}/media/${media.filename}`;
+          console.log('Resolved avatar URL from filename:', url);
+          return url;
+        }
+        // Fallback to constructing from server URL
+        const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
+        return `${serverUrl}/api/media/file/${media.filename}`;
       }
     } catch (error) {
       console.error('Error fetching avatar media:', error);
@@ -63,20 +82,55 @@ export const resolveAvatarURL: FieldHook = async ({ data, req }) => {
   }
 
   // Generate default avatar with initials
-  return generateDefaultAvatar(data?.name || data?.email, data?.avatarColor);
+  const name = data?.name || originalDoc?.name || data?.email || originalDoc?.email;
+  return generateDefaultAvatar(name, data?.avatarColor || originalDoc?.avatarColor);
 };
 
 /**
  * Hook to add a `image` property for Payload's admin UI
  * Payload's account navigation looks for specific properties
  */
-export const addImageProperty: CollectionAfterReadHook = async ({ doc }) => {
+export const addImageProperty: CollectionAfterReadHook = async ({ doc, req }) => {
   if (!doc) return doc;
 
-  // Add image property that Payload's admin UI expects
-  if (doc.avatar && typeof doc.avatar === 'object' && doc.avatar.url) {
+  // If avatar is just an ID (string or number), fetch the media
+  if (doc.avatar && (typeof doc.avatar === 'string' || typeof doc.avatar === 'number')) {
+    try {
+      const media = await req.payload.findByID({
+        collection: 'media',
+        id: String(doc.avatar),
+        depth: 0,
+      });
+      if (media) {
+        // Replace the ID with the full media object
+        doc.avatar = media;
+        if (media.url) {
+          doc.image = media.url;
+          // Also ensure avatarURL is updated
+          doc.avatarURL = media.url;
+        } else if (media.filename) {
+          // Construct URL if not present
+          const publicUrl = process.env.S3_PUBLIC_URL;
+          const bucket = process.env.S3_BUCKET || 'fourteenvoices';
+          if (publicUrl) {
+            const url = publicUrl.includes(bucket)
+              ? `${publicUrl}/media/${media.filename}`
+              : `${publicUrl}/${bucket}/media/${media.filename}`;
+            doc.image = url;
+            doc.avatarURL = url;
+            // Update the media object with the URL
+            media.url = url;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching avatar media in addImageProperty:', error);
+    }
+  } else if (doc.avatar && typeof doc.avatar === 'object' && doc.avatar.url) {
+    // Avatar is already populated
     doc.image = doc.avatar.url;
-  } else if (doc.avatarURL) {
+  } else if (doc.avatarURL && !doc.avatarURL.includes('data:image/svg')) {
+    // Use existing avatarURL if it's not a data URI
     doc.image = doc.avatarURL;
   } else {
     // Generate default avatar if no image exists

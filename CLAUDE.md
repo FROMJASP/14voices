@@ -81,6 +81,67 @@ To change column order in Payload CMS admin tables:
 3. For more control, use DOM manipulation in a `beforeListTable` component (see `PagesList.tsx`)
 4. Column reordering happens client-side after the table renders
 
+## Custom Payload CMS Cell Components
+
+When creating custom cell components for Payload admin tables:
+
+1. **Handling Relationship Fields**:
+   - Relationship fields (like `avatar`) often return just the ID in list views
+   - Use `afterRead` hooks to populate the full object server-side
+   - The `cellData` prop contains the field value (might be just an ID)
+   - The `rowData` prop contains the entire row data
+
+2. **Resolving Media URLs**:
+   - Media fields may need manual URL resolution
+   - Use virtual fields with `FieldHook` to resolve URLs server-side
+   - Check for both `url` property and construct from `filename` if needed
+   - For MinIO/S3: URLs should be constructed using `S3_PUBLIC_URL` environment variable
+
+3. **Example Pattern for Avatar Display**:
+
+   ```typescript
+   // In collection hooks:
+   afterRead: [
+     async ({ doc, req }) => {
+       if (doc?.avatar && typeof doc.avatar === 'string') {
+         const media = await req.payload.findByID({
+           collection: 'media',
+           id: doc.avatar,
+           depth: 0,
+         });
+         doc.avatar = media; // Replace ID with full object
+       }
+       return doc;
+     }
+   ]
+
+   // Virtual field for resolved URL:
+   {
+     name: 'avatarURL',
+     type: 'text',
+     virtual: true,
+     hooks: {
+       afterRead: [resolveAvatarURL], // Custom hook to resolve URL
+     },
+   }
+   ```
+
+4. **Custom List Views**:
+   - Use custom list components to ensure proper query depth
+   - Set `depth: 2` for nested relationships
+   - Example: `admin.components.views.list: './components/admin/lists/UsersList#UsersList'`
+
+5. **Cell Component Pattern**:
+   ```typescript
+   // Always check multiple sources for the data
+   if (cellData && typeof cellData === 'object' && cellData.url) {
+     return { imageUrl: cellData.url };
+   }
+   if (rowData?.avatarURL && !rowData.avatarURL.includes('data:image/svg')) {
+     return { imageUrl: rowData.avatarURL };
+   }
+   ```
+
 ## Live Preview Implementation
 
 The Payload CMS live preview is implemented with the following key components:
@@ -137,10 +198,3 @@ To prevent creating too many versions during editing:
    - Toggle for auto-save on/off
    - Manual save button
    - Last saved timestamp
-
-This setup allows you to:
-
-- Work on changes without creating a new version for each edit
-- Manually save when you want to create a checkpoint
-- Auto-save protection after 30 seconds of inactivity
-- See clearly when you have unsaved changes

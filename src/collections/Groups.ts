@@ -125,6 +125,13 @@ const Groups: CollectionConfig = {
     afterRead: [
       async ({ doc, req }) => {
         try {
+          // Only count voiceovers if we're not in a list view
+          // This prevents circular queries when listing groups
+          if (req.context?.preventCircularQuery) {
+            doc.voiceoverCount = 0;
+            return doc;
+          }
+
           // Count voiceovers in this group
           const voiceovers = await req.payload.find({
             collection: 'voiceovers',
@@ -134,10 +141,12 @@ const Groups: CollectionConfig = {
               },
             },
             limit: 0,
+            depth: 0, // Don't populate relationships
           });
 
           doc.voiceoverCount = voiceovers.totalDocs;
-        } catch {
+        } catch (error) {
+          console.error('Error counting voiceovers for group:', error);
           doc.voiceoverCount = 0;
         }
 

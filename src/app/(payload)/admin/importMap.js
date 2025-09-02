@@ -3,11 +3,13 @@ import { NameCell as NameCell_9c0639e919331889896aa9ea1c557661 } from '../../../
 import { StyleTagsCell as StyleTagsCell_789abce5a437648d513c3e44bd81ed9c } from '../../../components/admin/cells/StyleTagsCell'
 import { AudioDemoCell as AudioDemoCell_c5277311b993037e42bbdbf8c691c657 } from '../../../components/admin/cells/AudioDemoCell'
 import { StatusCell as StatusCell_9552c302193d4c39b8e8f39758f33f86 } from '../../../components/admin/cells/StatusCell'
+import { GroupCell as GroupCell_4f97fbdb7152b6433c40f3aaa21af63b } from '../../../components/admin/cells/GroupCell'
 import { WarningMessage as WarningMessage_7a3c835c149af2187667980e88c5e3e3 } from '../../../components/admin/fields/WarningMessage'
 import { AvailabilityCell as AvailabilityCell_f18f4f9ba3a684cf14cb7d599fed8813 } from '../../../components/admin/cells/AvailabilityCell'
 import { UserInfoCell as UserInfoCell_2498c455506837329098564ecaa127bb } from '../../../components/admin/cells/UserInfoCell'
 import { UserAvatarCell as UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd } from '../../../components/admin/cells/UserAvatarCell'
 import { UserRoleCell as UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d } from '../../../components/admin/cells/UserRoleCell'
+import { PhoneCell as PhoneCell_328db6a539f1a4d0a1739aed65064b39 } from '../../../components/admin/cells/PhoneCell'
 import { UserLastSeenCell as UserLastSeenCell_b5d142be42099c385752cb29940d2ee5 } from '../../../components/admin/cells/UserLastSeenCell'
 import { PageSlugCell as PageSlugCell_2b473417a40ab5652febac9d30aecbd0 } from '../../../components/admin/cells/PageSlugCell'
 import { PageTitleCell as PageTitleCell_672964606649d829c3d8d5ceb1579103 } from '../../../components/admin/cells/PageTitleCell'
@@ -60,11 +62,13 @@ export const importMap = {
   "./components/admin/cells/StyleTagsCell#StyleTagsCell": StyleTagsCell_789abce5a437648d513c3e44bd81ed9c,
   "./components/admin/cells/AudioDemoCell#AudioDemoCell": AudioDemoCell_c5277311b993037e42bbdbf8c691c657,
   "./components/admin/cells/StatusCell#StatusCell": StatusCell_9552c302193d4c39b8e8f39758f33f86,
+  "./components/admin/cells/GroupCell#GroupCell": GroupCell_4f97fbdb7152b6433c40f3aaa21af63b,
   "./components/admin/fields/WarningMessage#WarningMessage": WarningMessage_7a3c835c149af2187667980e88c5e3e3,
   "./components/admin/cells/AvailabilityCell#AvailabilityCell": AvailabilityCell_f18f4f9ba3a684cf14cb7d599fed8813,
   "./components/admin/cells/UserInfoCell#UserInfoCell": UserInfoCell_2498c455506837329098564ecaa127bb,
   "./components/admin/cells/UserAvatarCell#UserAvatarCell": UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd,
   "./components/admin/cells/UserRoleCell#UserRoleCell": UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d,
+  "./components/admin/cells/PhoneCell#PhoneCell": PhoneCell_328db6a539f1a4d0a1739aed65064b39,
   "./components/admin/cells/UserLastSeenCell#UserLastSeenCell": UserLastSeenCell_b5d142be42099c385752cb29940d2ee5,
   "/components/admin/cells/PageSlugCell#PageSlugCell": PageSlugCell_2b473417a40ab5652febac9d30aecbd0,
   "/components/admin/cells/PageTitleCell#PageTitleCell": PageTitleCell_672964606649d829c3d8d5ceb1579103,

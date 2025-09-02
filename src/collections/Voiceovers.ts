@@ -306,6 +306,9 @@ const Voiceovers: CollectionConfig = {
           nl: 'De groep/lichting waar deze voice-over toe behoort',
         },
         width: '20%',
+        components: {
+          Cell: './components/admin/cells/GroupCell#GroupCell',
+        },
       },
     },
     {
