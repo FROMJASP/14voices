@@ -1,5 +1,6 @@
 import type { Page } from '@/payload-types';
 import type { HomepageSettings } from './homepage-settings';
+import { makeMediaUrlRelative } from './media-utils';
 
 // Helper function to extract plain text from Lexical rich text
 function extractTextFromLexical(richText: unknown): string {
@@ -35,9 +36,9 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
   // Extract hero image URL with multiple fallback strategies
   let heroImageUrl = '/header-image.png'; // default fallback
 
-  // First check for the virtual heroImageURL field
-  if (heroWithRichText.heroImageURL) {
-    heroImageUrl = heroWithRichText.heroImageURL;
+  // First check for the virtual heroImageURL field (this is the most reliable)
+  if ((hero as any).heroImageURL) {
+    heroImageUrl = makeMediaUrlRelative((hero as any).heroImageURL);
   }
   // Then check the heroImage field
   else if (hero.heroImage) {
@@ -50,10 +51,11 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
 
       // Try different possible URL properties
       if (heroImageObj.url) {
-        heroImageUrl = heroImageObj.url;
-      } else if (heroImageObj.filename && process.env.NEXT_PUBLIC_S3_PUBLIC_URL) {
+        heroImageUrl = makeMediaUrlRelative(heroImageObj.url);
+      } else if (heroImageObj.filename && process.env.S3_PUBLIC_URL) {
         // Construct URL from filename if we have the S3 public URL
-        heroImageUrl = `${process.env.NEXT_PUBLIC_S3_PUBLIC_URL}/media/${heroImageObj.filename}`;
+        const fullUrl = `${process.env.S3_PUBLIC_URL}/media/${heroImageObj.filename}`;
+        heroImageUrl = makeMediaUrlRelative(fullUrl);
       } else if (heroImageObj.filename) {
         // Fallback to local media path
         heroImageUrl = `/media/${heroImageObj.filename}`;
