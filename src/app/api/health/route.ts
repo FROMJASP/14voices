@@ -27,7 +27,7 @@ export const GET = createApiHandler(
         server: 'ok',
         timestamp: new Date().toISOString(),
       };
-      
+
       // Simple database connectivity check with short timeout
       if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('fake:fake@fake')) {
         const pool = new Pool({
@@ -35,20 +35,20 @@ export const GET = createApiHandler(
           connectionTimeoutMillis: 3000,
           query_timeout: 3000,
         });
-        
+
         try {
           await pool.query('SELECT 1');
           checks['database'] = 'ok';
-        } catch (error) {
+        } catch {
           checks['database'] = 'error';
         } finally {
           await pool.end();
         }
       }
-      
-      const isHealthy = checks.server === 'ok' && 
-                       (checks['database'] === 'ok' || !checks['database']);
-      
+
+      const isHealthy =
+        checks.server === 'ok' && (checks['database'] === 'ok' || !checks['database']);
+
       return {
         status: isHealthy ? 'healthy' : 'unhealthy',
         checks,

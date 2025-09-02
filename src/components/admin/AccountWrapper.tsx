@@ -11,7 +11,7 @@ export default function AccountWrapper() {
   try {
     const auth = useAuth();
     user = auth.user;
-  } catch (err) {
+  } catch {
     // Fallback if hook is not available
     console.debug('AccountWrapper: useAuth hook not available');
   }
