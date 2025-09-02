@@ -29,6 +29,9 @@ const Pages: CollectionConfig = {
     },
     components: {
       beforeListTable: ['/components/admin/views/PagesList#PagesList'],
+      edit: {
+        SaveButton: '/components/admin/SaveDraftControls#SaveDraftControls',
+      },
     },
   },
   access: {
@@ -66,7 +69,12 @@ const Pages: CollectionConfig = {
     },
   },
   versions: {
-    drafts: true,
+    drafts: {
+      autosave: {
+        interval: 300000, // 5 minutes - only autosave every 5 minutes instead of on every change
+      },
+    },
+    maxPerDoc: 20, // Limit the number of versions per document
   },
   fields: [
     {

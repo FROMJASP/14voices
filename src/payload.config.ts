@@ -47,6 +47,9 @@ export default buildConfig({
     livePreview: {
       url: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
     },
+    autoSave: {
+      interval: 2000, // 2 seconds - delay before saving after changes stop
+    },
     components: {
       // Temporarily disabled to troubleshoot webpack issue
       // beforeLogin: ['./components/admin/BeforeLogin#default'],

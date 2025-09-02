@@ -99,3 +99,39 @@ The Payload CMS live preview is implemented with the following key components:
    - Hero title and description use rich text fields (`titleRichText`, `descriptionRichText`)
    - `transformHeroDataForHomepage` extracts plain text from Lexical rich text format
    - Legacy fields (`title`, `description`) are maintained for backward compatibility
+
+### Troubleshooting Live Preview
+
+If live preview stops working:
+
+1. Ensure dev server is restarted after config changes
+2. Check browser console for WebSocket connection errors
+3. Verify `NEXT_PUBLIC_SERVER_URL` is set correctly in `.env.local`
+4. Clear browser cache and reload admin panel
+5. Ensure the preview window URL is within the iframe (check for `x-payload-live-preview` header)
+
+## Version/Draft Management
+
+To prevent creating too many versions during editing:
+
+1. **Pages Collection Configuration** (`collections/Pages.ts`):
+   - Autosave interval set to 5 minutes (300000ms)
+   - Maximum 20 versions per document
+   - Custom SaveDraftControls component for manual save control
+
+2. **Global Configuration** (`payload.config.ts`):
+   - Admin autosave interval set to 2 seconds (debounced)
+   - Prevents saving on every keystroke
+
+3. **Custom Save Controls** (`components/admin/SaveDraftControls.tsx`):
+   - Visual indicator for unsaved changes
+   - Toggle for auto-save on/off
+   - Manual save button
+   - Last saved timestamp
+
+This setup allows you to:
+
+- Work on changes without creating a new version for each edit
+- Manually save when you want to create a checkpoint
+- Auto-save protection after 30 seconds of inactivity
+- See clearly when you have unsaved changes
