@@ -14,8 +14,8 @@ const Pages: CollectionConfig = {
     plural: labels.plural,
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'status', 'updatedAt'],
+    useAsTitle: 'slug',
+    defaultColumns: ['slug', 'title', 'status', 'updatedAt'],
     listSearchableFields: ['title', 'slug'],
     group: 'Content',
     livePreview: {
@@ -87,24 +87,6 @@ const Pages: CollectionConfig = {
           },
           fields: [
             {
-              name: 'title',
-              type: 'text',
-              required: true,
-              label: {
-                en: 'Title',
-                nl: 'Titel',
-              },
-              admin: {
-                description: {
-                  en: 'Page title displayed in browser tabs and search results',
-                  nl: 'Paginatitel weergegeven in browsertabbladen en zoekresultaten',
-                },
-                components: {
-                  Cell: '/components/admin/cells/PageTitleCell#PageTitleCell',
-                },
-              },
-            },
-            {
               name: 'slug',
               type: 'text',
               unique: true,
@@ -115,7 +97,6 @@ const Pages: CollectionConfig = {
                 nl: 'URL-pad',
               },
               admin: {
-                position: 'sidebar',
                 description: {
                   en: 'URL path for this page (e.g., "about-us")',
                   nl: 'URL-pad voor deze pagina (bijv. "over-ons")',
@@ -133,6 +114,24 @@ const Pages: CollectionConfig = {
               },
               hooks: {
                 beforeValidate: [formatSlug('title')],
+              },
+            },
+            {
+              name: 'title',
+              type: 'text',
+              required: true,
+              label: {
+                en: 'Title',
+                nl: 'Titel',
+              },
+              admin: {
+                description: {
+                  en: 'Page title displayed in browser tabs and search results',
+                  nl: 'Paginatitel weergegeven in browsertabbladen en zoekresultaten',
+                },
+                components: {
+                  Cell: '/components/admin/cells/PageTitleCell#PageTitleCell',
+                },
               },
             },
             {

@@ -44,7 +44,7 @@ function formatDateForDisplay(date: Date, isNL: boolean): string {
     const parts = formatted.match(/(\w+)\s+(\d+),\s+(\d+)\s+at\s+(\d+:\d+)/);
 
     if (parts) {
-      const [_, month, day, year, time] = parts;
+      const [, month, day, year, time] = parts;
       return `${day} ${month}, ${year} - ${time}`;
     }
 
@@ -58,6 +58,52 @@ export const PagesList: React.FC = () => {
   React.useEffect(() => {
     // Format dates and hide elements
     const updateUI = () => {
+      // Reorder table columns to show slug first
+      const reorderColumns = () => {
+        const table = document.querySelector('table');
+        if (!table) return;
+
+        // Find header row
+        const headerRow = table.querySelector('thead tr');
+        if (!headerRow) return;
+
+        const headers = Array.from(headerRow.querySelectorAll('th'));
+        let titleIndex = -1;
+        let slugIndex = -1;
+
+        // Find indices of title and slug columns
+        headers.forEach((header, index) => {
+          const headerText = header.textContent?.toLowerCase() || '';
+          if (headerText.includes('titel') || headerText.includes('title')) {
+            titleIndex = index;
+          } else if (headerText.includes('url-pad') || headerText.includes('slug')) {
+            slugIndex = index;
+          }
+        });
+
+        // If both columns found and slug is not already first (after checkbox column)
+        if (titleIndex > 0 && slugIndex > 0 && titleIndex < slugIndex) {
+          // Swap columns in header
+          const titleHeader = headers[titleIndex];
+          const slugHeader = headers[slugIndex];
+
+          // Insert slug header before title header
+          headerRow.insertBefore(slugHeader, titleHeader);
+
+          // Now swap cells in all body rows
+          const bodyRows = table.querySelectorAll('tbody tr');
+          bodyRows.forEach((row) => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            if (cells[titleIndex] && cells[slugIndex]) {
+              const titleCell = cells[titleIndex];
+              const slugCell = cells[slugIndex];
+              row.insertBefore(slugCell, titleCell);
+            }
+          });
+        }
+      };
+
+      reorderColumns();
       // Hide columns button
       const columnsButton = document.querySelector(
         '[aria-label*="column"], [aria-label*="Column"], [aria-label*="Kolommen"]'
@@ -192,6 +238,8 @@ export const PagesList: React.FC = () => {
       setTimeout(updateUI, 250),
       setTimeout(updateUI, 500),
       setTimeout(updateUI, 1000),
+      setTimeout(updateUI, 1500),
+      setTimeout(updateUI, 2000),
     ];
 
     // Also run on any DOM changes with debouncing
