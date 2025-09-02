@@ -99,18 +99,18 @@ export default buildConfig({
     },
   },
   collections: [
-    // Account Management group - appears right after globals
-    Users,
-    // Website group - main website content
-    BlogPosts,
-    Pages,
-    Testimonials,
-    FAQ,
-    // Content group - voiceover specific content
+    // Beheer Stemmen group - voiceover specific content
     Groups,
     Voiceovers,
-    // Media
-    Media, // General media repository
+    // Account Management group
+    Users,
+    // Opslag group - media storage
+    Media,
+    // Website group - main website content
+    Pages,
+    BlogPosts,
+    Testimonials,
+    FAQ,
     // Documents group
     Bookings,
     Scripts,

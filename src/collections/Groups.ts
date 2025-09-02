@@ -12,7 +12,7 @@ const Groups: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'voiceoverCount', 'isActive'],
-    group: 'Content',
+    group: 'Beheer Stemmen',
   },
   access: {
     read: () => true,
@@ -135,12 +135,12 @@ const Groups: CollectionConfig = {
             },
             limit: 0,
           });
-          
+
           doc.voiceoverCount = voiceovers.totalDocs;
-        } catch (error) {
+        } catch {
           doc.voiceoverCount = 0;
         }
-        
+
         return doc;
       },
     ],

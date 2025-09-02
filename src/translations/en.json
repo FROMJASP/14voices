@@ -106,14 +106,19 @@
     "archived": "Archived"
   },
   "groups": {
+    "beheerStemmen": "Manage Voiceovers",
     "website": "Website",
     "accountManagement": "Account Management",
     "content": "Content",
+    "opslag": "Storage",
     "siteBuilder": "Site Builder",
     "media": "Media",
     "settings": "Settings",
     "email": "Email",
-    "bookings": "Bookings"
+    "bookings": "Bookings",
+    "documents": "Documents",
+    "emailSystem": "Email System",
+    "system": "System"
   },
   "auth": {
     "login": "Login",

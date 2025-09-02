@@ -4,6 +4,9 @@ import { logStorageError } from '@/lib/storage/errors';
 
 const Media: CollectionConfig = {
   slug: 'media',
+  admin: {
+    group: 'Opslag',
+  },
   access: {
     read: () => true,
     create: ({ req }) => !!req.user,

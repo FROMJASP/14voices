@@ -106,14 +106,19 @@
     "archived": "Gearchiveerd"
   },
   "groups": {
+    "beheerStemmen": "Beheer Stemmen",
     "website": "Website",
     "accountManagement": "Accountbeheer",
     "content": "Inhoud",
+    "opslag": "Opslag",
     "siteBuilder": "Site Builder",
     "media": "Media",
     "settings": "Instellingen",
     "email": "E-mail",
-    "bookings": "Boekingen"
+    "bookings": "Boekingen",
+    "documents": "Documenten",
+    "emailSystem": "Email Systeem",
+    "system": "Systeem"
   },
   "auth": {
     "login": "Inloggen",

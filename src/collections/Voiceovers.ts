@@ -14,7 +14,7 @@ const Voiceovers: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'status', 'availability', 'styleTags', 'demos', 'group'],
     listSearchableFields: ['name', 'description'],
-    group: 'Content',
+    group: 'Beheer Stemmen',
     pagination: {
       defaultLimit: 10,
       limits: [10, 25, 50, 100],
@@ -28,52 +28,52 @@ const Voiceovers: CollectionConfig = {
   },
   fields: [
     {
-              name: 'name',
-              type: 'text',
-              required: true,
-              label: {
-                en: 'First Name',
-                nl: 'Voornaam',
-              },
-              admin: {
-                description: {
-                  en: 'Only the first name of the voiceover',
-                  nl: 'Alleen de voornaam van de voice-over',
-                },
-                width: '25%',
-                components: {
-                  Cell: './components/admin/cells/NameCell#NameCell',
-                },
-              },
-              validate: (async (value, { req, id }) => {
-                if (!value) return 'Name is required';
+      name: 'name',
+      type: 'text',
+      required: true,
+      label: {
+        en: 'First Name',
+        nl: 'Voornaam',
+      },
+      admin: {
+        description: {
+          en: 'Only the first name of the voiceover',
+          nl: 'Alleen de voornaam van de voice-over',
+        },
+        width: '25%',
+        components: {
+          Cell: './components/admin/cells/NameCell#NameCell',
+        },
+      },
+      validate: (async (value, { req, id }) => {
+        if (!value) return 'Name is required';
 
-                const firstName = value.split(' ')[0].toLowerCase();
+        const firstName = value.split(' ')[0].toLowerCase();
 
-                // Check for existing voiceovers with the same first name
-                const existingVoiceovers = await req.payload.find({
-                  collection: 'voiceovers',
-                  where: {
-                    id: {
-                      not_equals: id || '0', // Exclude current record when updating
-                    },
-                  },
-                  limit: 1000,
-                });
-
-                const duplicateFirstNames = existingVoiceovers.docs.filter((vo: any) => {
-                  const existingFirstName = vo.name?.split(' ')[0].toLowerCase();
-                  return existingFirstName === firstName;
-                });
-
-                if (duplicateFirstNames.length > 0) {
-                  const duplicateNames = duplicateFirstNames.map((vo: any) => vo.name).join(', ');
-                  return `WARNING: Another voiceover with the same first name "${firstName}" already exists: ${duplicateNames}. This will cause URL conflicts! Please use a different first name or add a middle initial/nickname.`;
-                }
-
-                return true;
-              }) as TextFieldSingleValidation,
+        // Check for existing voiceovers with the same first name
+        const existingVoiceovers = await req.payload.find({
+          collection: 'voiceovers',
+          where: {
+            id: {
+              not_equals: id || '0', // Exclude current record when updating
             },
+          },
+          limit: 1000,
+        });
+
+        const duplicateFirstNames = existingVoiceovers.docs.filter((vo) => {
+          const existingFirstName = (vo.name as string)?.split(' ')[0].toLowerCase();
+          return existingFirstName === firstName;
+        });
+
+        if (duplicateFirstNames.length > 0) {
+          const duplicateNames = duplicateFirstNames.map((vo) => vo.name).join(', ');
+          return `WARNING: Another voiceover with the same first name "${firstName}" already exists: ${duplicateNames}. This will cause URL conflicts! Please use a different first name or add a middle initial/nickname.`;
+        }
+
+        return true;
+      }) as TextFieldSingleValidation,
+    },
     {
       name: 'slug',
       type: 'text',
