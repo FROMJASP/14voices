@@ -157,8 +157,8 @@ const Users: CollectionConfig = {
       name: 'name',
       type: 'text',
       label: {
-        en: 'Name & Email',
-        nl: 'Naam & E-mail',
+        en: 'Name',
+        nl: 'Naam',
       },
       admin: {
         components: {
