@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { Page } from '@/payload-types';
 import { PageHeroSection } from './PageHeroSection';
 import { HeroSection } from '@/components/features/homepage/HeroSection';
 import { transformHeroDataForHomepage } from '@/lib/homepage-utils';
-import { PreviewLoading } from './PreviewLoading';
+import { useLivePreview } from '@payloadcms/live-preview-react';
+import { useRouter } from 'next/navigation';
 
 // Define section type union for all possible section types
 type PageSection = {
@@ -74,20 +75,38 @@ interface PageRendererProps {
   };
 }
 
-export function PageRenderer({ page }: PageRendererProps): React.ReactElement {
-  const [isLoading, setIsLoading] = useState(false);
+export function PageRenderer({ page: initialPage }: PageRendererProps): React.ReactElement {
+  const router = useRouter();
 
-  // Log the page data to debug
+  // Use live preview hook with proper configuration
+  const { data: page } = useLivePreview<Page>({
+    initialData: initialPage,
+    serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
+    depth: 2,
+  });
+
+  // Refresh the page when save is triggered
   useEffect(() => {
-    console.log('PageRenderer received page data:', page);
-    console.log('Hero data:', page.hero);
-  }, [page]);
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'payload-live-preview' && event.data?.action === 'saved') {
+        router.refresh();
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [router]);
 
   // Check if this is the homepage
   const isHomepage = page.slug === 'home';
 
+  // Transform the data with live updates - must be called unconditionally
+  const heroSettings = React.useMemo(() => {
+    return isHomepage && page.hero?.type === 'homepage' ? transformHeroDataForHomepage(page) : null;
+  }, [page, isHomepage]);
+
   // For homepage hero, render without article wrapper to maintain proper styling
-  if (isHomepage && page.hero?.type === 'homepage') {
+  if (isHomepage && page.hero?.type === 'homepage' && heroSettings) {
     return (
       <div
         className="homepage-preview"
@@ -103,7 +122,7 @@ export function PageRenderer({ page }: PageRendererProps): React.ReactElement {
           } as React.CSSProperties
         }
       >
-        <HeroSection heroSettings={transformHeroDataForHomepage(page)} />
+        <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
         {/* Optionally render other homepage sections if needed for preview */}
         {page.sections && page.sections.length > 0 && (
           <div className="sections-container">{/* Render sections... */}</div>

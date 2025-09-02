@@ -44,6 +44,9 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(process.cwd(), 'src'),
     },
+    livePreview: {
+      url: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+    },
     components: {
       // Temporarily disabled to troubleshoot webpack issue
       // beforeLogin: ['./components/admin/BeforeLogin#default'],
@@ -137,6 +140,11 @@ export default buildConfig({
     }
     return url;
   })(),
+  cors: '*', // Allow all origins for development - restrict this in production
+  csrf: [
+    // Add your production domain here
+    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  ],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',

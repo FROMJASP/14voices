@@ -19,10 +19,12 @@ const Pages: CollectionConfig = {
     listSearchableFields: ['title', 'slug'],
     group: 'Content',
     livePreview: {
-      url: ({ data, locale }) => {
+      url: ({ data }) => {
         const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || '';
-        // Pass the document ID for preview
-        return `${baseURL}/${data.slug}?preview=true&id=${data.id || ''}&locale=${locale || 'nl'}`;
+        // For home page, use root URL
+        const path = data.slug === 'home' ? '' : data.slug;
+        // Pass the proper parameters for live preview
+        return `${baseURL}/${path}`;
       },
     },
     components: {

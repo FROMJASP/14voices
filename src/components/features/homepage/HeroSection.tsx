@@ -38,8 +38,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
   // Parse title into specific parts for proper display
   // Expected format: "Vind de stem die jouw merk laat spreken."
   const parseTitle = (title: string) => {
+    if (!title) {
+      return {
+        part1: '',
+        part2: '',
+        part3: '',
+      };
+    }
+
     // Split by words and group them according to mockup
-    const words = title.split(' ');
+    const words = title.split(' ').filter((word) => word.length > 0);
 
     // Default structure if title format is different
     if (words.length < 6) {
@@ -50,11 +58,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
       };
     }
 
-    // Expected: "Vind de stem die jouw merk laat spreken."
+    // Dynamic parsing based on word count
+    const firstThreeWords = words.slice(0, 3).join(' ');
+    const middleWords = words.slice(3, 6).join(' ');
+    const remainingWords = words.slice(6).join(' ');
+
     return {
-      part1: 'Vind de stem', // words[0-2]
-      part2: 'die jouw merk', // words[3-5]
-      part3: 'laat spreken.', // words[6-7]
+      part1: firstThreeWords,
+      part2: middleWords,
+      part3: remainingWords,
     };
   };
 

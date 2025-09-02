@@ -71,3 +71,31 @@ src/
 - **Payload importMap**: The file `src/app/(payload)/admin/importMap.js` is auto-generated but MUST be committed to git
 - **Admin panel errors**: Clear cache with `rm -rf .next` and regenerate importMap if needed
 - Never change our .env.local without our permission
+
+## Live Preview Implementation
+
+The Payload CMS live preview is implemented with the following key components:
+
+1. **Payload Configuration** (`payload.config.ts`):
+   - Added `livePreview` configuration with the site URL
+   - Added CORS configuration to allow WebSocket connections
+   - Added CSRF configuration for security
+
+2. **Page Collection** (`collections/Pages.ts`):
+   - Configured `livePreview.url` to generate proper preview URLs
+   - For home page, uses root URL `/` instead of `/home`
+
+3. **Page Route** (`app/(app)/(with-global-layout)/[[...slug]]/page.tsx`):
+   - Uses optional catch-all route `[[...slug]]` to handle both home and other pages
+   - Detects live preview mode via `x-payload-live-preview` header
+   - Fetches draft content when in preview mode
+
+4. **PageRenderer Component** (`components/common/widgets/PageRenderer.tsx`):
+   - Uses `useLivePreview` hook from `@payloadcms/live-preview-react`
+   - Implements message listener for save events to refresh the page
+   - For homepage, uses memoized transformation and key prop for proper updates
+
+5. **Rich Text Fields**:
+   - Hero title and description use rich text fields (`titleRichText`, `descriptionRichText`)
+   - `transformHeroDataForHomepage` extracts plain text from Lexical rich text format
+   - Legacy fields (`title`, `description`) are maintained for backward compatibility
