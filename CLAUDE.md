@@ -72,6 +72,15 @@ src/
 - **Admin panel errors**: Clear cache with `rm -rf .next` and regenerate importMap if needed
 - Never change our .env.local without our permission
 
+## Payload CMS Admin Table Column Order
+
+To change column order in Payload CMS admin tables:
+
+1. The `defaultColumns` array in collection config only controls which columns are shown, not their order
+2. The actual visual order is determined by field definition order in the collection
+3. For more control, use DOM manipulation in a `beforeListTable` component (see `PagesList.tsx`)
+4. Column reordering happens client-side after the table renders
+
 ## Live Preview Implementation
 
 The Payload CMS live preview is implemented with the following key components:

@@ -101,6 +101,9 @@ const Pages: CollectionConfig = {
                   en: 'URL path for this page (e.g., "about-us")',
                   nl: 'URL-pad voor deze pagina (bijv. "over-ons")',
                 },
+                components: {
+                  Cell: '/components/admin/cells/PageSlugCell#PageSlugCell',
+                },
               },
               validate: (value: unknown) => {
                 if (!value) return 'Slug is required';
