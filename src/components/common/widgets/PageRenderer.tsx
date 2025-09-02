@@ -150,7 +150,10 @@ export function PageRenderer({
         <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
 
         {/* Render voiceovers section */}
-        <VoiceoverSection initialVoiceovers={transformedVoiceovers} />
+        <VoiceoverSection
+          initialVoiceovers={transformedVoiceovers}
+          title={page.voiceover?.title || 'Onze Stemacteurs'}
+        />
 
         {/* Optionally render other homepage sections if needed for preview */}
         {page.sections && page.sections.length > 0 && (

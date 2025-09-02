@@ -569,6 +569,39 @@ const Pages: CollectionConfig = {
               ],
             },
             {
+              name: 'voiceover',
+              type: 'group',
+              label: {
+                en: 'Voice-over Section',
+                nl: 'Voice-over Sectie',
+              },
+              admin: {
+                condition: (data) => data.slug === 'home',
+                description: {
+                  en: 'Settings for the voice-over section on the homepage',
+                  nl: 'Instellingen voor de voice-over sectie op de homepage',
+                },
+              },
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: true,
+                  defaultValue: 'Onze Stemacteurs',
+                  label: {
+                    en: 'Title',
+                    nl: 'Titel',
+                  },
+                  admin: {
+                    description: {
+                      en: 'The title displayed above the voice actors grid',
+                      nl: 'De titel die boven het stemacteurs grid wordt weergegeven',
+                    },
+                  },
+                },
+              ],
+            },
+            {
               name: 'content',
               type: 'richText',
               editor: pageEditorConfig,

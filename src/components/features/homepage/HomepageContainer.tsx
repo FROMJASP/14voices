@@ -62,9 +62,6 @@ const MainContent = memo(
           <div className="container mx-auto px-4">
             <div className="mb-8">
               <h2 className="text-4xl font-bold text-foreground mb-4">Onze Stemacteurs</h2>
-              <p className="text-lg text-muted-foreground">
-                Vind de perfecte stem voor jouw project
-              </p>
             </div>
             <OptimizedVoiceoverGrid voiceovers={voiceovers} />
           </div>

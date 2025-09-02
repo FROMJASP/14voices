@@ -798,6 +798,15 @@ export interface Page {
       | null;
   };
   /**
+   * Settings for the voice-over section on the homepage
+   */
+  voiceover?: {
+    /**
+     * The title displayed above the voice actors grid
+     */
+    title: string;
+  };
+  /**
    * Main page content
    */
   content?: {
