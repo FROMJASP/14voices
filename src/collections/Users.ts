@@ -140,11 +140,6 @@ const Users: CollectionConfig = {
       defaultLimit: 25,
       limits: [10, 25, 50, 100],
     },
-    components: {
-      views: {
-        list: './components/admin/lists/UsersList#UsersList',
-      },
-    },
   },
   access: {
     read: () => true,
@@ -321,8 +316,8 @@ const Users: CollectionConfig = {
   hooks: {
     beforeOperation: [
       async ({ args, operation }) => {
-        // Ensure avatar is populated in find operations
-        if (operation === 'find' || operation === 'findByID') {
+        // Ensure avatar is populated in read operations
+        if (operation === 'read') {
           if (!args.depth || args.depth < 1) {
             args.depth = 1;
           }
