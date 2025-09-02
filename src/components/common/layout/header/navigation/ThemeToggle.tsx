@@ -1,14 +1,29 @@
 'use client';
 
-import { useThemeStore } from '@/stores';
+import { useTheme } from 'next-themes';
 import { Sun, Moon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface ThemeToggleProps {
   className?: string;
 }
 
 export function ThemeToggle({ className = '' }: ThemeToggleProps) {
-  const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null; // Avoid hydration mismatch
+  }
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
+    setTheme(newTheme);
+  };
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Check if browser supports View Transitions API

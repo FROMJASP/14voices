@@ -52,7 +52,7 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section className="hero bg-background px-6 py-10">
       <div className="hero-container max-w-[1280px] mx-auto px-4 lg:px-[60px] py-8 lg:py-[60px] relative">
-        <div className="hero-content grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-[60px] items-center relative z-10">
+        <div className="hero-content grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-[60px] items-center relative z-10">
           {/* Left Content */}
           <div className="hero-text">
             {/* Process Steps - Reduced margin on mobile */}
@@ -196,10 +196,10 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
             )}
           </div>
 
-          {/* Right Content - Image (Hidden on mobile/tablet, shown on xl+) */}
-          <div className="hero-image relative hidden xl:block">
+          {/* Right Content - Image (Hidden on mobile, shown on md+) */}
+          <div className="hero-image relative hidden md:block">
             <div
-              className="image-wrapper relative mx-auto lg:ml-auto max-w-[420px] aspect-[4/5] overflow-hidden border-2 border-gray-200 dark:border-gray-700"
+              className="image-wrapper relative mx-auto md:ml-auto max-w-[320px] md:max-w-[380px] lg:max-w-[420px] aspect-[4/5] overflow-hidden border-2 border-gray-200 dark:border-gray-700"
               style={{
                 backgroundColor: 'var(--surface)',
                 borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
@@ -216,7 +216,7 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
                 className="object-cover"
                 priority={priority}
                 quality={85} // Slightly reduce quality for faster loading
-                sizes="(max-width: 1279px) 0px, 420px" // More precise sizing
+                sizes="(max-width: 767px) 0px, (max-width: 1023px) 50vw, 420px" // More precise sizing
                 placeholder="blur"
                 blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
               />

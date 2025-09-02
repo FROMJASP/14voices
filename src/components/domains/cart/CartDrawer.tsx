@@ -124,7 +124,7 @@ export function CartDrawer({
                 {!productionName && (!items || items.length === 0) && !selectedVoiceover && (
                   <div className="text-center py-12">
                     <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                      <Package className="w-12 h-12 text-gray-400" />
+                      <Package className="w-12 h-12 text-gray-400 dark:text-gray-500" />
                     </div>
                     <p className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                       Je winkelwagen is leeg

@@ -50,7 +50,7 @@ export function CartPreview({
       {!productionName && (!items || items.length === 0) && !selectedVoiceover && (
         <div className="text-center py-8">
           <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-            <Package className="w-10 h-10 text-gray-400" />
+            <Package className="w-10 h-10 text-gray-400 dark:text-gray-500" />
           </div>
           <p className="text-base font-medium text-gray-900 dark:text-gray-100 mb-1">
             Je winkelwagen is leeg

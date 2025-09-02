@@ -250,24 +250,24 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col justify-between p-4"
+      className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col justify-between p-4"
       onClick={(e) => e.preventDefault()}
     >
       {/* Header */}
       <div className="flex items-start justify-between">
-        <h3 className="text-xl font-semibold text-white">{firstName}</h3>
+        <h3 className="text-xl font-semibold text-foreground">{firstName}</h3>
         <button
           onClick={onClose}
-          className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-colors hover:bg-white/20"
+          className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center transition-colors hover:bg-foreground/20"
           aria-label="Close player"
         >
-          <X className="w-4 h-4 text-white" />
+          <X className="w-4 h-4 text-foreground" />
         </button>
       </div>
 
       {/* Profile picture */}
       <div className="flex justify-center mb-8">
-        <div className="relative w-32 h-32 rounded-2xl overflow-hidden bg-white/10">
+        <div className="relative w-32 h-32 rounded-2xl overflow-hidden bg-foreground/10">
           {voiceover.profilePhoto?.url ? (
             <Image
               src={voiceover.profilePhoto.url}
@@ -294,7 +294,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
         <div className="mb-6">
           <button
             onClick={handleChooseClick}
-            className="w-full bg-white text-black rounded-xl py-3 font-medium transition-all duration-200 hover:bg-white/90 hover:scale-[1.02] hover:shadow-lg"
+            className="w-full bg-foreground text-background rounded-xl py-3 font-medium transition-all duration-200 hover:bg-foreground/90 hover:scale-[1.02] hover:shadow-lg"
           >
             Kies {firstName}
           </button>
@@ -307,10 +307,10 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
             <button
               onClick={() => handleDemoChange('prev')}
               disabled={currentDemoIndex === 0}
-              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/20"
+              className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-foreground/20"
               aria-label="Previous demo"
             >
-              <ChevronLeft className="w-5 h-5 text-white" />
+              <ChevronLeft className="w-5 h-5 text-foreground" />
             </button>
           )}
 
@@ -318,15 +318,15 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
           <button
             onClick={handlePlayPause}
             disabled={isLoading}
-            className="w-14 h-14 rounded-full bg-white flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50"
+            className="w-14 h-14 rounded-full bg-foreground flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50"
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isLoading ? (
-              <div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-background border-t-transparent rounded-full animate-spin" />
             ) : isPlaying ? (
-              <Pause className="w-6 h-6 text-black" />
+              <Pause className="w-6 h-6 text-background" />
             ) : (
-              <Play className="w-6 h-6 text-black ml-0.5" />
+              <Play className="w-6 h-6 text-background ml-0.5" />
             )}
           </button>
 
@@ -335,10 +335,10 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
             <button
               onClick={() => handleDemoChange('next')}
               disabled={currentDemoIndex === voiceover.demos.length - 1}
-              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/20"
+              className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-foreground/20"
               aria-label="Next demo"
             >
-              <ChevronRight className="w-5 h-5 text-white" />
+              <ChevronRight className="w-5 h-5 text-foreground" />
             </button>
           )}
         </div>
@@ -346,7 +346,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
         {/* Progress bar */}
         <div className="mb-2 px-4">
           <div
-            className="relative h-1 bg-white/20 rounded-full cursor-pointer"
+            className="relative h-1 bg-foreground/20 rounded-full cursor-pointer"
             onClick={handleProgressClick}
             role="progressbar"
             aria-valuenow={progress}
@@ -354,7 +354,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
             aria-valuemax={100}
           >
             <motion.div
-              className="absolute inset-y-0 left-0 bg-white rounded-full"
+              className="absolute inset-y-0 left-0 bg-foreground rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.1 }}
@@ -363,13 +363,13 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
         </div>
 
         {/* Time and download */}
-        <div className="flex items-center justify-between text-white/80 text-xs px-4">
+        <div className="flex items-center justify-between text-foreground/80 text-xs px-4">
           <span>
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
           <button
             onClick={handleDownload}
-            className="p-1.5 rounded-full transition-colors hover:bg-white/10"
+            className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
             aria-label="Download audio"
           >
             <Download className="w-3.5 h-3.5" />
@@ -378,7 +378,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
 
         {/* Demo info */}
         <div className="text-center mt-3">
-          <span className="text-xs text-white/60">
+          <span className="text-xs text-foreground/60">
             {currentDemo?.title}
             {voiceover.demos.length > 1 && (
               <span className="ml-2">

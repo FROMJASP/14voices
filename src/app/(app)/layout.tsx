@@ -1,6 +1,8 @@
 import { Bricolage_Grotesque, Geist_Mono, Instrument_Serif } from 'next/font/google';
 import { MaintenanceModeWrapper } from '@/components/common/widgets/feedback';
 import { StoreHydration } from '@/components/common/StoreHydration';
+import { ThemeProvider } from '@/components/common/layout/ThemeProvider';
+import { ThemeScript } from './theme-script';
 import './globals.css';
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -34,13 +36,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="nl" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body
         className={`${bricolageGrotesque.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <StoreHydration>
-          <MaintenanceModeWrapper>{children}</MaintenanceModeWrapper>
-        </StoreHydration>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange={false}
+          storageKey="theme"
+        >
+          <StoreHydration>
+            <MaintenanceModeWrapper>{children}</MaintenanceModeWrapper>
+          </StoreHydration>
+        </ThemeProvider>
       </body>
     </html>
   );

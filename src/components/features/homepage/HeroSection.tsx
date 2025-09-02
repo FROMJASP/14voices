@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useThemeStore } from '@/stores';
 import type { HomepageSettings } from '@/lib/homepage-settings';
 
 interface HeroSectionProps {
@@ -33,7 +32,6 @@ const staggerChild = {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
   const { hero } = heroSettings;
-  const theme = useThemeStore((state) => state.resolvedTheme);
 
   // Parse title into specific parts for proper display
   // Expected format: "Vind de stem die jouw merk laat spreken."
@@ -78,7 +76,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
   return (
     <section className="hero bg-background px-6 py-10">
       <div className="hero-container max-w-[1280px] mx-auto px-4 lg:px-[60px] py-8 lg:py-[60px] relative">
-        <div className="hero-content grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-[60px] items-center relative z-10">
+        <div className="hero-content grid grid-cols-1 min-[811px]:grid-cols-2 gap-6 sm:gap-8 md:gap-[60px] items-center relative z-10">
           {/* Left Content */}
           <motion.div
             className="hero-text"
@@ -155,8 +153,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
                 href={hero.primaryButton.url}
                 className="flex-1 sm:flex-none"
                 style={{
-                  backgroundColor: theme === 'dark' ? '#ffffff' : 'var(--text-primary)',
-                  color: theme === 'dark' ? '#0a0a0a' : 'var(--background)',
+                  backgroundColor: 'var(--foreground)',
+                  color: 'var(--background)',
                   padding: '10px 20px',
                   borderRadius: '10px',
                   textDecoration: 'none',
@@ -275,15 +273,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
             )}
           </motion.div>
 
-          {/* Right Content - Image (Hidden on mobile/tablet, shown on xl+) */}
+          {/* Right Content - Image (Hidden below 810px, shown above) */}
           <motion.div
-            className="hero-image relative hidden xl:block"
+            className="hero-image relative hidden min-[811px]:block"
             initial="initial"
             animate="animate"
             variants={fadeInUpDelayed}
           >
             <div
-              className="image-wrapper relative mx-auto lg:ml-auto max-w-[420px] aspect-[4/5] overflow-hidden border-2 border-border"
+              className="image-wrapper relative mx-auto sm:ml-auto max-w-[280px] sm:max-w-[320px] md:max-w-[380px] lg:max-w-[420px] aspect-[4/5] overflow-hidden border-2 border-border"
               style={{
                 backgroundColor: 'var(--surface)',
                 borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
@@ -300,7 +298,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
                 className="object-cover scale-100"
                 style={{ transformOrigin: 'center' }}
                 priority
-                sizes="(max-width: 1279px) 0px, 500px"
+                sizes="(max-width: 639px) 0px, (max-width: 767px) 280px, (max-width: 1023px) 380px, 420px"
               />
             </div>
           </motion.div>

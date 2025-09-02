@@ -8,8 +8,8 @@ export { useCheckoutStore } from './checkout/checkoutStore';
 export { useCartModalStore } from './ui/cartModalStore';
 export { useDrawerStore } from './ui/drawerStore';
 
-// Theme
-export { useThemeStore } from './theme/themeStore';
+// Theme (handled by next-themes now)
+// export { useThemeStore } from './theme/themeStore';
 
 // Voiceover
 export {

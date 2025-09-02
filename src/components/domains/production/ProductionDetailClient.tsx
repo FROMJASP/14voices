@@ -675,7 +675,7 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                         </span>
                       )}
                       <ChevronDown
-                        className={`w-5 h-5 text-gray-400 transition-transform ${voiceDropdownOpen ? 'rotate-180' : ''}`}
+                        className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform ${voiceDropdownOpen ? 'rotate-180' : ''}`}
                       />
                     </button>
 
@@ -765,7 +765,7 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                         {selectedWords || 'Selecteer een optie'}
                       </span>
                       <ChevronDown
-                        className={`w-4 h-4 text-gray-400 transition-transform ${wordsDropdownOpen ? 'rotate-180' : ''}`}
+                        className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${wordsDropdownOpen ? 'rotate-180' : ''}`}
                       />
                     </button>
 
@@ -878,7 +878,7 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                                     +€{option.price}
                                   </span>
                                   <ChevronDown
-                                    className={`w-3.5 h-3.5 text-gray-400 transition-transform ${
+                                    className={`w-3.5 h-3.5 text-gray-400 dark:text-gray-500 transition-transform ${
                                       isOpen ? 'rotate-180' : ''
                                     }`}
                                   />

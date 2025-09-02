@@ -47,7 +47,7 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
       }
     } else if (currentDemo) {
       // Stop all other audio elements and close other players
-      document.querySelectorAll('audio').forEach(audio => audio.pause());
+      document.querySelectorAll('audio').forEach((audio) => audio.pause());
       // Dispatch custom event to close other players
       window.dispatchEvent(new CustomEvent('voiceover-play', { detail: { id: voiceover.id } }));
 
@@ -65,7 +65,7 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
           }
         });
       }
-      
+
       audioRef.current.play();
       setIsPlaying(true);
 
@@ -101,10 +101,11 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
   }, [voiceover.id]);
 
   const handleDemoChange = (direction: 'prev' | 'next') => {
-    const newIndex = direction === 'next' 
-      ? Math.min(currentDemoIndex + 1, voiceover.demos.length - 1)
-      : Math.max(currentDemoIndex - 1, 0);
-    
+    const newIndex =
+      direction === 'next'
+        ? Math.min(currentDemoIndex + 1, voiceover.demos.length - 1)
+        : Math.max(currentDemoIndex - 1, 0);
+
     if (newIndex !== currentDemoIndex) {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -130,12 +131,12 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current) return;
-    
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
     const newTime = (percentage / 100) * audioRef.current.duration;
-    
+
     audioRef.current.currentTime = newTime;
     setProgress(percentage);
     setCurrentTime(newTime);
@@ -152,7 +153,6 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
     }
   };
 
-
   if (!hasDemos) {
     return (
       <div className="custom-card-wrapper">
@@ -166,7 +166,7 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -178,11 +178,7 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
           <div className="custom-card-availability-section">
             <svg className="custom-card-trapezoid" viewBox="0 0 180 30" preserveAspectRatio="none">
               {/* Fill without stroke */}
-              <path
-                d="M 0,0 L 180,0 L 153,30 L 27,30 Z"
-                fill="var(--background)"
-                stroke="none"
-              />
+              <path d="M 0,0 L 180,0 L 153,30 L 27,30 Z" fill="var(--background)" stroke="none" />
               {/* Only side and bottom borders */}
               <line x1="0" y1="0" x2="27" y2="30" stroke="var(--border)" strokeWidth="1" />
               <line x1="180" y1="0" x2="153" y2="30" stroke="var(--border)" strokeWidth="1" />
@@ -190,7 +186,9 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
             </svg>
             <div className="custom-card-availability">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-xs font-medium text-foreground">{voiceover.availabilityText || 'Nu beschikbaar'}</span>
+              <span className="text-xs font-medium text-foreground">
+                {voiceover.availabilityText || 'Nu beschikbaar'}
+              </span>
             </div>
           </div>
         )}
@@ -199,146 +197,149 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
         <div className="overflow-hidden rounded-[1rem]">
           {/* Image container with player overlay */}
           <div className="relative aspect-[4/5]">
-          {/* Background image */}
-          {voiceover.profilePhoto?.url ? (
-            <Image
-              src={voiceover.profilePhoto.url}
-              alt={firstName}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-muted" />
-          )}
-          
-          {/* Player overlay */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col justify-between p-4">
-          {/* Top section with name and close button */}
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="text-xl font-semibold text-white">{firstName}</h3>
-              {/* Style tags */}
-              {voiceover.styleTags && voiceover.styleTags.length > 0 && (
-                <div className="flex items-center gap-1.5 flex-wrap text-xs text-white mt-1">
-                  {voiceover.styleTags.map((tagObj, index) => (
-                    <React.Fragment key={tagObj.tag}>
-                      {index > 0 && <span className="w-1 h-1 bg-white rounded-full" />}
-                      <span>{tagObj.tag.charAt(0).toUpperCase() + tagObj.tag.slice(1)}</span>
-                    </React.Fragment>
-                  ))}
+            {/* Background image */}
+            {voiceover.profilePhoto?.url ? (
+              <Image
+                src={voiceover.profilePhoto.url}
+                alt={firstName}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-muted" />
+            )}
+
+            {/* Player overlay */}
+            <div className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col justify-between p-4">
+              {/* Top section with name and close button */}
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-foreground">{firstName}</h3>
+                  {/* Style tags */}
+                  {voiceover.styleTags && voiceover.styleTags.length > 0 && (
+                    <div className="flex items-center gap-1.5 flex-wrap text-xs text-foreground mt-1">
+                      {voiceover.styleTags.map((tagObj, index) => (
+                        <React.Fragment key={tagObj.tag}>
+                          {index > 0 && <span className="w-1 h-1 bg-foreground rounded-full" />}
+                          <span>{tagObj.tag.charAt(0).toUpperCase() + tagObj.tag.slice(1)}</span>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                // Optional close functionality
-              }}
-              className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-colors opacity-0 pointer-events-none"
-            >
-              <X className="w-4 h-4 text-white" />
-            </button>
-          </div>
-
-          {/* Profile picture */}
-          <div className="flex justify-center mb-4">
-            <div className="relative w-28 h-28 rounded-2xl overflow-hidden bg-white/10">
-              {voiceover.profilePhoto?.url ? (
-                <Image
-                  src={voiceover.profilePhoto.url}
-                  alt={firstName}
-                  fill
-                  className="object-cover"
-                  sizes="128px"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-muted" />
-              )}
-            </div>
-          </div>
-
-          {/* Center section with player controls */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="w-full"
-          >
-
-            {/* Player controls */}
-            <div className="flex items-center justify-center gap-4 mb-4">
-              {/* Previous */}
-              {voiceover.demos.length > 1 && (
                 <button
-                  onClick={() => handleDemoChange('prev')}
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center transition-colors hover:bg-white/20"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Optional close functionality
+                  }}
+                  className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center transition-colors opacity-0 pointer-events-none"
                 >
-                  <ChevronLeft className="w-5 h-5 text-white" />
+                  <X className="w-4 h-4 text-foreground" />
                 </button>
-              )}
-
-              {/* Play/Pause */}
-              <button
-                onClick={handlePlayPause}
-                className="w-14 h-14 rounded-full bg-white flex items-center justify-center transition-transform hover:scale-105"
-              >
-                {isPlaying ? (
-                  <Pause className="w-6 h-6 text-black" />
-                ) : (
-                  <Play className="w-6 h-6 text-black ml-0.5" />
-                )}
-              </button>
-
-              {/* Next */}
-              {voiceover.demos.length > 1 && (
-                <button
-                  onClick={() => handleDemoChange('next')}
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center transition-colors hover:bg-white/20"
-                >
-                  <ChevronRight className="w-5 h-5 text-white" />
-                </button>
-              )}
-            </div>
-
-            {/* Progress bar */}
-            <div className="mb-2">
-              <div 
-                className="relative h-1 bg-white/20 rounded-full cursor-pointer"
-                onClick={handleProgressClick}
-              >
-                <motion.div 
-                  className="absolute inset-y-0 left-0 bg-white rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.1 }}
-                />
               </div>
-            </div>
 
-            {/* Time and download */}
-            <div className="flex items-center justify-between text-white/80 text-xs px-4">
-              <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
-              <button
-                onClick={handleDownload}
-                className="p-1.5 rounded-full transition-colors hover:bg-white/10"
+              {/* Profile picture */}
+              <div className="flex justify-center mb-4">
+                <div className="relative w-28 h-28 rounded-2xl overflow-hidden bg-foreground/10">
+                  {voiceover.profilePhoto?.url ? (
+                    <Image
+                      src={voiceover.profilePhoto.url}
+                      alt={firstName}
+                      fill
+                      className="object-cover"
+                      sizes="128px"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-muted" />
+                  )}
+                </div>
+              </div>
+
+              {/* Center section with player controls */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="w-full"
               >
-                <Download className="w-3.5 h-3.5" />
-              </button>
-            </div>
+                {/* Player controls */}
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  {/* Previous */}
+                  {voiceover.demos.length > 1 && (
+                    <button
+                      onClick={() => handleDemoChange('prev')}
+                      className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center transition-colors hover:bg-foreground/20"
+                    >
+                      <ChevronLeft className="w-5 h-5 text-foreground" />
+                    </button>
+                  )}
 
-            {/* Demo info */}
-            <div className="text-center mt-3">
-              <span className="text-xs text-white/60">
-                {currentDemo?.title}
-                {voiceover.demos.length > 1 && (
-                  <span className="ml-2">({currentDemoIndex + 1}/{voiceover.demos.length})</span>
-                )}
-              </span>
+                  {/* Play/Pause */}
+                  <button
+                    onClick={handlePlayPause}
+                    className="w-14 h-14 rounded-full bg-foreground flex items-center justify-center transition-transform hover:scale-105"
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-6 h-6 text-background" />
+                    ) : (
+                      <Play className="w-6 h-6 text-background ml-0.5" />
+                    )}
+                  </button>
+
+                  {/* Next */}
+                  {voiceover.demos.length > 1 && (
+                    <button
+                      onClick={() => handleDemoChange('next')}
+                      className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center transition-colors hover:bg-foreground/20"
+                    >
+                      <ChevronRight className="w-5 h-5 text-foreground" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Progress bar */}
+                <div className="mb-2">
+                  <div
+                    className="relative h-1 bg-foreground/20 rounded-full cursor-pointer"
+                    onClick={handleProgressClick}
+                  >
+                    <motion.div
+                      className="absolute inset-y-0 left-0 bg-foreground rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.1 }}
+                    />
+                  </div>
+                </div>
+
+                {/* Time and download */}
+                <div className="flex items-center justify-between text-foreground/80 text-xs px-4">
+                  <span>
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </span>
+                  <button
+                    onClick={handleDownload}
+                    className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Demo info */}
+                <div className="text-center mt-3">
+                  <span className="text-xs text-foreground/60">
+                    {currentDemo?.title}
+                    {voiceover.demos.length > 1 && (
+                      <span className="ml-2">
+                        ({currentDemoIndex + 1}/{voiceover.demos.length})
+                      </span>
+                    )}
+                  </span>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
           </div>
-        </div>
         </div>
       </div>
     </motion.div>

@@ -262,7 +262,7 @@ export function PageRenderer({
                           </h2>
                         )}
                         {section.contactSubheading && (
-                          <p className="text-xl mb-12 text-center text-gray-600">
+                          <p className="text-xl mb-12 text-center text-gray-600 dark:text-gray-400">
                             {section.contactSubheading}
                           </p>
                         )}
@@ -296,7 +296,9 @@ export function PageRenderer({
                             <div>
                               <h3 className="text-xl font-semibold mb-4">Send us a message</h3>
                               {/* Contact form would go here */}
-                              <p className="text-gray-600">Contact form coming soon...</p>
+                              <p className="text-gray-600 dark:text-gray-400">
+                                Contact form coming soon...
+                              </p>
                             </div>
                           )}
                         </div>
@@ -315,7 +317,7 @@ export function PageRenderer({
                         </h2>
                       )}
                       {section.pricingSubheading && (
-                        <p className="text-xl mb-12 text-center text-gray-600">
+                        <p className="text-xl mb-12 text-center text-gray-600 dark:text-gray-400">
                           {section.pricingSubheading}
                         </p>
                       )}
@@ -327,7 +329,7 @@ export function PageRenderer({
                               className={`border rounded-lg p-8 ${
                                 plan.highlighted
                                   ? 'border-primary shadow-lg scale-105'
-                                  : 'border-gray-200'
+                                  : 'border-gray-200 dark:border-gray-700'
                               }`}
                             >
                               {plan.highlighted && (
@@ -338,7 +340,9 @@ export function PageRenderer({
                               <h3 className="text-2xl font-bold mt-4">{plan.name}</h3>
                               <p className="text-3xl font-bold mt-2 mb-4">{plan.price}</p>
                               {plan.description && (
-                                <p className="text-gray-600 mb-6">{plan.description}</p>
+                                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                                  {plan.description}
+                                </p>
                               )}
                               {plan.features && plan.features.length > 0 && (
                                 <ul className="mb-8 space-y-2">
@@ -366,7 +370,7 @@ export function PageRenderer({
                                   className={`block text-center py-3 px-6 rounded-lg font-medium transition-colors ${
                                     plan.highlighted
                                       ? 'bg-primary text-white hover:bg-primary/90'
-                                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700'
                                   }`}
                                 >
                                   {plan.buttonText}
@@ -382,7 +386,7 @@ export function PageRenderer({
 
               case 'testimonials':
                 return (
-                  <section key={index} className="py-16 bg-gray-50">
+                  <section key={index} className="py-16 bg-gray-50 dark:bg-gray-900">
                     <div className="container mx-auto px-4">
                       {section.testimonialsHeading && (
                         <h2 className="text-3xl font-bold mb-4 text-center">
@@ -390,12 +394,12 @@ export function PageRenderer({
                         </h2>
                       )}
                       {section.testimonialsSubheading && (
-                        <p className="text-xl mb-12 text-center text-gray-600">
+                        <p className="text-xl mb-12 text-center text-gray-600 dark:text-gray-400">
                           {section.testimonialsSubheading}
                         </p>
                       )}
                       {/* Testimonials would be fetched and rendered here based on source */}
-                      <div className="text-center text-gray-600">
+                      <div className="text-center text-gray-600 dark:text-gray-400">
                         <p>Testimonials coming soon...</p>
                       </div>
                     </div>
@@ -412,7 +416,7 @@ export function PageRenderer({
                         </h2>
                       )}
                       {section.faqSubheading && (
-                        <p className="text-xl mb-12 text-center text-gray-600">
+                        <p className="text-xl mb-12 text-center text-gray-600 dark:text-gray-400">
                           {section.faqSubheading}
                         </p>
                       )}
@@ -422,7 +426,7 @@ export function PageRenderer({
                             (faq: { question: string; answer?: unknown }, faqIndex: number) => (
                               <details
                                 key={faqIndex}
-                                className="border border-gray-200 rounded-lg p-4"
+                                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
                               >
                                 <summary className="font-semibold cursor-pointer">
                                   {faq.question}
@@ -449,7 +453,7 @@ export function PageRenderer({
                         </h2>
                       )}
                       {/* Gallery images would be rendered here */}
-                      <div className="text-center text-gray-600">
+                      <div className="text-center text-gray-600 dark:text-gray-400">
                         <p>Gallery coming soon...</p>
                       </div>
                     </div>

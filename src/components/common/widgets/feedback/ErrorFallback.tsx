@@ -2,7 +2,7 @@
 
 export function ErrorFallback() {
   return (
-    <div className="min-h-screen bg-white dark:bg-background flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center max-w-md mx-auto px-4">
         <h1 className="text-3xl font-bold text-foreground mb-4">14voices</h1>
         <h2 className="text-xl font-semibold text-foreground mb-4">Er ging iets mis</h2>

@@ -106,7 +106,9 @@ export function RichText({ content, className }: RichTextProps) {
               className={`${alignment === 'full' ? 'w-full' : ''}`}
             />
             {caption && (
-              <figcaption className="text-sm text-gray-600 mt-2 text-center">{caption}</figcaption>
+              <figcaption className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
+                {caption}
+              </figcaption>
             )}
           </figure>
         );
@@ -127,7 +129,9 @@ export function RichText({ content, className }: RichTextProps) {
               allowFullScreen
             />
             {embedCaption && (
-              <p className="text-sm text-gray-600 mt-2 text-center">{embedCaption}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
+                {embedCaption}
+              </p>
             )}
           </div>
         );
@@ -143,8 +147,10 @@ export function RichText({ content, className }: RichTextProps) {
 
         const buttonClasses = {
           primary: 'bg-blue-600 text-white hover:bg-blue-700',
-          secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
-          outline: 'border-2 border-gray-300 hover:bg-gray-100',
+          secondary:
+            'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600',
+          outline:
+            'border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800',
           text: 'text-blue-600 hover:underline',
         };
 
