@@ -20,12 +20,12 @@ async function loadEnv() {
 async function runSeed() {
   // Load environment variables first
   await loadEnv();
-  
+
   console.log('🔍 Environment check:');
   console.log('   PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? '✓ Set' : '✗ Missing');
   console.log('   POSTGRES_URL:', process.env.POSTGRES_URL ? '✓ Set' : '✗ Missing');
   console.log('');
-  
+
   // Dynamically import the config AFTER env vars are loaded
   const configModule = await import('../payload.config');
   const config = configModule.default;
@@ -56,7 +56,6 @@ async function runSeed() {
           password: process.env.ADMIN_PASSWORD || 'ChangeThisPassword123!',
           name: 'Admin User',
           role: 'admin',
-          status: 'active',
         },
       });
 

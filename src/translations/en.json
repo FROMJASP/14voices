@@ -106,6 +106,8 @@
     "archived": "Archived"
   },
   "groups": {
+    "website": "Website",
+    "accountManagement": "Account Management",
     "content": "Content",
     "siteBuilder": "Site Builder",
     "media": "Media",

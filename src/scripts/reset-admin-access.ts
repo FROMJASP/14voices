@@ -70,9 +70,7 @@ async function resetAdminAccess() {
     if (existingAdmins.docs.length > 0) {
       log.info(`Found ${existingAdmins.docs.length} admin user(s):`);
       existingAdmins.docs.forEach((admin) => {
-        console.log(
-          `  - ${admin.email} (${admin.name || 'No name'}) - Status: ${admin.status || 'active'}`
-        );
+        console.log(`  - ${admin.email} (${admin.name || 'No name'}) - Status: active`);
       });
     } else {
       log.warning('No admin users found in the database');
@@ -156,8 +154,12 @@ async function resetExistingAdminPassword(payload: any) {
   console.log(`\n${colors.bright}New credentials:${colors.reset}`);
   console.log(`Email: ${colors.cyan}${email}${colors.reset}`);
   console.log(`Password: ${colors.cyan}[Generated - Check secure channel]${colors.reset}`);
-  console.log(`\n${colors.yellow}⚠️  Password has been updated. For security reasons, the password is not displayed.${colors.reset}`);
-  console.log(`${colors.yellow}⚠️  Please check your secure password manager or contact system administrator.${colors.reset}`);
+  console.log(
+    `\n${colors.yellow}⚠️  Password has been updated. For security reasons, the password is not displayed.${colors.reset}`
+  );
+  console.log(
+    `${colors.yellow}⚠️  Please check your secure password manager or contact system administrator.${colors.reset}`
+  );
   console.log(
     `Login URL: ${colors.cyan}${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/login${colors.reset}`
   );
@@ -227,8 +229,12 @@ async function createNewAdminUser(payload: any) {
   console.log(`\n${colors.bright}New admin credentials:${colors.reset}`);
   console.log(`Email: ${colors.cyan}${email}${colors.reset}`);
   console.log(`Password: ${colors.cyan}[Generated - Check secure channel]${colors.reset}`);
-  console.log(`\n${colors.yellow}⚠️  Password has been generated. For security reasons, the password is not displayed.${colors.reset}`);
-  console.log(`${colors.yellow}⚠️  Please check your secure password manager or contact system administrator.${colors.reset}`);
+  console.log(
+    `\n${colors.yellow}⚠️  Password has been generated. For security reasons, the password is not displayed.${colors.reset}`
+  );
+  console.log(
+    `${colors.yellow}⚠️  Please check your secure password manager or contact system administrator.${colors.reset}`
+  );
   console.log(
     `Login URL: ${colors.cyan}${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/admin/login${colors.reset}`
   );

@@ -1,6 +1,6 @@
-import type { FAQ } from '@/payload-types';
+import type { Faq } from '@/payload-types';
 
-type FAQSeed = Omit<FAQ, 'id' | 'createdAt' | 'updatedAt'>;
+type FAQSeed = Omit<Faq, 'id' | 'createdAt' | 'updatedAt'>;
 
 export const faqSeedData: FAQSeed[] = [
   {
@@ -11,6 +11,7 @@ export const faqSeedData: FAQSeed[] = [
         format: '',
         indent: 0,
         version: 1,
+        direction: null,
         children: [
           {
             type: 'paragraph',
@@ -44,6 +45,7 @@ export const faqSeedData: FAQSeed[] = [
         format: '',
         indent: 0,
         version: 1,
+        direction: null,
         children: [
           {
             type: 'paragraph',
@@ -77,6 +79,7 @@ export const faqSeedData: FAQSeed[] = [
         format: '',
         indent: 0,
         version: 1,
+        direction: null,
         children: [
           {
             type: 'paragraph',
@@ -110,6 +113,7 @@ export const faqSeedData: FAQSeed[] = [
         format: '',
         indent: 0,
         version: 1,
+        direction: null,
         children: [
           {
             type: 'paragraph',
@@ -143,6 +147,7 @@ export const faqSeedData: FAQSeed[] = [
         format: '',
         indent: 0,
         version: 1,
+        direction: null,
         children: [
           {
             type: 'paragraph',
@@ -176,6 +181,7 @@ export const faqSeedData: FAQSeed[] = [
         format: '',
         indent: 0,
         version: 1,
+        direction: null,
         children: [
           {
             type: 'paragraph',
@@ -197,7 +203,7 @@ export const faqSeedData: FAQSeed[] = [
         ],
       },
     },
-    category: 'other',
+    category: 'general',
     order: 6,
     published: true,
   },

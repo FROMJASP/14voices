@@ -6,8 +6,6 @@ import {
   LinkFeature,
   ParagraphFeature,
   StrikethroughFeature,
-  SubscriptFeature,
-  SuperscriptFeature,
   InlineCodeFeature,
 } from '@payloadcms/richtext-lexical';
 

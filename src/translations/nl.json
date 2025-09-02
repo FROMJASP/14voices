@@ -106,6 +106,8 @@
     "archived": "Gearchiveerd"
   },
   "groups": {
+    "website": "Website",
+    "accountManagement": "Accountbeheer",
     "content": "Inhoud",
     "siteBuilder": "Site Builder",
     "media": "Media",

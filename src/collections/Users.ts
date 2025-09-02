@@ -4,6 +4,16 @@ import { resolveAvatarURL, addImageProperty } from '@/hooks/userAvatar';
 
 const Users: CollectionConfig = {
   slug: 'users',
+  labels: {
+    singular: {
+      en: 'User',
+      nl: 'Gebruiker',
+    },
+    plural: {
+      en: 'Users',
+      nl: 'Gebruikers',
+    },
+  },
   auth: {
     depth: 1, // Ensure avatar relationship is populated
     forgotPassword: {
@@ -125,7 +135,7 @@ const Users: CollectionConfig = {
     useAsTitle: 'email',
     defaultColumns: ['avatar', 'name', 'email', 'lastLogin'],
     listSearchableFields: ['name', 'email', 'jobTitle'],
-    group: 'System',
+    group: 'Account Management',
     pagination: {
       defaultLimit: 25,
       limits: [10, 25, 50, 100],
@@ -264,7 +274,7 @@ const Users: CollectionConfig = {
       name: 'socialLinks',
       type: 'group',
       admin: {
-        description: {en: 'Social media profiles', nl: 'Social media profielen'},
+        description: { en: 'Social media profiles', nl: 'Social media profielen' },
       },
       fields: [
         {

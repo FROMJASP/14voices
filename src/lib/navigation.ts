@@ -37,7 +37,8 @@ export async function getNavigationData(): Promise<Navigation | null> {
     }
 
     // Extract navigation-related data from site settings
-    const banner = siteSettings.banner;
+    const settingsWithBanner = siteSettings as any;
+    const banner = settingsWithBanner.banner;
     const navigationData: Navigation = {
       id: 'site-settings',
       banner: banner

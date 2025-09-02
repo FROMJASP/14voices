@@ -27,7 +27,8 @@ export const afterBookingCreate: CollectionAfterChangeHook = async ({ doc, req, 
         id: doc.customer,
       });
 
-      if (user && !user.emailPreferences?.unsubscribed) {
+      // TODO: Add emailPreferences field to User collection
+      if (user) {
         const { sendEmail } = await import('@/lib/email/renderer');
 
         await sendEmail({
@@ -65,11 +66,11 @@ export const afterScriptUpload: CollectionAfterChangeHook = async ({
         depth: 2,
       });
 
+      // TODO: Add emailPreferences field to User collection
       if (
         booking?.customer &&
         typeof booking.customer === 'object' &&
-        'email' in booking.customer &&
-        !booking.customer.emailPreferences?.unsubscribed
+        'email' in booking.customer
       ) {
         const { sendEmail } = await import('@/lib/email/renderer');
 

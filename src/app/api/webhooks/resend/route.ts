@@ -200,17 +200,18 @@ async function handler(req: NextRequest) {
         });
 
         // Also unsubscribe user if recipient exists
-        if (log.recipient && typeof log.recipient === 'object' && 'id' in log.recipient) {
-          await payload.update({
-            collection: 'users',
-            id: log.recipient.id,
-            data: {
-              emailPreferences: {
-                unsubscribed: true,
-              },
-            },
-          });
-        }
+        // TODO: Add emailPreferences field to User collection
+        // if (log.recipient && typeof log.recipient === 'object' && 'id' in log.recipient) {
+        //   await payload.update({
+        //     collection: 'users',
+        //     id: log.recipient.id,
+        //     data: {
+        //       emailPreferences: {
+        //         unsubscribed: true,
+        //       },
+        //     },
+        //   });
+        // }
         break;
     }
 

@@ -23,12 +23,13 @@ function extractTextFromLexical(richText: unknown): string {
 
 export function transformHeroDataForHomepage(page: Page): HomepageSettings {
   const hero = page.hero || {};
+  const heroWithRichText = hero as any;
 
-  const extractedTitle = hero.titleRichText
-    ? extractTextFromLexical(hero.titleRichText)
+  const extractedTitle = heroWithRichText.titleRichText
+    ? extractTextFromLexical(heroWithRichText.titleRichText)
     : hero.title || '';
-  const extractedDescription = hero.descriptionRichText
-    ? extractTextFromLexical(hero.descriptionRichText)
+  const extractedDescription = heroWithRichText.descriptionRichText
+    ? extractTextFromLexical(heroWithRichText.descriptionRichText)
     : hero.description || '';
 
   return {
@@ -46,7 +47,9 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
         url: '',
       },
       heroImage:
-        typeof hero.heroImage === 'object' && hero.heroImage?.url ? hero.heroImage.url : undefined,
+        typeof hero.heroImage === 'object' && hero.heroImage?.url
+          ? hero.heroImage.url
+          : '/header-image.png',
       stats: hero.stats || [],
     },
   };

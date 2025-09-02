@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     // Fetch FAQ settings
     const settings = await payload.findGlobal({
       slug: 'faq-settings',
-      locale,
+      locale: locale as 'nl' | 'en' | 'all',
       depth: 1,
     });
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       collection: 'faq',
       where,
       sort: 'order',
-      locale,
+      locale: locale as 'nl' | 'en' | 'all',
       depth: 1,
       limit: settings?.settings?.itemsToShow || 10,
     });

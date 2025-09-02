@@ -39,9 +39,7 @@ async function getInfoNavbarData(): Promise<InfoNavbarData> {
           slug: 'site-settings',
         });
 
-        // @ts-expect-error - topBar types will be available after schema regeneration
         if (siteSettings?.topBar) {
-          // @ts-expect-error - topBar types will be available after schema regeneration
           const { topBar } = siteSettings;
 
           // Build the whatsappTooltip data
@@ -56,29 +54,33 @@ async function getInfoNavbarData(): Promise<InfoNavbarData> {
 
             // Handle image - can be either a Media object with ID or an object with url
             if (topBar.whatsappTooltip.image) {
-              if (
-                typeof topBar.whatsappTooltip.image === 'number' ||
-                topBar.whatsappTooltip.image.id
-              ) {
-                // It's a Payload media reference
+              if (typeof topBar.whatsappTooltip.image === 'number') {
+                // It's a Payload media reference ID
                 whatsappTooltip.image = topBar.whatsappTooltip.image;
               } else if (topBar.whatsappTooltip.image.url) {
                 // It's already resolved with url
                 whatsappTooltip.image = {
-                  url: topBar.whatsappTooltip.image.url,
+                  url:
+                    topBar.whatsappTooltip.image.url === null
+                      ? undefined
+                      : topBar.whatsappTooltip.image.url,
                   alt: topBar.whatsappTooltip.image.alt || '',
                 };
               }
             }
           }
 
-          const result = {
+          const result: InfoNavbarData = {
             enabled: topBar.enabled !== false,
             whatsappNumber: topBar.whatsappNumber || defaultInfoNavbarData.whatsappNumber,
             email: topBar.email || defaultInfoNavbarData.email,
             quickLinks:
               topBar.quickLinks && topBar.quickLinks.length > 0
-                ? topBar.quickLinks
+                ? topBar.quickLinks.map((link: any) => ({
+                    label: link.label,
+                    url: link.url,
+                    openInNewTab: link.openInNewTab === null ? undefined : link.openInNewTab,
+                  }))
                 : defaultInfoNavbarData.quickLinks,
             whatsappTooltip: whatsappTooltip || defaultInfoNavbarData.whatsappTooltip,
           };
@@ -119,18 +121,44 @@ async function getLogoSettings(): Promise<LogoSettings> {
           slug: 'site-settings',
         });
 
-        // @ts-expect-error - branding types will be available after schema regeneration
         if (siteSettings?.branding) {
-          // @ts-expect-error - branding types will be available after schema regeneration
           const { branding } = siteSettings;
 
-          return {
+          const result: LogoSettings = {
             logoType: branding.logoType || defaultLogoSettings.logoType,
             logoText: branding.logoText || defaultLogoSettings.logoText,
-            logoFont: branding.logoFont || defaultLogoSettings.logoFont,
-            logoImage: branding.logoImage,
-            logoImageDark: branding.logoImageDark,
+            logoFont: defaultLogoSettings.logoFont, // logoFont not available in current schema
           };
+
+          // Handle logoImage
+          if (branding.logoImage) {
+            if (typeof branding.logoImage !== 'number' && branding.logoImage.url) {
+              result.logoImage = {
+                url: branding.logoImage.url === null ? undefined : branding.logoImage.url,
+                alt: branding.logoImage.alt || '',
+                width: branding.logoImage.width === null ? undefined : branding.logoImage.width,
+                height: branding.logoImage.height === null ? undefined : branding.logoImage.height,
+              };
+            }
+          }
+
+          // Handle logoImageDark
+          if (branding.logoImageDark) {
+            if (typeof branding.logoImageDark !== 'number' && branding.logoImageDark.url) {
+              result.logoImageDark = {
+                url: branding.logoImageDark.url === null ? undefined : branding.logoImageDark.url,
+                alt: branding.logoImageDark.alt || '',
+                width:
+                  branding.logoImageDark.width === null ? undefined : branding.logoImageDark.width,
+                height:
+                  branding.logoImageDark.height === null
+                    ? undefined
+                    : branding.logoImageDark.height,
+              };
+            }
+          }
+
+          return result;
         }
       } catch (error) {
         console.error('Failed to fetch logo settings:', error);

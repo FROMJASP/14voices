@@ -11,7 +11,7 @@ export const FAQSettings: GlobalConfig = {
     update: ({ req: { user } }) => user?.role === 'admin',
   },
   admin: {
-    group: 'Content',
+    group: 'Website',
     description: {
       en: 'Configure how the FAQ section appears on the homepage',
       nl: 'Configureer hoe de FAQ sectie op de homepage wordt weergegeven',
@@ -55,7 +55,7 @@ export const FAQSettings: GlobalConfig = {
                     nl: 'Sectie Titel',
                   },
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: {
                       en: 'Title displayed above the FAQ section',
                       nl: 'Titel die boven de FAQ sectie wordt weergegeven',
@@ -72,7 +72,7 @@ export const FAQSettings: GlobalConfig = {
                     nl: 'Sectie Beschrijving',
                   },
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: {
                       en: 'Optional description text below the title',
                       nl: 'Optionele beschrijvingstekst onder de titel',
@@ -90,7 +90,7 @@ export const FAQSettings: GlobalConfig = {
                     nl: 'Aantal te Tonen Items',
                   },
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: {
                       en: 'Maximum number of FAQ items to display on the homepage (1-50)',
                       nl: 'Maximaal aantal FAQ items om weer te geven op de homepage (1-50)',
@@ -106,7 +106,7 @@ export const FAQSettings: GlobalConfig = {
                     nl: 'Categorie Filter Tonen',
                   },
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: {
                       en: 'Allow visitors to filter FAQ items by category',
                       nl: 'Sta bezoekers toe om FAQ items te filteren op categorie',
@@ -122,7 +122,7 @@ export const FAQSettings: GlobalConfig = {
                     nl: 'Eerste Item Automatisch Uitklappen',
                   },
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: {
                       en: 'Automatically expand the first FAQ item when the section loads',
                       nl: 'Klap automatisch het eerste FAQ item uit wanneer de sectie wordt geladen',
@@ -138,7 +138,7 @@ export const FAQSettings: GlobalConfig = {
                     nl: 'Meerdere Items Tegelijk Open',
                   },
                   admin: {
-                    condition: (data, siblingData) => siblingData?.enabled === true,
+                    condition: (_data, siblingData) => siblingData?.enabled === true,
                     description: {
                       en: 'Allow multiple FAQ items to be expanded at the same time',
                       nl: 'Sta toe dat meerdere FAQ items tegelijk zijn uitgeklapt',

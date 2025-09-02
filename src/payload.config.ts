@@ -47,9 +47,6 @@ export default buildConfig({
     livePreview: {
       url: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
     },
-    autoSave: {
-      interval: 2000, // 2 seconds - delay before saving after changes stop
-    },
     components: {
       // Temporarily disabled to troubleshoot webpack issue
       // beforeLogin: ['./components/admin/BeforeLogin#default'],
@@ -102,19 +99,26 @@ export default buildConfig({
     },
   },
   collections: [
+    // Account Management group - appears right after globals
     Users,
-    Media, // General media repository
+    // Website group - main website content
+    BlogPosts,
+    Pages,
+    Testimonials,
+    FAQ,
+    // Content group - voiceover specific content
     Groups,
     Voiceovers,
+    // Media
+    Media, // General media repository
+    // Documents group
     Bookings,
     Scripts,
     Invoices,
-    BlogPosts,
-    Pages,
+    // Site Builder group
     Forms,
     FormSubmissions,
-    Testimonials,
-    FAQ,
+    // Email System group
     EmailComponents,
     EmailTemplates,
     EmailSequences,
@@ -123,6 +127,7 @@ export default buildConfig({
     EmailCampaigns,
     EmailAudiences,
     EmailContacts,
+    // System group
     SecurityLogs,
   ],
   globals: [EmailSettings, FAQSettings, SiteSettings],

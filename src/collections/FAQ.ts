@@ -13,7 +13,7 @@ const FAQ: CollectionConfig = {
   admin: {
     useAsTitle: 'question',
     defaultColumns: ['question', 'category', 'order', 'published'],
-    group: 'Content',
+    group: 'Website',
   },
   access: {
     read: () => true,
@@ -39,7 +39,7 @@ const FAQ: CollectionConfig = {
       type: 'select',
       label: getFAQFieldLabel('category'),
       defaultValue: 'general',
-      options: defaultFAQCategories.map(cat => ({
+      options: defaultFAQCategories.map((cat) => ({
         label: getFAQCategoryLabel(cat.value),
         value: cat.value,
       })),

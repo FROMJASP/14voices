@@ -141,19 +141,21 @@ export default async function Page({ params }: PageProps) {
         result[key] = nullToUndefined(obj[key]);
       }
     }
-    return result;
+    return result as T;
   }
 
   // Transform the page to ensure no null values
   const transformedPage = {
-    ...page,
-    sections: page.sections ? nullToUndefined(page.sections) : undefined,
-    content: page.content ? nullToUndefined(page.content) : undefined,
-  };
+    ...nullToUndefined(page),
+    sections:
+      page.sections === null
+        ? undefined
+        : page.sections?.map((section) => nullToUndefined(section)),
+  } as Page & { content?: unknown; sections?: any[] };
 
   return (
     <Suspense fallback={<PreviewLoading />}>
-      <PageRenderer page={transformedPage as Page} />
+      <PageRenderer page={transformedPage} />
     </Suspense>
   );
 }
