@@ -12,9 +12,15 @@ interface AnimatedPlayerProps {
   voiceover: TransformedVoiceover;
   onClose: () => void;
   autoPlay?: boolean;
+  gridSize?: 'large' | 'small';
 }
 
-export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: AnimatedPlayerProps) {
+export function AnimatedPlayer({
+  voiceover,
+  onClose,
+  autoPlay = true,
+  gridSize = 'large',
+}: AnimatedPlayerProps) {
   const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentDemoIndex, setCurrentDemoIndex] = useState(0);
@@ -250,26 +256,60 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col p-2 sm:p-3 lg:p-4 rounded-[1rem] overflow-hidden"
+      className={`absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col rounded-[1rem] overflow-hidden ${
+        gridSize === 'small' ? 'p-2.5' : 'p-4 sm:p-2.5 md:p-3 lg:p-4'
+      }`}
       onClick={(e) => e.preventDefault()}
     >
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <h3 className="text-sm sm:text-base lg:text-xl font-semibold text-foreground">
+      <div
+        className={`flex items-start justify-between ${
+          gridSize === 'small' ? 'mb-2' : 'mb-2 sm:mb-3'
+        }`}
+      >
+        <h3
+          className={`font-semibold text-foreground ${
+            gridSize === 'small'
+              ? 'text-sm mt-5 lg:text-base'
+              : 'text-lg mt-8 sm:text-base sm:mt-6 [@media(min-width:768px)_and_(max-width:1023px)]:text-xl [@media(min-width:768px)_and_(max-width:1023px)]:mt-7 lg:text-lg lg:mt-6'
+          }`}
+        >
           {firstName}
         </h3>
         <button
           onClick={onClose}
-          className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 rounded-full bg-foreground/10 flex items-center justify-center transition-colors hover:bg-foreground/20"
+          className={`rounded-full bg-foreground/10 flex items-center justify-center transition-colors hover:bg-foreground/20 ${
+            gridSize === 'small' ? 'w-6 h-6' : 'w-8 h-8 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8'
+          }`}
           aria-label="Close player"
         >
-          <X className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 text-foreground" />
+          <X
+            className={`text-foreground ${
+              gridSize === 'small'
+                ? 'w-3 h-3'
+                : 'w-4 h-4 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4'
+            }`}
+          />
         </button>
       </div>
 
-      {/* Profile picture */}
-      <div className="flex-1 flex items-center justify-center min-h-0">
-        <div className="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden bg-foreground/10">
+      {/* Profile picture - clickable to navigate to voiceover page */}
+      <div
+        className={`flex-1 flex items-center justify-center min-h-0 ${
+          gridSize === 'small'
+            ? '-mt-3 sm:-mt-4 md:-mt-5 lg:-mt-6 xl:-mt-8' // Small grid: move up more for better centering
+            : '-mt-2 [@media(max-width:639px)]:-mt-0 sm:-mt-1 [@media(min-width:768px)_and_(max-width:1023px)]:-mt-2 lg:-mt-5 xl:-mt-4' // Large grid: adjusted for bigger image at xl
+        }`}
+      >
+        <button
+          onClick={handleChooseClick}
+          className={`relative overflow-hidden bg-foreground/10 cursor-pointer transition-transform hover:scale-105 ${
+            gridSize === 'small'
+              ? 'w-14 h-14 rounded-lg sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 xl:w-24 xl:h-24' // Small grid: starts smaller, scales up with viewport
+              : 'w-40 h-40 rounded-2xl sm:w-24 sm:h-24 sm:rounded-xl md:w-32 md:h-32 md:rounded-2xl lg:w-28 lg:h-28 lg:rounded-2xl xl:w-36 xl:h-36 xl:rounded-2xl' // Large grid: progressively bigger, largest for 4-card layout
+          }`}
+          aria-label={`View ${firstName}'s profile`}
+        >
           {voiceover.profilePhoto?.url ? (
             <Image
               src={voiceover.profilePhoto.url}
@@ -281,7 +321,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
           ) : (
             <div className="absolute inset-0 bg-muted" />
           )}
-        </div>
+        </button>
       </div>
 
       {/* Player controls */}
@@ -292,27 +332,33 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         className="w-full flex-shrink-0"
       >
-        {/* Choose button */}
-        <div className="mb-2 sm:mb-3 lg:mb-4">
-          <button
-            onClick={handleChooseClick}
-            className="w-full bg-foreground text-background rounded-lg sm:rounded-xl py-1 sm:py-1.5 lg:py-2 text-[11px] sm:text-xs lg:text-sm font-medium transition-all duration-200 hover:bg-foreground/90 hover:scale-[1.02] hover:shadow-lg"
-          >
-            Kies {firstName}
-          </button>
-        </div>
-
         {/* Playback controls */}
-        <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 mb-2 sm:mb-3 lg:mb-4">
+        <div
+          className={`flex items-center justify-center ${
+            gridSize === 'small'
+              ? 'gap-2 mb-2'
+              : 'gap-4 sm:gap-2 md:gap-3 lg:gap-3.5 mb-4 sm:mb-2 md:mb-3 lg:mb-3.5'
+          }`}
+        >
           {/* Previous */}
           {voiceover.demos.length > 1 && (
             <button
               onClick={() => handleDemoChange('prev')}
               disabled={currentDemoIndex === 0}
-              className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full bg-foreground/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-foreground/20"
+              className={`rounded-full bg-foreground/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-foreground/20 ${
+                gridSize === 'small'
+                  ? 'w-6 h-6 lg:w-7 lg:h-7'
+                  : 'w-10 h-10 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-9 lg:h-9'
+              }`}
               aria-label="Previous demo"
             >
-              <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-foreground" />
+              <ChevronLeft
+                className={`text-foreground ${
+                  gridSize === 'small'
+                    ? 'w-3 h-3'
+                    : 'w-5 h-5 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-[18px] lg:h-[18px]'
+                }`}
+              />
             </button>
           )}
 
@@ -320,15 +366,37 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
           <button
             onClick={handlePlayPause}
             disabled={isLoading}
-            className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-foreground flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50"
+            className={`rounded-full bg-foreground flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50 ${
+              gridSize === 'small'
+                ? 'w-8 h-8 lg:w-10 lg:h-10'
+                : 'w-14 h-14 sm:w-9 sm:h-9 md:w-11 md:h-11 lg:w-12 lg:h-12'
+            }`}
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isLoading ? (
-              <div className="w-3 h-3 sm:w-4 sm:h-4 lg:w-6 lg:h-6 border-2 border-background border-t-transparent rounded-full animate-spin" />
+              <div
+                className={`border-2 border-background border-t-transparent rounded-full animate-spin ${
+                  gridSize === 'small'
+                    ? 'w-3 h-3'
+                    : 'w-6 h-6 sm:w-3.5 sm:h-3.5 md:w-[18px] md:h-[18px] lg:w-5 lg:h-5'
+                }`}
+              />
             ) : isPlaying ? (
-              <Pause className="w-3 h-3 sm:w-4 sm:h-4 lg:w-6 lg:h-6 text-background" />
+              <Pause
+                className={`text-background ${
+                  gridSize === 'small'
+                    ? 'w-3 h-3'
+                    : 'w-6 h-6 sm:w-3.5 sm:h-3.5 md:w-[18px] md:h-[18px] lg:w-5 lg:h-5'
+                }`}
+              />
             ) : (
-              <Play className="w-3 h-3 sm:w-4 sm:h-4 lg:w-6 lg:h-6 text-background ml-0.5" />
+              <Play
+                className={`text-background ml-0.5 ${
+                  gridSize === 'small'
+                    ? 'w-3 h-3'
+                    : 'w-6 h-6 sm:w-3.5 sm:h-3.5 md:w-[18px] md:h-[18px] lg:w-5 lg:h-5'
+                }`}
+              />
             )}
           </button>
 
@@ -337,16 +405,32 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
             <button
               onClick={() => handleDemoChange('next')}
               disabled={currentDemoIndex === voiceover.demos.length - 1}
-              className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full bg-foreground/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-foreground/20"
+              className={`rounded-full bg-foreground/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-foreground/20 ${
+                gridSize === 'small'
+                  ? 'w-6 h-6 lg:w-7 lg:h-7'
+                  : 'w-10 h-10 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-9 lg:h-9'
+              }`}
               aria-label="Next demo"
             >
-              <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-foreground" />
+              <ChevronRight
+                className={`text-foreground ${
+                  gridSize === 'small'
+                    ? 'w-3 h-3'
+                    : 'w-5 h-5 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-[18px] lg:h-[18px]'
+                }`}
+              />
             </button>
           )}
         </div>
 
         {/* Progress bar */}
-        <div className="mb-1 lg:mb-1.5 px-2 sm:px-3 lg:px-4">
+        <div
+          className={
+            gridSize === 'small'
+              ? 'mb-1 px-2'
+              : 'mb-2 sm:mb-1 md:mb-1.5 lg:mb-2 px-4 sm:px-2.5 md:px-3 lg:px-3.5'
+          }
+        >
           <div
             className="relative h-1 bg-foreground/20 rounded-full cursor-pointer"
             onClick={handleProgressClick}
@@ -365,7 +449,13 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
         </div>
 
         {/* Time and download */}
-        <div className="flex items-center justify-between text-foreground/80 text-[10px] sm:text-xs px-2 sm:px-3 lg:px-4">
+        <div
+          className={`flex items-center justify-between text-foreground/80 ${
+            gridSize === 'small'
+              ? 'text-[10px] px-2'
+              : 'text-sm sm:text-xs [@media(min-width:768px)_and_(max-width:1023px)]:text-sm lg:text-xs px-4 sm:px-2.5 md:px-3 lg:px-3.5'
+          }`}
+        >
           <span>
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
@@ -374,13 +464,23 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
             className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
             aria-label="Download audio"
           >
-            <Download className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-3.5 lg:h-3.5" />
+            <Download
+              className={
+                gridSize === 'small'
+                  ? 'w-2.5 h-2.5'
+                  : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
+              }
+            />
           </button>
         </div>
 
         {/* Demo info */}
-        <div className="text-center mt-1 mb-1">
-          <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-1">
+        <div className={gridSize === 'small' ? 'text-center mt-1 mb-2' : 'text-center mt-1 mb-3'}>
+          <span
+            className={`text-foreground/60 line-clamp-1 ${
+              gridSize === 'small' ? 'text-[10px]' : 'text-sm sm:text-[10px] md:text-xs lg:text-xs'
+            }`}
+          >
             {currentDemo?.title}
             {voiceover.demos.length > 1 && (
               <span className="ml-1">
@@ -388,6 +488,26 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
               </span>
             )}
           </span>
+        </div>
+
+        {/* Choose button - moved to bottom */}
+        <div
+          className={
+            gridSize === 'small'
+              ? 'mt-2'
+              : 'mt-6 [@media(min-width:640px)]:mt-3 [@media(min-width:768px)_and_(max-width:1023px)]:mt-8 lg:mt-4'
+          }
+        >
+          <button
+            onClick={handleChooseClick}
+            className={`w-full bg-foreground text-background font-medium transition-all duration-200 hover:bg-foreground/90 hover:scale-[1.02] hover:shadow-lg ${
+              gridSize === 'small'
+                ? 'py-1.5 text-xs rounded-lg lg:py-2 lg:text-sm'
+                : 'py-3 sm:py-2.5 sm:text-sm [@media(min-width:768px)_and_(max-width:1023px)]:py-5 [@media(min-width:768px)_and_(max-width:1023px)]:text-lg lg:py-3 lg:text-base text-base rounded-xl sm:rounded-lg [@media(min-width:768px)_and_(max-width:1023px)]:rounded-2xl'
+            }`}
+          >
+            Kies {firstName}
+          </button>
         </div>
       </motion.div>
     </motion.div>

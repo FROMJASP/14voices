@@ -22,6 +22,12 @@
   z-index: 10;
 }
 
+/* Smaller width for small grid (5 cards) */
+.custom-card-availability-section.small-grid {
+  width: 140px;
+  height: 28px;
+}
+
 /* SVG for trapezoid shape */
 .custom-card-trapezoid {
   position: absolute;
@@ -54,9 +60,20 @@
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Smaller for small grid */
+.custom-card-play-section.small-grid {
+  width: 75px;
+  height: 38px;
+}
+
 /* Expand trapezoid on hover */
 .custom-card-play-section:hover {
   width: 240px;
+}
+
+/* Smaller hover expansion for small grid */
+.custom-card-play-section.small-grid:hover {
+  width: 180px;
 }
 
 /* Play button content */

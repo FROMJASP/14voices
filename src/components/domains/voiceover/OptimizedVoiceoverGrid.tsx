@@ -20,12 +20,14 @@ interface OptimizedVoiceoverGridProps {
   voiceovers: TransformedVoiceover[];
   enableVirtualization?: boolean;
   initialPageSize?: number;
+  title?: string;
 }
 
 export function OptimizedVoiceoverGrid({
   voiceovers,
   enableVirtualization = true,
   initialPageSize = 12,
+  title = 'Onze Stemacteurs',
 }: OptimizedVoiceoverGridProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [gridSize, setGridSize] = useState<'large' | 'small'>('large');
@@ -86,53 +88,57 @@ export function OptimizedVoiceoverGrid({
 
   return (
     <div className="w-full">
-      {/* Optimized filter controls */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+      {/* Header with title and controls */}
+      <div className="flex items-center justify-between mb-6 gap-4">
+        {/* Title */}
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">{title}</h2>
+
+        {/* Controls - cohesive button group */}
+        <div className="flex items-center border border-border rounded-lg overflow-hidden bg-background flex-shrink-0">
+          {/* Grid size buttons - always visible */}
+          <button
+            onClick={() => setGridSize('large')}
+            className={`p-2 sm:px-3 sm:py-2 transition-colors border-r border-border ${
+              gridSize === 'large' ? 'bg-muted text-foreground' : 'hover:bg-muted/50'
+            }`}
+            title="Large grid"
+            aria-label="Large grid view"
+            aria-pressed={gridSize === 'large'}
+          >
+            <Grid2X2 className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+          <button
+            onClick={() => setGridSize('small')}
+            className={`p-2 sm:px-3 sm:py-2 transition-colors border-r border-border ${
+              gridSize === 'small' ? 'bg-muted text-foreground' : 'hover:bg-muted/50'
+            }`}
+            title="Small grid"
+            aria-label="Small grid view"
+            aria-pressed={gridSize === 'small'}
+          >
+            <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+
+          {/* Filter button */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
+            className={`px-3 py-2 sm:px-4 sm:py-2 transition-colors flex items-center gap-2 ${
               showFilters || selectedTags.length > 0
-                ? 'border-primary bg-primary/5 text-primary'
-                : 'border-border'
+                ? 'bg-primary/10 text-primary'
+                : 'hover:bg-muted/50'
             }`}
             aria-expanded={showFilters}
             aria-controls="filter-panel"
           >
-            <Filter className="w-4 h-4" />
-            <span className="hidden sm:inline">Filters</span>
+            <Filter className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline text-sm">Filters</span>
             {selectedTags.length > 0 && (
-              <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
+              <span className="ml-1 text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
                 {selectedTags.length}
               </span>
             )}
           </button>
-
-          <div className="hidden md:flex items-center gap-1 border border-border rounded-lg p-1">
-            <button
-              onClick={() => setGridSize('large')}
-              className={`p-1.5 rounded transition-colors ${
-                gridSize === 'large' ? 'bg-muted' : ''
-              }`}
-              title="Large grid"
-              aria-pressed={gridSize === 'large'}
-            >
-              <Grid2X2 className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setGridSize('small')}
-              className={`p-1.5 rounded transition-colors ${
-                gridSize === 'small' ? 'bg-muted' : ''
-              }`}
-              title="Small grid"
-              aria-pressed={gridSize === 'small'}
-            >
-              <Grid3X3 className="w-4 h-4" />
-            </button>
-          </div>
         </div>
-
-        <p className="text-sm text-muted-foreground">{filteredVoiceovers.length} stemmen</p>
       </div>
 
       {/* Filter panel with lazy rendering */}
@@ -250,7 +256,9 @@ function OptimizedVoiceoverCard({
           <div className="custom-card">
             {/* Availability indicator */}
             {voiceover.beschikbaar && (
-              <div className="custom-card-availability-section">
+              <div
+                className={`custom-card-availability-section ${size === 'small' ? 'small-grid' : ''}`}
+              >
                 <svg
                   className="custom-card-trapezoid"
                   viewBox="0 0 180 30"
@@ -281,38 +289,38 @@ function OptimizedVoiceoverCard({
               </div>
             )}
 
-            {/* Optimized image container with proper overflow */}
-            <div className="overflow-hidden rounded-[1rem]">
-              <div className="relative aspect-[3/4]">
-                {voiceover.profilePhoto?.url ? (
-                  <>
-                    {!imageLoaded && <div className="absolute inset-0 bg-muted animate-pulse" />}
-                    <Image
-                      src={voiceover.profilePhoto.url}
-                      alt={firstName}
-                      fill
-                      className={`object-cover transition-opacity duration-300 ${
-                        imageLoaded ? 'opacity-100' : 'opacity-0'
-                      }`}
-                      sizes={
-                        size === 'large'
-                          ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'
-                          : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw'
-                      }
-                      priority={false}
-                      loading="lazy"
-                      onLoad={() => setImageLoaded(true)}
-                    />
-                  </>
-                ) : (
-                  <div className="absolute inset-0 bg-muted" />
-                )}
-              </div>
+            {/* Optimized image container */}
+            <div className="relative aspect-[3/4] overflow-hidden rounded-[1rem]">
+              {voiceover.profilePhoto?.url ? (
+                <>
+                  {!imageLoaded && <div className="absolute inset-0 bg-muted animate-pulse" />}
+                  <Image
+                    src={voiceover.profilePhoto.url}
+                    alt={firstName}
+                    fill
+                    className={`object-cover transition-opacity duration-300 ${
+                      imageLoaded ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    sizes={
+                      size === 'large'
+                        ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'
+                        : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw'
+                    }
+                    priority={false}
+                    loading="lazy"
+                    onLoad={() => setImageLoaded(true)}
+                  />
+                </>
+              ) : (
+                <div className="absolute inset-0 bg-muted rounded-[1rem]" />
+              )}
             </div>
 
             {/* Play button */}
             {!showPlayer && hasDemos && (
-              <div className="custom-card-play-section group/play">
+              <div
+                className={`custom-card-play-section group/play ${size === 'small' ? 'small-grid' : ''}`}
+              >
                 <svg
                   className="custom-card-trapezoid"
                   viewBox="0 0 100 100"
@@ -359,7 +367,11 @@ function OptimizedVoiceoverCard({
             {showPlayer && hasDemos && (
               <div className="absolute inset-0 overflow-hidden rounded-[1rem]">
                 <Suspense fallback={<div className="absolute inset-0 bg-black/20 animate-pulse" />}>
-                  <AnimatedPlayer voiceover={voiceover} onClose={() => setShowPlayer(false)} />
+                  <AnimatedPlayer
+                    voiceover={voiceover}
+                    onClose={() => setShowPlayer(false)}
+                    gridSize={size}
+                  />
                 </Suspense>
               </div>
             )}
