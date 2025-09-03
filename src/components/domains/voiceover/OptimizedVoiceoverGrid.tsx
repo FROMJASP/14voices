@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Filter, Grid3X3, Grid2X2 } from 'lucide-react';
 import type { TransformedVoiceover } from '@/types/voiceover';
+import { HoverTooltip } from './HoverTooltip';
 import './custom-card.css';
 
 // Lazy load heavy components
@@ -251,9 +252,12 @@ function OptimizedVoiceoverCard({
 
   return (
     <div className="group">
-      <div className="block cursor-pointer" onClick={handleCardClick}>
+      <div className="block cursor-pointer relative" onClick={handleCardClick}>
         <div className="custom-card-wrapper">
           <div className="custom-card">
+            {/* Hover tooltip for desktop */}
+            <HoverTooltip text="Klik voor meer info" enabled={!showPlayer} />
+
             {/* Availability indicator */}
             {voiceover.beschikbaar && (
               <div
