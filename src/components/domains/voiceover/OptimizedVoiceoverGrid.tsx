@@ -293,8 +293,8 @@ function OptimizedVoiceoverCard({
               </div>
             )}
 
-            {/* Optimized image container */}
-            <div className="relative aspect-[3/4] overflow-hidden rounded-[1rem]">
+            {/* Optimized image container with responsive aspect ratio */}
+            <div className="relative aspect-[3/4] xl:aspect-[2/3] 2xl:aspect-[3/4] overflow-hidden rounded-[1rem]">
               {voiceover.profilePhoto?.url ? (
                 <>
                   {!imageLoaded && <div className="absolute inset-0 bg-muted animate-pulse" />}

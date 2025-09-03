@@ -16,22 +16,15 @@ export function HoverTooltip({
 }: HoverTooltipProps) {
   const [localPosition, setLocalPosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 768px)').matches || 'ontouchstart' in window);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
+    setIsMounted(true);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!enabled || isMobile || !containerRef.current) return;
+    if (!enabled || !containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
     setLocalPosition({
@@ -40,13 +33,17 @@ export function HoverTooltip({
     });
   };
 
-  if (!enabled || isMobile) return null;
+  // Only render on desktop (check happens on client only)
+  if (!enabled || !isMounted) return null;
+
+  // Use CSS to hide on mobile instead of JS check to avoid hydration issues
+  const isMobileClass = 'hidden md:block';
 
   return (
     <>
       <div
         ref={containerRef}
-        className="absolute inset-0 z-10"
+        className={`absolute inset-0 z-10 ${isMobileClass}`}
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => setIsVisible(false)}
         onMouseMove={handleMouseMove}
@@ -60,7 +57,7 @@ export function HoverTooltip({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`pointer-events-none absolute z-50 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium shadow-lg whitespace-nowrap ${className}`}
+            className={`pointer-events-none absolute z-50 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium shadow-lg whitespace-nowrap ${isMobileClass} ${className}`}
             style={{
               left: localPosition.x + 10,
               top: localPosition.y + 10,
