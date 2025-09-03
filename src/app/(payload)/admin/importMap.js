@@ -13,6 +13,8 @@ import { PhoneCell as PhoneCell_328db6a539f1a4d0a1739aed65064b39 } from '../../.
 import { UserLastSeenCell as UserLastSeenCell_b5d142be42099c385752cb29940d2ee5 } from '../../../components/admin/cells/UserLastSeenCell'
 import { PageSlugCell as PageSlugCell_2b473417a40ab5652febac9d30aecbd0 } from '../../../components/admin/cells/PageSlugCell'
 import { PageTitleCell as PageTitleCell_672964606649d829c3d8d5ceb1579103 } from '../../../components/admin/cells/PageTitleCell'
+import { BlockLabel as BlockLabel_90d854ae10e67e9e952613bb477ac825 } from '../../../components/admin/cells/BlockLabel'
+import { EditBlocksTitle as EditBlocksTitle_46e07528f96dd773ecd187ed9c15ff3f } from '../../../components/admin/fields/EditBlocksTitle'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -72,6 +74,8 @@ export const importMap = {
   "./components/admin/cells/UserLastSeenCell#UserLastSeenCell": UserLastSeenCell_b5d142be42099c385752cb29940d2ee5,
   "/components/admin/cells/PageSlugCell#PageSlugCell": PageSlugCell_2b473417a40ab5652febac9d30aecbd0,
   "/components/admin/cells/PageTitleCell#PageTitleCell": PageTitleCell_672964606649d829c3d8d5ceb1579103,
+  "/components/admin/cells/BlockLabel#BlockLabel": BlockLabel_90d854ae10e67e9e952613bb477ac825,
+  "/components/admin/fields/EditBlocksTitle#EditBlocksTitle": EditBlocksTitle_46e07528f96dd773ecd187ed9c15ff3f,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,

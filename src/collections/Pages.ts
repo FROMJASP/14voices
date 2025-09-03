@@ -138,12 +138,80 @@ const Pages: CollectionConfig = {
               },
             },
             {
-              type: 'collapsible',
+              name: 'pageBlocks',
+              type: 'array',
               label: {
-                en: 'Hero Section',
-                nl: 'Hero Sectie',
+                en: 'Page Blocks',
+                nl: 'Pagina Blokken',
+              },
+              labels: {
+                singular: {
+                  en: 'Block',
+                  nl: 'Blok',
+                },
+                plural: {
+                  en: 'Blocks',
+                  nl: 'Blokken',
+                },
               },
               admin: {
+                condition: (data) => data.slug === 'home',
+                description: {
+                  en: 'Add blocks to build your page. Drag to reorder.',
+                  nl: 'Voeg blokken toe om je pagina te bouwen. Sleep om te herschikken.',
+                },
+                initCollapsed: false,
+                isSortable: true,
+                components: {
+                  RowLabel: '/components/admin/cells/BlockLabel#BlockLabel',
+                },
+              },
+              fields: [
+                {
+                  name: 'blockType',
+                  type: 'select',
+                  required: true,
+                  label: {
+                    en: 'Block Type',
+                    nl: 'Blok Type',
+                  },
+                  options: [
+                    { label: { en: 'Hero', nl: 'Hero' }, value: 'hero' },
+                    { label: { en: 'Products', nl: 'Producten' }, value: 'voiceover' },
+                    { label: { en: 'Blog', nl: 'Blog' }, value: 'linkToBlog' },
+                  ],
+                },
+                {
+                  name: 'enabled',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: {
+                    en: 'Visible',
+                    nl: 'Zichtbaar',
+                  },
+                },
+              ],
+              defaultValue: [
+                { blockType: 'hero', enabled: true },
+                { blockType: 'voiceover', enabled: true },
+                { blockType: 'linkToBlog', enabled: true },
+              ],
+            },
+            {
+              name: 'editBlocksTitle',
+              type: 'ui',
+              admin: {
+                condition: (data) => data.slug === 'home',
+                components: {
+                  Field: '/components/admin/fields/EditBlocksTitle#EditBlocksTitle',
+                },
+              },
+            },
+            {
+              type: 'collapsible',
+              label: 'Hero',
+              admin: {
+                condition: (data) => data.slug === 'home',
                 initCollapsed: true,
               },
               fields: [
@@ -600,10 +668,7 @@ const Pages: CollectionConfig = {
             },
             {
               type: 'collapsible',
-              label: {
-                en: 'Voice-over Section',
-                nl: 'Voice-over Sectie',
-              },
+              label: 'Products',
               admin: {
                 condition: (data) => data.slug === 'home',
                 initCollapsed: true,
@@ -641,10 +706,7 @@ const Pages: CollectionConfig = {
             },
             {
               type: 'collapsible',
-              label: {
-                en: 'Link-to-Blog Section',
-                nl: 'Link-to-Blog Sectie',
-              },
+              label: 'Blog',
               admin: {
                 condition: (data) => data.slug === 'home',
                 initCollapsed: true,
@@ -1576,6 +1638,15 @@ const Pages: CollectionConfig = {
         // Ensure home page slug stays as 'home'
         if (data.slug === 'home' && operation === 'update') {
           data.slug = 'home';
+        }
+
+        // Initialize pageBlocks if not present for homepage
+        if (data.slug === 'home' && (!data.pageBlocks || data.pageBlocks.length === 0)) {
+          data.pageBlocks = [
+            { blockType: 'hero', enabled: true },
+            { blockType: 'voiceover', enabled: true },
+            { blockType: 'linkToBlog', enabled: true },
+          ];
         }
 
         // Migrate hero type to layout field if needed

@@ -78,6 +78,10 @@ interface PageRendererProps {
     content?: unknown;
     sections?: PageSection[];
     linkToBlog?: any;
+    pageBlocks?: Array<{
+      blockType: 'hero' | 'voiceover' | 'linkToBlog';
+      enabled: boolean;
+    }>;
   };
   voiceovers?: any[] | null;
 }
@@ -135,7 +139,7 @@ export function PageRenderer({
 
   // Transform the data with live updates - must be called unconditionally
   const heroSettings = React.useMemo(() => {
-    // Check for new layout field first, fallback to legacy type field
+    // Check for hero data
     const hero = page.hero as any;
     const isHeroVariant1 = hero?.layout === 'variant1' || hero?.type === 'homepage';
     return isHomepage && isHeroVariant1 ? transformHeroDataForHomepage(page) : null;
@@ -158,24 +162,45 @@ export function PageRenderer({
 
   // For homepage hero, render without article wrapper to maintain proper styling
   const hero = page.hero as any;
+  const voiceover = page.voiceover;
+  const linkToBlog = page.linkToBlog;
   const isHeroVariant1 = hero?.layout === 'variant1' || hero?.type === 'homepage';
   if (isHomepage && isHeroVariant1 && heroSettings) {
+    // Get pageBlocks array or use default order
+    const blocksArray = page.pageBlocks || [
+      { blockType: 'hero', enabled: true },
+      { blockType: 'voiceover', enabled: true },
+      { blockType: 'linkToBlog', enabled: true },
+    ];
+
+    // Create block components map
+    const blockComponents = {
+      hero: heroSettings ? (
+        <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
+      ) : null,
+      voiceover: (
+        <VoiceoverSection
+          key={JSON.stringify(voiceover)}
+          initialVoiceovers={transformedVoiceovers}
+          title={voiceover?.title || 'Onze Stemacteurs'}
+        />
+      ),
+      linkToBlog: linkToBlog ? (
+        <LinkToBlogSection key={JSON.stringify(linkToBlog)} data={linkToBlog} />
+      ) : null,
+    };
+
     return (
       <SsgoiTransition id="/">
         <div className="homepage-preview">
-          <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
-
-          {/* Render voiceovers section */}
-          <VoiceoverSection
-            key={JSON.stringify(page.voiceover)}
-            initialVoiceovers={transformedVoiceovers}
-            title={page.voiceover?.title || 'Onze Stemacteurs'}
-          />
-
-          {/* Render Link to Blog section */}
-          {page.linkToBlog && (
-            <LinkToBlogSection key={JSON.stringify(page.linkToBlog)} data={page.linkToBlog} />
-          )}
+          {/* Render blocks based on pageBlocks array order and enabled state */}
+          {blocksArray.map((blockItem, index) => {
+            if (!blockItem.enabled) return null;
+            const component = blockComponents[blockItem.blockType];
+            return component ? (
+              <div key={`${blockItem.blockType}-${index}`}>{component}</div>
+            ) : null;
+          })}
 
           {/* Optionally render other homepage sections if needed for preview */}
           {page.sections && page.sections.length > 0 && (
