@@ -61,7 +61,11 @@ export function MobileMenu({
     setExpandedItem(expandedItem === index ? null : index);
   };
 
-  if (!mounted) return null;
+  // Return empty portal container during SSR to prevent hydration mismatch
+  // but don't return null to prevent unmount/remount on theme change
+  if (!mounted) {
+    return typeof window !== 'undefined' ? createPortal(<div />, document.body) : null;
+  }
 
   const menuContent = (
     <div data-mobile-menu>

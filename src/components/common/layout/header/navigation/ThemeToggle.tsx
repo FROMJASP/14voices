@@ -21,22 +21,20 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
   }
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
+    // Simple toggle between light and dark only (no system option)
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
 
     // Force update the data-theme attribute for compatibility
-    const resolvedTheme =
-      newTheme === 'system'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light'
-        : newTheme;
-    document.documentElement.setAttribute('data-theme', resolvedTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
   };
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Check if browser supports View Transitions API
-    if (!document.startViewTransition) {
+    // Check if we're in mobile menu (by checking if the button is inside data-mobile-menu)
+    const isInMobileMenu = e.currentTarget.closest('[data-mobile-menu]');
+
+    // Skip View Transitions API for mobile menu to prevent flicker
+    if (isInMobileMenu || !document.startViewTransition) {
       toggleTheme();
       return;
     }
