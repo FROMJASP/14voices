@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { OptimizedVoiceoverGrid } from '@/components/domains/voiceover';
 import { getVoiceovers } from '@/lib/api';
 import type { TransformedVoiceover } from '@/types/voiceover';
+
+// Import directly for immediate rendering
+import { OptimizedVoiceoverGrid } from '@/components/domains/voiceover';
 
 interface VoiceoverSectionProps {
   initialVoiceovers?: TransformedVoiceover[];
@@ -32,7 +34,8 @@ export function VoiceoverSection({
     }
   }, [initialVoiceovers]);
 
-  if (loading) {
+  // Don't show loading state if we have initial data from SSR
+  if (loading && (!initialVoiceovers || initialVoiceovers.length === 0)) {
     return (
       <section id="voiceovers" className="py-16 bg-background">
         <div className="container mx-auto px-4">
@@ -42,12 +45,12 @@ export function VoiceoverSection({
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {/* Loading skeleton */}
+            {/* Only show skeleton if truly loading with no data */}
             {[...Array(4)].map((_, i) => (
               <div key={i} className="space-y-3">
-                <div className="aspect-[3/4] bg-muted animate-pulse rounded-lg" />
-                <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
-                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+                <div className="aspect-[3/4] bg-muted rounded-lg" />
+                <div className="h-4 bg-muted rounded w-3/4" />
+                <div className="h-3 bg-muted rounded w-1/2" />
               </div>
             ))}
           </div>

@@ -39,6 +39,18 @@ export default function RootLayout({
     <html lang="nl" suppressHydrationWarning>
       <head>
         <ThemeScript />
+        {/* Resource hints for better performance */}
+        <link rel="preconnect" href="https://minio.14voices.com" />
+        <link rel="dns-prefetch" href="https://minio.14voices.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* PWA meta tags */}
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body
         className={`${bricolageGrotesque.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}

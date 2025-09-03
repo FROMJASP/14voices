@@ -3,6 +3,7 @@
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Filter, Grid3X3, Grid2X2 } from 'lucide-react';
 import type { TransformedVoiceover } from '@/types/voiceover';
 import { HoverTooltip } from './HoverTooltip';
@@ -243,6 +244,15 @@ function OptimizedVoiceoverCard({
     router.push(`/voiceovers/${voiceover.slug}`);
   };
 
+  // Prefetch on hover for faster navigation
+  const handleMouseEnter = () => {
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        router.prefetch(`/voiceovers/${voiceover.slug}`);
+      });
+    }
+  };
+
   const handlePlayClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -251,7 +261,7 @@ function OptimizedVoiceoverCard({
   };
 
   return (
-    <div className="group">
+    <div className="group" onMouseEnter={handleMouseEnter}>
       <div className="block cursor-pointer relative" onClick={handleCardClick}>
         <div className="custom-card-wrapper">
           <div className="custom-card">
@@ -312,6 +322,9 @@ function OptimizedVoiceoverCard({
                     }
                     priority={false}
                     loading="lazy"
+                    quality={85}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAA8A/9k="
                     onLoad={() => setImageLoaded(true)}
                   />
                 </>
@@ -385,12 +398,13 @@ function OptimizedVoiceoverCard({
 
       {/* Card footer */}
       <div className="mt-3 px-1">
-        <h3
-          className="font-medium text-foreground text-base mb-1 hover:underline cursor-pointer"
-          onClick={() => router.push(`/voiceovers/${voiceover.slug}`)}
+        <Link
+          href={`/voiceovers/${voiceover.slug}`}
+          className="font-medium text-foreground text-base mb-1 hover:underline inline-block"
+          prefetch={false}
         >
           {firstName}
-        </h3>
+        </Link>
         <div className="flex items-center gap-1.5 flex-wrap text-xs text-muted-foreground">
           {(voiceover.tags || []).slice(0, 3).map((tag, index) => (
             <React.Fragment key={tag}>

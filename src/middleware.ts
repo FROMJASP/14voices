@@ -12,6 +12,20 @@ export async function middleware(request: NextRequest) {
     return staticResponse;
   }
 
+  // Add early hints for critical resources on homepage
+  if (request.nextUrl.pathname === '/' || request.nextUrl.pathname === '/home') {
+    const response = NextResponse.next();
+    response.headers.set(
+      'Link',
+      [
+        '<https://fonts.googleapis.com>; rel=preconnect',
+        '<https://fonts.gstatic.com>; rel=preconnect; crossorigin',
+        '<https://minio.14voices.com>; rel=preconnect',
+        '</_next/static/css/app/layout.css>; rel=preload; as=style',
+      ].join(', ')
+    );
+  }
+
   // Special handling for admin panel and preview requests
   const isAdminPath = request.nextUrl.pathname.startsWith('/admin');
   const isPreviewRequest =
@@ -68,6 +82,15 @@ export async function middleware(request: NextRequest) {
     response.headers.set('x-nonce', nonce);
   }
 
+  // Add performance headers for API routes
+  if (request.nextUrl.pathname.startsWith('/api/public')) {
+    response.headers.set(
+      'Cache-Control',
+      'public, max-age=60, s-maxage=300, stale-while-revalidate=600'
+    );
+    response.headers.set('CDN-Cache-Control', 'max-age=900');
+  }
+
   // Add rate limit headers for API routes
   if (request.nextUrl.pathname.startsWith('/api/')) {
     try {
@@ -112,7 +135,7 @@ export async function middleware(request: NextRequest) {
 
   // Add additional security headers
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  response.headers.set('X-DNS-Prefetch-Control', 'off');
+  response.headers.set('X-DNS-Prefetch-Control', 'on'); // Enable DNS prefetch for performance
   response.headers.set('X-Download-Options', 'noopen');
   response.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
 

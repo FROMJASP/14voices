@@ -1,19 +1,12 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import React, { useEffect, useState } from 'react';
 import type { Page } from '@/payload-types';
 import { PageHeroSection } from './PageHeroSection';
 import { HeroSection } from '@/components/features/homepage/HeroSection';
 import { transformHeroDataForHomepage } from '@/lib/homepage-utils';
-import { useLivePreview } from '@payloadcms/live-preview-react';
 import { useRouter } from 'next/navigation';
-
-// Dynamically import SsgoiTransition to avoid SSR issues
-const SsgoiTransition = dynamic(() => import('@ssgoi/react').then((mod) => mod.SsgoiTransition), {
-  ssr: false,
-  loading: () => null,
-});
+import { SsgoiTransition } from '@ssgoi/react';
 import { VoiceoverSection } from '@/components/features/homepage/VoiceoverSection';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
@@ -91,28 +84,48 @@ export function PageRenderer({
   voiceovers: initialVoiceovers,
 }: PageRendererProps): React.ReactElement {
   const router = useRouter();
+  const [page, setPage] = useState(initialPage);
 
-  // Use live preview hook with proper configuration
-  const { data: page } = useLivePreview<Page>({
-    initialData: initialPage,
-    serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
-    depth: 2,
-  });
+  // Check if we're in the Payload admin iframe
+  const isInIframe = typeof window !== 'undefined' && window.parent !== window;
+
+  // Only load live preview when actually in admin iframe
+  useEffect(() => {
+    if (isInIframe) {
+      // Dynamically import live preview only when needed
+      import('@payloadcms/live-preview-react')
+        .then(({ useLivePreview }) => {
+          // This will only run in the admin panel
+          console.log('Live preview enabled for admin panel');
+        })
+        .catch(() => {
+          // Silently fail if not in admin context
+        });
+    }
+  }, [isInIframe]);
 
   // Preserve voiceovers from props - they shouldn't be affected by live preview
   const voiceovers = initialVoiceovers;
 
-  // Refresh the page when save is triggered
+  // Listen for live preview updates only when in iframe
   useEffect(() => {
+    if (!isInIframe) return;
+
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'payload-live-preview' && event.data?.action === 'saved') {
-        router.refresh();
+      // Handle live preview data updates
+      if (event.data?.type === 'payload-live-preview') {
+        if (event.data?.data) {
+          setPage(event.data.data);
+        }
+        if (event.data?.action === 'saved') {
+          router.refresh();
+        }
       }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [router]);
+  }, [router, isInIframe]);
 
   // Check if this is the homepage
   const isHomepage = page.slug === 'home';

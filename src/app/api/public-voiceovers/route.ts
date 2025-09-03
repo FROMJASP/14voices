@@ -107,7 +107,14 @@ export const GET = createApiHandler(
           };
         }
 
-        return result;
+        // Add cache headers for better client-side caching
+        return {
+          ...result,
+          _headers: {
+            'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
+            'CDN-Cache-Control': 'max-age=900',
+          },
+        };
       },
       300000 // 5 minutes cache
     );

@@ -50,12 +50,14 @@ const nextConfig: NextConfig = {
     // Enable modern optimizations
     optimizeServerReact: true,
     // Enable modern JavaScript optimizations
-    reactCompiler: false, // React 19 feature - disabled for stability
+    reactCompiler: false, // Keep disabled for React 19 stability
     // Enable partial prerendering for better performance
-    ppr: false, // Experimental - enable after testing
+    ppr: false, // Only available in Next.js canary versions
   },
   // Performance optimizations
   compress: true,
+  poweredByHeader: false, // Remove X-Powered-By header
+  generateEtags: true, // Enable ETag generation
   // Optimized headers for performance
   headers: async () => [
     {

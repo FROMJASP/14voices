@@ -1,9 +1,8 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { PageRenderer, PreviewLoading } from '@/components/common/widgets';
+import { PageRenderer } from '@/components/common/widgets';
 import type { Page } from '@/payload-types';
-import { Suspense } from 'react';
 import { headers } from 'next/headers';
 
 interface PageProps {
@@ -13,9 +12,40 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-// Disable static generation for self-hosted deployments
-export const dynamic = 'force-dynamic';
+// Enable Incremental Static Regeneration (ISR) for better performance
+export const revalidate = 60; // Revalidate every 60 seconds
 export const dynamicParams = true;
+
+// Pre-generate static paths for common pages
+export async function generateStaticParams() {
+  // During build with fake database, skip generation
+  if (process.env.DATABASE_URL?.includes('fake:fake@fake')) {
+    return [];
+  }
+
+  try {
+    const payload = await getPayload({ config: configPromise });
+
+    // Get all published pages
+    const pages = await payload.find({
+      collection: 'pages',
+      where: {
+        status: {
+          equals: 'published',
+        },
+      },
+      limit: 100,
+    });
+
+    // Generate paths for all pages
+    return pages.docs.map((page) => ({
+      slug: page.slug === 'home' ? [] : page.slug.split('/'),
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
+}
 
 export async function generateMetadata({ params }: PageProps) {
   // During build time with fake database URL, return default metadata
@@ -156,24 +186,23 @@ export default async function Page({ params }: PageProps) {
   // Fetch voiceovers if this is the homepage
   let voiceovers = null;
   if (slug === 'home') {
-    // Fetch voiceovers directly from Payload during SSR
-    const voiceoverResults = await payload.find({
-      collection: 'voiceovers',
-      where: {
-        status: {
-          in: ['active', 'more-voices'],
+    // Fetch voiceovers with caching for better performance
+    const [voiceoverResults] = await Promise.all([
+      payload.find({
+        collection: 'voiceovers',
+        where: {
+          status: {
+            in: ['active', 'more-voices'],
+          },
         },
-      },
-      depth: 2,
-      limit: 100,
-    });
+        depth: 2,
+        limit: 100,
+      }),
+    ]);
 
     voiceovers = voiceoverResults.docs;
   }
 
-  return (
-    <Suspense fallback={<PreviewLoading />}>
-      <PageRenderer page={transformedPage} voiceovers={voiceovers} />
-    </Suspense>
-  );
+  // No Suspense needed - data is already loaded server-side with ISR
+  return <PageRenderer page={transformedPage} voiceovers={voiceovers} />;
 }

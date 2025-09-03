@@ -4,9 +4,39 @@ import { fetchOptimized } from '@/lib/data-fetching-server';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 
-// Disable static generation for self-hosted deployments
-// This prevents build-time database connection attempts
-export const dynamic = 'force-dynamic';
+// Enable Incremental Static Regeneration (ISR) for better performance
+// Pages are cached and revalidated every 60 seconds
+export const revalidate = 60;
+export const dynamicParams = true;
+
+// Pre-generate paths for all active voiceovers
+export async function generateStaticParams() {
+  // Skip during build with fake database
+  if (process.env.DATABASE_URL?.includes('fake:fake@fake')) {
+    return [];
+  }
+
+  try {
+    const result = await fetchOptimized({
+      collection: 'voiceovers',
+      where: {
+        status: {
+          equals: 'active',
+        },
+      },
+      limit: 100,
+    });
+
+    if (!result.docs) return [];
+
+    return result.docs.map((voiceover: any) => ({
+      slug: voiceover.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating voiceover static params:', error);
+    return [];
+  }
+}
 
 interface VoiceoverPageProps {
   params: Promise<{
