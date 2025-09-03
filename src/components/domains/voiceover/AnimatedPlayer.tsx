@@ -250,7 +250,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col justify-between p-2 sm:p-3 lg:p-4 rounded-[1rem]"
+      className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col p-2 sm:p-3 lg:p-4 rounded-[1rem] overflow-hidden"
       onClick={(e) => e.preventDefault()}
     >
       {/* Header */}
@@ -268,8 +268,8 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
       </div>
 
       {/* Profile picture */}
-      <div className="flex justify-center mb-3 sm:mb-5 lg:mb-8">
-        <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-32 lg:h-32 rounded-xl sm:rounded-2xl overflow-hidden bg-foreground/10">
+      <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden bg-foreground/10">
           {voiceover.profilePhoto?.url ? (
             <Image
               src={voiceover.profilePhoto.url}
@@ -290,13 +290,13 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full"
+        className="w-full flex-shrink-0"
       >
         {/* Choose button */}
-        <div className="mb-3 sm:mb-4 lg:mb-6">
+        <div className="mb-2 sm:mb-3 lg:mb-4">
           <button
             onClick={handleChooseClick}
-            className="w-full bg-foreground text-background rounded-lg sm:rounded-xl py-1.5 sm:py-2 lg:py-3 text-xs sm:text-sm lg:text-base font-medium transition-all duration-200 hover:bg-foreground/90 hover:scale-[1.02] hover:shadow-lg"
+            className="w-full bg-foreground text-background rounded-lg sm:rounded-xl py-1 sm:py-1.5 lg:py-2 text-[11px] sm:text-xs lg:text-sm font-medium transition-all duration-200 hover:bg-foreground/90 hover:scale-[1.02] hover:shadow-lg"
           >
             Kies {firstName}
           </button>
@@ -320,7 +320,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
           <button
             onClick={handlePlayPause}
             disabled={isLoading}
-            className="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 rounded-full bg-foreground flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50"
+            className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-foreground flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50"
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isLoading ? (
@@ -346,7 +346,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
         </div>
 
         {/* Progress bar */}
-        <div className="mb-1 sm:mb-1.5 lg:mb-2 px-2 sm:px-3 lg:px-4">
+        <div className="mb-1 lg:mb-1.5 px-2 sm:px-3 lg:px-4">
           <div
             className="relative h-1 bg-foreground/20 rounded-full cursor-pointer"
             onClick={handleProgressClick}
@@ -379,11 +379,11 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
         </div>
 
         {/* Demo info */}
-        <div className="text-center mt-1 sm:mt-2 lg:mt-3">
-          <span className="text-[10px] sm:text-xs text-foreground/60">
+        <div className="text-center mt-1 mb-1">
+          <span className="text-[10px] sm:text-xs text-foreground/60 line-clamp-1">
             {currentDemo?.title}
             {voiceover.demos.length > 1 && (
-              <span className="ml-2">
+              <span className="ml-1">
                 ({currentDemoIndex + 1}/{voiceover.demos.length})
               </span>
             )}
