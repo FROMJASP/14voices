@@ -10,6 +10,8 @@ import { SsgoiTransition } from '@ssgoi/react';
 import { VoiceoverSection } from '@/components/features/homepage/VoiceoverSection';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
+import LinkToBlogSection from '@/components/features/homepage/LinkToBlogSection';
+import { useLivePreview } from '@payloadcms/live-preview-react';
 
 // Define section type union for all possible section types
 type PageSection = {
@@ -75,6 +77,7 @@ interface PageRendererProps {
   page: Page & {
     content?: unknown;
     sections?: PageSection[];
+    linkToBlog?: any;
   };
   voiceovers?: any[] | null;
 }
@@ -84,42 +87,42 @@ export function PageRenderer({
   voiceovers: initialVoiceovers,
 }: PageRendererProps): React.ReactElement {
   const router = useRouter();
-  const [page, setPage] = useState(initialPage);
 
   // Check if we're in the Payload admin iframe
   const isInIframe = typeof window !== 'undefined' && window.parent !== window;
 
-  // Only load live preview when actually in admin iframe
+  // Use Payload's live preview hook for real-time updates
+  const { data: livePreviewData } = useLivePreview<typeof initialPage>({
+    initialData: initialPage,
+    serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
+    depth: 2,
+  });
+
+  // Use live preview data if available, otherwise use initial data
+  const page =
+    isInIframe && livePreviewData ? (livePreviewData as typeof initialPage) : initialPage;
+
+  // Debug logging for live preview
   useEffect(() => {
-    if (isInIframe) {
-      // Dynamically import live preview only when needed
-      import('@payloadcms/live-preview-react')
-        .then(() => {
-          // This will only run in the admin panel
-          console.log('Live preview enabled for admin panel');
-        })
-        .catch(() => {
-          // Silently fail if not in admin context
-        });
+    if (isInIframe && livePreviewData) {
+      console.log('Live preview data updated:', {
+        hero: livePreviewData.hero,
+        voiceover: livePreviewData.voiceover,
+        linkToBlog: livePreviewData.linkToBlog,
+      });
     }
-  }, [isInIframe]);
+  }, [livePreviewData, isInIframe]);
 
   // Preserve voiceovers from props - they shouldn't be affected by live preview
   const voiceovers = initialVoiceovers;
 
-  // Listen for live preview updates only when in iframe
+  // Listen for save events
   useEffect(() => {
     if (!isInIframe) return;
 
     const handleMessage = (event: MessageEvent) => {
-      // Handle live preview data updates
-      if (event.data?.type === 'payload-live-preview') {
-        if (event.data?.data) {
-          setPage(event.data.data);
-        }
-        if (event.data?.action === 'saved') {
-          router.refresh();
-        }
+      if (event.data?.type === 'payload-live-preview' && event.data?.action === 'saved') {
+        router.refresh();
       }
     };
 
@@ -132,7 +135,9 @@ export function PageRenderer({
 
   // Transform the data with live updates - must be called unconditionally
   const heroSettings = React.useMemo(() => {
-    return isHomepage && page.hero?.type === 'homepage' ? transformHeroDataForHomepage(page) : null;
+    // Check for new layout field first, fallback to legacy type field
+    const isHeroVariant1 = page.hero?.layout === 'variant1' || page.hero?.type === 'homepage';
+    return isHomepage && isHeroVariant1 ? transformHeroDataForHomepage(page) : null;
   }, [page, isHomepage]);
 
   // Transform voiceovers data if needed
@@ -151,7 +156,8 @@ export function PageRenderer({
   }, [voiceovers]);
 
   // For homepage hero, render without article wrapper to maintain proper styling
-  if (isHomepage && page.hero?.type === 'homepage' && heroSettings) {
+  const isHeroVariant1 = page.hero?.layout === 'variant1' || page.hero?.type === 'homepage';
+  if (isHomepage && isHeroVariant1 && heroSettings) {
     return (
       <SsgoiTransition id="/">
         <div className="homepage-preview">
@@ -159,9 +165,15 @@ export function PageRenderer({
 
           {/* Render voiceovers section */}
           <VoiceoverSection
+            key={JSON.stringify(page.voiceover)}
             initialVoiceovers={transformedVoiceovers}
             title={page.voiceover?.title || 'Onze Stemacteurs'}
           />
+
+          {/* Render Link to Blog section */}
+          {page.linkToBlog && (
+            <LinkToBlogSection key={JSON.stringify(page.linkToBlog)} data={page.linkToBlog} />
+          )}
 
           {/* Optionally render other homepage sections if needed for preview */}
           {page.sections && page.sections.length > 0 && (

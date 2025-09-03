@@ -138,429 +138,500 @@ const Pages: CollectionConfig = {
               },
             },
             {
-              name: 'hero',
-              type: 'group',
+              type: 'collapsible',
               label: {
                 en: 'Hero Section',
                 nl: 'Hero Sectie',
               },
+              admin: {
+                initCollapsed: true,
+              },
               fields: [
                 {
-                  name: 'type',
-                  type: 'select',
-                  defaultValue: 'none',
-                  label: {
-                    en: 'Hero Type',
-                    nl: 'Hero Type',
-                  },
-                  options: [
-                    { label: { en: 'None', nl: 'Geen' }, value: 'none' },
-                    { label: { en: 'Simple', nl: 'Eenvoudig' }, value: 'simple' },
-                    { label: { en: 'With Image', nl: 'Met Afbeelding' }, value: 'image' },
-                    { label: { en: 'Video Background', nl: 'Video Achtergrond' }, value: 'video' },
-                    { label: { en: 'Gradient', nl: 'Gradiënt' }, value: 'gradient' },
-                    { label: { en: 'Homepage Hero', nl: 'Homepage Hero' }, value: 'homepage' },
-                  ],
-                },
-                // Homepage-specific fields
-                {
-                  name: 'processSteps',
-                  type: 'array',
-                  label: {
-                    en: 'Process Steps',
-                    nl: 'Processtappen',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
-                    description: {
-                      en: 'The small process steps displayed at the top of the hero',
-                      nl: 'De kleine processtappen die bovenaan de hero worden weergegeven',
-                    },
-                    initCollapsed: false,
-                  },
-                  defaultValue: [
-                    { text: '1. Kies de stem' },
-                    { text: '2. Upload script' },
-                    { text: '3. Ontvang audio' },
-                  ],
-                  fields: [
-                    {
-                      name: 'text',
-                      type: 'text',
-                      required: true,
-                      label: {
-                        en: 'Text',
-                        nl: 'Tekst',
-                      },
-                      admin: {
-                        description: {
-                          en: 'Text for this step (e.g., "1. Choose the voice")',
-                          nl: 'Tekst voor deze stap (bijv. "1. Kies de stem")',
-                        },
-                      },
-                    },
-                  ],
-                },
-                {
-                  name: 'title',
-                  type: 'textarea',
-                  label: {
-                    en: 'Hero Title (Legacy)',
-                    nl: 'Hero Titel (Oud)',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type !== 'none',
-                    description: {
-                      en: 'Legacy plain text title - will be migrated to rich text',
-                      nl: 'Oude platte tekst titel - wordt gemigreerd naar rich text',
-                    },
-                    rows: 3,
-                    hidden: true,
-                  },
-                },
-                {
-                  name: 'titleRichText',
-                  type: 'richText',
-                  editor: heroTitleConfig,
-                  label: {
-                    en: 'Hero Title',
-                    nl: 'Hero Titel',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type !== 'none',
-                    description: {
-                      en: 'Hero title with formatting. Use the <code> button to highlight text in brand color.',
-                      nl: 'Hero titel met opmaak. Gebruik de <code> knop om tekst in merkkleur te markeren.',
-                    },
-                  },
-                },
-                {
-                  name: 'subtitle',
-                  type: 'text',
-                  label: {
-                    en: 'Subtitle',
-                    nl: 'Ondertitel',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) =>
-                      siblingData?.type !== 'none' && siblingData?.type !== 'homepage',
-                  },
-                },
-                {
-                  name: 'description',
-                  type: 'textarea',
-                  label: {
-                    en: 'Description (Legacy)',
-                    nl: 'Beschrijving (Oud)',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
-                    description: {
-                      en: 'Legacy plain text description - will be migrated to rich text',
-                      nl: 'Oude platte tekst beschrijving - wordt gemigreerd naar rich text',
-                    },
-                    rows: 4,
-                    hidden: true,
-                  },
-                },
-                {
-                  name: 'descriptionRichText',
-                  type: 'richText',
-                  editor: heroDescriptionConfig,
-                  label: {
-                    en: 'Description',
-                    nl: 'Beschrijving',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
-                    description: {
-                      en: 'Hero description with formatting. Use the <code> button to highlight text in brand color. You can also use bold, italic, and links.',
-                      nl: 'Hero beschrijving met opmaak. Gebruik de <code> knop om tekst in merkkleur te markeren. Je kunt ook vet, cursief en links gebruiken.',
-                    },
-                  },
-                },
-                {
-                  name: 'image',
-                  type: 'upload',
-                  relationTo: 'media',
-                  label: {
-                    en: 'Image',
-                    nl: 'Afbeelding',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'image',
-                  },
-                },
-                {
-                  name: 'heroImage',
-                  type: 'upload',
-                  relationTo: 'media',
-                  label: {
-                    en: 'Hero Image',
-                    nl: 'Hero Afbeelding',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
-                    description: {
-                      en: 'Main image displayed in the oval-shaped container on the right (recommended: high-quality portrait photo, minimum 400x500px)',
-                      nl: 'Hoofdafbeelding weergegeven in de ovaalvormige container rechts (aanbevolen: hoogwaardige portretfoto, minimaal 400x500px)',
-                    },
-                  },
-                },
-                {
-                  name: 'videoUrl',
-                  type: 'text',
-                  label: {
-                    en: 'Video URL',
-                    nl: 'Video URL',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'video',
-                    description: {
-                      en: 'YouTube or Vimeo URL',
-                      nl: 'YouTube of Vimeo URL',
-                    },
-                  },
-                },
-                // Homepage buttons
-                {
-                  name: 'primaryButton',
+                  name: 'hero',
                   type: 'group',
-                  label: {
-                    en: 'Primary Button',
-                    nl: 'Primaire Knop',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
-                  },
                   fields: [
                     {
-                      name: 'text',
-                      type: 'text',
-                      required: true,
-                      defaultValue: 'Ontdek stemmen',
-                      label: {
-                        en: 'Button Text',
-                        nl: 'Knop Tekst',
-                      },
-                      admin: {
-                        description: {
-                          en: 'Text for the primary call-to-action button',
-                          nl: 'Tekst voor de primaire call-to-action knop',
-                        },
-                      },
-                    },
-                    {
-                      name: 'url',
-                      type: 'text',
-                      required: true,
-                      defaultValue: '#voiceovers',
-                      label: {
-                        en: 'Button URL',
-                        nl: 'Knop URL',
-                      },
-                      admin: {
-                        description: {
-                          en: 'URL for the primary button (e.g., #voiceovers, /voiceovers)',
-                          nl: 'URL voor de primaire knop (bijv. #voiceovers, /voiceovers)',
-                        },
-                      },
-                    },
-                  ],
-                },
-                {
-                  name: 'secondaryButton',
-                  type: 'group',
-                  label: {
-                    en: 'Secondary Button',
-                    nl: 'Secundaire Knop',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
-                  },
-                  fields: [
-                    {
-                      name: 'text',
-                      type: 'text',
-                      required: true,
-                      defaultValue: 'Hoe wij werken',
-                      label: {
-                        en: 'Button Text',
-                        nl: 'Knop Tekst',
-                      },
-                      admin: {
-                        description: {
-                          en: 'Text for the secondary button',
-                          nl: 'Tekst voor de secundaire knop',
-                        },
-                      },
-                    },
-                    {
-                      name: 'url',
-                      type: 'text',
-                      required: true,
-                      defaultValue: '/hoe-het-werkt',
-                      label: {
-                        en: 'Button URL',
-                        nl: 'Knop URL',
-                      },
-                      admin: {
-                        description: {
-                          en: 'URL for the secondary button',
-                          nl: 'URL voor de secundaire knop',
-                        },
-                      },
-                    },
-                  ],
-                },
-                {
-                  name: 'cta',
-                  type: 'group',
-                  label: {
-                    en: 'Call to Action',
-                    nl: 'Call to Action',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) =>
-                      siblingData?.type !== 'none' && siblingData?.type !== 'homepage',
-                  },
-                  fields: [
-                    {
-                      name: 'text',
-                      type: 'text',
-                      label: {
-                        en: 'Text',
-                        nl: 'Tekst',
-                      },
-                    },
-                    {
-                      name: 'link',
-                      type: 'text',
-                      label: {
-                        en: 'Link',
-                        nl: 'Link',
-                      },
-                    },
-                    {
-                      name: 'style',
+                      name: 'layout',
                       type: 'select',
-                      defaultValue: 'primary',
+                      defaultValue: 'variant1',
                       label: {
-                        en: 'Style',
-                        nl: 'Stijl',
+                        en: 'Hero Layout',
+                        nl: 'Hero Layout',
                       },
                       options: [
-                        { label: { en: 'Primary', nl: 'Primair' }, value: 'primary' },
-                        { label: { en: 'Secondary', nl: 'Secundair' }, value: 'secondary' },
-                        { label: { en: 'Outline', nl: 'Omlijnd' }, value: 'outline' },
+                        {
+                          label: { en: 'Hero variant 1', nl: 'Hero variant 1' },
+                          value: 'variant1',
+                        },
+                        // More layout variants can be added here in the future
+                        // { label: { en: 'Hero variant 2', nl: 'Hero variant 2' }, value: 'variant2' },
+                      ],
+                      admin: {
+                        description: {
+                          en: 'Choose the layout style for the hero section',
+                          nl: 'Kies de layout stijl voor de hero sectie',
+                        },
+                      },
+                    },
+                    // Legacy type field - hidden but maintained for backwards compatibility
+                    {
+                      name: 'type',
+                      type: 'text',
+                      defaultValue: 'homepage',
+                      admin: {
+                        hidden: true,
+                      },
+                    },
+                    // Homepage-specific fields
+                    {
+                      name: 'processSteps',
+                      type: 'array',
+                      label: {
+                        en: 'Process Steps',
+                        nl: 'Processtappen',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.layout === 'variant1' || siblingData?.type === 'homepage',
+                        description: {
+                          en: 'The small process steps displayed at the top of the hero',
+                          nl: 'De kleine processtappen die bovenaan de hero worden weergegeven',
+                        },
+                        initCollapsed: false,
+                      },
+                      defaultValue: [
+                        { text: '1. Kies de stem' },
+                        { text: '2. Upload script' },
+                        { text: '3. Ontvang audio' },
+                      ],
+                      fields: [
+                        {
+                          name: 'text',
+                          type: 'text',
+                          required: true,
+                          label: {
+                            en: 'Text',
+                            nl: 'Tekst',
+                          },
+                          admin: {
+                            description: {
+                              en: 'Text for this step (e.g., "1. Choose the voice")',
+                              nl: 'Tekst voor deze stap (bijv. "1. Kies de stem")',
+                            },
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      name: 'title',
+                      type: 'textarea',
+                      label: {
+                        en: 'Hero Title (Legacy)',
+                        nl: 'Hero Titel (Oud)',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) => siblingData?.type !== 'none',
+                        description: {
+                          en: 'Legacy plain text title - will be migrated to rich text',
+                          nl: 'Oude platte tekst titel - wordt gemigreerd naar rich text',
+                        },
+                        rows: 3,
+                        hidden: true,
+                      },
+                    },
+                    {
+                      name: 'titleRichText',
+                      type: 'richText',
+                      editor: heroTitleConfig,
+                      label: {
+                        en: 'Hero Title',
+                        nl: 'Hero Titel',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) => siblingData?.type !== 'none',
+                        description: {
+                          en: 'Hero title with formatting. Use the <code> button to highlight text in brand color.',
+                          nl: 'Hero titel met opmaak. Gebruik de <code> knop om tekst in merkkleur te markeren.',
+                        },
+                      },
+                    },
+                    {
+                      name: 'subtitle',
+                      type: 'text',
+                      label: {
+                        en: 'Subtitle',
+                        nl: 'Ondertitel',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.type !== 'none' && siblingData?.type !== 'homepage',
+                      },
+                    },
+                    {
+                      name: 'description',
+                      type: 'textarea',
+                      label: {
+                        en: 'Description (Legacy)',
+                        nl: 'Beschrijving (Oud)',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.layout === 'variant1' || siblingData?.type === 'homepage',
+                        description: {
+                          en: 'Legacy plain text description - will be migrated to rich text',
+                          nl: 'Oude platte tekst beschrijving - wordt gemigreerd naar rich text',
+                        },
+                        rows: 4,
+                        hidden: true,
+                      },
+                    },
+                    {
+                      name: 'descriptionRichText',
+                      type: 'richText',
+                      editor: heroDescriptionConfig,
+                      label: {
+                        en: 'Description',
+                        nl: 'Beschrijving',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.layout === 'variant1' || siblingData?.type === 'homepage',
+                        description: {
+                          en: 'Hero description with formatting. Use the <code> button to highlight text in brand color. You can also use bold, italic, and links.',
+                          nl: 'Hero beschrijving met opmaak. Gebruik de <code> knop om tekst in merkkleur te markeren. Je kunt ook vet, cursief en links gebruiken.',
+                        },
+                      },
+                    },
+                    {
+                      name: 'image',
+                      type: 'upload',
+                      relationTo: 'media',
+                      label: {
+                        en: 'Image',
+                        nl: 'Afbeelding',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) => siblingData?.type === 'image',
+                      },
+                    },
+                    {
+                      name: 'heroImage',
+                      type: 'upload',
+                      relationTo: 'media',
+                      label: {
+                        en: 'Hero Image',
+                        nl: 'Hero Afbeelding',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.layout === 'variant1' || siblingData?.type === 'homepage',
+                        description: {
+                          en: 'Main image displayed in the oval-shaped container on the right (recommended: high-quality portrait photo, minimum 400x500px)',
+                          nl: 'Hoofdafbeelding weergegeven in de ovaalvormige container rechts (aanbevolen: hoogwaardige portretfoto, minimaal 400x500px)',
+                        },
+                      },
+                    },
+                    {
+                      name: 'videoUrl',
+                      type: 'text',
+                      label: {
+                        en: 'Video URL',
+                        nl: 'Video URL',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) => siblingData?.type === 'video',
+                        description: {
+                          en: 'YouTube or Vimeo URL',
+                          nl: 'YouTube of Vimeo URL',
+                        },
+                      },
+                    },
+                    // Homepage buttons
+                    {
+                      name: 'primaryButton',
+                      type: 'group',
+                      label: {
+                        en: 'Primary Button',
+                        nl: 'Primaire Knop',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.layout === 'variant1' || siblingData?.type === 'homepage',
+                      },
+                      fields: [
+                        {
+                          name: 'text',
+                          type: 'text',
+                          required: true,
+                          defaultValue: 'Ontdek stemmen',
+                          label: {
+                            en: 'Button Text',
+                            nl: 'Knop Tekst',
+                          },
+                          admin: {
+                            description: {
+                              en: 'Text for the primary call-to-action button',
+                              nl: 'Tekst voor de primaire call-to-action knop',
+                            },
+                          },
+                        },
+                        {
+                          name: 'url',
+                          type: 'text',
+                          required: true,
+                          defaultValue: '#voiceovers',
+                          label: {
+                            en: 'Button URL',
+                            nl: 'Knop URL',
+                          },
+                          admin: {
+                            description: {
+                              en: 'URL for the primary button (e.g., #voiceovers, /voiceovers)',
+                              nl: 'URL voor de primaire knop (bijv. #voiceovers, /voiceovers)',
+                            },
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      name: 'secondaryButton',
+                      type: 'group',
+                      label: {
+                        en: 'Secondary Button',
+                        nl: 'Secundaire Knop',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.layout === 'variant1' || siblingData?.type === 'homepage',
+                      },
+                      fields: [
+                        {
+                          name: 'text',
+                          type: 'text',
+                          required: true,
+                          defaultValue: 'Hoe wij werken',
+                          label: {
+                            en: 'Button Text',
+                            nl: 'Knop Tekst',
+                          },
+                          admin: {
+                            description: {
+                              en: 'Text for the secondary button',
+                              nl: 'Tekst voor de secundaire knop',
+                            },
+                          },
+                        },
+                        {
+                          name: 'url',
+                          type: 'text',
+                          required: true,
+                          defaultValue: '/hoe-het-werkt',
+                          label: {
+                            en: 'Button URL',
+                            nl: 'Knop URL',
+                          },
+                          admin: {
+                            description: {
+                              en: 'URL for the secondary button',
+                              nl: 'URL voor de secundaire knop',
+                            },
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      name: 'cta',
+                      type: 'group',
+                      label: {
+                        en: 'Call to Action',
+                        nl: 'Call to Action',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.type !== 'none' && siblingData?.type !== 'homepage',
+                      },
+                      fields: [
+                        {
+                          name: 'text',
+                          type: 'text',
+                          label: {
+                            en: 'Text',
+                            nl: 'Tekst',
+                          },
+                        },
+                        {
+                          name: 'link',
+                          type: 'text',
+                          label: {
+                            en: 'Link',
+                            nl: 'Link',
+                          },
+                        },
+                        {
+                          name: 'style',
+                          type: 'select',
+                          defaultValue: 'primary',
+                          label: {
+                            en: 'Style',
+                            nl: 'Stijl',
+                          },
+                          options: [
+                            { label: { en: 'Primary', nl: 'Primair' }, value: 'primary' },
+                            { label: { en: 'Secondary', nl: 'Secundair' }, value: 'secondary' },
+                            { label: { en: 'Outline', nl: 'Omlijnd' }, value: 'outline' },
+                          ],
+                        },
+                      ],
+                    },
+                    {
+                      name: 'heroImageURL',
+                      type: 'text',
+                      virtual: true,
+                      admin: {
+                        hidden: true,
+                      },
+                      hooks: {
+                        afterRead: [
+                          async ({ siblingData, req }) => {
+                            // Only process if we have a heroImage
+                            if (!siblingData?.heroImage) return null;
+
+                            // If heroImage is just an ID string, fetch the media
+                            if (typeof siblingData.heroImage === 'string') {
+                              try {
+                                const media = await req.payload.findByID({
+                                  collection: 'media',
+                                  id: siblingData.heroImage,
+                                  depth: 0,
+                                });
+
+                                if (media?.url) {
+                                  return media.url;
+                                } else if (media?.filename) {
+                                  const publicUrl = process.env.S3_PUBLIC_URL;
+                                  if (publicUrl) {
+                                    return `${publicUrl}/media/${media.filename}`;
+                                  }
+                                  return `/media/${media.filename}`;
+                                }
+                              } catch (error) {
+                                console.error('Error fetching hero image media:', error);
+                              }
+                            }
+                            // If heroImage is already populated as an object
+                            else if (typeof siblingData.heroImage === 'object') {
+                              const heroImageObj = siblingData.heroImage as any;
+
+                              if (heroImageObj.url) {
+                                return heroImageObj.url;
+                              } else if (heroImageObj.filename) {
+                                const publicUrl = process.env.S3_PUBLIC_URL;
+                                if (publicUrl) {
+                                  return `${publicUrl}/media/${heroImageObj.filename}`;
+                                }
+                                return `/media/${heroImageObj.filename}`;
+                              }
+                            }
+
+                            return null;
+                          },
+                        ],
+                      },
+                    },
+                    // Homepage stats
+                    {
+                      name: 'stats',
+                      type: 'array',
+                      label: {
+                        en: 'Statistics',
+                        nl: 'Statistieken',
+                      },
+                      admin: {
+                        condition: (_data, siblingData) =>
+                          siblingData?.layout === 'variant1' || siblingData?.type === 'homepage',
+                        description: {
+                          en: 'Statistics displayed below the buttons',
+                          nl: 'Statistieken weergegeven onder de knoppen',
+                        },
+                        initCollapsed: true,
+                      },
+                      defaultValue: [
+                        { number: '14', label: 'Stemacteurs' },
+                        { number: '<48u', label: 'Snelle levering' },
+                        { number: '9.1/10', label: 'Klantbeoordeling' },
+                      ],
+                      fields: [
+                        {
+                          name: 'number',
+                          type: 'text',
+                          required: true,
+                          label: {
+                            en: 'Number',
+                            nl: 'Getal',
+                          },
+                          admin: {
+                            description: {
+                              en: 'The statistic number/value (e.g., "14", "<48u", "9.1/10")',
+                              nl: 'Het statistiek getal/waarde (bijv. "14", "<48u", "9.1/10")',
+                            },
+                          },
+                        },
+                        {
+                          name: 'label',
+                          type: 'text',
+                          required: true,
+                          label: {
+                            en: 'Label',
+                            nl: 'Label',
+                          },
+                          admin: {
+                            description: {
+                              en: 'The statistic label (e.g., "Voice actors", "Fast delivery")',
+                              nl: 'Het statistiek label (bijv. "Stemacteurs", "Snelle levering")',
+                            },
+                          },
+                        },
                       ],
                     },
                   ],
                 },
+              ],
+            },
+            {
+              type: 'collapsible',
+              label: {
+                en: 'Voice-over Section',
+                nl: 'Voice-over Sectie',
+              },
+              admin: {
+                condition: (data) => data.slug === 'home',
+                initCollapsed: true,
+              },
+              fields: [
                 {
-                  name: 'heroImageURL',
-                  type: 'text',
-                  virtual: true,
+                  name: 'voiceover',
+                  type: 'group',
                   admin: {
-                    hidden: true,
-                  },
-                  hooks: {
-                    afterRead: [
-                      async ({ siblingData, req }) => {
-                        // Only process if we have a heroImage
-                        if (!siblingData?.heroImage) return null;
-
-                        // If heroImage is just an ID string, fetch the media
-                        if (typeof siblingData.heroImage === 'string') {
-                          try {
-                            const media = await req.payload.findByID({
-                              collection: 'media',
-                              id: siblingData.heroImage,
-                              depth: 0,
-                            });
-
-                            if (media?.url) {
-                              return media.url;
-                            } else if (media?.filename) {
-                              const publicUrl = process.env.S3_PUBLIC_URL;
-                              if (publicUrl) {
-                                return `${publicUrl}/media/${media.filename}`;
-                              }
-                              return `/media/${media.filename}`;
-                            }
-                          } catch (error) {
-                            console.error('Error fetching hero image media:', error);
-                          }
-                        }
-                        // If heroImage is already populated as an object
-                        else if (typeof siblingData.heroImage === 'object') {
-                          const heroImageObj = siblingData.heroImage as any;
-
-                          if (heroImageObj.url) {
-                            return heroImageObj.url;
-                          } else if (heroImageObj.filename) {
-                            const publicUrl = process.env.S3_PUBLIC_URL;
-                            if (publicUrl) {
-                              return `${publicUrl}/media/${heroImageObj.filename}`;
-                            }
-                            return `/media/${heroImageObj.filename}`;
-                          }
-                        }
-
-                        return null;
-                      },
-                    ],
-                  },
-                },
-                // Homepage stats
-                {
-                  name: 'stats',
-                  type: 'array',
-                  label: {
-                    en: 'Statistics',
-                    nl: 'Statistieken',
-                  },
-                  admin: {
-                    condition: (_data, siblingData) => siblingData?.type === 'homepage',
                     description: {
-                      en: 'Statistics displayed below the buttons',
-                      nl: 'Statistieken weergegeven onder de knoppen',
+                      en: 'Settings for the voice-over section on the homepage',
+                      nl: 'Instellingen voor de voice-over sectie op de homepage',
                     },
-                    initCollapsed: false,
                   },
-                  defaultValue: [
-                    { number: '14', label: 'Stemacteurs' },
-                    { number: '<48u', label: 'Snelle levering' },
-                    { number: '9.1/10', label: 'Klantbeoordeling' },
-                  ],
                   fields: [
                     {
-                      name: 'number',
+                      name: 'title',
                       type: 'text',
                       required: true,
+                      defaultValue: 'Onze Stemacteurs',
                       label: {
-                        en: 'Number',
-                        nl: 'Getal',
+                        en: 'Title',
+                        nl: 'Titel',
                       },
                       admin: {
                         description: {
-                          en: 'The statistic number/value (e.g., "14", "<48u", "9.1/10")',
-                          nl: 'Het statistiek getal/waarde (bijv. "14", "<48u", "9.1/10")',
-                        },
-                      },
-                    },
-                    {
-                      name: 'label',
-                      type: 'text',
-                      required: true,
-                      label: {
-                        en: 'Label',
-                        nl: 'Label',
-                      },
-                      admin: {
-                        description: {
-                          en: 'The statistic label (e.g., "Voice actors", "Fast delivery")',
-                          nl: 'Het statistiek label (bijv. "Stemacteurs", "Snelle levering")',
+                          en: 'The title displayed above the voice actors grid',
+                          nl: 'De titel die boven het stemacteurs grid wordt weergegeven',
                         },
                       },
                     },
@@ -569,35 +640,298 @@ const Pages: CollectionConfig = {
               ],
             },
             {
-              name: 'voiceover',
-              type: 'group',
+              type: 'collapsible',
               label: {
-                en: 'Voice-over Section',
-                nl: 'Voice-over Sectie',
+                en: 'Link-to-Blog Section',
+                nl: 'Link-to-Blog Sectie',
               },
               admin: {
                 condition: (data) => data.slug === 'home',
-                description: {
-                  en: 'Settings for the voice-over section on the homepage',
-                  nl: 'Instellingen voor de voice-over sectie op de homepage',
-                },
+                initCollapsed: true,
               },
               fields: [
                 {
-                  name: 'title',
-                  type: 'text',
-                  required: true,
-                  defaultValue: 'Onze Stemacteurs',
-                  label: {
-                    en: 'Title',
-                    nl: 'Titel',
-                  },
+                  name: 'linkToBlog',
+                  type: 'group',
                   admin: {
                     description: {
-                      en: 'The title displayed above the voice actors grid',
-                      nl: 'De titel die boven het stemacteurs grid wordt weergegeven',
+                      en: 'Settings for the link-to-blog section on the homepage',
+                      nl: 'Instellingen voor de link-to-blog sectie op de homepage',
                     },
                   },
+                  fields: [
+                    {
+                      name: 'layout',
+                      type: 'select',
+                      defaultValue: 'variant1',
+                      label: {
+                        en: 'Section Layout',
+                        nl: 'Sectie Layout',
+                      },
+                      options: [
+                        {
+                          label: { en: 'Link-to-Blog variant 1', nl: 'Link-to-Blog variant 1' },
+                          value: 'variant1',
+                        },
+                        // More layout variants can be added here in the future
+                        // { label: { en: 'Link-to-Blog variant 2', nl: 'Link-to-Blog variant 2' }, value: 'variant2' },
+                      ],
+                      admin: {
+                        description: {
+                          en: 'Choose the layout style for this section',
+                          nl: 'Kies de layout stijl voor deze sectie',
+                        },
+                      },
+                    },
+                    {
+                      name: 'enabled',
+                      type: 'checkbox',
+                      defaultValue: true,
+                      label: {
+                        en: 'Enable Section',
+                        nl: 'Sectie Inschakelen',
+                      },
+                      admin: {
+                        description: {
+                          en: 'Show or hide this section on the homepage',
+                          nl: 'Toon of verberg deze sectie op de homepage',
+                        },
+                      },
+                    },
+                    {
+                      name: 'image',
+                      type: 'upload',
+                      relationTo: 'media',
+                      required: true,
+                      label: {
+                        en: 'Section Image',
+                        nl: 'Sectie Afbeelding',
+                      },
+                      admin: {
+                        description: {
+                          en: 'Main image for the section (recommended: high-quality landscape photo)',
+                          nl: 'Hoofdafbeelding voor de sectie (aanbevolen: hoogwaardige landschapsfoto)',
+                        },
+                      },
+                    },
+                    {
+                      name: 'imageGrayscale',
+                      type: 'checkbox',
+                      defaultValue: true,
+                      label: {
+                        en: 'Apply Grayscale Filter',
+                        nl: 'Grijstinten Filter Toepassen',
+                      },
+                      admin: {
+                        description: {
+                          en: 'Apply a grayscale filter to the image',
+                          nl: 'Pas een grijstinten filter toe op de afbeelding',
+                        },
+                      },
+                    },
+                    {
+                      name: 'heading',
+                      type: 'textarea',
+                      required: true,
+                      defaultValue:
+                        'The Lyra ecosystem brings together our models, products and platforms.',
+                      label: {
+                        en: 'Heading',
+                        nl: 'Koptekst',
+                      },
+                      admin: {
+                        rows: 2,
+                        description: {
+                          en: 'Main heading text for the section',
+                          nl: 'Hoofdkoptekst voor de sectie',
+                        },
+                      },
+                    },
+                    {
+                      name: 'description',
+                      type: 'textarea',
+                      required: true,
+                      defaultValue:
+                        'Lyra is evolving to be more than just the models. It supports an entire ecosystem — from products to the APIs and platforms helping developers and businesses innovate.',
+                      label: {
+                        en: 'Description',
+                        nl: 'Beschrijving',
+                      },
+                      admin: {
+                        rows: 3,
+                        description: {
+                          en: 'Supporting description text',
+                          nl: 'Ondersteunende beschrijvingstekst',
+                        },
+                      },
+                    },
+                    {
+                      name: 'button',
+                      type: 'group',
+                      label: {
+                        en: 'Button Settings',
+                        nl: 'Knop Instellingen',
+                      },
+                      fields: [
+                        {
+                          name: 'text',
+                          type: 'text',
+                          required: true,
+                          defaultValue: 'Learn More',
+                          label: {
+                            en: 'Button Text',
+                            nl: 'Knop Tekst',
+                          },
+                        },
+                        {
+                          name: 'url',
+                          type: 'text',
+                          required: true,
+                          defaultValue: '/blog',
+                          label: {
+                            en: 'Button URL',
+                            nl: 'Knop URL',
+                          },
+                          admin: {
+                            description: {
+                              en: 'URL to navigate to when button is clicked (e.g., /blog, /about)',
+                              nl: 'URL om naar te navigeren wanneer op de knop wordt geklikt (bijv. /blog, /over-ons)',
+                            },
+                          },
+                        },
+                        {
+                          name: 'variant',
+                          type: 'select',
+                          defaultValue: 'secondary',
+                          label: {
+                            en: 'Button Style',
+                            nl: 'Knop Stijl',
+                          },
+                          options: [
+                            { label: { en: 'Primary', nl: 'Primair' }, value: 'default' },
+                            { label: { en: 'Secondary', nl: 'Secundair' }, value: 'secondary' },
+                            { label: { en: 'Outline', nl: 'Omlijnd' }, value: 'outline' },
+                            { label: { en: 'Ghost', nl: 'Transparant' }, value: 'ghost' },
+                            { label: { en: 'Link', nl: 'Link' }, value: 'link' },
+                          ],
+                          admin: {
+                            description: {
+                              en: 'Visual style of the button',
+                              nl: 'Visuele stijl van de knop',
+                            },
+                          },
+                        },
+                        {
+                          name: 'showIcon',
+                          type: 'checkbox',
+                          defaultValue: true,
+                          label: {
+                            en: 'Show Arrow Icon',
+                            nl: 'Pijlicoon Tonen',
+                          },
+                          admin: {
+                            description: {
+                              en: 'Display a chevron arrow icon after the button text',
+                              nl: 'Toon een pijlicoon na de knoptekst',
+                            },
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      name: 'spacing',
+                      type: 'group',
+                      label: {
+                        en: 'Spacing',
+                        nl: 'Ruimte',
+                      },
+                      fields: [
+                        {
+                          name: 'top',
+                          type: 'select',
+                          defaultValue: 'md',
+                          label: {
+                            en: 'Top',
+                            nl: 'Boven',
+                          },
+                          options: [
+                            { label: { en: 'Small', nl: 'Klein' }, value: 'sm' },
+                            { label: { en: 'Medium', nl: 'Medium' }, value: 'md' },
+                            { label: { en: 'Large', nl: 'Groot' }, value: 'lg' },
+                          ],
+                        },
+                        {
+                          name: 'bottom',
+                          type: 'select',
+                          defaultValue: 'md',
+                          label: {
+                            en: 'Bottom',
+                            nl: 'Onder',
+                          },
+                          options: [
+                            { label: { en: 'Small', nl: 'Klein' }, value: 'sm' },
+                            { label: { en: 'Medium', nl: 'Medium' }, value: 'md' },
+                            { label: { en: 'Large', nl: 'Groot' }, value: 'lg' },
+                          ],
+                        },
+                      ],
+                    },
+                    {
+                      name: 'imageURL',
+                      type: 'text',
+                      virtual: true,
+                      admin: {
+                        hidden: true,
+                      },
+                      hooks: {
+                        afterRead: [
+                          async ({ siblingData, req }) => {
+                            // Only process if we have an image
+                            if (!siblingData?.image) return null;
+
+                            // If image is just an ID string, fetch the media
+                            if (typeof siblingData.image === 'string') {
+                              try {
+                                const media = await req.payload.findByID({
+                                  collection: 'media',
+                                  id: siblingData.image,
+                                  depth: 0,
+                                });
+
+                                if (media?.url) {
+                                  return media.url;
+                                } else if (media?.filename) {
+                                  const publicUrl = process.env.S3_PUBLIC_URL;
+                                  if (publicUrl) {
+                                    return `${publicUrl}/media/${media.filename}`;
+                                  }
+                                  return `/media/${media.filename}`;
+                                }
+                              } catch (error) {
+                                console.error('Error fetching link-to-blog image media:', error);
+                              }
+                            }
+                            // If image is already populated as an object
+                            else if (typeof siblingData.image === 'object') {
+                              const imageObj = siblingData.image as any;
+
+                              if (imageObj.url) {
+                                return imageObj.url;
+                              } else if (imageObj.filename) {
+                                const publicUrl = process.env.S3_PUBLIC_URL;
+                                if (publicUrl) {
+                                  return `${publicUrl}/media/${imageObj.filename}`;
+                                }
+                                return `/media/${imageObj.filename}`;
+                              }
+                            }
+
+                            return null;
+                          },
+                        ],
+                      },
+                    },
+                  ],
                 },
               ],
             },
@@ -1242,6 +1576,14 @@ const Pages: CollectionConfig = {
         // Ensure home page slug stays as 'home'
         if (data.slug === 'home' && operation === 'update') {
           data.slug = 'home';
+        }
+
+        // Migrate hero type to layout field if needed
+        if (data.hero) {
+          // Migrate type field to layout field
+          if (data.hero.type === 'homepage' && !data.hero.layout) {
+            data.hero.layout = 'variant1';
+          }
         }
 
         // Migrate plain text to rich text if needed
