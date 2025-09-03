@@ -899,6 +899,13 @@ const Pages: CollectionConfig = {
                                 });
 
                                 if (media?.url) {
+                                  // Check if URL starts with /api/media/file/ and replace with S3 URL
+                                  if (media.url.includes('/api/media/file/')) {
+                                    const publicUrl = process.env.S3_PUBLIC_URL;
+                                    if (publicUrl && media.filename) {
+                                      return `${publicUrl}/media/${media.filename}`;
+                                    }
+                                  }
                                   return media.url;
                                 } else if (media?.filename) {
                                   const publicUrl = process.env.S3_PUBLIC_URL;
@@ -916,6 +923,13 @@ const Pages: CollectionConfig = {
                               const imageObj = siblingData.image as any;
 
                               if (imageObj.url) {
+                                // Check if URL starts with /api/media/file/ and replace with S3 URL
+                                if (imageObj.url.includes('/api/media/file/')) {
+                                  const publicUrl = process.env.S3_PUBLIC_URL;
+                                  if (publicUrl && imageObj.filename) {
+                                    return `${publicUrl}/media/${imageObj.filename}`;
+                                  }
+                                }
                                 return imageObj.url;
                               } else if (imageObj.filename) {
                                 const publicUrl = process.env.S3_PUBLIC_URL;
