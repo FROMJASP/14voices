@@ -1,13 +1,19 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import type { Page } from '@/payload-types';
 import { PageHeroSection } from './PageHeroSection';
 import { HeroSection } from '@/components/features/homepage/HeroSection';
 import { transformHeroDataForHomepage } from '@/lib/homepage-utils';
 import { useLivePreview } from '@payloadcms/live-preview-react';
 import { useRouter } from 'next/navigation';
-import { SsgoiTransition } from '@ssgoi/react';
+
+// Dynamically import SsgoiTransition to avoid SSR issues
+const SsgoiTransition = dynamic(() => import('@ssgoi/react').then((mod) => mod.SsgoiTransition), {
+  ssr: false,
+  loading: () => null,
+});
 import { VoiceoverSection } from '@/components/features/homepage/VoiceoverSection';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';

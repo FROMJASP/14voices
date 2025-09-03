@@ -1,8 +1,14 @@
 'use client';
 
-import { SsgoiTransition } from '@ssgoi/react';
+import dynamic from 'next/dynamic';
 import { TransitionLink } from '@/components/common/navigation';
 import { AnimatedSection } from '@/components/common/transitions';
+
+// Dynamically import SsgoiTransition to avoid SSR issues
+const SsgoiTransition = dynamic(() => import('@ssgoi/react').then((mod) => mod.SsgoiTransition), {
+  ssr: false,
+  loading: () => <div className="container mx-auto px-4 py-8">Loading...</div>,
+});
 
 export default function TestTransitionsPage() {
   return (
