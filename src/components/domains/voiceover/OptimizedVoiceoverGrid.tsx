@@ -281,31 +281,33 @@ function OptimizedVoiceoverCard({
               </div>
             )}
 
-            {/* Optimized image container */}
-            <div className="relative aspect-[3/4]">
-              {voiceover.profilePhoto?.url ? (
-                <>
-                  {!imageLoaded && <div className="absolute inset-0 bg-muted animate-pulse" />}
-                  <Image
-                    src={voiceover.profilePhoto.url}
-                    alt={firstName}
-                    fill
-                    className={`object-cover transition-opacity duration-300 ${
-                      imageLoaded ? 'opacity-100' : 'opacity-0'
-                    }`}
-                    sizes={
-                      size === 'large'
-                        ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'
-                        : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw'
-                    }
-                    priority={false}
-                    loading="lazy"
-                    onLoad={() => setImageLoaded(true)}
-                  />
-                </>
-              ) : (
-                <div className="absolute inset-0 bg-muted" />
-              )}
+            {/* Optimized image container with proper overflow */}
+            <div className="overflow-hidden rounded-[1rem]">
+              <div className="relative aspect-[3/4]">
+                {voiceover.profilePhoto?.url ? (
+                  <>
+                    {!imageLoaded && <div className="absolute inset-0 bg-muted animate-pulse" />}
+                    <Image
+                      src={voiceover.profilePhoto.url}
+                      alt={firstName}
+                      fill
+                      className={`object-cover transition-opacity duration-300 ${
+                        imageLoaded ? 'opacity-100' : 'opacity-0'
+                      }`}
+                      sizes={
+                        size === 'large'
+                          ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'
+                          : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw'
+                      }
+                      priority={false}
+                      loading="lazy"
+                      onLoad={() => setImageLoaded(true)}
+                    />
+                  </>
+                ) : (
+                  <div className="absolute inset-0 bg-muted" />
+                )}
+              </div>
             </div>
 
             {/* Play button */}
