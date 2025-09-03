@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { Page } from '@/payload-types';
 import { PageHeroSection } from './PageHeroSection';
 import { HeroSection } from '@/components/features/homepage/HeroSection';
@@ -136,7 +136,8 @@ export function PageRenderer({
   // Transform the data with live updates - must be called unconditionally
   const heroSettings = React.useMemo(() => {
     // Check for new layout field first, fallback to legacy type field
-    const isHeroVariant1 = page.hero?.layout === 'variant1' || page.hero?.type === 'homepage';
+    const hero = page.hero as any;
+    const isHeroVariant1 = hero?.layout === 'variant1' || hero?.type === 'homepage';
     return isHomepage && isHeroVariant1 ? transformHeroDataForHomepage(page) : null;
   }, [page, isHomepage]);
 
@@ -156,7 +157,8 @@ export function PageRenderer({
   }, [voiceovers]);
 
   // For homepage hero, render without article wrapper to maintain proper styling
-  const isHeroVariant1 = page.hero?.layout === 'variant1' || page.hero?.type === 'homepage';
+  const hero = page.hero as any;
+  const isHeroVariant1 = hero?.layout === 'variant1' || hero?.type === 'homepage';
   if (isHomepage && isHeroVariant1 && heroSettings) {
     return (
       <SsgoiTransition id="/">
