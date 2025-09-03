@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { makeMediaUrlRelative } from '@/lib/media-utils';
 
 interface LinkToBlogSectionProps {
   data: {
@@ -65,13 +66,13 @@ function LinkToBlogVariant1({ data }: { data: LinkToBlogSectionProps['data'] }) 
 
   // First check for the virtual imageURL field
   if (data.imageURL) {
-    imageUrl = data.imageURL;
+    imageUrl = makeMediaUrlRelative(data.imageURL);
   } else if (data.image) {
     if (typeof data.image === 'string') {
       // If it's just an ID, the imageURL virtual field should have resolved it
       imageUrl = '';
     } else if (data.image.url) {
-      imageUrl = data.image.url;
+      imageUrl = makeMediaUrlRelative(data.image.url);
       imageAlt = data.image.alt || 'Section image';
       imageWidth = data.image.width || 2747;
       imageHeight = data.image.height || 1830;
