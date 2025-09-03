@@ -250,7 +250,7 @@ export function AnimatedPlayer({ voiceover, onClose, autoPlay = true }: Animated
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col justify-between p-4"
+      className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col justify-between p-4 rounded-[1rem]"
       onClick={(e) => e.preventDefault()}
     >
       {/* Header */}

@@ -357,9 +357,11 @@ function OptimizedVoiceoverCard({
 
             {/* Lazy load animated player */}
             {showPlayer && hasDemos && (
-              <Suspense fallback={<div className="absolute inset-0 bg-black/20 animate-pulse" />}>
-                <AnimatedPlayer voiceover={voiceover} onClose={() => setShowPlayer(false)} />
-              </Suspense>
+              <div className="absolute inset-0 overflow-hidden rounded-[1rem]">
+                <Suspense fallback={<div className="absolute inset-0 bg-black/20 animate-pulse" />}>
+                  <AnimatedPlayer voiceover={voiceover} onClose={() => setShowPlayer(false)} />
+                </Suspense>
+              </div>
             )}
           </div>
         </div>
