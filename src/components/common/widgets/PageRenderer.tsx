@@ -94,7 +94,7 @@ export function PageRenderer({
     if (isInIframe) {
       // Dynamically import live preview only when needed
       import('@payloadcms/live-preview-react')
-        .then(({ useLivePreview }) => {
+        .then(() => {
           // This will only run in the admin panel
           console.log('Live preview enabled for admin panel');
         })
