@@ -138,3 +138,13 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* WebKit */
 }
+
+/* Subtle black & white effect */
+.custom-grayscale {
+  filter: grayscale(100%) contrast(1.1) brightness(1.02);
+  transition: filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .custom-grayscale {
+  filter: grayscale(0%) contrast(1) brightness(1);
+}

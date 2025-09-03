@@ -302,8 +302,8 @@ function OptimizedVoiceoverCard({
                     src={voiceover.profilePhoto.url}
                     alt={firstName}
                     fill
-                    className={`object-cover transition-opacity duration-300 ${
-                      imageLoaded ? 'opacity-100' : 'opacity-0'
+                    className={`object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${
+                      !showPlayer ? 'custom-grayscale' : ''
                     }`}
                     sizes={
                       size === 'large'
