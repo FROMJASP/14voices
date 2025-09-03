@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { TransitionLink as Link } from '@/components/common/navigation';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { Instrument_Serif, Bricolage_Grotesque, Geist_Mono } from 'next/font/google';

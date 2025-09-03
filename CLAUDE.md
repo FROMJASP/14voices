@@ -9,6 +9,7 @@
 - **Storage**: MinIO (S3-compatible, self-hosted on a VPS running Coolify)
 - **Styling**: Tailwind CSS v4
 - **Animations**: Motion (Framer Motion)
+- **View Transitions**: @ssgoi/react (smooth page transitions)
 - **Package Manager**: Bun (required)
 - **Email**: Resend API
 - **Error Tracking**: Sentry

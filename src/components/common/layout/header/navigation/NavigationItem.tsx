@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { TransitionLink as Link } from '@/components/common/navigation';
 import type { MenuItem } from './Navigation.types';
 
 interface NavigationItemProps {
@@ -53,9 +53,7 @@ export function NavigationItem({ item }: NavigationItemProps) {
   if (hasDropdown) {
     return (
       <div style={{ position: 'relative' }} className="group">
-        <button
-          style={getButtonStyle()}
-        >
+        <button style={getButtonStyle()}>
           <ButtonContent />
         </button>
 

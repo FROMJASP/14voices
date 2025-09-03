@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
-import Link from 'next/link';
+import { TransitionLink as Link } from '@/components/common/navigation';
 import { X, ChevronDown, Mail } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
 import { useState, useEffect } from 'react';

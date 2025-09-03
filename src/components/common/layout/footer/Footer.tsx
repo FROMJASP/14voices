@@ -2,7 +2,7 @@
 
 import React, { FormEvent, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import Link from 'next/link';
+import { TransitionLink as Link } from '@/components/common/navigation';
 import { ArrowRight } from 'lucide-react';
 import { Bricolage_Grotesque } from 'next/font/google';
 

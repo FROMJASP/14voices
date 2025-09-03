@@ -177,7 +177,7 @@ export function VoiceoverDetailClient({ voiceover }: VoiceoverDetailClientProps)
     script,
     additionalNotes,
     audioFile,
-    setSavedFormData,
+    // Note: setSavedFormData should NOT be in the dependency array as it causes infinite loops
   ]);
 
   // Get current production type config

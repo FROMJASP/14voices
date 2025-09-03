@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { TransitionLink } from '@/components/common/navigation';
 import { Menu, X } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
 import { useCartStore, useDrawerStore } from '@/stores';
@@ -240,7 +240,7 @@ export function Navigation({
               </button>
 
               {/* Login Link */}
-              <Link
+              <TransitionLink
                 href={loginUrl}
                 style={{
                   color: 'var(--text-primary)',
@@ -257,7 +257,7 @@ export function Navigation({
                 }}
               >
                 {loginText}
-              </Link>
+              </TransitionLink>
             </div>
 
             {/* Mobile Menu Toggle */}

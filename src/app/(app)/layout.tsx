@@ -3,6 +3,7 @@ import { MaintenanceModeWrapper } from '@/components/common/widgets/feedback';
 import { StoreHydration } from '@/components/common/StoreHydration';
 import { ThemeProvider } from '@/components/common/layout/ThemeProvider';
 import { ThemeScript } from './theme-script';
+import { ViewTransitionsProvider } from '@/components/common/transitions/ViewTransitionsProvider';
 import './globals.css';
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -50,9 +51,11 @@ export default function RootLayout({
           disableTransitionOnChange={false}
           storageKey="theme"
         >
-          <StoreHydration>
-            <MaintenanceModeWrapper>{children}</MaintenanceModeWrapper>
-          </StoreHydration>
+          <ViewTransitionsProvider>
+            <StoreHydration>
+              <MaintenanceModeWrapper>{children}</MaintenanceModeWrapper>
+            </StoreHydration>
+          </ViewTransitionsProvider>
         </ThemeProvider>
       </body>
     </html>
