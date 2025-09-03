@@ -213,18 +213,18 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
             {/* Player overlay */}
             <div
               className="absolute inset-0 backdrop-blur-sm flex flex-col justify-between p-4"
-              style={{ backgroundColor: 'var(--background)' + '99' }}
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
             >
               {/* Top section with name and close button */}
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-xl font-semibold text-foreground">{firstName}</h3>
+                  <h3 className="text-xl font-semibold text-white">{firstName}</h3>
                   {/* Style tags */}
                   {voiceover.styleTags && voiceover.styleTags.length > 0 && (
-                    <div className="flex items-center gap-1.5 flex-wrap text-xs text-foreground mt-1">
+                    <div className="flex items-center gap-1.5 flex-wrap text-xs text-white/90 mt-1">
                       {voiceover.styleTags.map((tagObj, index) => (
                         <React.Fragment key={tagObj.tag}>
-                          {index > 0 && <span className="w-1 h-1 bg-foreground rounded-full" />}
+                          {index > 0 && <span className="w-1 h-1 bg-white/80 rounded-full" />}
                           <span>{tagObj.tag.charAt(0).toUpperCase() + tagObj.tag.slice(1)}</span>
                         </React.Fragment>
                       ))}
@@ -236,15 +236,15 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
                     e.preventDefault();
                     // Optional close functionality
                   }}
-                  className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center transition-colors opacity-0 pointer-events-none"
+                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-colors opacity-0 pointer-events-none"
                 >
-                  <X className="w-4 h-4 text-foreground" />
+                  <X className="w-4 h-4 text-white" />
                 </button>
               </div>
 
               {/* Profile picture */}
               <div className="flex justify-center mb-4">
-                <div className="relative w-28 h-28 rounded-2xl overflow-hidden bg-foreground/10">
+                <div className="relative w-28 h-28 rounded-2xl overflow-hidden bg-white/10">
                   {voiceover.profilePhoto?.url ? (
                     <Image
                       src={voiceover.profilePhoto.url}
@@ -272,21 +272,21 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
                   {voiceover.demos.length > 1 && (
                     <button
                       onClick={() => handleDemoChange('prev')}
-                      className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center transition-colors hover:bg-foreground/20"
+                      className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center transition-colors hover:bg-white/20"
                     >
-                      <ChevronLeft className="w-5 h-5 text-foreground" />
+                      <ChevronLeft className="w-5 h-5 text-white" />
                     </button>
                   )}
 
                   {/* Play/Pause */}
                   <button
                     onClick={handlePlayPause}
-                    className="w-14 h-14 rounded-full bg-foreground flex items-center justify-center transition-transform hover:scale-105"
+                    className="w-14 h-14 rounded-full bg-white flex items-center justify-center transition-transform hover:scale-105"
                   >
                     {isPlaying ? (
-                      <Pause className="w-6 h-6 text-background" />
+                      <Pause className="w-6 h-6 text-black" />
                     ) : (
-                      <Play className="w-6 h-6 text-background ml-0.5" />
+                      <Play className="w-6 h-6 text-black ml-0.5" />
                     )}
                   </button>
 
@@ -294,9 +294,9 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
                   {voiceover.demos.length > 1 && (
                     <button
                       onClick={() => handleDemoChange('next')}
-                      className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center transition-colors hover:bg-foreground/20"
+                      className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center transition-colors hover:bg-white/20"
                     >
-                      <ChevronRight className="w-5 h-5 text-foreground" />
+                      <ChevronRight className="w-5 h-5 text-white" />
                     </button>
                   )}
                 </div>
@@ -304,11 +304,11 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
                 {/* Progress bar */}
                 <div className="mb-2">
                   <div
-                    className="relative h-1 bg-foreground/20 rounded-full cursor-pointer"
+                    className="relative h-1 bg-white/20 rounded-full cursor-pointer"
                     onClick={handleProgressClick}
                   >
                     <motion.div
-                      className="absolute inset-y-0 left-0 bg-foreground rounded-full"
+                      className="absolute inset-y-0 left-0 bg-white rounded-full"
                       initial={{ width: 0 }}
                       animate={{ width: `${progress}%` }}
                       transition={{ duration: 0.1 }}
@@ -317,13 +317,13 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
                 </div>
 
                 {/* Time and download */}
-                <div className="flex items-center justify-between text-foreground/80 text-xs px-4">
+                <div className="flex items-center justify-between text-white/80 text-xs px-4">
                   <span>
                     {formatTime(currentTime)} / {formatTime(duration)}
                   </span>
                   <button
                     onClick={handleDownload}
-                    className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
+                    className="p-1.5 rounded-full transition-colors hover:bg-white/10"
                   >
                     <Download className="w-3.5 h-3.5" />
                   </button>
@@ -331,7 +331,7 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
 
                 {/* Demo info */}
                 <div className="text-center mt-3">
-                  <span className="text-xs text-foreground/60">
+                  <span className="text-xs text-white/60">
                     {currentDemo?.title}
                     {voiceover.demos.length > 1 && (
                       <span className="ml-2">
