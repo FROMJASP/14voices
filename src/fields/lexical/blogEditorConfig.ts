@@ -61,22 +61,65 @@ export const blogEditorConfig = lexicalEditor({
     BoldFeature(),
     ItalicFeature(),
     LinkFeature({
-      fields: [
-        {
-          name: 'rel',
-          type: 'select',
-          hasMany: true,
-          options: ['noopener', 'noreferrer', 'nofollow'],
-          admin: {
-            description: 'Link relationship attributes',
+      fields: ({ defaultFields }) => {
+        // Filter out any existing newTab field to avoid duplicates
+        const filteredFields = defaultFields.filter((field: any) => field.name !== 'newTab');
+        return [
+          ...filteredFields,
+          {
+            name: 'rel',
+            type: 'select',
+            hasMany: true,
+            label: {
+              en: 'Rel',
+              nl: 'Rel',
+            },
+            options: [
+              {
+                label: {
+                  en: 'No Opener - Prevents the new page from accessing the window.opener property',
+                  nl: 'No Opener - Voorkomt dat de nieuwe pagina toegang heeft tot de window.opener eigenschap',
+                },
+                value: 'noopener',
+              },
+              {
+                label: {
+                  en: 'No Referrer - Prevents the browser from sending referrer information',
+                  nl: 'No Referrer - Voorkomt dat de browser referrer informatie verstuurt',
+                },
+                value: 'noreferrer',
+              },
+              {
+                label: {
+                  en: 'No Follow - Tells search engines not to follow this link',
+                  nl: 'No Follow - Vertelt zoekmachines deze link niet te volgen',
+                },
+                value: 'nofollow',
+              },
+            ],
+            admin: {
+              description: {
+                en: 'Link relationship attributes for SEO and security',
+                nl: 'Link relatie attributen voor SEO en beveiliging',
+              },
+            },
           },
-        },
-        {
-          name: 'newTab',
-          type: 'checkbox',
-          label: 'Open in new tab',
-        },
-      ],
+          {
+            name: 'newTab',
+            type: 'checkbox',
+            label: {
+              en: 'Open in new tab',
+              nl: 'Open in nieuw tabblad',
+            },
+            admin: {
+              description: {
+                en: 'Opens the link in a new browser tab',
+                nl: 'Opent de link in een nieuw browsertabblad',
+              },
+            },
+          },
+        ];
+      },
     }),
     HorizontalRuleFeature(),
     BlocksFeature({

@@ -528,35 +528,79 @@ const BlogPosts: CollectionConfig = {
       },
     },
     {
-      name: 'readingTime',
+      name: 'wordCount',
       type: 'number',
+      virtual: true,
       label: {
-        en: 'Reading Time',
-        nl: 'Leestijd',
+        en: 'Word Count',
+        nl: 'Aantal Woorden',
       },
       admin: {
         position: 'sidebar',
         readOnly: true,
         description: {
-          en: 'Estimated reading time in minutes',
-          nl: 'Geschatte leestijd in minuten',
+          en: 'Total number of words in the blog post content',
+          nl: 'Totaal aantal woorden in de blogpost inhoud',
         },
       },
       hooks: {
         beforeValidate: [
           ({ data }) => {
             if (data?.content) {
+              // Extract plain text from Lexical content structure
               const plainText = data.content.root.children
                 .map(
                   (node: { children?: Array<{ text?: string }> }) =>
                     node.children?.map((child) => child.text).join('') || ''
                 )
                 .join(' ');
-              const wordsPerMinute = 200;
-              const wordCount = plainText.split(/\s+/).length;
-              return Math.ceil(wordCount / wordsPerMinute);
+              
+              // Count words (split by whitespace)
+              const wordCount = plainText.split(/\s+/).filter((word: string) => word.length > 0).length;
+              return wordCount;
             }
             return 0;
+          },
+        ],
+      },
+    },
+    {
+      name: 'readingTime',
+      type: 'number',
+      label: {
+        en: 'Reading Time (minutes)',
+        nl: 'Leestijd (minuten)',
+      },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: {
+          en: 'Automatically calculated based on content length. Assumes an average reading speed of 200 words per minute. The total word count is divided by 200 to estimate reading time.',
+          nl: 'Automatisch berekend op basis van de tekstlengte. Gaat uit van een gemiddelde leessnelheid van 200 woorden per minuut. Het totale aantal woorden wordt gedeeld door 200 om de leestijd te schatten.',
+        },
+      },
+      hooks: {
+        beforeValidate: [
+          ({ data, value }) => {
+            if (data?.content) {
+              // Extract plain text from Lexical content structure
+              const plainText = data.content.root.children
+                .map(
+                  (node: { children?: Array<{ text?: string }> }) =>
+                    node.children?.map((child) => child.text).join('') || ''
+                )
+                .join(' ');
+              
+              // Count words (split by whitespace)
+              const wordCount = plainText.split(/\s+/).filter((word: string) => word.length > 0).length;
+              
+              // Calculate reading time based on 200 words per minute
+              const wordsPerMinute = 200;
+              const readingTimeMinutes = Math.ceil(wordCount / wordsPerMinute);
+              
+              return readingTimeMinutes;
+            }
+            return value || 0;
           },
         ],
       },

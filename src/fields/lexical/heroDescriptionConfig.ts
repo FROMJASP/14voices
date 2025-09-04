@@ -19,25 +19,21 @@ export const heroDescriptionConfig = lexicalEditor({
     // We'll use InlineCode for brand color - it shows as <code> button
     InlineCodeFeature(),
     LinkFeature({
-      fields: [
-        {
-          name: 'url',
-          type: 'text',
-          required: true,
-          label: {
-            en: 'URL',
-            nl: 'URL',
+      fields: ({ defaultFields }) => {
+        // Filter out any existing newTab field to avoid duplicates
+        const filteredFields = defaultFields.filter((field: any) => field.name !== 'newTab');
+        return [
+          ...filteredFields,
+          {
+            name: 'newTab',
+            type: 'checkbox',
+            label: {
+              en: 'Open in new tab',
+              nl: 'Open in nieuw tabblad',
+            },
           },
-        },
-        {
-          name: 'newTab',
-          type: 'checkbox',
-          label: {
-            en: 'Open in new tab',
-            nl: 'Open in nieuw tabblad',
-          },
-        },
-      ],
+        ];
+      },
     }),
   ],
 });
