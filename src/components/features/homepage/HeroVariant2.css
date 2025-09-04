@@ -31,20 +31,102 @@
   animation: pulse 2s infinite;
 }
 
+/* Light mode support for custom CSS properties */
+.hero-badge {
+  background-color: var(--badge-bg-light) !important;
+  color: var(--badge-text-light) !important;
+}
+
+.badge-horizontal {
+  background: linear-gradient(
+    90deg,
+    var(--badge-bg-light) 0%,
+    rgba(255, 255, 255, var(--badge-intensity)) 50%,
+    var(--badge-bg-light) 100%
+  ) !important;
+}
+
+.badge-radial {
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, var(--badge-intensity)) 0%,
+    var(--badge-bg-light) 60%
+  ) !important;
+}
+
+.badge-pulse {
+  background-color: var(--badge-bg-light) !important;
+  box-shadow: 0 0 30px var(--badge-bg-light);
+}
+
+/* Override button component styles */
+.hero-custom-button {
+  background-color: var(--btn-bg-light) !important;
+  color: var(--btn-text-light) !important;
+  border: none !important;
+}
+
+.hero-custom-button:hover {
+  background-color: var(--btn-bg-light) !important;
+  opacity: 0.9;
+}
+
+.hero-custom-button-outline {
+  background-color: var(--btn-bg-light) !important;
+  border: 1px solid var(--btn-border-light) !important;
+  color: var(--btn-text-light) !important;
+}
+
+.hero-custom-button-outline:hover {
+  background-color: var(--btn-bg-light) !important;
+  opacity: 0.9;
+}
+
 /* Dark mode support for custom CSS properties */
-@media (prefers-color-scheme: dark) {
-  span[style*='--badge-bg-light'] {
-    background-color: var(--badge-bg-dark) !important;
-    color: var(--badge-text-dark) !important;
-  }
+.dark .hero-badge {
+  background-color: var(--badge-bg-dark) !important;
+  color: var(--badge-text-dark) !important;
+}
 
-  button[style*='--btn-bg-light'] {
-    background-color: var(--btn-bg-dark) !important;
-    color: var(--btn-text-dark) !important;
-  }
+.dark .badge-horizontal {
+  background: linear-gradient(
+    90deg,
+    var(--badge-bg-dark) 0%,
+    rgba(255, 255, 255, var(--badge-intensity)) 50%,
+    var(--badge-bg-dark) 100%
+  ) !important;
+}
 
-  button[style*='--btn-border-light'] {
-    border-color: var(--btn-border-dark) !important;
-    color: var(--btn-text-dark) !important;
-  }
+.dark .badge-radial {
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, var(--badge-intensity)) 0%,
+    var(--badge-bg-dark) 60%
+  ) !important;
+}
+
+.dark .badge-pulse {
+  background-color: var(--badge-bg-dark) !important;
+  box-shadow: 0 0 30px var(--badge-bg-dark);
+}
+
+.dark .hero-custom-button {
+  background-color: var(--btn-bg-dark) !important;
+  color: var(--btn-text-dark) !important;
+}
+
+.dark .hero-custom-button:hover {
+  background-color: var(--btn-bg-dark) !important;
+  opacity: 0.9;
+}
+
+.dark .hero-custom-button-outline {
+  background-color: var(--btn-bg-dark) !important;
+  border-color: var(--btn-border-dark) !important;
+  color: var(--btn-text-dark) !important;
+}
+
+.dark .hero-custom-button-outline:hover {
+  background-color: var(--btn-bg-dark) !important;
+  opacity: 0.9;
 }

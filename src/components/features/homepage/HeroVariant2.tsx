@@ -44,50 +44,6 @@ interface HeroVariant2Props {
   brandColor?: string;
 }
 
-// Helper function to generate lighting effect inline styles
-function getLightingEffectStyles(
-  color: string,
-  effect?: string,
-  intensity?: string
-): React.CSSProperties {
-  if (!effect || effect === 'none') {
-    return { backgroundColor: color };
-  }
-
-  // Determine intensity values
-  const intensityMap = {
-    subtle: { opacity: 0.2, spread: '30%', glow: '0 0 10px' },
-    medium: { opacity: 0.4, spread: '50%', glow: '0 0 20px' },
-    strong: { opacity: 0.6, spread: '70%', glow: '0 0 30px' },
-  };
-  const { opacity, glow } =
-    intensityMap[intensity as keyof typeof intensityMap] || intensityMap.medium;
-
-  // Create a lighter version of the color for the effect
-  const lightColor = `rgba(255, 255, 255, ${opacity})`;
-
-  switch (effect) {
-    case 'diagonal':
-      // Diagonal effect is handled separately with shimmer animation
-      return { backgroundColor: color };
-    case 'horizontal':
-      return {
-        background: `linear-gradient(90deg, ${color} 0%, ${lightColor} 50%, ${color} 100%)`,
-      };
-    case 'radial':
-      return {
-        background: `radial-gradient(circle at 30% 30%, ${lightColor} 0%, ${color} 60%)`,
-      };
-    case 'pulse':
-      return {
-        backgroundColor: color,
-        boxShadow: `${glow} ${color}`,
-      };
-    default:
-      return { backgroundColor: color };
-  }
-}
-
 export function HeroVariant2({
   badge,
   title = 'Professional Voice-Overs',
@@ -134,8 +90,9 @@ export function HeroVariant2({
             {badge.color || badge.colorDark ? (
               <span
                 className={cn(
-                  'inline-flex items-center justify-center rounded-full border-none px-2 py-1 text-xs font-medium w-fit whitespace-nowrap relative overflow-hidden',
-                  badge.lightingEffect === 'pulse' && 'badge-pulse'
+                  'inline-flex items-center justify-center rounded-full border-none px-2 py-1 text-xs font-medium w-fit whitespace-nowrap relative overflow-hidden hero-badge',
+                  badge.lightingEffect === 'pulse' && 'badge-pulse',
+                  badge.lightingEffect && `badge-${badge.lightingEffect}`
                 )}
                 style={
                   {
@@ -144,12 +101,12 @@ export function HeroVariant2({
                     '--badge-bg-dark': badge.colorDark || badge.color || brandColor,
                     '--badge-text-light': badge.textColor || 'white',
                     '--badge-text-dark': badge.textColorDark || badge.textColor || 'white',
-                    color: 'var(--badge-text-light)',
-                    ...getLightingEffectStyles(
-                      badge.color || brandColor,
-                      badge.lightingEffect,
-                      badge.lightingIntensity
-                    ),
+                    '--badge-intensity':
+                      badge.lightingIntensity === 'subtle'
+                        ? '0.2'
+                        : badge.lightingIntensity === 'strong'
+                          ? '0.6'
+                          : '0.4',
                   } as React.CSSProperties
                 }
               >
@@ -171,10 +128,15 @@ export function HeroVariant2({
               </span>
             ) : (
               <Badge
-                className="rounded-full py-1 border-none relative overflow-hidden"
-                style={{
-                  backgroundColor: brandColor,
-                }}
+                className="rounded-full py-1 border-none relative overflow-hidden hero-badge"
+                style={
+                  {
+                    '--badge-bg-light': brandColor,
+                    '--badge-bg-dark': brandColor,
+                    '--badge-text-light': 'white',
+                    '--badge-text-dark': 'white',
+                  } as React.CSSProperties
+                }
               >
                 {badge.text}
                 <span
@@ -213,7 +175,7 @@ export function HeroVariant2({
           {primaryButton && (
             <Button
               size="lg"
-              className="rounded-full text-base"
+              className="rounded-full text-base hero-custom-button"
               style={
                 {
                   '--btn-bg-light': primaryButton.backgroundColor || brandColor,
@@ -224,8 +186,6 @@ export function HeroVariant2({
                   '--btn-text-light': primaryButton.textColor || 'white',
                   '--btn-text-dark':
                     primaryButton.textColorDark || primaryButton.textColor || 'white',
-                  backgroundColor: 'var(--btn-bg-light)',
-                  color: 'var(--btn-text-light)',
                 } as React.CSSProperties
               }
               asChild
@@ -243,7 +203,7 @@ export function HeroVariant2({
             <Button
               variant="outline"
               size="lg"
-              className="rounded-full text-base shadow-none"
+              className="rounded-full text-base shadow-none hero-custom-button-outline"
               style={
                 {
                   '--btn-bg-light': secondaryButton.backgroundColor || 'transparent',
@@ -257,9 +217,6 @@ export function HeroVariant2({
                   '--btn-text-light': secondaryButton.textColor || brandColor,
                   '--btn-text-dark':
                     secondaryButton.textColorDark || secondaryButton.textColor || brandColor,
-                  backgroundColor: 'var(--btn-bg-light)',
-                  borderColor: 'var(--btn-border-light)',
-                  color: 'var(--btn-text-light)',
                 } as React.CSSProperties
               }
               asChild
