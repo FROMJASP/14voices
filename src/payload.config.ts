@@ -50,6 +50,7 @@ export default buildConfig({
     components: {
       // Temporarily disabled to troubleshoot webpack issue
       // beforeLogin: ['./components/admin/BeforeLogin#default'],
+      beforeNavLinks: ['./components/admin/BeforeNavLinks#default'],
       afterDashboard: ['./components/admin/AdminEnhancements#default'],
       graphics: {
         Logo: './components/admin/graphics/Logo#default',

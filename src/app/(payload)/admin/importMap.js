@@ -54,6 +54,7 @@ import { default as default_3a876ee42d71cfab00ced64d3d270372 } from '../../../co
 import { default as default_16e62c7e42dfe7700742ba3a13bf8900 } from '../../../components/admin/graphics/Icon'
 import { default as default_13338d86bf8cb9661b50b401726320cd } from '../../../components/admin/graphics/Logo'
 import { default as default_cc0bf669a4a39ae97ac9df948983a5f4 } from '../../../components/admin/AdminEnhancements'
+import { default as default_76583f164dc1cb6264ec0ff9eddd5240 } from '../../../components/admin/BeforeNavLinks'
 import { default as default_24b53340c847bf8d73acd711c069ef0d } from '../../../components/admin/AdminProvider'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'
@@ -115,6 +116,7 @@ export const importMap = {
   "./components/admin/graphics/Icon#default": default_16e62c7e42dfe7700742ba3a13bf8900,
   "./components/admin/graphics/Logo#default": default_13338d86bf8cb9661b50b401726320cd,
   "./components/admin/AdminEnhancements#default": default_cc0bf669a4a39ae97ac9df948983a5f4,
+  "./components/admin/BeforeNavLinks#default": default_76583f164dc1cb6264ec0ff9eddd5240,
   "./components/admin/AdminProvider#default": default_24b53340c847bf8d73acd711c069ef0d,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "./components/admin/Root#default": default_52fc470c96be62b5d8029b692894d144

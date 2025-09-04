@@ -6,6 +6,7 @@ import { ErrorBoundary } from './ErrorBoundary';
 import LastPassCleanup from './LastPassCleanup';
 import AccountWrapper from './AccountWrapper';
 import { ClientConfigProvider } from './ClientConfigProvider';
+import NavIconsCSS from './NavIconsCSS';
 
 const Root: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -14,6 +15,7 @@ const Root: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <SafeDynamicFavicon />
         <LastPassCleanup />
         <AccountWrapper />
+        <NavIconsCSS />
         {children}
       </ClientConfigProvider>
     </ErrorBoundary>
