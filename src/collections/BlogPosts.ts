@@ -4,6 +4,16 @@ import { blogEditorConfig } from '../fields/lexical/blogEditorConfig';
 
 const BlogPosts: CollectionConfig = {
   slug: 'blog-posts',
+  labels: {
+    singular: {
+      en: 'Blog Post',
+      nl: 'Blogbericht',
+    },
+    plural: {
+      en: 'Blog Posts',
+      nl: 'Blogberichten',
+    },
+  },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'status', 'author', 'publishedDate', 'views'],
@@ -68,21 +78,38 @@ const BlogPosts: CollectionConfig = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Content',
+          label: {
+            en: 'Content',
+            nl: 'Inhoud',
+          },
           fields: [
             {
               name: 'title',
               type: 'text',
               required: true,
+              label: {
+                en: 'Title',
+                nl: 'Titel',
+              },
               admin: {
-                description: 'The main title of your blog post',
+                description: {
+                  en: 'The main title of your blog post',
+                  nl: 'De hoofdtitel van je blogbericht',
+                },
               },
             },
             {
               name: 'subtitle',
               type: 'text',
+              label: {
+                en: 'Subtitle',
+                nl: 'Ondertitel',
+              },
               admin: {
-                description: 'Optional subtitle or tagline',
+                description: {
+                  en: 'Optional subtitle or tagline',
+                  nl: 'Optionele ondertitel of tagline',
+                },
               },
             },
             {
@@ -90,9 +117,16 @@ const BlogPosts: CollectionConfig = {
               type: 'text',
               unique: true,
               index: true,
+              label: {
+                en: 'URL Slug',
+                nl: 'URL Slug',
+              },
               admin: {
                 position: 'sidebar',
-                description: 'URL-friendly version of the title',
+                description: {
+                  en: 'URL-friendly version of the title',
+                  nl: 'URL-vriendelijke versie van de titel',
+                },
               },
               hooks: {
                 beforeValidate: [formatSlug('title')],
@@ -103,8 +137,15 @@ const BlogPosts: CollectionConfig = {
               type: 'upload',
               relationTo: 'media',
               required: true,
+              label: {
+                en: 'Banner Image',
+                nl: 'Banner Afbeelding',
+              },
               admin: {
-                description: 'Hero image displayed at the top of the post',
+                description: {
+                  en: 'Hero image displayed at the top of the post',
+                  nl: 'Hero afbeelding die bovenaan het bericht wordt weergegeven',
+                },
               },
             },
             {
@@ -112,15 +153,29 @@ const BlogPosts: CollectionConfig = {
               type: 'richText',
               required: true,
               editor: blogEditorConfig,
+              label: {
+                en: 'Content',
+                nl: 'Inhoud',
+              },
               admin: {
-                description: 'The main content of your blog post',
+                description: {
+                  en: 'The main content of your blog post',
+                  nl: 'De hoofdinhoud van je blogbericht',
+                },
               },
             },
             {
               name: 'excerpt',
               type: 'textarea',
+              label: {
+                en: 'Excerpt',
+                nl: 'Samenvatting',
+              },
               admin: {
-                description: 'Short summary for previews and listings (auto-generated if empty)',
+                description: {
+                  en: 'Short summary for previews and listings (auto-generated if empty)',
+                  nl: 'Korte samenvatting voor voorvertoningen en lijsten (automatisch gegenereerd indien leeg)',
+                },
               },
               hooks: {
                 beforeValidate: [
@@ -142,37 +197,69 @@ const BlogPosts: CollectionConfig = {
           ],
         },
         {
-          label: 'SEO',
+          label: {
+            en: 'SEO',
+            nl: 'SEO',
+          },
           fields: [
             {
               name: 'meta',
               type: 'group',
               interfaceName: 'Meta',
+              label: {
+                en: 'Meta Tags',
+                nl: 'Meta Tags',
+              },
               fields: [
                 {
                   name: 'title',
                   type: 'text',
+                  label: {
+                    en: 'SEO Title',
+                    nl: 'SEO Titel',
+                  },
                   admin: {
-                    description: 'Override the default title for SEO (defaults to post title)',
+                    description: {
+                      en: 'Override the default title for SEO (defaults to post title)',
+                      nl: 'Overschrijf de standaardtitel voor SEO (gebruikt standaard de berichttitel)',
+                    },
                   },
                 },
                 {
                   name: 'description',
                   type: 'textarea',
+                  label: {
+                    en: 'Meta Description',
+                    nl: 'Meta Beschrijving',
+                  },
                   admin: {
-                    description: 'Meta description for search engines (defaults to excerpt)',
+                    description: {
+                      en: 'Meta description for search engines (defaults to excerpt)',
+                      nl: 'Meta beschrijving voor zoekmachines (gebruikt standaard de samenvatting)',
+                    },
                   },
                 },
                 {
                   name: 'keywords',
                   type: 'array',
+                  label: {
+                    en: 'Keywords',
+                    nl: 'Trefwoorden',
+                  },
                   admin: {
-                    description: 'SEO keywords for this post',
+                    description: {
+                      en: 'SEO keywords for this post',
+                      nl: 'SEO trefwoorden voor dit bericht',
+                    },
                   },
                   fields: [
                     {
                       name: 'keyword',
                       type: 'text',
+                      label: {
+                        en: 'Keyword',
+                        nl: 'Trefwoord',
+                      },
                     },
                   ],
                 },
@@ -180,16 +267,30 @@ const BlogPosts: CollectionConfig = {
                   name: 'image',
                   type: 'upload',
                   relationTo: 'media',
+                  label: {
+                    en: 'Preview Image',
+                    nl: 'Voorvertoning Afbeelding',
+                  },
                   admin: {
-                    description: 'Social media preview image (defaults to banner image)',
+                    description: {
+                      en: 'Social media preview image (defaults to banner image)',
+                      nl: 'Social media voorvertoning afbeelding (gebruikt standaard de banner afbeelding)',
+                    },
                   },
                 },
                 {
                   name: 'noIndex',
                   type: 'checkbox',
                   defaultValue: false,
+                  label: {
+                    en: 'No Index',
+                    nl: 'Niet Indexeren',
+                  },
                   admin: {
-                    description: 'Prevent search engines from indexing this page',
+                    description: {
+                      en: 'Prevent search engines from indexing this page',
+                      nl: 'Voorkom dat zoekmachines deze pagina indexeren',
+                    },
                   },
                 },
               ],
@@ -197,28 +298,50 @@ const BlogPosts: CollectionConfig = {
             {
               name: 'openGraph',
               type: 'group',
+              label: {
+                en: 'Open Graph',
+                nl: 'Open Graph',
+              },
               fields: [
                 {
                   name: 'title',
                   type: 'text',
+                  label: {
+                    en: 'OG Title',
+                    nl: 'OG Titel',
+                  },
                   admin: {
-                    description: 'OG title for social sharing',
+                    description: {
+                      en: 'OG title for social sharing',
+                      nl: 'OG titel voor social media delen',
+                    },
                   },
                 },
                 {
                   name: 'description',
                   type: 'textarea',
+                  label: {
+                    en: 'OG Description',
+                    nl: 'OG Beschrijving',
+                  },
                   admin: {
-                    description: 'OG description for social sharing',
+                    description: {
+                      en: 'OG description for social sharing',
+                      nl: 'OG beschrijving voor social media delen',
+                    },
                   },
                 },
                 {
                   name: 'type',
                   type: 'select',
+                  label: {
+                    en: 'Type',
+                    nl: 'Type',
+                  },
                   defaultValue: 'article',
                   options: [
-                    { label: 'Article', value: 'article' },
-                    { label: 'Website', value: 'website' },
+                    { label: { en: 'Article', nl: 'Artikel' }, value: 'article' },
+                    { label: { en: 'Website', nl: 'Website' }, value: 'website' },
                   ],
                 },
               ],
@@ -226,7 +349,10 @@ const BlogPosts: CollectionConfig = {
           ],
         },
         {
-          label: 'Settings',
+          label: {
+            en: 'Settings',
+            nl: 'Instellingen',
+          },
           fields: [
             {
               name: 'author',
@@ -234,27 +360,51 @@ const BlogPosts: CollectionConfig = {
               relationTo: 'users',
               required: true,
               defaultValue: ({ user }) => user?.id,
+              label: {
+                en: 'Author',
+                nl: 'Auteur',
+              },
               admin: {
-                description: 'The author of this post',
+                description: {
+                  en: 'The author of this post',
+                  nl: 'De auteur van dit bericht',
+                },
               },
             },
             {
               name: 'categories',
               type: 'array',
+              label: {
+                en: 'Categories',
+                nl: 'Categorieën',
+              },
               admin: {
-                description: 'Organize posts by categories',
+                description: {
+                  en: 'Organize posts by categories',
+                  nl: 'Organiseer berichten per categorie',
+                },
               },
               fields: [
                 {
                   name: 'category',
                   type: 'select',
+                  label: {
+                    en: 'Category',
+                    nl: 'Categorie',
+                  },
                   options: [
-                    { label: 'News', value: 'news' },
-                    { label: 'Tips & Tricks', value: 'tips-tricks' },
-                    { label: 'Behind the Scenes', value: 'behind-scenes' },
-                    { label: 'Industry Insights', value: 'industry-insights' },
-                    { label: 'Voice Acting', value: 'voice-acting' },
-                    { label: 'Technology', value: 'technology' },
+                    { label: { en: 'News', nl: 'Nieuws' }, value: 'news' },
+                    { label: { en: 'Tips & Tricks', nl: 'Tips & Trucs' }, value: 'tips-tricks' },
+                    {
+                      label: { en: 'Behind the Scenes', nl: 'Achter de Schermen' },
+                      value: 'behind-scenes',
+                    },
+                    {
+                      label: { en: 'Industry Insights', nl: 'Industrie Inzichten' },
+                      value: 'industry-insights',
+                    },
+                    { label: { en: 'Voice Acting', nl: 'Voice Acting' }, value: 'voice-acting' },
+                    { label: { en: 'Technology', nl: 'Technologie' }, value: 'technology' },
                   ],
                 },
               ],
@@ -262,13 +412,24 @@ const BlogPosts: CollectionConfig = {
             {
               name: 'tags',
               type: 'array',
+              label: {
+                en: 'Tags',
+                nl: 'Tags',
+              },
               admin: {
-                description: 'Add tags for better discoverability',
+                description: {
+                  en: 'Add tags for better discoverability',
+                  nl: 'Voeg tags toe voor betere vindbaarheid',
+                },
               },
               fields: [
                 {
                   name: 'tag',
                   type: 'text',
+                  label: {
+                    en: 'Tag',
+                    nl: 'Tag',
+                  },
                 },
               ],
             },
@@ -277,25 +438,39 @@ const BlogPosts: CollectionConfig = {
               type: 'select',
               defaultValue: 'draft',
               required: true,
+              label: {
+                en: 'Status',
+                nl: 'Status',
+              },
               options: [
-                { label: 'Draft', value: 'draft' },
-                { label: 'Published', value: 'published' },
-                { label: 'Archived', value: 'archived' },
+                { label: { en: 'Draft', nl: 'Concept' }, value: 'draft' },
+                { label: { en: 'Published', nl: 'Gepubliceerd' }, value: 'published' },
+                { label: { en: 'Archived', nl: 'Gearchiveerd' }, value: 'archived' },
               ],
               admin: {
                 position: 'sidebar',
-                description: 'Post visibility status',
+                description: {
+                  en: 'Post visibility status',
+                  nl: 'Zichtbaarheidsstatus van bericht',
+                },
               },
             },
             {
               name: 'publishedDate',
               type: 'date',
+              label: {
+                en: 'Published Date',
+                nl: 'Publicatiedatum',
+              },
               admin: {
                 position: 'sidebar',
                 date: {
                   pickerAppearance: 'dayAndTime',
                 },
-                description: 'Schedule post publication',
+                description: {
+                  en: 'Schedule post publication',
+                  nl: 'Plan de publicatie van het bericht',
+                },
               },
               defaultValue: () => new Date().toISOString(),
             },
@@ -303,18 +478,32 @@ const BlogPosts: CollectionConfig = {
               name: 'featured',
               type: 'checkbox',
               defaultValue: false,
+              label: {
+                en: 'Featured',
+                nl: 'Uitgelicht',
+              },
               admin: {
                 position: 'sidebar',
-                description: 'Feature this post on the homepage',
+                description: {
+                  en: 'Feature this post on the homepage',
+                  nl: 'Toon dit bericht uitgelicht op de homepage',
+                },
               },
             },
             {
               name: 'enableComments',
               type: 'checkbox',
               defaultValue: true,
+              label: {
+                en: 'Enable Comments',
+                nl: 'Reacties Toestaan',
+              },
               admin: {
                 position: 'sidebar',
-                description: 'Allow comments on this post',
+                description: {
+                  en: 'Allow comments on this post',
+                  nl: 'Sta reacties toe op dit bericht',
+                },
               },
             },
           ],
@@ -325,19 +514,33 @@ const BlogPosts: CollectionConfig = {
       name: 'views',
       type: 'number',
       defaultValue: 0,
+      label: {
+        en: 'Views',
+        nl: 'Weergaven',
+      },
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Number of times this post has been viewed',
+        description: {
+          en: 'Number of times this post has been viewed',
+          nl: 'Aantal keer dat dit bericht is bekeken',
+        },
       },
     },
     {
       name: 'readingTime',
       type: 'number',
+      label: {
+        en: 'Reading Time',
+        nl: 'Leestijd',
+      },
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Estimated reading time in minutes',
+        description: {
+          en: 'Estimated reading time in minutes',
+          nl: 'Geschatte leestijd in minuten',
+        },
       },
       hooks: {
         beforeValidate: [
