@@ -13,8 +13,9 @@ interface PageProps {
 }
 
 // Enable Incremental Static Regeneration (ISR) for better performance
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 300; // Revalidate every 5 minutes
 export const dynamicParams = true;
+export const fetchCache = 'default-cache'; // Use browser cache when available
 
 // Pre-generate static paths for common pages
 export async function generateStaticParams() {

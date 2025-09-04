@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { getVoiceovers } from '@/lib/api';
 import type { TransformedVoiceover } from '@/types/voiceover';
+import { useVoiceoverCacheStore } from '@/stores';
 
 // Import directly for immediate rendering
 import { OptimizedVoiceoverGrid } from '@/components/domains/voiceover';
@@ -16,15 +17,42 @@ export function VoiceoverSection({
   initialVoiceovers,
   title = 'Onze Stemacteurs',
 }: VoiceoverSectionProps) {
-  const [voiceovers, setVoiceovers] = useState<TransformedVoiceover[]>(initialVoiceovers || []);
-  const [loading, setLoading] = useState(!initialVoiceovers || initialVoiceovers.length === 0);
+  // Use cache store
+  const {
+    voiceovers: cachedVoiceovers,
+    setVoiceovers: setCachedVoiceovers,
+    isStale,
+  } = useVoiceoverCacheStore();
+
+  // Initialize with SSR data > cached data > empty array
+  const [voiceovers, setVoiceovers] = useState<TransformedVoiceover[]>(
+    initialVoiceovers || cachedVoiceovers || []
+  );
+  const [loading, setLoading] = useState(
+    (!initialVoiceovers || initialVoiceovers.length === 0) &&
+      (!cachedVoiceovers || cachedVoiceovers.length === 0)
+  );
 
   useEffect(() => {
-    // If we don't have voiceovers from SSR, fetch them client-side
+    // Update cache if we have SSR data
+    if (initialVoiceovers && initialVoiceovers.length > 0) {
+      setCachedVoiceovers(initialVoiceovers);
+      return;
+    }
+
+    // If no SSR data, check cache
+    if (cachedVoiceovers && cachedVoiceovers.length > 0 && !isStale()) {
+      setVoiceovers(cachedVoiceovers);
+      setLoading(false);
+      return;
+    }
+
+    // Only fetch if no SSR data and cache is empty or stale
     if (!initialVoiceovers || initialVoiceovers.length === 0) {
       getVoiceovers()
         .then((data) => {
           setVoiceovers(data);
+          setCachedVoiceovers(data);
           setLoading(false);
         })
         .catch((error) => {
@@ -32,10 +60,10 @@ export function VoiceoverSection({
           setLoading(false);
         });
     }
-  }, [initialVoiceovers]);
+  }, [initialVoiceovers, cachedVoiceovers, setCachedVoiceovers, isStale]);
 
-  // Don't show loading state if we have initial data from SSR
-  if (loading && (!initialVoiceovers || initialVoiceovers.length === 0)) {
+  // Don't show loading state if we have any data (SSR or cached)
+  if (loading && (!voiceovers || voiceovers.length === 0)) {
     return (
       <section id="voiceovers" className="py-16 bg-background">
         <div className="container mx-auto px-4">

@@ -295,7 +295,7 @@ function OptimizedVoiceoverCard({
                   />
                 </svg>
                 <div className="custom-card-availability">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
                   <span className="text-xs font-medium text-foreground">
                     {voiceover.availabilityText || 'Nu beschikbaar'}
                   </span>

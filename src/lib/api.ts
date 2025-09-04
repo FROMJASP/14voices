@@ -10,6 +10,7 @@ export async function getVoiceovers(): Promise<Voiceover[]> {
   try {
     const res = await fetch(`${API_URL}/api/public-voiceovers?depth=2`, {
       next: { revalidate: 900 }, // 15 minutes
+      cache: 'force-cache', // Use cache when available
     });
 
     if (!res.ok) {

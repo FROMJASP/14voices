@@ -19,6 +19,9 @@ export {
   scrollToSection,
 } from './voiceover/voiceoverStore';
 
+// Voiceover cache
+export { useVoiceoverStore as useVoiceoverCacheStore } from './voiceoverStore';
+
 import { useCartStore } from './cart/cartStore';
 import { useCheckoutStore } from './checkout/checkoutStore';
 import { useCartModalStore } from './ui/cartModalStore';

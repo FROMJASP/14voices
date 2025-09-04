@@ -341,6 +341,7 @@ export function VoiceoverDetailClient({ voiceover }: VoiceoverDetailClientProps)
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <Link
           href="/#voiceovers"
+          prefetch={true}
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
