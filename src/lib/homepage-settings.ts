@@ -80,10 +80,8 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
         processSteps: homePage.hero.processSteps || [],
         title: homePage.hero.title || '',
         description: homePage.hero.description || '',
-        primaryButton:
-          homePage.hero.primaryButton?.enabled !== false ? homePage.hero.primaryButton : null,
-        secondaryButton:
-          homePage.hero.secondaryButton?.enabled !== false ? homePage.hero.secondaryButton : null,
+        primaryButton: homePage.hero.primaryButton || null,
+        secondaryButton: homePage.hero.secondaryButton || null,
         heroImage:
           typeof homePage.hero.heroImage === 'object' && homePage.hero.heroImage?.url
             ? homePage.hero.heroImage.url

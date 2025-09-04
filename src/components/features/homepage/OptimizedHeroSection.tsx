@@ -116,7 +116,7 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
             {/* CTA Buttons - Performance optimized */}
             <div className="hero-actions flex flex-row gap-3 mb-8 flex-wrap sm:flex-nowrap">
               <Link
-                href={hero.primaryButton.url}
+                href={hero.primaryButton?.url || '#'}
                 className="flex-1 sm:flex-none"
                 style={{
                   backgroundColor: 'var(--foreground)',
@@ -144,7 +144,7 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
                 }}
                 prefetch={false} // Don't prefetch unless critical
               >
-                {hero.primaryButton.text}
+                {hero.primaryButton?.text || ''}
                 <svg
                   width="20"
                   height="20"
@@ -162,7 +162,7 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
               </Link>
 
               <Link
-                href={hero.secondaryButton.url}
+                href={hero.secondaryButton?.url || '#'}
                 className="flex-1 sm:flex-none"
                 style={{
                   backgroundColor: 'transparent',
@@ -202,7 +202,7 @@ export const OptimizedHeroSection: React.FC<HeroSectionProps> = ({
                   <circle cx="12" cy="12" r="10"></circle>
                   <polygon points="10 8 16 12 10 16 10 8"></polygon>
                 </svg>
-                {hero.secondaryButton.text}
+                {hero.secondaryButton?.text || ''}
               </Link>
             </div>
 
