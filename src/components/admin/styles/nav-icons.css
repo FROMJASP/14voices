@@ -1,4 +1,4 @@
-/* Collection Icons - Apply to sidebar navigation links AND replace dashboard card icons */
+/* Collection Icons - Apply to sidebar navigation links only */
 
 /* Users Collection */
 /* Sidebar */
@@ -6,8 +6,8 @@
 .nav a[href*='/admin/collections/users/']::before,
 nav a[href='/admin/collections/users']::before,
 nav a[href*='/admin/collections/users/']::before,
-[role="navigation"] a[href='/admin/collections/users']::before,
-[role="navigation"] a[href*='/admin/collections/users/']::before {
+[role='navigation'] a[href='/admin/collections/users']::before,
+[role='navigation'] a[href*='/admin/collections/users/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -27,8 +27,8 @@ nav a[href*='/admin/collections/users/']::before,
 .nav a[href*='/admin/collections/voiceovers/']::before,
 nav a[href='/admin/collections/voiceovers']::before,
 nav a[href*='/admin/collections/voiceovers/']::before,
-[role="navigation"] a[href='/admin/collections/voiceovers']::before,
-[role="navigation"] a[href*='/admin/collections/voiceovers/']::before {
+[role='navigation'] a[href='/admin/collections/voiceovers']::before,
+[role='navigation'] a[href*='/admin/collections/voiceovers/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -48,8 +48,8 @@ nav a[href*='/admin/collections/voiceovers/']::before,
 .nav a[href*='/admin/collections/groups/']::before,
 nav a[href='/admin/collections/groups']::before,
 nav a[href*='/admin/collections/groups/']::before,
-[role="navigation"] a[href='/admin/collections/groups']::before,
-[role="navigation"] a[href*='/admin/collections/groups/']::before {
+[role='navigation'] a[href='/admin/collections/groups']::before,
+[role='navigation'] a[href*='/admin/collections/groups/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -69,8 +69,8 @@ nav a[href*='/admin/collections/groups/']::before,
 .nav a[href*='/admin/collections/media/']::before,
 nav a[href='/admin/collections/media']::before,
 nav a[href*='/admin/collections/media/']::before,
-[role="navigation"] a[href='/admin/collections/media']::before,
-[role="navigation"] a[href*='/admin/collections/media/']::before {
+[role='navigation'] a[href='/admin/collections/media']::before,
+[role='navigation'] a[href*='/admin/collections/media/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -90,8 +90,8 @@ nav a[href*='/admin/collections/media/']::before,
 .nav a[href*='/admin/collections/pages/']::before,
 nav a[href='/admin/collections/pages']::before,
 nav a[href*='/admin/collections/pages/']::before,
-[role="navigation"] a[href='/admin/collections/pages']::before,
-[role="navigation"] a[href*='/admin/collections/pages/']::before {
+[role='navigation'] a[href='/admin/collections/pages']::before,
+[role='navigation'] a[href*='/admin/collections/pages/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -111,8 +111,8 @@ nav a[href*='/admin/collections/pages/']::before,
 .nav a[href*='/admin/collections/blog-posts/']::before,
 nav a[href='/admin/collections/blog-posts']::before,
 nav a[href*='/admin/collections/blog-posts/']::before,
-[role="navigation"] a[href='/admin/collections/blog-posts']::before,
-[role="navigation"] a[href*='/admin/collections/blog-posts/']::before {
+[role='navigation'] a[href='/admin/collections/blog-posts']::before,
+[role='navigation'] a[href*='/admin/collections/blog-posts/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -132,8 +132,8 @@ nav a[href*='/admin/collections/blog-posts/']::before,
 .nav a[href*='/admin/collections/testimonials/']::before,
 nav a[href='/admin/collections/testimonials']::before,
 nav a[href*='/admin/collections/testimonials/']::before,
-[role="navigation"] a[href='/admin/collections/testimonials']::before,
-[role="navigation"] a[href*='/admin/collections/testimonials/']::before {
+[role='navigation'] a[href='/admin/collections/testimonials']::before,
+[role='navigation'] a[href*='/admin/collections/testimonials/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -153,8 +153,8 @@ nav a[href*='/admin/collections/testimonials/']::before,
 .nav a[href*='/admin/collections/faq/']::before,
 nav a[href='/admin/collections/faq']::before,
 nav a[href*='/admin/collections/faq/']::before,
-[role="navigation"] a[href='/admin/collections/faq']::before,
-[role="navigation"] a[href*='/admin/collections/faq/']::before {
+[role='navigation'] a[href='/admin/collections/faq']::before,
+[role='navigation'] a[href*='/admin/collections/faq/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -174,8 +174,8 @@ nav a[href*='/admin/collections/faq/']::before,
 .nav a[href*='/admin/collections/bookings/']::before,
 nav a[href='/admin/collections/bookings']::before,
 nav a[href*='/admin/collections/bookings/']::before,
-[role="navigation"] a[href='/admin/collections/bookings']::before,
-[role="navigation"] a[href*='/admin/collections/bookings/']::before {
+[role='navigation'] a[href='/admin/collections/bookings']::before,
+[role='navigation'] a[href*='/admin/collections/bookings/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -195,8 +195,8 @@ nav a[href*='/admin/collections/bookings/']::before,
 .nav a[href*='/admin/collections/scripts/']::before,
 nav a[href='/admin/collections/scripts']::before,
 nav a[href*='/admin/collections/scripts/']::before,
-[role="navigation"] a[href='/admin/collections/scripts']::before,
-[role="navigation"] a[href*='/admin/collections/scripts/']::before {
+[role='navigation'] a[href='/admin/collections/scripts']::before,
+[role='navigation'] a[href*='/admin/collections/scripts/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -216,8 +216,8 @@ nav a[href*='/admin/collections/scripts/']::before,
 .nav a[href*='/admin/collections/invoices/']::before,
 nav a[href='/admin/collections/invoices']::before,
 nav a[href*='/admin/collections/invoices/']::before,
-[role="navigation"] a[href='/admin/collections/invoices']::before,
-[role="navigation"] a[href*='/admin/collections/invoices/']::before {
+[role='navigation'] a[href='/admin/collections/invoices']::before,
+[role='navigation'] a[href*='/admin/collections/invoices/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -237,8 +237,8 @@ nav a[href*='/admin/collections/invoices/']::before,
 .nav a[href*='/admin/collections/forms/']::before,
 nav a[href='/admin/collections/forms']::before,
 nav a[href*='/admin/collections/forms/']::before,
-[role="navigation"] a[href='/admin/collections/forms']::before,
-[role="navigation"] a[href*='/admin/collections/forms/']::before {
+[role='navigation'] a[href='/admin/collections/forms']::before,
+[role='navigation'] a[href*='/admin/collections/forms/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -258,8 +258,8 @@ nav a[href*='/admin/collections/forms/']::before,
 .nav a[href*='/admin/collections/form-submissions/']::before,
 nav a[href='/admin/collections/form-submissions']::before,
 nav a[href*='/admin/collections/form-submissions/']::before,
-[role="navigation"] a[href='/admin/collections/form-submissions']::before,
-[role="navigation"] a[href*='/admin/collections/form-submissions/']::before {
+[role='navigation'] a[href='/admin/collections/form-submissions']::before,
+[role='navigation'] a[href*='/admin/collections/form-submissions/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -276,7 +276,7 @@ nav a[href*='/admin/collections/form-submissions/']::before,
 /* Email Collections */
 .nav a[href*='/admin/collections/email-']::before,
 nav a[href*='/admin/collections/email-']::before,
-[role="navigation"] a[href*='/admin/collections/email-']::before {
+[role='navigation'] a[href*='/admin/collections/email-']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -300,8 +300,8 @@ nav a[href*='/admin/collections/email-']::before,
 .nav a[href*='/admin/collections/security-logs/']::before,
 nav a[href='/admin/collections/security-logs']::before,
 nav a[href*='/admin/collections/security-logs/']::before,
-[role="navigation"] a[href='/admin/collections/security-logs']::before,
-[role="navigation"] a[href*='/admin/collections/security-logs/']::before {
+[role='navigation'] a[href='/admin/collections/security-logs']::before,
+[role='navigation'] a[href*='/admin/collections/security-logs/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -322,8 +322,8 @@ nav a[href*='/admin/collections/security-logs/']::before,
 .nav a[href*='/admin/globals/site-settings/']::before,
 nav a[href='/admin/globals/site-settings']::before,
 nav a[href*='/admin/globals/site-settings/']::before,
-[role="navigation"] a[href='/admin/globals/site-settings']::before,
-[role="navigation"] a[href*='/admin/globals/site-settings/']::before {
+[role='navigation'] a[href='/admin/globals/site-settings']::before,
+[role='navigation'] a[href*='/admin/globals/site-settings/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -343,8 +343,8 @@ nav a[href*='/admin/globals/site-settings/']::before,
 .nav a[href*='/admin/globals/email-settings/']::before,
 nav a[href='/admin/globals/email-settings']::before,
 nav a[href*='/admin/globals/email-settings/']::before,
-[role="navigation"] a[href='/admin/globals/email-settings']::before,
-[role="navigation"] a[href*='/admin/globals/email-settings/']::before {
+[role='navigation'] a[href='/admin/globals/email-settings']::before,
+[role='navigation'] a[href*='/admin/globals/email-settings/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -364,8 +364,8 @@ nav a[href*='/admin/globals/email-settings/']::before,
 .nav a[href*='/admin/globals/faq-settings/']::before,
 nav a[href='/admin/globals/faq-settings']::before,
 nav a[href*='/admin/globals/faq-settings/']::before,
-[role="navigation"] a[href='/admin/globals/faq-settings']::before,
-[role="navigation"] a[href*='/admin/globals/faq-settings/']::before {
+[role='navigation'] a[href='/admin/globals/faq-settings']::before,
+[role='navigation'] a[href*='/admin/globals/faq-settings/']::before {
   content: '';
   display: inline-block;
   width: 20px;
@@ -384,8 +384,8 @@ nav a[href*='/admin/globals/faq-settings/']::before,
 .nav a[href*='/admin/globals/'],
 nav a[href*='/admin/collections/'],
 nav a[href*='/admin/globals/'],
-[role="navigation"] a[href*='/admin/collections/'],
-[role="navigation"] a[href*='/admin/globals/'] {
+[role='navigation'] a[href*='/admin/collections/'],
+[role='navigation'] a[href*='/admin/globals/'] {
   display: flex !important;
   align-items: center !important;
 }
