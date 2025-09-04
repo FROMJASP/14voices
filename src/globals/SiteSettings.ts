@@ -606,31 +606,64 @@ export const SiteSettings: GlobalConfig = {
           ],
         },
         {
-          label: 'Branding',
+          label: {
+            en: 'Branding',
+            nl: 'Huisstijl',
+          },
           fields: [
             {
               name: 'branding',
               type: 'group',
+              label: {
+                en: 'Brand Settings',
+                nl: 'Huisstijl Instellingen',
+              },
               fields: [
                 {
                   name: 'logoType',
                   type: 'select',
                   defaultValue: 'text',
+                  label: {
+                    en: 'Logo Type',
+                    nl: 'Logo Type',
+                  },
                   options: [
-                    { label: 'Text Logo', value: 'text' },
-                    { label: 'Image Logo', value: 'image' },
+                    {
+                      label: {
+                        en: 'Text Logo',
+                        nl: 'Tekst Logo',
+                      },
+                      value: 'text',
+                    },
+                    {
+                      label: {
+                        en: 'Image Logo',
+                        nl: 'Afbeelding Logo',
+                      },
+                      value: 'image',
+                    },
                   ],
                   admin: {
-                    description: 'Choose between text logo or image logo',
+                    description: {
+                      en: 'Choose between text logo or image logo',
+                      nl: 'Kies tussen tekstlogo of afbeeldinglogo',
+                    },
                   },
                 },
                 {
                   name: 'logoText',
                   type: 'text',
                   defaultValue: 'FourteenVoices',
+                  label: {
+                    en: 'Logo Text',
+                    nl: 'Logo Tekst',
+                  },
                   admin: {
                     condition: (_data, siblingData) => siblingData?.logoType === 'text',
-                    description: 'Text to display as logo',
+                    description: {
+                      en: 'Text to display as logo',
+                      nl: 'Tekst om als logo weer te geven',
+                    },
                   },
                 },
                 {
@@ -667,25 +700,41 @@ export const SiteSettings: GlobalConfig = {
                   name: 'logoImage',
                   type: 'upload',
                   relationTo: 'media',
+                  label: {
+                    en: 'Logo Image',
+                    nl: 'Logo Afbeelding',
+                  },
                   admin: {
                     condition: (_data, siblingData) => siblingData?.logoType === 'image',
-                    description:
-                      'Image to use as logo (recommended: SVG or PNG with transparent background)',
+                    description: {
+                      en: 'Image to use as logo (recommended: SVG or PNG with transparent background)',
+                      nl: 'Afbeelding om als logo te gebruiken (aanbevolen: SVG of PNG met transparante achtergrond)',
+                    },
                   },
                 },
                 {
                   name: 'logoImageDark',
                   type: 'upload',
                   relationTo: 'media',
+                  label: {
+                    en: 'Dark Mode Logo',
+                    nl: 'Donkere Modus Logo',
+                  },
                   admin: {
                     condition: (_data, siblingData) => siblingData?.logoType === 'image',
-                    description:
-                      'Optional: Different logo for dark mode (if not provided, same logo will be used)',
+                    description: {
+                      en: 'Optional: Different logo for dark mode (if not provided, same logo will be used)',
+                      nl: 'Optioneel: Ander logo voor donkere modus (indien niet opgegeven, wordt hetzelfde logo gebruikt)',
+                    },
                   },
                 },
                 {
                   name: 'logoPreview',
                   type: 'ui',
+                  label: {
+                    en: 'Logo Preview',
+                    nl: 'Logo Voorbeeld',
+                  },
                   admin: {
                     components: {
                       Field: '@/components/admin/ui/LogoPreview#LogoPreview',
@@ -881,59 +930,95 @@ export const SiteSettings: GlobalConfig = {
           ],
         },
         {
-          label: 'Top Bar',
+          label: {
+            en: 'Top Bar',
+            nl: 'Topbalk',
+          },
           fields: [
             {
               name: 'topBar',
               type: 'group',
+              label: {
+                en: 'Top Bar Settings',
+                nl: 'Topbalk Instellingen',
+              },
               fields: [
                 {
                   name: 'enabled',
                   type: 'checkbox',
                   defaultValue: true,
-                  label: 'Enable Top Bar',
+                  label: {
+                    en: 'Enable Top Bar',
+                    nl: 'Topbalk Inschakelen',
+                  },
                   admin: {
-                    description: 'Show the top bar with contact details and quick links',
+                    description: {
+                      en: 'Show the top bar with contact details and quick links',
+                      nl: 'Toon de topbalk met contactgegevens en snelle links',
+                    },
                   },
                 },
                 {
                   name: 'whatsappNumber',
                   type: 'text',
                   defaultValue: '+31 6 12345678',
+                  label: {
+                    en: 'WhatsApp Number',
+                    nl: 'WhatsApp Nummer',
+                  },
                   admin: {
                     condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description:
-                      'WhatsApp number for contact (include country code). Default: +31 6 12345678',
+                    description: {
+                      en: 'WhatsApp number for contact (include country code). Default: +31 6 12345678',
+                      nl: 'WhatsApp-nummer voor contact (inclusief landcode). Standaard: +31 6 12345678',
+                    },
                   },
                 },
                 {
                   name: 'whatsappTooltip',
                   type: 'group',
-                  label: 'WhatsApp Tooltip',
+                  label: {
+                    en: 'WhatsApp Tooltip',
+                    nl: 'WhatsApp Tooltip',
+                  },
                   admin: {
                     condition: (_data, siblingData) =>
                       siblingData?.enabled === true && siblingData?.whatsappNumber,
-                    description:
-                      'Configure the tooltip that appears when hovering over the WhatsApp number',
+                    description: {
+                      en: 'Configure the tooltip that appears when hovering over the WhatsApp number',
+                      nl: 'Configureer de tooltip die verschijnt bij het zweven over het WhatsApp-nummer',
+                    },
                   },
                   fields: [
                     {
                       name: 'enabled',
                       type: 'checkbox',
                       defaultValue: true,
-                      label: 'Enable Tooltip',
+                      label: {
+                        en: 'Enable Tooltip',
+                        nl: 'Tooltip Inschakelen',
+                      },
                       admin: {
-                        description: 'Show a tooltip when hovering over the WhatsApp number',
+                        description: {
+                          en: 'Show a tooltip when hovering over the WhatsApp number',
+                          nl: 'Toon een tooltip bij het zweven over het WhatsApp-nummer',
+                        },
                       },
                     },
                     {
                       name: 'title',
                       type: 'text',
                       defaultValue: 'Stuur ons een WhatsApp',
+                      label: {
+                        en: 'Tooltip Title',
+                        nl: 'Tooltip Titel',
+                      },
                       admin: {
                         condition: (_data, siblingData) => siblingData?.enabled === true,
-                        description:
-                          'Title text for the tooltip. Default: "Stuur ons een WhatsApp"',
+                        description: {
+                          en: 'Title text for the tooltip. Default: "Stuur ons een WhatsApp"',
+                          nl: 'Titeltekst voor de tooltip. Standaard: "Stuur ons een WhatsApp"',
+                        },
                       },
                     },
                     {
@@ -941,19 +1026,32 @@ export const SiteSettings: GlobalConfig = {
                       type: 'textarea',
                       defaultValue:
                         'We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen.',
+                      label: {
+                        en: 'Tooltip Message',
+                        nl: 'Tooltip Bericht',
+                      },
                       admin: {
                         condition: (_data, siblingData) => siblingData?.enabled === true,
-                        description:
-                          'Message text for the tooltip. Default: "We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen."',
+                        description: {
+                          en: 'Message text for the tooltip. Default: "We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen."',
+                          nl: 'Berichttekst voor de tooltip. Standaard: "We zijn vaak in de studio aan het werk. Stuur ons eerst een WhatsApp-bericht, dan kunnen we je zo snel mogelijk terugbellen."',
+                        },
                       },
                     },
                     {
                       name: 'image',
                       type: 'upload',
                       relationTo: 'media',
+                      label: {
+                        en: 'Tooltip Image',
+                        nl: 'Tooltip Afbeelding',
+                      },
                       admin: {
                         condition: (_data, siblingData) => siblingData?.enabled === true,
-                        description: 'Optional image to show in the tooltip (recommended: 80x80px)',
+                        description: {
+                          en: 'Optional image to show in the tooltip (recommended: 80x80px)',
+                          nl: 'Optionele afbeelding om in de tooltip te tonen (aanbevolen: 80x80px)',
+                        },
                       },
                     },
                   ],
@@ -962,19 +1060,31 @@ export const SiteSettings: GlobalConfig = {
                   name: 'email',
                   type: 'email',
                   defaultValue: 'casting@14voices.com',
+                  label: {
+                    en: 'Contact Email',
+                    nl: 'Contact E-mail',
+                  },
                   admin: {
                     condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description: 'Primary contact email address. Default: casting@14voices.com',
+                    description: {
+                      en: 'Primary contact email address. Default: casting@14voices.com',
+                      nl: 'Primair contact e-mailadres. Standaard: casting@14voices.com',
+                    },
                   },
                 },
                 {
                   name: 'quickLinks',
                   type: 'array',
-                  label: 'Quick Links',
+                  label: {
+                    en: 'Quick Links',
+                    nl: 'Snelle Links',
+                  },
                   admin: {
                     condition: (_data, siblingData) => siblingData?.enabled === true,
-                    description:
-                      'Navigation links to display in the top bar. Default links: "Veelgestelde vragen" (/veelgestelde-vragen) and "Blog" (/blog)',
+                    description: {
+                      en: 'Navigation links to display in the top bar. Default links: "Veelgestelde vragen" (/veelgestelde-vragen) and "Blog" (/blog)',
+                      nl: 'Navigatielinks om in de topbalk weer te geven. Standaard links: "Veelgestelde vragen" (/veelgestelde-vragen) en "Blog" (/blog)',
+                    },
                     initCollapsed: false,
                   },
                   defaultValue: [
@@ -986,16 +1096,30 @@ export const SiteSettings: GlobalConfig = {
                       name: 'label',
                       type: 'text',
                       required: true,
+                      label: {
+                        en: 'Link Text',
+                        nl: 'Link Tekst',
+                      },
                       admin: {
-                        description: 'Display text for the link',
+                        description: {
+                          en: 'Display text for the link',
+                          nl: 'Weergavetekst voor de link',
+                        },
                       },
                     },
                     {
                       name: 'url',
                       type: 'text',
                       required: true,
+                      label: {
+                        en: 'URL',
+                        nl: 'URL',
+                      },
                       admin: {
-                        description: 'URL path (e.g., /veelgestelde-vragen) or external URL',
+                        description: {
+                          en: 'URL path (e.g., /veelgestelde-vragen) or external URL',
+                          nl: 'URL-pad (bijv. /veelgestelde-vragen) of externe URL',
+                        },
                       },
                     },
                     {
