@@ -8,7 +8,7 @@ const Invoices: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'invoiceNumber',
-    group: 'Documents',
+    group: 'Orders',
     description: 'Invoice documents with restricted access',
   },
   access: {
