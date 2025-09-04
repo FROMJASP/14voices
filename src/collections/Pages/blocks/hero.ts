@@ -20,15 +20,6 @@ export const heroBlock: Field = {
       type: 'group',
       fields: [
         {
-          name: 'blockUsageInfo',
-          type: 'ui',
-          admin: {
-            components: {
-              Field: '/components/admin/fields/BlockUsageInfo#BlockUsageInfo',
-            },
-          },
-        },
-        {
           name: 'layout',
           type: 'select',
           defaultValue: 'variant1',

@@ -20,15 +20,6 @@ export const voiceoverBlock: Field = {
       type: 'group',
       fields: [
         {
-          name: 'blockUsageInfo',
-          type: 'ui',
-          admin: {
-            components: {
-              Field: '/components/admin/fields/BlockUsageInfo#BlockUsageInfo',
-            },
-          },
-        },
-        {
           name: 'variant',
           type: 'select',
           defaultValue: 'variant1',
