@@ -203,6 +203,18 @@ export default async function Page({ params }: PageProps) {
     voiceovers = voiceoverResults.docs;
   }
 
+  // Fetch site settings to get brand color
+  let brandColor = '#6366f1';
+  try {
+    const siteSettings = await payload.findGlobal({
+      slug: 'site-settings',
+      depth: 0,
+    });
+    brandColor = (siteSettings as any)?.branding?.brandColor || brandColor;
+  } catch (error) {
+    console.error('Failed to fetch site settings:', error);
+  }
+
   // No Suspense needed - data is already loaded server-side with ISR
-  return <PageRenderer page={transformedPage} voiceovers={voiceovers} />;
+  return <PageRenderer page={transformedPage} voiceovers={voiceovers} brandColor={brandColor} />;
 }

@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import type { Page } from '@/payload-types';
 import { PageHeroSection } from './PageHeroSection';
 import { HeroSection } from '@/components/features/homepage/HeroSection';
+import { HeroVariant2 } from '@/components/features/homepage/HeroVariant2';
 import { transformHeroDataForHomepage } from '@/lib/homepage-utils';
 import { useRouter } from 'next/navigation';
 import { SsgoiTransition } from '@ssgoi/react';
@@ -12,6 +13,26 @@ import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 import LinkToBlogSection from '@/components/features/homepage/LinkToBlogSection';
 import { useLivePreview } from '@payloadcms/live-preview-react';
+
+// Helper function to extract plain text from rich text
+function extractPlainText(richText: any): string {
+  if (!richText?.root?.children) return '';
+
+  const extractText = (children: any[]): string => {
+    return children
+      .map((child) => {
+        if (child.type === 'text') {
+          return child.text || '';
+        } else if (child.children) {
+          return extractText(child.children);
+        }
+        return '';
+      })
+      .join('');
+  };
+
+  return extractText(richText.root.children);
+}
 
 // Define section type union for all possible section types
 type PageSection = {
@@ -84,11 +105,13 @@ interface PageRendererProps {
     }>;
   };
   voiceovers?: any[] | null;
+  brandColor?: string;
 }
 
 export function PageRenderer({
   page: initialPage,
   voiceovers: initialVoiceovers,
+  brandColor = '#6366f1',
 }: PageRendererProps): React.ReactElement {
   const router = useRouter();
 
@@ -141,9 +164,10 @@ export function PageRenderer({
   const heroSettings = React.useMemo(() => {
     // Check for hero data
     const hero = page.hero as any;
-    const isHeroVariant1 = hero?.layout === 'variant1' || hero?.type === 'homepage';
-    return isHomepage && isHeroVariant1 ? transformHeroDataForHomepage(page) : null;
-  }, [page, isHomepage]);
+    const isHeroVariant1 = hero?.layout === 'variant1';
+    const isHomeOrBlog = page.slug === 'home' || page.slug === 'blog';
+    return isHomeOrBlog && isHeroVariant1 ? transformHeroDataForHomepage(page) : null;
+  }, [page]);
 
   // Transform voiceovers data if needed
   const transformedVoiceovers = React.useMemo(() => {
@@ -160,12 +184,14 @@ export function PageRenderer({
     );
   }, [voiceovers]);
 
-  // For homepage hero, render without article wrapper to maintain proper styling
+  // For homepage or blog page with hero blocks
   const hero = page.hero as any;
   const voiceover = page.voiceover;
   const linkToBlog = page.linkToBlog;
-  const isHeroVariant1 = hero?.layout === 'variant1' || hero?.type === 'homepage';
-  if (isHomepage && isHeroVariant1 && heroSettings) {
+  const isHeroVariant1 = hero?.layout === 'variant1';
+  const isHeroVariant2 = hero?.layout === 'variant2';
+
+  if ((isHomepage || page.slug === 'blog') && (isHeroVariant1 || isHeroVariant2)) {
     // Get pageBlocks array or use default order
     const blocksArray = page.pageBlocks || [
       { blockType: 'hero', enabled: true },
@@ -175,9 +201,24 @@ export function PageRenderer({
 
     // Create block components map
     const blockComponents = {
-      hero: heroSettings ? (
-        <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
-      ) : null,
+      hero:
+        isHeroVariant1 && heroSettings ? (
+          <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
+        ) : isHeroVariant2 ? (
+          <HeroVariant2
+            key={JSON.stringify(page.hero)}
+            badge={hero?.badge?.enabled !== false ? hero?.badge : null}
+            title={hero?.titleRichText ? extractPlainText(hero.titleRichText) : hero?.title}
+            subtitle={
+              hero?.subtitleRichText ? extractPlainText(hero.subtitleRichText) : hero?.subtitle
+            }
+            primaryButton={hero?.primaryButton?.enabled !== false ? hero?.primaryButton : null}
+            secondaryButton={
+              hero?.secondaryButton?.enabled !== false ? hero?.secondaryButton : null
+            }
+            brandColor={brandColor}
+          />
+        ) : null,
       voiceover: (
         <VoiceoverSection
           key={JSON.stringify(voiceover)}
@@ -191,7 +232,7 @@ export function PageRenderer({
     };
 
     return (
-      <SsgoiTransition id="/">
+      <SsgoiTransition id={`/${page.slug || ''}`}>
         <div className="homepage-preview">
           {/* Render blocks based on pageBlocks array order and enabled state */}
           {blocksArray.map((blockItem, index) => {

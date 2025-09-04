@@ -10,11 +10,11 @@ export interface HomepageSettings {
     primaryButton: {
       text: string;
       url: string;
-    };
+    } | null;
     secondaryButton: {
       text: string;
       url: string;
-    };
+    } | null;
     heroImage: string;
     stats?: Array<{
       number: string;
@@ -80,14 +80,10 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
         processSteps: homePage.hero.processSteps || [],
         title: homePage.hero.title || '',
         description: homePage.hero.description || '',
-        primaryButton: homePage.hero.primaryButton || {
-          text: 'Ontdek stemmen',
-          url: '#voiceovers',
-        },
-        secondaryButton: homePage.hero.secondaryButton || {
-          text: 'Hoe wij werken',
-          url: '/hoe-het-werkt',
-        },
+        primaryButton:
+          homePage.hero.primaryButton?.enabled !== false ? homePage.hero.primaryButton : null,
+        secondaryButton:
+          homePage.hero.secondaryButton?.enabled !== false ? homePage.hero.secondaryButton : null,
         heroImage:
           typeof homePage.hero.heroImage === 'object' && homePage.hero.heroImage?.url
             ? homePage.hero.heroImage.url

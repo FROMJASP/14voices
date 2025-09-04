@@ -1,0 +1,50 @@
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.badge-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  animation: shimmer 3s infinite;
+  pointer-events: none;
+}
+
+.badge-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Dark mode support for custom CSS properties */
+@media (prefers-color-scheme: dark) {
+  span[style*='--badge-bg-light'] {
+    background-color: var(--badge-bg-dark) !important;
+    color: var(--badge-text-dark) !important;
+  }
+
+  button[style*='--btn-bg-light'] {
+    background-color: var(--btn-bg-dark) !important;
+    color: var(--btn-text-dark) !important;
+  }
+
+  button[style*='--btn-border-light'] {
+    border-color: var(--btn-border-dark) !important;
+    color: var(--btn-text-dark) !important;
+  }
+}

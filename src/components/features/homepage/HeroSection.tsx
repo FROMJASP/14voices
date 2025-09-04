@@ -145,96 +145,102 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
             </motion.p>
 
             {/* CTA Buttons - Side by side on mobile, responsive flex */}
-            <motion.div
-              className="hero-actions flex flex-row gap-3 mb-8 flex-wrap sm:flex-nowrap"
-              variants={staggerChild}
-            >
-              <Link
-                href={hero.primaryButton.url}
-                className="flex-1 sm:flex-none"
-                style={{
-                  backgroundColor: 'var(--foreground)',
-                  color: 'var(--background)',
-                  padding: '10px 20px',
-                  borderRadius: '10px',
-                  textDecoration: 'none',
-                  fontWeight: '600',
-                  fontSize: '15px',
-                  transition: 'all 0.2s',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  border: 'none',
-                  minWidth: 'fit-content',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
+            {(hero.primaryButton || hero.secondaryButton) && (
+              <motion.div
+                className="hero-actions flex flex-row gap-3 mb-8 flex-wrap sm:flex-nowrap"
+                variants={staggerChild}
               >
-                {hero.primaryButton.text}
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </Link>
+                {hero.primaryButton && (
+                  <Link
+                    href={hero.primaryButton.url}
+                    className="flex-1 sm:flex-none"
+                    style={{
+                      backgroundColor: 'var(--foreground)',
+                      color: 'var(--background)',
+                      padding: '10px 20px',
+                      borderRadius: '10px',
+                      textDecoration: 'none',
+                      fontWeight: '600',
+                      fontSize: '15px',
+                      transition: 'all 0.2s',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      border: 'none',
+                      minWidth: 'fit-content',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    {hero.primaryButton.text}
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </Link>
+                )}
 
-              <Link
-                href={hero.secondaryButton.url}
-                className="flex-1 sm:flex-none"
-                style={{
-                  backgroundColor: 'transparent',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border)',
-                  padding: '10px 20px',
-                  borderRadius: '10px',
-                  textDecoration: 'none',
-                  fontWeight: '600',
-                  fontSize: '15px',
-                  transition: 'all 0.2s',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  minWidth: 'fit-content',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--surface)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                </svg>
-                {hero.secondaryButton.text}
-              </Link>
-            </motion.div>
+                {hero.secondaryButton && (
+                  <Link
+                    href={hero.secondaryButton.url}
+                    className="flex-1 sm:flex-none"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border)',
+                      padding: '10px 20px',
+                      borderRadius: '10px',
+                      textDecoration: 'none',
+                      fontWeight: '600',
+                      fontSize: '15px',
+                      transition: 'all 0.2s',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      minWidth: 'fit-content',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--surface)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                    </svg>
+                    {hero.secondaryButton.text}
+                  </Link>
+                )}
+              </motion.div>
+            )}
 
             {/* Stats - Always horizontal with smaller font if needed on mobile */}
             {hero.stats && hero.stats.length > 0 && (

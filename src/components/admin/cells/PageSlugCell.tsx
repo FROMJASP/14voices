@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export const PageSlugCell: React.FC<DefaultCellComponentProps> = memo(({ cellData, rowData }) => {
   const router = useRouter();
-  const isHomePage = rowData?.slug === 'home';
+  const isLocked = rowData?.locked === true;
 
   const handleClick = () => {
     if (rowData?.id) {
@@ -24,7 +24,7 @@ export const PageSlugCell: React.FC<DefaultCellComponentProps> = memo(({ cellDat
       }}
       onClick={handleClick}
     >
-      {isHomePage && (
+      {isLocked && (
         <span title="This page cannot be deleted">
           <svg
             width="16"
@@ -49,11 +49,11 @@ export const PageSlugCell: React.FC<DefaultCellComponentProps> = memo(({ cellDat
         style={{
           fontSize: '14px',
           fontWeight: '500',
-          color: isHomePage ? 'var(--theme-text-dark)' : 'var(--theme-text)',
+          color: isLocked ? 'var(--theme-text-dark)' : 'var(--theme-text)',
           textDecoration: 'underline',
           textDecorationColor: 'transparent',
           transition: 'text-decoration-color 0.2s',
-          opacity: isHomePage ? 0.8 : 1,
+          opacity: isLocked ? 0.8 : 1,
         }}
         onMouseEnter={(e) =>
           (e.currentTarget.style.textDecorationColor = 'var(--theme-success-500)')

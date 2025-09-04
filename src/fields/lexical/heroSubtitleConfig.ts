@@ -4,14 +4,10 @@ import {
   lexicalEditor,
   ParagraphFeature,
   InlineCodeFeature,
-  HeadingFeature,
 } from '@payloadcms/richtext-lexical';
 
-export const heroTitleConfig = lexicalEditor({
+export const heroSubtitleConfig = lexicalEditor({
   features: () => [
-    HeadingFeature({
-      enabledHeadingSizes: ['h1'],
-    }),
     ParagraphFeature(),
     BoldFeature(),
     ItalicFeature(),

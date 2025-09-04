@@ -69,14 +69,8 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
       title: extractedTitle,
       description: extractedDescription,
       processSteps: hero.processSteps || [],
-      primaryButton: hero.primaryButton || {
-        text: '',
-        url: '',
-      },
-      secondaryButton: hero.secondaryButton || {
-        text: '',
-        url: '',
-      },
+      primaryButton: hero.primaryButton?.enabled !== false ? hero.primaryButton : null,
+      secondaryButton: hero.secondaryButton?.enabled !== false ? hero.secondaryButton : null,
       heroImage: heroImageUrl,
       stats: hero.stats || [],
     },
