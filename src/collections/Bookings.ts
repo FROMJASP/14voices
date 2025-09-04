@@ -11,7 +11,10 @@ export const Bookings: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    group: 'Orders',
+    group: {
+      en: 'Orders',
+      nl: 'Bestellingen',
+    },
     defaultColumns: ['title', 'customer', 'voiceover', 'status', 'createdAt'],
   },
   access: {

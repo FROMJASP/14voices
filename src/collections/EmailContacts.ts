@@ -4,7 +4,10 @@ export const EmailContacts: CollectionConfig = {
   slug: 'email-contacts',
   admin: {
     useAsTitle: 'email',
-    group: 'Email System',
+    group: {
+      en: 'Email System',
+      nl: 'Email Systeem',
+    },
     defaultColumns: ['email', 'firstName', 'lastName', 'subscribed', 'tags'],
   },
   fields: [

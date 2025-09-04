@@ -14,7 +14,10 @@ const Voiceovers: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'status', 'availability', 'styleTags', 'demos', 'group'],
     listSearchableFields: ['name', 'description'],
-    group: 'Beheer Stemmen',
+    group: {
+      en: 'Manage Voices',
+      nl: 'Beheer Stemmen',
+    },
     pagination: {
       defaultLimit: 10,
       limits: [10, 25, 50, 100],

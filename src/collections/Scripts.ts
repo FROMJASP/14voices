@@ -8,7 +8,10 @@ const Scripts: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    group: 'Orders',
+    group: {
+      en: 'Orders',
+      nl: 'Bestellingen',
+    },
     description: 'Scripts uploaded by clients for voiceover work',
   },
   access: {

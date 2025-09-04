@@ -4,7 +4,10 @@ export const EmailJobs: CollectionConfig = {
   slug: 'email-jobs',
   admin: {
     useAsTitle: 'id',
-    group: 'Email System',
+    group: {
+      en: 'Email System',
+      nl: 'Email Systeem',
+    },
     defaultColumns: ['recipient', 'template', 'status', 'scheduledFor'],
   },
   access: {

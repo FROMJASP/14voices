@@ -5,7 +5,10 @@ const Testimonials: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'company', 'rating', 'featured', 'publishedDate'],
-    group: 'Site Builder',
+    group: {
+      en: 'Site Builder',
+      nl: 'Site Builder',
+    },
   },
   access: {
     read: () => true,

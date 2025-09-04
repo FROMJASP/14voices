@@ -4,7 +4,10 @@ export const EmailSequences: CollectionConfig = {
   slug: 'email-sequences',
   admin: {
     useAsTitle: 'name',
-    group: 'Email System',
+    group: {
+      en: 'Email System',
+      nl: 'Email Systeem',
+    },
   },
   fields: [
     {

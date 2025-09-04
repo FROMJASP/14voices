@@ -6,7 +6,10 @@ const SecurityLogs: CollectionConfig = {
     useAsTitle: 'type',
     defaultColumns: ['type', 'severity', 'userId', 'ipAddress', 'timestamp'],
     listSearchableFields: ['type', 'userId', 'ipAddress', 'details'],
-    group: 'System',
+    group: {
+      en: 'System',
+      nl: 'Systeem',
+    },
     pagination: {
       defaultLimit: 50,
       limits: [25, 50, 100, 200],

@@ -4,7 +4,10 @@ export const EmailSettings: GlobalConfig = {
   slug: 'email-settings',
   label: 'Email Settings',
   admin: {
-    group: 'Email System',
+    group: {
+      en: 'Email System',
+      nl: 'Email Systeem',
+    },
   },
   fields: [
     {

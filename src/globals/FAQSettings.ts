@@ -11,7 +11,10 @@ export const FAQSettings: GlobalConfig = {
     update: ({ req: { user } }) => user?.role === 'admin',
   },
   admin: {
-    group: 'Site Builder',
+    group: {
+      en: 'Site Builder',
+      nl: 'Site Builder',
+    },
     description: {
       en: 'Configure how the FAQ section appears on the homepage',
       nl: 'Configureer hoe de FAQ sectie op de homepage wordt weergegeven',

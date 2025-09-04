@@ -17,7 +17,10 @@ const Pages: CollectionConfig = {
     useAsTitle: 'slug',
     defaultColumns: ['slug', 'title', 'status', 'updatedAt'],
     listSearchableFields: ['title', 'slug'],
-    group: 'Site Builder',
+    group: {
+      en: 'Site Builder',
+      nl: 'Site Builder',
+    },
     livePreview: {
       url: ({ data }) => {
         const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || '';

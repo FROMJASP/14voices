@@ -4,7 +4,10 @@ export const EmailCampaigns: CollectionConfig = {
   slug: 'email-campaigns',
   admin: {
     useAsTitle: 'name',
-    group: 'Email System',
+    group: {
+      en: 'Email System',
+      nl: 'Email Systeem',
+    },
     defaultColumns: ['name', 'status', 'scheduledAt', 'sentCount'],
   },
   fields: [

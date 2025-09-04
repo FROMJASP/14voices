@@ -4,7 +4,10 @@ export const EmailTemplates: CollectionConfig = {
   slug: 'email-templates',
   admin: {
     useAsTitle: 'name',
-    group: 'Email System',
+    group: {
+      en: 'Email System',
+      nl: 'Email Systeem',
+    },
   },
   fields: [
     {

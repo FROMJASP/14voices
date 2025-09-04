@@ -117,6 +117,8 @@
     "email": "E-mail",
     "bookings": "Boekingen",
     "documents": "Documenten",
+    "orders": "Bestellingen",
+    "editForms": "Formulieren Bewerken",
     "emailSystem": "Email Systeem",
     "system": "Systeem"
   },

@@ -4,7 +4,10 @@ export const EmailLogs: CollectionConfig = {
   slug: 'email-logs',
   admin: {
     useAsTitle: 'subject',
-    group: 'Email System',
+    group: {
+      en: 'Email System',
+      nl: 'Email Systeem',
+    },
     defaultColumns: ['recipient', 'template', 'status', 'sentAt'],
   },
   access: {

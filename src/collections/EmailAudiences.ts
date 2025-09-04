@@ -4,7 +4,10 @@ export const EmailAudiences: CollectionConfig = {
   slug: 'email-audiences',
   admin: {
     useAsTitle: 'name',
-    group: 'Email System',
+    group: {
+      en: 'Email System',
+      nl: 'Email Systeem',
+    },
     defaultColumns: ['name', 'type', 'contactCount', 'active'],
   },
   fields: [

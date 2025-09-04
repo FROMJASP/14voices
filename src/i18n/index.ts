@@ -79,8 +79,18 @@ export const i18n = {
         'general:logout': 'Uitloggen',
         'general:payloadSettings': 'CMS Instellingen',
         'general:cmsSettings': 'CMS Instellingen',
-        'collections:groups:noResults': 'Geen groepen gevonden of er bestaat geen groep met de hierboven gespecificeerde filters.',
+        'collections:groups:noResults':
+          'Geen groepen gevonden of er bestaat geen groep met de hierboven gespecificeerde filters.',
         'general:createNew': 'Nieuwe {{label}} aanmaken',
+        // Admin group translations
+        'admin.group:beheerStemmen': 'Beheer Stemmen',
+        'admin.group:accountManagement': 'Accountbeheer',
+        'admin.group:opslag': 'Opslag',
+        'admin.group:siteBuilder': 'Site Builder',
+        'admin.group:orders': 'Bestellingen',
+        'admin.group:editForms': 'Formulieren Bewerken',
+        'admin.group:emailSystem': 'Email Systeem',
+        'admin.group:system': 'Systeem',
       },
     },
     en: {
@@ -90,8 +100,18 @@ export const i18n = {
         'authentication:otherSettings': 'CMS Settings',
         'general:payloadSettings': 'CMS Settings',
         'general:cmsSettings': 'CMS Settings',
-        'collections:groups:noResults': 'No groups found or there does not exist a group based on the filters specified above.',
+        'collections:groups:noResults':
+          'No groups found or there does not exist a group based on the filters specified above.',
         'general:createNew': 'Create new {{label}}',
+        // Admin group translations
+        'admin.group:beheerStemmen': 'Manage Voices',
+        'admin.group:accountManagement': 'Account Management',
+        'admin.group:opslag': 'Storage',
+        'admin.group:siteBuilder': 'Site Builder',
+        'admin.group:orders': 'Orders',
+        'admin.group:editForms': 'Edit Forms',
+        'admin.group:emailSystem': 'Email System',
+        'admin.group:system': 'System',
       },
     },
   },
@@ -147,15 +167,23 @@ export function getFAQFieldLabel(field: string) {
 // Helper function to get FAQ-specific field descriptions
 export function getFAQFieldDescription(field: string) {
   return {
-    nl: nlTranslations.faq?.descriptions?.[field as keyof typeof nlTranslations.faq.descriptions] || '',
-    en: enTranslations.faq?.descriptions?.[field as keyof typeof enTranslations.faq.descriptions] || '',
+    nl:
+      nlTranslations.faq?.descriptions?.[field as keyof typeof nlTranslations.faq.descriptions] ||
+      '',
+    en:
+      enTranslations.faq?.descriptions?.[field as keyof typeof enTranslations.faq.descriptions] ||
+      '',
   };
 }
 
 // Helper function to get FAQ category labels
 export function getFAQCategoryLabel(category: string) {
   return {
-    nl: nlTranslations.faq?.categories?.[category as keyof typeof nlTranslations.faq.categories] || category,
-    en: enTranslations.faq?.categories?.[category as keyof typeof enTranslations.faq.categories] || category,
+    nl:
+      nlTranslations.faq?.categories?.[category as keyof typeof nlTranslations.faq.categories] ||
+      category,
+    en:
+      enTranslations.faq?.categories?.[category as keyof typeof enTranslations.faq.categories] ||
+      category,
   };
 }

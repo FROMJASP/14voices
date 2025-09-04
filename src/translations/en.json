@@ -117,6 +117,8 @@
     "email": "Email",
     "bookings": "Bookings",
     "documents": "Documents",
+    "orders": "Orders",
+    "editForms": "Edit Forms",
     "emailSystem": "Email System",
     "system": "System"
   },

@@ -136,7 +136,10 @@ const Users: CollectionConfig = {
     useAsTitle: 'email',
     defaultColumns: ['avatar', 'name', 'phone', 'lastLogin'],
     listSearchableFields: ['name', 'email', 'jobTitle'],
-    group: 'Account Management',
+    group: {
+      en: 'Account Management',
+      nl: 'Accountbeheer',
+    },
     pagination: {
       defaultLimit: 25,
       limits: [10, 25, 50, 100],

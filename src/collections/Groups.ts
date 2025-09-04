@@ -12,7 +12,10 @@ const Groups: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'voiceoverCount', 'isActive'],
-    group: 'Beheer Stemmen',
+    group: {
+      en: 'Manage Voices',
+      nl: 'Beheer Stemmen',
+    },
   },
   access: {
     read: () => true,

@@ -5,7 +5,10 @@ const FormSubmissions: CollectionConfig = {
   admin: {
     useAsTitle: 'id',
     defaultColumns: ['form', 'submittedAt', 'status'],
-    group: 'Edit Forms',
+    group: {
+      en: 'Edit Forms',
+      nl: 'Formulieren Bewerken',
+    },
   },
   access: {
     read: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',

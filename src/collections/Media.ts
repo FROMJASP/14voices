@@ -5,7 +5,10 @@ import { logStorageError } from '@/lib/storage/errors';
 const Media: CollectionConfig = {
   slug: 'media',
   admin: {
-    group: 'Opslag',
+    group: {
+      en: 'Storage',
+      nl: 'Opslag',
+    },
   },
   access: {
     read: () => true,

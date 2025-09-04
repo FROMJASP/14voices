@@ -13,7 +13,10 @@ const FAQ: CollectionConfig = {
   admin: {
     useAsTitle: 'question',
     defaultColumns: ['question', 'category', 'order', 'published'],
-    group: 'Site Builder',
+    group: {
+      en: 'Site Builder',
+      nl: 'Site Builder',
+    },
   },
   access: {
     read: () => true,
