@@ -8,7 +8,7 @@ const BlogPosts: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'status', 'author', 'publishedDate', 'views'],
     listSearchableFields: ['title', 'subtitle', 'content'],
-    group: 'Website',
+    group: 'Site Builder',
     preview: (doc) => {
       if (doc?.slug) {
         return `${process.env.NEXT_PUBLIC_SERVER_URL}/blog/${doc.slug}`;

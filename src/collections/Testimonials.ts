@@ -5,7 +5,7 @@ const Testimonials: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'company', 'rating', 'featured', 'publishedDate'],
-    group: 'Website',
+    group: 'Site Builder',
   },
   access: {
     read: () => true,

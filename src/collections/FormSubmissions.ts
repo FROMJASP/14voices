@@ -5,7 +5,7 @@ const FormSubmissions: CollectionConfig = {
   admin: {
     useAsTitle: 'id',
     defaultColumns: ['form', 'submittedAt', 'status'],
-    group: 'Site Builder',
+    group: 'Edit Forms',
   },
   access: {
     read: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'editor',
