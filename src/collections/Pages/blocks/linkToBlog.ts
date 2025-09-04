@@ -2,10 +2,14 @@ import type { Field } from 'payload';
 
 export const linkToBlogBlock: Field = {
   type: 'collapsible',
-  label: 'Blog',
+  label: 'Content',
   admin: {
     condition: (data) => data.slug === 'home' || data.slug === 'blog',
     initCollapsed: true,
+    description: {
+      en: 'Differently designed variants you can use to highlight something',
+      nl: 'Verschillend ontworpen varianten waarmee je iets kunt uitlichten',
+    },
   },
   fields: [
     {
@@ -19,23 +23,32 @@ export const linkToBlogBlock: Field = {
       },
       fields: [
         {
+          name: 'blockUsageInfo',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: '/components/admin/fields/BlockUsageInfo#BlockUsageInfo',
+            },
+          },
+        },
+        {
           name: 'layout',
           type: 'select',
           defaultValue: 'variant1',
           label: {
-            en: 'Section Layout',
-            nl: 'Sectie Layout',
+            en: 'Variant',
+            nl: 'Variant',
           },
           options: [
             {
-              label: { en: 'Link-to-Blog variant 1', nl: 'Link-to-Blog variant 1' },
+              label: { en: 'Content variant 1', nl: 'Content variant 1' },
               value: 'variant1',
             },
           ],
           admin: {
             description: {
-              en: 'Choose the layout style for this section',
-              nl: 'Kies de layout stijl voor deze sectie',
+              en: 'Choose the variant for this section',
+              nl: 'Kies de variant voor deze sectie',
             },
           },
         },

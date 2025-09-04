@@ -5,10 +5,14 @@ import { heroSubtitleConfig } from '@/fields/lexical/heroSubtitleConfig';
 
 export const heroBlock: Field = {
   type: 'collapsible',
-  label: 'Hero',
+  label: 'Hero Section',
   admin: {
     condition: (data) => data.slug === 'home' || data.slug === 'blog',
     initCollapsed: true,
+    description: {
+      en: 'A hero section is usually shown at the top of a page',
+      nl: 'Een hero sectie wordt meestal bovenaan een pagina getoond',
+    },
   },
   fields: [
     {
@@ -16,12 +20,21 @@ export const heroBlock: Field = {
       type: 'group',
       fields: [
         {
+          name: 'blockUsageInfo',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: '/components/admin/fields/BlockUsageInfo#BlockUsageInfo',
+            },
+          },
+        },
+        {
           name: 'layout',
           type: 'select',
           defaultValue: 'variant1',
           label: {
-            en: 'Hero Layout',
-            nl: 'Hero Layout',
+            en: 'Variant',
+            nl: 'Variant',
           },
           options: [
             {
@@ -35,8 +48,8 @@ export const heroBlock: Field = {
           ],
           admin: {
             description: {
-              en: 'Choose the layout style for the hero section',
-              nl: 'Kies de layout stijl voor de hero sectie',
+              en: 'Choose the variant for the hero section',
+              nl: 'Kies de variant voor de hero sectie',
             },
           },
         },

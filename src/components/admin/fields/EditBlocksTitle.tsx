@@ -10,14 +10,14 @@ export const EditBlocksTitle = () => {
   const isNL = currentLanguage === 'nl';
 
   return (
-    <div style={{ marginBottom: '20px', marginTop: '30px', padding: '0 24px' }}>
+    <div style={{ marginBottom: '20px', marginTop: '30px' }}>
       <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>
         {isNL ? 'Blokken aanpassen' : 'Edit blocks'}
       </h3>
       <p style={{ fontSize: '14px', color: '#6B7280' }}>
         {isNL
-          ? 'Dit zijn op maat ontworpen voorprogrammeerde blokken waarvan je de content kun wijzigen. Later volgen hier meer mogelijke designs om je website vorm te geven.'
-          : 'These are custom pre-programmed blocks that you can edit the content of. More design options to shape your website will follow later.'}
+          ? 'Wijzig het ontwerp en de content van een blok door een blok uit te klappen, een variant te kiezen en de velden in te vullen.'
+          : 'Change the design and the content of a block by expanding a block, pick a variant and fill in the fields.'}
       </p>
     </div>
   );

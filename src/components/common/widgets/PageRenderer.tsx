@@ -188,48 +188,14 @@ export function PageRenderer({
   const hero = page.hero as any;
   const voiceover = page.voiceover;
   const linkToBlog = page.linkToBlog;
-  const isHeroVariant1 = hero?.layout === 'variant1';
-  const isHeroVariant2 = hero?.layout === 'variant2';
 
-  if ((isHomepage || page.slug === 'blog') && (isHeroVariant1 || isHeroVariant2)) {
+  if (isHomepage || page.slug === 'blog') {
     // Get pageBlocks array or use default order
     const blocksArray = page.pageBlocks || [
-      { blockType: 'hero', enabled: true },
-      { blockType: 'voiceover', enabled: true },
-      { blockType: 'linkToBlog', enabled: true },
+      { blockType: 'hero', enabled: true, heroVariant: 'variant1' },
+      { blockType: 'voiceover', enabled: true, voiceoverVariant: 'variant1' },
+      { blockType: 'linkToBlog', enabled: true, contentVariant: 'variant1' },
     ];
-
-    // Create block components map
-    const blockComponents = {
-      hero:
-        isHeroVariant1 && heroSettings ? (
-          <HeroSection key={JSON.stringify(page.hero)} heroSettings={heroSettings} />
-        ) : isHeroVariant2 ? (
-          <HeroVariant2
-            key={JSON.stringify(page.hero)}
-            badge={hero?.badge?.enabled !== false ? hero?.badge : null}
-            title={hero?.titleRichText ? extractPlainText(hero.titleRichText) : hero?.title}
-            subtitle={
-              hero?.subtitleRichText ? extractPlainText(hero.subtitleRichText) : hero?.subtitle
-            }
-            primaryButton={hero?.primaryButton?.enabled !== false ? hero?.primaryButton : null}
-            secondaryButton={
-              hero?.secondaryButton?.enabled !== false ? hero?.secondaryButton : null
-            }
-            brandColor={brandColor}
-          />
-        ) : null,
-      voiceover: (
-        <VoiceoverSection
-          key={JSON.stringify(voiceover)}
-          initialVoiceovers={transformedVoiceovers}
-          title={voiceover?.title || 'Onze Stemacteurs'}
-        />
-      ),
-      linkToBlog: linkToBlog ? (
-        <LinkToBlogSection key={JSON.stringify(linkToBlog)} data={linkToBlog} />
-      ) : null,
-    };
 
     return (
       <SsgoiTransition id={`/${page.slug || ''}`}>
@@ -237,10 +203,67 @@ export function PageRenderer({
           {/* Render blocks based on pageBlocks array order and enabled state */}
           {blocksArray.map((blockItem, index) => {
             if (!blockItem.enabled) return null;
-            const component = blockComponents[blockItem.blockType];
-            return component ? (
-              <div key={`${blockItem.blockType}-${index}`}>{component}</div>
-            ) : null;
+
+            // Create component based on block type and variant
+            switch (blockItem.blockType) {
+              case 'hero': {
+                const variant =
+                  ('heroVariant' in blockItem ? blockItem.heroVariant : undefined) ||
+                  hero?.layout ||
+                  'variant1';
+                if (variant === 'variant1' && heroSettings) {
+                  return (
+                    <div key={`hero-${index}-${variant}`}>
+                      <HeroSection heroSettings={heroSettings} />
+                    </div>
+                  );
+                } else if (variant === 'variant2') {
+                  return (
+                    <div key={`hero-${index}-${variant}`}>
+                      <HeroVariant2
+                        badge={hero?.badge?.enabled !== false ? hero?.badge : null}
+                        title={
+                          hero?.titleRichText ? extractPlainText(hero.titleRichText) : hero?.title
+                        }
+                        subtitle={
+                          hero?.subtitleRichText
+                            ? extractPlainText(hero.subtitleRichText)
+                            : hero?.subtitle
+                        }
+                        primaryButton={
+                          hero?.primaryButton?.enabled !== false ? hero?.primaryButton : null
+                        }
+                        secondaryButton={
+                          hero?.secondaryButton?.enabled !== false ? hero?.secondaryButton : null
+                        }
+                        brandColor={brandColor}
+                      />
+                    </div>
+                  );
+                }
+                return null;
+              }
+              case 'voiceover': {
+                return (
+                  <div key={`voiceover-${index}`}>
+                    <VoiceoverSection
+                      initialVoiceovers={transformedVoiceovers}
+                      title={voiceover?.title || 'Onze Stemacteurs'}
+                    />
+                  </div>
+                );
+              }
+              case 'linkToBlog': {
+                if (!linkToBlog) return null;
+                return (
+                  <div key={`content-${index}`}>
+                    <LinkToBlogSection data={linkToBlog} />
+                  </div>
+                );
+              }
+              default:
+                return null;
+            }
           })}
 
           {/* Optionally render other homepage sections if needed for preview */}
