@@ -32,8 +32,20 @@ export default function Logo() {
 
   if (!logoUrl) {
     return (
-      <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--theme-text)' }}>
-        14voices
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+        <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--theme-text)' }}>14V</div>
+        <div
+          style={{
+            fontSize: '11px',
+            color: 'var(--theme-text)',
+            opacity: 0.6,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            fontWeight: '500',
+          }}
+        >
+          Admin Panel
+        </div>
       </div>
     );
   }
@@ -70,15 +82,29 @@ export default function Logo() {
           }}
         />
       </div>
-      <span
-        style={{
-          fontSize: '18px',
-          fontWeight: '600',
-          color: 'var(--theme-text)',
-        }}
-      >
-        14voices
-      </span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <span
+          style={{
+            fontSize: '18px',
+            fontWeight: '600',
+            color: 'var(--theme-text)',
+          }}
+        >
+          14V
+        </span>
+        <span
+          style={{
+            fontSize: '10px',
+            color: 'var(--theme-text)',
+            opacity: 0.6,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            fontWeight: '500',
+          }}
+        >
+          Admin Panel
+        </span>
+      </div>
     </div>
   );
 }
