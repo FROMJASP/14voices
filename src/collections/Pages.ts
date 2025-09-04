@@ -849,19 +849,93 @@ const Pages: CollectionConfig = {
                           },
                         },
                         {
+                          name: 'linkType',
+                          type: 'radio',
+                          defaultValue: 'manual',
+                          label: {
+                            en: 'Link Type',
+                            nl: 'Link Type',
+                          },
+                          options: [
+                            {
+                              label: {
+                                en: 'Manual URL',
+                                nl: 'Handmatige URL',
+                              },
+                              value: 'manual',
+                            },
+                            {
+                              label: {
+                                en: 'Blog Post',
+                                nl: 'Blogbericht',
+                              },
+                              value: 'blogPost',
+                            },
+                          ],
+                          admin: {
+                            layout: 'horizontal',
+                            description: {
+                              en: 'Choose whether to enter a custom URL or select a blog post',
+                              nl: 'Kies of je een aangepaste URL wilt invoeren of een blogbericht wilt selecteren',
+                            },
+                          },
+                        },
+                        {
                           name: 'url',
                           type: 'text',
-                          required: true,
                           defaultValue: '/blog',
                           label: {
                             en: 'Button URL',
                             nl: 'Knop URL',
                           },
+                          required: false, // Not always required, depends on linkType
                           admin: {
+                            condition: (_data, siblingData) => {
+                              // When inside a group, siblingData contains the group's fields
+                              return !siblingData?.linkType || siblingData?.linkType === 'manual';
+                            },
                             description: {
                               en: 'URL to navigate to when button is clicked (e.g., /blog, /about)',
                               nl: 'URL om naar te navigeren wanneer op de knop wordt geklikt (bijv. /blog, /over-ons)',
                             },
+                          },
+                          validate: (value: unknown, { siblingData }: any) => {
+                            if (siblingData?.linkType === 'manual' && !value) {
+                              return 'URL is required when link type is manual';
+                            }
+                            return true;
+                          },
+                        },
+                        {
+                          name: 'blogPost',
+                          type: 'relationship',
+                          relationTo: 'blog-posts',
+                          label: {
+                            en: 'Select Blog Post',
+                            nl: 'Selecteer Blogbericht',
+                          },
+                          admin: {
+                            condition: (_data, siblingData) => {
+                              // Show this field when blogPost is selected
+                              return siblingData?.linkType === 'blogPost';
+                            },
+                            description: {
+                              en: 'Select a blog post to link to',
+                              nl: 'Selecteer een blogbericht om naar te linken',
+                            },
+                          },
+                          filterOptions: () => {
+                            return {
+                              status: {
+                                equals: 'published',
+                              },
+                            };
+                          },
+                          validate: (value: unknown, { siblingData }: any) => {
+                            if (siblingData?.linkType === 'blogPost' && !value) {
+                              return 'Blog post is required when link type is blog post';
+                            }
+                            return true;
                           },
                         },
                         {
@@ -902,6 +976,60 @@ const Pages: CollectionConfig = {
                           },
                         },
                       ],
+                    },
+                    {
+                      name: 'resolvedUrl',
+                      type: 'text',
+                      virtual: true,
+                      admin: {
+                        hidden: true,
+                      },
+                      hooks: {
+                        afterRead: [
+                          async ({ siblingData, req }) => {
+                            // If manual URL is selected, return the URL
+                            if (
+                              siblingData?.button?.linkType === 'manual' ||
+                              !siblingData?.button?.linkType
+                            ) {
+                              return siblingData?.button?.url || '/blog';
+                            }
+
+                            // If blog post is selected, resolve the blog post URL
+                            if (
+                              siblingData?.button?.linkType === 'blogPost' &&
+                              siblingData?.button?.blogPost
+                            ) {
+                              try {
+                                let blogPost;
+
+                                // If blogPost is just an ID string, fetch the full blog post
+                                if (typeof siblingData.button.blogPost === 'string') {
+                                  blogPost = await req.payload.findByID({
+                                    collection: 'blog-posts',
+                                    id: siblingData.button.blogPost,
+                                    depth: 0,
+                                  });
+                                }
+                                // If blogPost is already populated as an object
+                                else if (typeof siblingData.button.blogPost === 'object') {
+                                  blogPost = siblingData.button.blogPost;
+                                }
+
+                                // Return the blog post URL if we have the slug
+                                if (blogPost?.slug) {
+                                  return `/blog/${blogPost.slug}`;
+                                }
+                              } catch (error) {
+                                console.error('Error fetching blog post for button URL:', error);
+                              }
+                            }
+
+                            // Default fallback
+                            return '/blog';
+                          },
+                        ],
+                      },
                     },
                     {
                       name: 'spacing',

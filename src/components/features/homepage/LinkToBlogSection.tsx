@@ -28,7 +28,10 @@ interface LinkToBlogSectionProps {
       url?: string;
       variant?: 'default' | 'secondary' | 'outline' | 'ghost' | 'link';
       showIcon?: boolean;
+      linkType?: 'manual' | 'blogPost';
+      blogPost?: string | { slug?: string };
     };
+    resolvedUrl?: string;
     spacing?: {
       top?: 'sm' | 'md' | 'lg';
       bottom?: 'sm' | 'md' | 'lg';
@@ -86,7 +89,8 @@ function LinkToBlogVariant1({ data }: { data: LinkToBlogSectionProps['data'] }) 
     data.description ||
     'Lyra is evolving to be more than just the models. It supports an entire ecosystem — from products to the APIs and platforms helping developers and businesses innovate.';
   const buttonText = data.button?.text || 'Learn More';
-  const buttonUrl = data.button?.url || '/blog';
+  // Use resolvedUrl if available, otherwise fall back to button.url
+  const buttonUrl = data.resolvedUrl || data.button?.url || '/blog';
   const buttonVariant = data.button?.variant || 'secondary';
   const showIcon = data.button?.showIcon !== false;
 
