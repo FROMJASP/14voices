@@ -1,3 +1,6 @@
+/* Import nav icons styles */
+@import './styles/nav-icons.css';
+
 /* Hide the locale selector in the admin panel */
 .localizer {
   display: none !important;
