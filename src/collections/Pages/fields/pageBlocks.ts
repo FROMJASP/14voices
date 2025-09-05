@@ -29,7 +29,7 @@ export const pageBlocksField: Field[] = [
       RowLabel: '/components/admin/cells/PageBlockLabel#PageBlockLabel',
     },
   },
-  validate: (value, { t }) => {
+  validate: (value) => {
     if (!Array.isArray(value)) return true;
     
     // Check for duplicate enabled blocks of the same type

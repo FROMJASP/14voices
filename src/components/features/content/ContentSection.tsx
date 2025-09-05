@@ -71,7 +71,7 @@ export default function ContentSection({ data }: ContentSectionProps) {
             {data.button?.label && data.button?.url && (
               <Button
                 asChild
-                variant={data.button.style === 'primary' ? 'default' : (data.button.style || 'secondary')}
+                variant={data.button.style || 'secondary'}
                 size="sm"
                 className={data.button.showIcon !== false ? "gap-1 pr-1.5" : ""}>
                 <Link href={data.button.url}>
