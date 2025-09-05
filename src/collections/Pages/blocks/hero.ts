@@ -38,10 +38,9 @@ export const heroBlock: Field = {
             },
           ],
           admin: {
-            condition: (data) => {
-              // Get the variant from pageBlocks
-              const heroBlock = data.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
-              return false; // Always hide this field since variant is controlled in Layout
+            condition: (_data) => {
+              // Always hide this field since variant is controlled in Layout
+              return false;
             },
             hidden: true,
           },
