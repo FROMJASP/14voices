@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import AccountWrapper from './AccountWrapper';
+import AccountWrapperSimple from './AccountWrapperSimple';
 import UserDataPreloader from './UserDataPreloader';
 
 interface AdminProviderProps {
@@ -12,7 +12,7 @@ export default function AdminProvider({ children }: AdminProviderProps) {
   return (
     <>
       <UserDataPreloader />
-      <AccountWrapper />
+      <AccountWrapperSimple />
       {children}
     </>
   );

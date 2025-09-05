@@ -1,0 +1,83 @@
+/* Tailwind CSS for Payload Admin Panel */
+/* Import Tailwind without base/preflight to avoid conflicts with Payload's styles */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* Import admin overrides */
+@import './admin-overrides.css';
+
+/* Configure dark mode to work with Payload's data-theme attribute */
+@custom-variant dark ([data-theme="dark"] &);
+
+/* Define CSS variables that integrate with both Payload and Tailwind */
+@layer theme {
+  :root {
+    /* Icon filter for light mode */
+    --icon-filter: none;
+    --icon-color: #000000;
+  }
+
+  [data-theme='dark'] {
+    /* Icon filter for dark mode - inverts black to white */
+    --icon-filter: invert(1);
+    --icon-color: #ffffff;
+  }
+}
+
+/* Custom utilities for admin panel */
+@layer utilities {
+  /* Icon styling using Tailwind utilities */
+  .nav-icon {
+    @apply inline-block w-5 h-5 mr-2 flex-shrink-0 align-middle transition-all duration-200;
+    filter: var(--icon-filter);
+  }
+
+  /* Dark mode specific icon styling */
+  .dark\:nav-icon {
+    filter: invert(1);
+  }
+
+  /* Logo and branding utilities */
+  .admin-logo {
+    @apply transition-opacity duration-200 hover:opacity-80;
+  }
+
+  /* Custom admin panel spacing and layout */
+  .admin-nav-logo-container {
+    @apply absolute top-5 left-0 right-0 h-[60px] flex items-start justify-end px-4 z-10;
+  }
+
+  .admin-nav-logo-link {
+    @apply inline-flex items-center justify-center no-underline transition-opacity duration-200 mr-12 mt-0;
+  }
+
+  .admin-logo-wrapper {
+    @apply flex flex-col items-end text-right;
+  }
+
+  .admin-logo-text {
+    @apply whitespace-nowrap overflow-hidden text-ellipsis block;
+  }
+
+  /* Responsive utilities */
+  @media (max-width: 1024px) {
+    .admin-nav-logo-container {
+      @apply hidden;
+    }
+  }
+}
+
+/* Override Payload's default icon colors for better dark mode support */
+[data-theme='dark'] {
+  /* Target navigation links */
+  .nav-group__content a,
+  .nav__link {
+    color: var(--theme-text);
+  }
+
+  /* Ensure icons in navigation adapt to dark mode */
+  .nav-group__content a::before,
+  .nav__link::before {
+    filter: var(--icon-filter);
+  }
+}

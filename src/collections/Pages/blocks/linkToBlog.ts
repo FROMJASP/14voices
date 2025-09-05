@@ -23,6 +23,15 @@ export const linkToBlogBlock: Field = {
       },
       fields: [
         {
+          name: 'variantNotice',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: '/components/admin/fields/VariantSyncNotice#VariantSyncNoticeContent',
+            },
+          },
+        },
+        {
           name: 'layout',
           type: 'select',
           defaultValue: 'variant1',
@@ -38,8 +47,8 @@ export const linkToBlogBlock: Field = {
           ],
           admin: {
             description: {
-              en: 'Choose the variant for this section',
-              nl: 'Kies de variant voor deze sectie',
+              en: '🔄 Synced with Layout section - changes here update Layout automatically',
+              nl: '🔄 Gesynchroniseerd met Layout sectie - wijzigingen hier worden automatisch toegepast in Layout',
             },
           },
         },

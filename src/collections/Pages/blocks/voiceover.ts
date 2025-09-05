@@ -20,6 +20,15 @@ export const voiceoverBlock: Field = {
       type: 'group',
       fields: [
         {
+          name: 'variantNotice',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: '/components/admin/fields/VariantSyncNotice#VariantSyncNoticeVoiceover',
+            },
+          },
+        },
+        {
           name: 'variant',
           type: 'select',
           defaultValue: 'variant1',
@@ -35,8 +44,8 @@ export const voiceoverBlock: Field = {
           ],
           admin: {
             description: {
-              en: 'Choose the variant for this section',
-              nl: 'Kies de variant voor deze sectie',
+              en: '🔄 Synced with Layout section - changes here update Layout automatically',
+              nl: '🔄 Gesynchroniseerd met Layout sectie - wijzigingen hier worden automatisch toegepast in Layout',
             },
           },
         },

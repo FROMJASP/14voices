@@ -188,6 +188,47 @@ const Pages: CollectionConfig = {
           data.locked = true;
         }
 
+        // Sync variant selections between pageBlocks and individual block sections
+        if (data.pageBlocks && Array.isArray(data.pageBlocks)) {
+          data.pageBlocks.forEach((block) => {
+            // Sync hero variant
+            if (block.blockType === 'hero' && block.heroVariant) {
+              if (!data.hero) data.hero = {};
+              data.hero.layout = block.heroVariant;
+            }
+            // Sync voiceover variant
+            if (block.blockType === 'voiceover' && block.voiceoverVariant) {
+              if (!data.voiceover) data.voiceover = {};
+              data.voiceover.variant = block.voiceoverVariant;
+            }
+            // Sync linkToBlog variant
+            if (block.blockType === 'linkToBlog' && block.contentVariant) {
+              if (!data.linkToBlog) data.linkToBlog = {};
+              data.linkToBlog.layout = block.contentVariant;
+            }
+          });
+        }
+
+        // Reverse sync: update pageBlocks when individual sections are changed
+        if (data.hero?.layout && data.pageBlocks) {
+          const heroBlock = data.pageBlocks.find((b: any) => b.blockType === 'hero');
+          if (heroBlock) {
+            heroBlock.heroVariant = data.hero.layout;
+          }
+        }
+        if (data.voiceover?.variant && data.pageBlocks) {
+          const voiceoverBlock = data.pageBlocks.find((b: any) => b.blockType === 'voiceover');
+          if (voiceoverBlock) {
+            voiceoverBlock.voiceoverVariant = data.voiceover.variant;
+          }
+        }
+        if (data.linkToBlog?.layout && data.pageBlocks) {
+          const linkToBlogBlock = data.pageBlocks.find((b: any) => b.blockType === 'linkToBlog');
+          if (linkToBlogBlock) {
+            linkToBlogBlock.contentVariant = data.linkToBlog.layout;
+          }
+        }
+
         return data;
       },
     ],

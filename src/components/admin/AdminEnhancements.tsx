@@ -1,6 +1,6 @@
 'use client';
 
-import VoiceoverRowClick from './VoiceoverRowClick';
+import VoiceoverRowClickSimple from './VoiceoverRowClickSimple';
 import { ErrorBoundary } from './ErrorBoundary';
 import { DateCellFormatter } from './DateCellFormatter';
 import './admin-overrides.css';
@@ -9,7 +9,7 @@ import './styles/date-formatting.css';
 export default function AdminEnhancements() {
   return (
     <ErrorBoundary>
-      <VoiceoverRowClick />
+      <VoiceoverRowClickSimple />
       <DateCellFormatter />
     </ErrorBoundary>
   );

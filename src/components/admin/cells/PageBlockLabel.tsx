@@ -51,18 +51,38 @@ export const PageBlockLabel: React.FC<PageBlockLabelProps> = ({ data }) => {
         {label.en}
       </span>
       {variantLabel && (
-        <span
-          style={{
-            fontSize: '12px',
-            padding: '2px 8px',
-            borderRadius: '4px',
-            backgroundColor: '#F3F4F6',
-            color: '#374151',
-            fontWeight: 500,
-          }}
-        >
-          Variant {variantLabel}
-        </span>
+        <>
+          <span
+            style={{
+              fontSize: '12px',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              backgroundColor: 'var(--theme-info-100)',
+              color: 'var(--theme-info-800)',
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              style={{ flexShrink: 0 }}
+            >
+              <title>Synced with block settings</title>
+              <path
+                d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"
+                transform="rotate(180 12 12)"
+              />
+            </svg>
+            Variant {variantLabel}
+          </span>
+        </>
       )}
       {!enabled && (
         <span

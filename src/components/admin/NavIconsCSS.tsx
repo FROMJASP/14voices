@@ -1,9 +1,17 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const NavIconsCSS: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     // Inject CSS that adds icons using pseudo-elements
     const styleId = 'nav-icons-styles';
 
@@ -17,7 +25,7 @@ const NavIconsCSS: React.FC = () => {
     const style = document.createElement('style');
     style.id = styleId;
 
-    // Icon SVGs as data URIs
+    // Icon SVGs as data URIs - using currentColor which will inherit the text color
     const icons = {
       users: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
       voiceovers: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>`,
@@ -72,6 +80,8 @@ const NavIconsCSS: React.FC = () => {
           background-repeat: no-repeat;
           flex-shrink: 0;
           vertical-align: middle;
+          filter: var(--payload-icon-filter, none);
+          transition: filter 0.2s ease;
         }
         
         a[href="/admin/collections/${slug}"],
@@ -101,6 +111,8 @@ const NavIconsCSS: React.FC = () => {
             background-repeat: no-repeat;
             flex-shrink: 0;
             vertical-align: middle;
+            filter: var(--payload-icon-filter, none);
+            transition: filter 0.2s ease;
           }
           
           a[href="/admin/globals/${slug}"],
@@ -118,12 +130,12 @@ const NavIconsCSS: React.FC = () => {
 
     return () => {
       // Cleanup on unmount
-      const styleEl = document.getElementById(styleId);
+      const styleEl = document.getElementById('nav-icons-styles');
       if (styleEl) {
         styleEl.remove();
       }
     };
-  }, []);
+  }, [mounted]);
 
   return null;
 };

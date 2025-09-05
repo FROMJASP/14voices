@@ -1,6 +1,9 @@
 /* Import Payload CMS styles directly */
 @import '@payloadcms/next/css';
 
+/* Import our custom icon and UI styles */
+@import './icon-styles.css';
+
 /* Add any custom styles here */
 
 /* Animated blob backgrounds for login */

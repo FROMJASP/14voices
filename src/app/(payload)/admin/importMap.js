@@ -15,7 +15,7 @@ import { PageSlugCell as PageSlugCell_2b473417a40ab5652febac9d30aecbd0 } from '.
 import { PageTitleCell as PageTitleCell_672964606649d829c3d8d5ceb1579103 } from '../../../components/admin/cells/PageTitleCell'
 import { PageBlockLabel as PageBlockLabel_ec1b864fcf0730684bdce08ebc97c4e8 } from '../../../components/admin/cells/PageBlockLabel'
 import { EditBlocksTitle as EditBlocksTitle_46e07528f96dd773ecd187ed9c15ff3f } from '../../../components/admin/fields/EditBlocksTitle'
-import { BlockUsageInfo as BlockUsageInfo_27a96520fa627c43afa63e15d4cec63c } from '../../../components/admin/fields/BlockUsageInfo'
+import { VariantSyncNoticeHero as VariantSyncNoticeHero_556625af850ab5510c77e8a1ac034bd5 } from '../../../components/admin/fields/VariantSyncNotice'
 import { ColorPickerFieldComponent as ColorPickerFieldComponent_95f860801d0381344387ae1d8e2f4d24 } from '@innovixx/payload-color-picker-field/components'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -28,6 +28,8 @@ import { HeadingFeatureClient as HeadingFeatureClient_e70f5e05f09f93e00b997edb1e
 import { LinkFeatureClient as LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { VariantSyncNoticeVoiceover as VariantSyncNoticeVoiceover_556625af850ab5510c77e8a1ac034bd5 } from '../../../components/admin/fields/VariantSyncNotice'
+import { VariantSyncNoticeContent as VariantSyncNoticeContent_556625af850ab5510c77e8a1ac034bd5 } from '../../../components/admin/fields/VariantSyncNotice'
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { IndentFeatureClient as IndentFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
@@ -78,7 +80,7 @@ export const importMap = {
   "/components/admin/cells/PageTitleCell#PageTitleCell": PageTitleCell_672964606649d829c3d8d5ceb1579103,
   "/components/admin/cells/PageBlockLabel#PageBlockLabel": PageBlockLabel_ec1b864fcf0730684bdce08ebc97c4e8,
   "/components/admin/fields/EditBlocksTitle#EditBlocksTitle": EditBlocksTitle_46e07528f96dd773ecd187ed9c15ff3f,
-  "/components/admin/fields/BlockUsageInfo#BlockUsageInfo": BlockUsageInfo_27a96520fa627c43afa63e15d4cec63c,
+  "/components/admin/fields/VariantSyncNotice#VariantSyncNoticeHero": VariantSyncNoticeHero_556625af850ab5510c77e8a1ac034bd5,
   "@innovixx/payload-color-picker-field/components#ColorPickerFieldComponent": ColorPickerFieldComponent_95f860801d0381344387ae1d8e2f4d24,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -91,6 +93,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#LinkFeatureClient": LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#StrikethroughFeatureClient": StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/components/admin/fields/VariantSyncNotice#VariantSyncNoticeVoiceover": VariantSyncNoticeVoiceover_556625af850ab5510c77e8a1ac034bd5,
+  "/components/admin/fields/VariantSyncNotice#VariantSyncNoticeContent": VariantSyncNoticeContent_556625af850ab5510c77e8a1ac034bd5,
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#IndentFeatureClient": IndentFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@payloadcms/ui';
 import { getInitials } from '@/lib/initials';
-import LocaleHider from './LocaleHider';
+// LocaleHider styles are now in admin-overrides.css
 
 const CustomAvatar: React.FC = () => {
   const { user } = useAuth();
@@ -91,7 +91,6 @@ const CustomAvatar: React.FC = () => {
   if (avatarUrl && !imageError) {
     return (
       <>
-        <LocaleHider />
         <div style={styles.wrapper}>
           <img
             src={avatarUrl}
@@ -106,7 +105,6 @@ const CustomAvatar: React.FC = () => {
 
   return (
     <>
-      <LocaleHider />
       <div style={styles.wrapper}>
         <span style={styles.initials}>{initials}</span>
       </div>

@@ -1,0 +1,54 @@
+/* Tailwind-based admin overrides using Payload's theming system */
+
+/* Account Avatar Styles */
+.custom-avatar-wrapper {
+  @apply w-8 h-8 rounded-full overflow-hidden cursor-pointer flex items-center justify-center flex-shrink-0;
+  border: 2px solid var(--theme-elevation-150);
+  background-color: var(--theme-elevation-100);
+  transition: border-color 0.2s ease;
+}
+
+.custom-avatar-wrapper:hover {
+  border-color: var(--theme-success-500);
+}
+
+.custom-avatar-wrapper img {
+  @apply w-full h-full object-cover;
+}
+
+.custom-avatar-wrapper .initials {
+  @apply text-sm font-semibold select-none;
+  color: var(--theme-text);
+}
+
+/* Voiceover Row Click Styles */
+.collection-list__list-item[data-collection='voiceovers'] {
+  @apply cursor-pointer transition-colors duration-200;
+}
+
+.collection-list__list-item[data-collection='voiceovers']:hover {
+  background-color: var(--theme-elevation-50);
+}
+
+.collection-list__list-item[data-collection='voiceovers'].navigating {
+  background-color: var(--theme-elevation-100);
+}
+
+/* Hide Locale Selector in Navigation Only */
+nav .localizer,
+header .localizer,
+nav [class*='LocaleSelector'],
+header [class*='LocaleSelector'] {
+  @apply hidden !important;
+}
+
+/* Dark mode adjustments using Payload's data-theme */
+[data-theme='dark'] {
+  .custom-avatar-wrapper {
+    border-color: var(--theme-elevation-200);
+  }
+
+  .custom-avatar-wrapper:hover {
+    border-color: var(--theme-success-600);
+  }
+}

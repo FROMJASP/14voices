@@ -89,8 +89,8 @@ export const pageBlocksField: Field = {
       admin: {
         condition: (_, siblingData) => siblingData?.blockType === 'hero',
         description: {
-          en: 'Choose the variant for the hero section',
-          nl: 'Kies de variant voor de hero sectie',
+          en: '🔄 Synced with Hero Section settings - changes here update Hero Section automatically',
+          nl: '🔄 Gesynchroniseerd met Hero sectie instellingen - wijzigingen worden automatisch doorgevoerd',
         },
       },
     },
@@ -112,8 +112,8 @@ export const pageBlocksField: Field = {
       admin: {
         condition: (_, siblingData) => siblingData?.blockType === 'voiceover',
         description: {
-          en: 'Custom made designs for your company',
-          nl: 'Speciale ontwerpen gemaakt voor jouw bedrijf',
+          en: '🔄 Synced with Special Sections settings - changes automatically sync',
+          nl: '🔄 Gesynchroniseerd met Speciale secties - wijzigingen worden automatisch doorgevoerd',
         },
       },
     },
@@ -135,8 +135,8 @@ export const pageBlocksField: Field = {
       admin: {
         condition: (_, siblingData) => siblingData?.blockType === 'linkToBlog',
         description: {
-          en: 'Choose the variant for this section',
-          nl: 'Kies de variant voor deze sectie',
+          en: '🔄 Synced with Content Section settings - changes automatically sync',
+          nl: '🔄 Gesynchroniseerd met Content sectie - wijzigingen worden automatisch doorgevoerd',
         },
       },
     },
