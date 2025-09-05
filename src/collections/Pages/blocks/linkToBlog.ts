@@ -23,22 +23,13 @@ export const linkToBlogBlock: Field = {
       },
       fields: [
         {
-          name: 'variantNotice',
-          type: 'ui',
-          admin: {
-            components: {
-              Field: '/components/admin/fields/VariantSyncNotice#VariantSyncNoticeContent',
-            },
-          },
-        },
-        {
           name: 'layout',
           type: 'select',
-          defaultValue: 'variant1',
           label: {
             en: 'Variant',
             nl: 'Variant',
           },
+          defaultValue: 'variant1',
           options: [
             {
               label: { en: 'Content variant 1', nl: 'Content variant 1' },
@@ -46,10 +37,7 @@ export const linkToBlogBlock: Field = {
             },
           ],
           admin: {
-            description: {
-              en: '🔄 Synced with Layout section - changes here update Layout automatically',
-              nl: '🔄 Gesynchroniseerd met Layout sectie - wijzigingen hier worden automatisch toegepast in Layout',
-            },
+            hidden: true, // Always hide since controlled in Layout
           },
         },
         {

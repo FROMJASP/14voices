@@ -26,15 +26,21 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
   const hero = page.hero || {};
   const heroWithRichText = hero as any;
 
-  const extractedTitle = heroWithRichText.titleRichText
-    ? extractTextFromLexical(heroWithRichText.titleRichText)
-    : hero.title || '';
-  const extractedDescription = heroWithRichText.descriptionRichText
-    ? extractTextFromLexical(heroWithRichText.descriptionRichText)
-    : hero.description || '';
+  // Check if title/description are already rich text (new structure) or need to check for legacy fields
+  const extractedTitle = heroWithRichText.title && typeof heroWithRichText.title === 'object'
+    ? extractTextFromLexical(heroWithRichText.title)  // New: title IS rich text
+    : heroWithRichText.titleRichText
+    ? extractTextFromLexical(heroWithRichText.titleRichText)  // Legacy: titleRichText field
+    : hero.title || '';  // Fallback to plain text
+  
+  const extractedDescription = heroWithRichText.description && typeof heroWithRichText.description === 'object'
+    ? extractTextFromLexical(heroWithRichText.description)  // New: description IS rich text
+    : heroWithRichText.descriptionRichText
+    ? extractTextFromLexical(heroWithRichText.descriptionRichText)  // Legacy: descriptionRichText field
+    : hero.description || '';  // Fallback to plain text
 
   // Extract hero image URL with multiple fallback strategies
-  let heroImageUrl = '/header-image.png'; // default fallback
+  let heroImageUrl: string | null = null; // No default fallback
 
   // First check for the virtual heroImageURL field (this is the most reliable)
   if ((hero as any).heroImageURL) {
@@ -44,8 +50,7 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
   else if (hero.heroImage) {
     if (typeof hero.heroImage === 'string') {
       // If it's just an ID (not populated), we can't use it directly
-      // The virtual field should have resolved this, but as a fallback
-      heroImageUrl = '/header-image.png';
+      heroImageUrl = null; // No fallback image
     } else if (typeof hero.heroImage === 'object') {
       const heroImageObj = hero.heroImage as any;
 

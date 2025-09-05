@@ -1,6 +1,7 @@
 import type { Field } from 'payload';
 
-export const pageBlocksField: Field = {
+export const pageBlocksField: Field[] = [
+  {
   name: 'pageBlocks',
   type: 'array',
   label: {
@@ -19,14 +20,32 @@ export const pageBlocksField: Field = {
   },
   admin: {
     description: {
-      en: 'Control which blocks appear on the page and in what order',
-      nl: 'Bepaal welke blokken op de pagina verschijnen en in welke volgorde',
+      en: 'Control which blocks appear on the page and in what order. Note: You can only have one active block of each type.',
+      nl: 'Bepaal welke blokken op de pagina verschijnen en in welke volgorde. Let op: Je kunt maar één actief blok van elk type hebben.',
     },
     condition: (data) => data.slug === 'home' || data.slug === 'blog',
     initCollapsed: false,
     components: {
       RowLabel: '/components/admin/cells/PageBlockLabel#PageBlockLabel',
     },
+  },
+  validate: (value, { t }) => {
+    if (!Array.isArray(value)) return true;
+    
+    // Check for duplicate enabled blocks of the same type
+    const enabledBlockTypes = value
+      .filter((block: any) => block.enabled !== false)
+      .map((block: any) => block.blockType);
+    
+    const duplicates = enabledBlockTypes.filter((type: string, index: number) => 
+      enabledBlockTypes.indexOf(type) !== index
+    );
+    
+    if (duplicates.length > 0) {
+      return `You can only have one active block of each type. Duplicate: ${duplicates[0]}`;
+    }
+    
+    return true;
   },
   fields: [
     {
@@ -89,8 +108,8 @@ export const pageBlocksField: Field = {
       admin: {
         condition: (_, siblingData) => siblingData?.blockType === 'hero',
         description: {
-          en: '🔄 Synced with Hero Section settings - changes here update Hero Section automatically',
-          nl: '🔄 Gesynchroniseerd met Hero sectie instellingen - wijzigingen worden automatisch doorgevoerd',
+          en: 'Choose the visual style for the Hero section',
+          nl: 'Kies de visuele stijl voor de Hero sectie',
         },
       },
     },
@@ -112,8 +131,8 @@ export const pageBlocksField: Field = {
       admin: {
         condition: (_, siblingData) => siblingData?.blockType === 'voiceover',
         description: {
-          en: '🔄 Synced with Special Sections settings - changes automatically sync',
-          nl: '🔄 Gesynchroniseerd met Speciale secties - wijzigingen worden automatisch doorgevoerd',
+          en: 'Choose the visual style for the Special section',
+          nl: 'Kies de visuele stijl voor de Speciale sectie',
         },
       },
     },
@@ -135,8 +154,8 @@ export const pageBlocksField: Field = {
       admin: {
         condition: (_, siblingData) => siblingData?.blockType === 'linkToBlog',
         description: {
-          en: '🔄 Synced with Content Section settings - changes automatically sync',
-          nl: '🔄 Gesynchroniseerd met Content sectie - wijzigingen worden automatisch doorgevoerd',
+          en: 'Choose the visual style for the Content section',
+          nl: 'Kies de visuele stijl voor de Content sectie',
         },
       },
     },
@@ -146,4 +165,5 @@ export const pageBlocksField: Field = {
     { blockType: 'linkToBlog', enabled: true, contentVariant: 'variant1' },
     { blockType: 'voiceover', enabled: true, voiceoverVariant: 'variant1' },
   ],
-};
+},
+];

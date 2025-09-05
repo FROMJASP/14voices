@@ -71,7 +71,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
   const titleParts = parseTitle(hero.title);
 
   // Handle image URL extraction - should already be resolved by transformHeroDataForHomepage
-  const imageUrl = hero.heroImage || '/header-image.png';
+  const imageUrl = hero.heroImage;
 
   return (
     <section className="hero bg-background px-6 py-10">
@@ -251,28 +251,97 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
               >
                 {hero.stats.map((stat, index) => (
                   <div key={index} className="stat-item text-left flex-1 sm:flex-none">
-                    <div
-                      className="stat-number leading-none mb-[6px]"
-                      style={{
-                        color: 'var(--text-primary)',
-                        fontFamily: 'var(--font-bricolage)',
-                        fontWeight: '800',
-                        fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', // Responsive font size
-                      }}
-                    >
-                      {stat.number}
-                    </div>
-                    <div
-                      className="stat-label"
-                      style={{
-                        color: 'var(--text-secondary)',
-                        fontWeight: '500',
-                        fontSize: 'clamp(0.7rem, 2vw, 0.813rem)', // Responsive font size
-                        lineHeight: '1.3',
-                      }}
-                    >
-                      {stat.label}
-                    </div>
+                    {stat.link ? (
+                      <Link 
+                        href={stat.link} 
+                        className="block group"
+                        style={{
+                          textDecoration: 'none',
+                          transition: 'transform 0.2s ease',
+                          ...(stat.hoverEffect !== false ? {
+                            transform: 'scale(1)',
+                          } : {}),
+                        }}
+                        onMouseEnter={(e) => {
+                          if (stat.hoverEffect !== false) {
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (stat.hoverEffect !== false) {
+                            e.currentTarget.style.transform = 'scale(1)';
+                          }
+                        }}
+                      >
+                        <div
+                          className="stat-number leading-none mb-[6px]"
+                          style={{
+                            color: 'var(--text-primary)',
+                            fontFamily: 'var(--font-bricolage)',
+                            fontWeight: '800',
+                            fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', // Responsive font size
+                          }}
+                        >
+                          {stat.value || stat.number}
+                        </div>
+                        <div
+                          className="stat-label"
+                          style={{
+                            color: 'var(--text-secondary)',
+                            fontFamily: 'var(--font-genkei)',
+                            fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', // Responsive font size
+                            letterSpacing: '0.025em',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {stat.label || stat.text}
+                        </div>
+                      </Link>
+                    ) : (
+                      <div 
+                        className="block"
+                        style={{
+                          transition: 'transform 0.2s ease',
+                          ...(stat.hoverEffect !== false ? {
+                            transform: 'scale(1)',
+                          } : {}),
+                        }}
+                        onMouseEnter={(e) => {
+                          if (stat.hoverEffect !== false) {
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (stat.hoverEffect !== false) {
+                            e.currentTarget.style.transform = 'scale(1)';
+                          }
+                        }}
+                      >
+                        <div
+                          className="stat-number leading-none mb-[6px]"
+                          style={{
+                            color: 'var(--text-primary)',
+                            fontFamily: 'var(--font-bricolage)',
+                            fontWeight: '800',
+                            fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', // Responsive font size
+                          }}
+                        >
+                          {stat.value || stat.number}
+                        </div>
+                        <div
+                          className="stat-label"
+                          style={{
+                            color: 'var(--text-secondary)',
+                            fontFamily: 'var(--font-genkei)',
+                            fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', // Responsive font size
+                            letterSpacing: '0.025em',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {stat.label || stat.text}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </motion.div>
@@ -296,16 +365,47 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
               {/* Gradient overlay */}
               <div className="image-gradient absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent z-10 pointer-events-none" />
 
-              {/* Hero Image */}
-              <Image
-                src={imageUrl}
-                alt="Professional voice-over artist"
-                fill
-                className="object-cover scale-100"
-                style={{ transformOrigin: 'center' }}
-                priority
-                sizes="(max-width: 639px) 0px, (max-width: 767px) 280px, (max-width: 1023px) 380px, 420px"
-              />
+              {/* Hero Image or Skeleton */}
+              {imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt="Professional voice-over artist"
+                  fill
+                  className="object-cover scale-100"
+                  style={{ transformOrigin: 'center' }}
+                  priority
+                  sizes="(max-width: 639px) 0px, (max-width: 767px) 280px, (max-width: 1023px) 380px, 420px"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {/* Skeleton placeholder */}
+                  <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 animate-pulse">
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-4 p-8">
+                      <svg
+                        className="w-24 h-24 text-gray-400 dark:text-gray-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                          No image uploaded
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                          Add an image in the admin panel
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         </div>

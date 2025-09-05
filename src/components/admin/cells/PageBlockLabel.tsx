@@ -4,95 +4,82 @@ import React from 'react';
 
 interface PageBlockLabelProps {
   data?: any;
+  path?: string;
+  index?: number;
 }
 
-export const PageBlockLabel: React.FC<PageBlockLabelProps> = ({ data }) => {
+export const PageBlockLabel: React.FC<PageBlockLabelProps> = ({ data, index }) => {
+  // If no data yet, show placeholder
+  if (!data || !data.blockType) {
+    return (
+      <span style={{ color: '#9CA3AF', fontSize: '14px' }}>
+        Block {typeof index === 'number' ? index + 1 : ''}
+      </span>
+    );
+  }
+
   const blockLabels = {
-    hero: { en: 'Hero Section', nl: 'Hero Section' },
-    voiceover: { en: 'Special sections', nl: 'Speciale secties' },
-    linkToBlog: { en: 'Content', nl: 'Content' },
+    hero: 'Hero Section',
+    voiceover: 'Speciale secties',
+    linkToBlog: 'Content',
   };
 
-  const variantLabels = {
-    variant1: '1',
-    variant2: '2',
-  };
-
-  const label = blockLabels[data?.blockType as keyof typeof blockLabels] || {
-    en: 'Block',
-    nl: 'Blok',
-  };
+  const blockLabel = blockLabels[data.blockType as keyof typeof blockLabels] || 'Block';
   const enabled = data?.enabled !== false;
 
   // Get the variant based on block type
-  let variant = '';
-  let variantLabel = '';
-
-  if (data?.blockType === 'hero' && data?.heroVariant) {
-    variant = data.heroVariant;
-    variantLabel = variantLabels[variant as keyof typeof variantLabels] || variant;
-  } else if (data?.blockType === 'voiceover' && data?.voiceoverVariant) {
-    variant = data.voiceoverVariant;
-    variantLabel = variantLabels[variant as keyof typeof variantLabels] || variant;
-  } else if (data?.blockType === 'linkToBlog' && data?.contentVariant) {
-    variant = data.contentVariant;
-    variantLabel = variantLabels[variant as keyof typeof variantLabels] || variant;
+  let variantText = '';
+  
+  if (data.blockType === 'hero' && data.heroVariant) {
+    variantText = data.heroVariant === 'variant1' ? 'Variant 1' : 'Variant 2';
+  } else if (data.blockType === 'voiceover' && data.voiceoverVariant) {
+    variantText = data.voiceoverVariant === 'variant1' ? 'Variant 1' : 'Variant 2';
+  } else if (data.blockType === 'linkToBlog' && data.contentVariant) {
+    variantText = data.contentVariant === 'variant1' ? 'Variant 1' : 'Variant 2';
   }
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {/* Main block type label */}
       <span
         style={{
           fontSize: '14px',
-          fontWeight: 500,
-          color: enabled ? 'inherit' : '#9CA3AF',
+          fontWeight: 600,
+          color: enabled ? 'var(--theme-text)' : 'var(--theme-text-secondary)',
+          textDecoration: !enabled ? 'line-through' : 'none',
         }}
       >
-        {label.en}
+        {blockLabel}
       </span>
-      {variantLabel && (
-        <>
-          <span
-            style={{
-              fontSize: '12px',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              backgroundColor: 'var(--theme-info-100)',
-              color: 'var(--theme-info-800)',
-              fontWeight: 500,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              style={{ flexShrink: 0 }}
-            >
-              <title>Synced with block settings</title>
-              <path
-                d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"
-                transform="rotate(180 12 12)"
-              />
-            </svg>
-            Variant {variantLabel}
-          </span>
-        </>
+      
+      {/* Variant badge */}
+      {variantText && (
+        <span
+          style={{
+            fontSize: '11px',
+            padding: '2px 6px',
+            borderRadius: '3px',
+            backgroundColor: enabled ? 'var(--theme-elevation-100)' : 'var(--theme-elevation-50)',
+            color: enabled ? 'var(--theme-text-secondary)' : 'var(--theme-text-tertiary)',
+            fontWeight: 500,
+            border: '1px solid var(--theme-elevation-150)',
+          }}
+        >
+          {variantText}
+        </span>
       )}
+      
+      {/* Disabled indicator */}
       {!enabled && (
         <span
           style={{
-            fontSize: '12px',
-            color: '#9CA3AF',
+            fontSize: '11px',
+            color: 'var(--theme-warning-600)',
             fontStyle: 'italic',
+            marginLeft: 'auto',
           }}
         >
-          (hidden)
+          Uitgeschakeld
         </span>
       )}
     </div>

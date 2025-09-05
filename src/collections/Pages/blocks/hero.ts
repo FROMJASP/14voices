@@ -20,22 +20,13 @@ export const heroBlock: Field = {
       type: 'group',
       fields: [
         {
-          name: 'variantNotice',
-          type: 'ui',
-          admin: {
-            components: {
-              Field: '/components/admin/fields/VariantSyncNotice#VariantSyncNoticeHero',
-            },
-          },
-        },
-        {
           name: 'layout',
           type: 'select',
-          defaultValue: 'variant1',
           label: {
             en: 'Variant',
             nl: 'Variant',
           },
+          defaultValue: 'variant1',
           options: [
             {
               label: { en: 'Hero variant 1', nl: 'Hero variant 1' },
@@ -47,10 +38,12 @@ export const heroBlock: Field = {
             },
           ],
           admin: {
-            description: {
-              en: '🔄 Synced with Layout section - changes here update Layout automatically',
-              nl: '🔄 Gesynchroniseerd met Layout sectie - wijzigingen hier worden automatisch toegepast in Layout',
+            condition: (data) => {
+              // Get the variant from pageBlocks
+              const heroBlock = data.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              return false; // Always hide this field since variant is controlled in Layout
             },
+            hidden: true,
           },
         },
         // Legacy type field - hidden but maintained for backwards compatibility
@@ -70,7 +63,11 @@ export const heroBlock: Field = {
             nl: 'Processtappen',
           },
           admin: {
-            condition: (_data, siblingData) => siblingData?.layout === 'variant1',
+            condition: (data) => {
+              // Check the pageBlocks array for which hero variant is selected
+              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              return heroBlock?.heroVariant === 'variant1';
+            },
             initCollapsed: true,
           },
           fields: [
@@ -116,7 +113,11 @@ export const heroBlock: Field = {
             nl: 'Badge',
           },
           admin: {
-            condition: (_data, siblingData) => siblingData?.layout === 'variant2',
+            condition: (data) => {
+              // Check the pageBlocks array for which hero variant is selected
+              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              return heroBlock?.heroVariant === 'variant2';
+            },
             initCollapsed: true,
           },
           fields: [
@@ -323,7 +324,11 @@ export const heroBlock: Field = {
             nl: 'Ondertitel (Oud)',
           },
           admin: {
-            condition: (_data, siblingData) => siblingData?.layout === 'variant2',
+            condition: (data) => {
+              // Check the pageBlocks array for which hero variant is selected
+              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              return heroBlock?.heroVariant === 'variant2';
+            },
             hidden: true,
           },
         },
@@ -336,7 +341,11 @@ export const heroBlock: Field = {
             nl: 'Ondertitel',
           },
           admin: {
-            condition: (_data, siblingData) => siblingData?.layout === 'variant2',
+            condition: (data) => {
+              // Check the pageBlocks array for which hero variant is selected
+              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              return heroBlock?.heroVariant === 'variant2';
+            },
             description: {
               en: 'Subtitle with formatting. Use the <code> button to highlight text in brand color.',
               nl: 'Ondertitel met opmaak. Gebruik de <code> knop om tekst in merkkleur te markeren.',
@@ -370,7 +379,11 @@ export const heroBlock: Field = {
             nl: 'Beschrijving',
           },
           admin: {
-            condition: (_data, siblingData) => siblingData?.layout === 'variant1',
+            condition: (data) => {
+              // Check the pageBlocks array for which hero variant is selected
+              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              return heroBlock?.heroVariant === 'variant1';
+            },
             description: {
               en: 'Hero description with formatting. Use the <code> button to highlight text in brand color. You can also use bold, italic, and links.',
               nl: 'Hero beschrijving met opmaak. Gebruik de <code> knop om tekst in merkkleur te markeren. Je kunt ook vet, cursief en links gebruiken.',
@@ -386,7 +399,11 @@ export const heroBlock: Field = {
             nl: 'Hero Afbeelding',
           },
           admin: {
-            condition: (_data, siblingData) => siblingData?.layout === 'variant1',
+            condition: (data) => {
+              // Check the pageBlocks array for which hero variant is selected
+              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              return heroBlock?.heroVariant === 'variant1';
+            },
             description: {
               en: 'Main image displayed in the oval-shaped container on the right (recommended: high-quality portrait photo, minimum 400x500px)',
               nl: 'Hoofdafbeelding weergegeven in de ovaalvormige container rechts (aanbevolen: hoogwaardige portretfoto, minimaal 400x500px)',
@@ -401,10 +418,10 @@ export const heroBlock: Field = {
             nl: 'Primaire Knop',
           },
           admin: {
-            condition: (_data, siblingData) =>
-              siblingData?.layout === 'variant1' ||
-              siblingData?.layout === 'variant2' ||
-              siblingData?.type === 'homepage',
+            condition: (data) => {
+              // Show buttons if there's any hero block enabled
+              return data?.pageBlocks?.some((b: any) => b.blockType === 'hero' && b.enabled);
+            },
             initCollapsed: true,
           },
           fields: [
@@ -600,10 +617,10 @@ export const heroBlock: Field = {
             nl: 'Secundaire Knop',
           },
           admin: {
-            condition: (_data, siblingData) =>
-              siblingData?.layout === 'variant1' ||
-              siblingData?.layout === 'variant2' ||
-              siblingData?.type === 'homepage',
+            condition: (data) => {
+              // Show buttons if there's any hero block enabled
+              return data?.pageBlocks?.some((b: any) => b.blockType === 'hero' && b.enabled);
+            },
             initCollapsed: true,
           },
           fields: [
@@ -838,7 +855,11 @@ export const heroBlock: Field = {
             nl: 'Hero Statistieken',
           },
           admin: {
-            condition: (_data, siblingData) => siblingData?.layout === 'variant1',
+            condition: (data) => {
+              // Check the pageBlocks array for which hero variant is selected
+              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              return heroBlock?.heroVariant === 'variant1';
+            },
             initCollapsed: true,
           },
           fields: [
@@ -900,8 +921,7 @@ export const heroBlock: Field = {
             nl: 'Call to Action',
           },
           admin: {
-            condition: (_data, siblingData) =>
-              siblingData?.type !== 'none' && siblingData?.type !== 'homepage',
+            condition: () => false, // Legacy field - always hide
           },
           fields: [
             {

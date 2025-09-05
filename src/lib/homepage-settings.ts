@@ -15,10 +15,14 @@ export interface HomepageSettings {
       text: string;
       url: string;
     } | null;
-    heroImage: string;
+    heroImage: string | null;
     stats?: Array<{
-      number: string;
-      label: string;
+      number?: string;  // Legacy field
+      value?: string;   // New field  
+      label?: string;   // Legacy field
+      text?: string;    // Alternative field
+      link?: string;    // Optional link
+      hoverEffect?: boolean;  // Optional hover effect
     }>;
   };
 }
@@ -85,7 +89,7 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
         heroImage:
           typeof homePage.hero.heroImage === 'object' && homePage.hero.heroImage?.url
             ? homePage.hero.heroImage.url
-            : '/header-image.png',
+            : null,  // No default image
         stats: homePage.hero.stats || [],
       },
     };
@@ -122,7 +126,7 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
           text: 'Hoe wij werken',
           url: '/hoe-het-werkt',
         },
-        heroImage: '/header-image.png',
+        heroImage: null,  // No default image
         stats: [
           { number: '14', label: 'Stemacteurs' },
           { number: '<48u', label: 'Snelle levering' },

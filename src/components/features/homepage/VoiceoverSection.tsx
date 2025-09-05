@@ -15,7 +15,7 @@ interface VoiceoverSectionProps {
 
 export function VoiceoverSection({
   initialVoiceovers,
-  title = 'Onze Stemacteurs',
+  title,
 }: VoiceoverSectionProps) {
   // Use cache store
   const {

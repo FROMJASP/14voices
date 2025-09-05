@@ -6,5 +6,7 @@ export { linkToBlogBlock } from './blocks/linkToBlog';
 // Field configurations
 export { basicContentFields } from './fields/content';
 export { pageBlocksField } from './fields/pageBlocks';
+export { pageBlocksSimpleField } from './fields/pageBlocksSimple';
+export { pageBlocksComprehensiveField } from './fields/pageBlocksComprehensive';
 export { seoTab } from './fields/seo';
 export { settingsTab } from './fields/settings';

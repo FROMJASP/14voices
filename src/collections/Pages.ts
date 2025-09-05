@@ -2,14 +2,11 @@ import type { CollectionConfig } from 'payload';
 import { getCollectionLabels } from '../i18n';
 import { pageEditorConfig } from '../fields/lexical/pageEditorConfig';
 import {
-  heroBlock,
-  voiceoverBlock,
-  linkToBlogBlock,
   basicContentFields,
-  pageBlocksField,
   seoTab,
   settingsTab,
 } from './Pages/index';
+import { pageBlocks } from './Pages/blocks';
 
 const labels = getCollectionLabels('pages');
 
@@ -94,20 +91,30 @@ const Pages: CollectionConfig = {
           },
           fields: [
             ...basicContentFields,
-            pageBlocksField,
+            // New Payload native blocks field - handles both layout AND content!
             {
-              name: 'editBlocksTitle',
-              type: 'ui',
-              admin: {
-                condition: (data) => data.slug === 'home' || data.slug === 'blog',
-                components: {
-                  Field: '/components/admin/fields/EditBlocksTitle#EditBlocksTitle',
+              name: 'layout',
+              type: 'blocks',
+              label: {
+                en: 'Page Layout',
+                nl: 'Pagina Layout',
+              },
+              labels: {
+                singular: {
+                  en: 'Block',
+                  nl: 'Blok',
+                },
+                plural: {
+                  en: 'Blocks',
+                  nl: 'Blokken',
                 },
               },
+              blocks: pageBlocks,
+              admin: {
+                condition: (data) => data.slug === 'home' || data.slug === 'blog',
+                initCollapsed: false,
+              },
             },
-            heroBlock,
-            voiceoverBlock,
-            linkToBlogBlock,
             {
               name: 'content',
               type: 'richText',
@@ -188,48 +195,119 @@ const Pages: CollectionConfig = {
           data.locked = true;
         }
 
-        // Sync variant selections between pageBlocks and individual block sections
-        if (data.pageBlocks && Array.isArray(data.pageBlocks)) {
-          data.pageBlocks.forEach((block) => {
-            // Sync hero variant
-            if (block.blockType === 'hero' && block.heroVariant) {
-              if (!data.hero) data.hero = {};
-              data.hero.layout = block.heroVariant;
-            }
-            // Sync voiceover variant
-            if (block.blockType === 'voiceover' && block.voiceoverVariant) {
-              if (!data.voiceover) data.voiceover = {};
-              data.voiceover.variant = block.voiceoverVariant;
-            }
-            // Sync linkToBlog variant
-            if (block.blockType === 'linkToBlog' && block.contentVariant) {
-              if (!data.linkToBlog) data.linkToBlog = {};
-              data.linkToBlog.layout = block.contentVariant;
-            }
-          });
-        }
-
-        // Reverse sync: update pageBlocks when individual sections are changed
-        if (data.hero?.layout && data.pageBlocks) {
-          const heroBlock = data.pageBlocks.find((b: any) => b.blockType === 'hero');
-          if (heroBlock) {
-            heroBlock.heroVariant = data.hero.layout;
-          }
-        }
-        if (data.voiceover?.variant && data.pageBlocks) {
-          const voiceoverBlock = data.pageBlocks.find((b: any) => b.blockType === 'voiceover');
-          if (voiceoverBlock) {
-            voiceoverBlock.voiceoverVariant = data.voiceover.variant;
-          }
-        }
-        if (data.linkToBlog?.layout && data.pageBlocks) {
-          const linkToBlogBlock = data.pageBlocks.find((b: any) => b.blockType === 'linkToBlog');
-          if (linkToBlogBlock) {
-            linkToBlogBlock.contentVariant = data.linkToBlog.layout;
-          }
-        }
-
         return data;
+      },
+    ],
+    afterRead: [
+      async ({ doc }) => {
+        // Migrate from old structure to new blocks structure
+        if ((doc.slug === 'home' || doc.slug === 'blog') && !doc.layout?.length) {
+          const migratedLayout = [];
+          
+          // Check if we have old pageBlocks structure
+          if (doc.pageBlocks?.length) {
+            // Migrate from old pageBlocks to new layout
+            doc.pageBlocks.forEach((block: any) => {
+              if (block.blockType === 'hero' && block.enabled) {
+                const variant = block.heroVariant || doc.hero?.layout || 'variant1';
+                migratedLayout.push({
+                  blockType: variant === 'variant1' ? 'hero-v1' : 'hero-v2',
+                  // Migrate hero content if it exists
+                  ...(doc.hero ? {
+                    title: doc.hero.title,
+                    titleRichText: doc.hero.titleRichText,
+                    description: doc.hero.description,
+                    descriptionRichText: doc.hero.descriptionRichText,
+                    image: doc.hero.image,
+                    cta: doc.hero.cta,
+                    // Variant 1 specific
+                    ...(variant === 'variant1' ? {
+                      processSteps: doc.hero.processSteps || [],
+                      stats: doc.hero.stats || [],
+                    } : {}),
+                    // Variant 2 specific
+                    ...(variant === 'variant2' ? {
+                      badge: doc.hero.badge,
+                      subtitle: doc.hero.subtitle,
+                      subtitleRichText: doc.hero.subtitleRichText,
+                    } : {}),
+                  } : {}),
+                });
+              }
+              
+              if (block.blockType === 'linkToBlog' && block.enabled) {
+                migratedLayout.push({
+                  blockType: 'content-v1',
+                  enabled: block.enabled !== false,
+                  ...(doc.linkToBlog ? {
+                    title: doc.linkToBlog.title,
+                    description: doc.linkToBlog.description,
+                    links: doc.linkToBlog.links || [],
+                  } : {}),
+                });
+              }
+              
+              if (block.blockType === 'voiceover' && block.enabled) {
+                migratedLayout.push({
+                  blockType: 'voiceover-v1',
+                  ...(doc.voiceover ? {
+                    title: doc.voiceover.title,
+                    description: doc.voiceover.description,
+                    showcase: doc.voiceover.showcase !== false,
+                  } : {}),
+                });
+              }
+            });
+          } else if (doc.hero || doc.linkToBlog || doc.voiceover) {
+            // Migrate from original structure (no pageBlocks)
+            if (doc.hero) {
+              const variant = doc.hero.layout || 'variant1';
+              migratedLayout.push({
+                blockType: variant === 'variant1' ? 'hero-v1' : 'hero-v2',
+                title: doc.hero.title,
+                titleRichText: doc.hero.titleRichText,
+                description: doc.hero.description,
+                descriptionRichText: doc.hero.descriptionRichText,
+                image: doc.hero.image,
+                cta: doc.hero.cta,
+                ...(variant === 'variant1' ? {
+                  processSteps: doc.hero.processSteps || [],
+                  stats: doc.hero.stats || [],
+                } : {}),
+                ...(variant === 'variant2' ? {
+                  badge: doc.hero.badge,
+                  subtitle: doc.hero.subtitle,
+                  subtitleRichText: doc.hero.subtitleRichText,
+                } : {}),
+              });
+            }
+            
+            if (doc.linkToBlog) {
+              migratedLayout.push({
+                blockType: 'content-v1',
+                enabled: doc.linkToBlog.enabled !== false,
+                title: doc.linkToBlog.title,
+                description: doc.linkToBlog.description,
+                links: doc.linkToBlog.links || [],
+              });
+            }
+            
+            if (doc.voiceover) {
+              migratedLayout.push({
+                blockType: 'voiceover-v1',
+                title: doc.voiceover.title,
+                description: doc.voiceover.description,
+                showcase: doc.voiceover.showcase !== false,
+              });
+            }
+          }
+          
+          if (migratedLayout.length > 0) {
+            doc.layout = migratedLayout;
+          }
+        }
+        
+        return doc;
       },
     ],
   },

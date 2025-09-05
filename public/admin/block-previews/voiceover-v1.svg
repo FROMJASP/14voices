@@ -1,0 +1,30 @@
+<svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="120" fill="#f5f5f5"/>
+  <!-- Title -->
+  <rect x="60" y="10" width="80" height="6" rx="3" fill="#333"/>
+  <!-- Voice cards grid -->
+  <rect x="15" y="25" width="40" height="40" rx="4" fill="#e0e0e0"/>
+  <circle cx="35" cy="45" r="10" fill="#ccc"/>
+  
+  <rect x="60" y="25" width="40" height="40" rx="4" fill="#e0e0e0"/>
+  <circle cx="80" cy="45" r="10" fill="#ccc"/>
+  
+  <rect x="105" y="25" width="40" height="40" rx="4" fill="#e0e0e0"/>
+  <circle cx="125" cy="45" r="10" fill="#ccc"/>
+  
+  <rect x="150" y="25" width="40" height="40" rx="4" fill="#e0e0e0"/>
+  <circle cx="170" cy="45" r="10" fill="#ccc"/>
+  
+  <!-- Second row -->
+  <rect x="15" y="70" width="40" height="40" rx="4" fill="#e0e0e0"/>
+  <circle cx="35" cy="90" r="10" fill="#ccc"/>
+  
+  <rect x="60" y="70" width="40" height="40" rx="4" fill="#e0e0e0"/>
+  <circle cx="80" cy="90" r="10" fill="#ccc"/>
+  
+  <rect x="105" y="70" width="40" height="40" rx="4" fill="#e0e0e0"/>
+  <circle cx="125" cy="90" r="10" fill="#ccc"/>
+  
+  <rect x="150" y="70" width="40" height="40" rx="4" fill="#e0e0e0"/>
+  <circle cx="170" cy="90" r="10" fill="#ccc"/>
+</svg>
