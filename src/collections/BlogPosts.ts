@@ -374,7 +374,7 @@ const BlogPosts: CollectionConfig = {
             {
               name: 'category',
               type: 'relationship',
-              relationTo: 'categories' as const,
+              relationTo: 'categories' as any,
               label: {
                 en: 'Category',
                 nl: 'Categorie',
