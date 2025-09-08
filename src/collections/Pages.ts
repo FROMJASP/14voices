@@ -108,7 +108,7 @@ const Pages: CollectionConfig = {
               blocks: pageBlocks,
               admin: {
                 condition: (data) => data.slug === 'home' || data.slug === 'blog',
-                initCollapsed: false,
+                initCollapsed: true,
               },
             },
             {
