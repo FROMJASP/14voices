@@ -85,7 +85,7 @@ export function BlogSection1({
     let isCancelled = false;
 
     const fetchData = async () => {
-      console.log('BlogSection1: Starting fetch...');
+      // Starting fetch...
       setLoading(true);
 
       try {
@@ -98,7 +98,7 @@ export function BlogSection1({
         }
 
         if (inIframe) {
-          console.log('BlogSection1: Detected iframe/preview mode, skipping fetch');
+          // Detected iframe/preview mode, skipping fetch
           setIsPreview(true);
           setPosts([]);
           setCategories([]);
@@ -125,12 +125,12 @@ export function BlogSection1({
         }
 
         const postsData = await postsResponse.json();
-        console.log('BlogSection1: Posts data received:', postsData);
+        // Posts data received
 
         if (isCancelled) return;
 
         const fetchedPosts = postsData.docs || [];
-        console.log('BlogSection1: Setting posts:', fetchedPosts.length, 'posts');
+        // Setting posts
         setPosts(fetchedPosts);
 
         if (showCategories) {
@@ -141,7 +141,7 @@ export function BlogSection1({
                 'Content-Type': 'application/json',
               },
             });
-            console.log('Categories response status:', categoriesResponse.status);
+            // Categories response received
             if (categoriesResponse.ok) {
               const categoriesData = await categoriesResponse.json();
 
@@ -213,10 +213,10 @@ export function BlogSection1({
         }
       } finally {
         if (!isCancelled) {
-          console.log('BlogSection1: Fetch complete, setting loading to false');
+          // Fetch complete, setting loading to false
           setLoading(false);
         } else {
-          console.log('BlogSection1: Fetch was cancelled');
+          // Fetch was cancelled
         }
       }
     };
