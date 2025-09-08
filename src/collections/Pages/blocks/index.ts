@@ -10,6 +10,9 @@ import { heroSubtitleConfig } from '@/fields/lexical/heroSubtitleConfig';
 export const HeroV1Block: Block = {
   slug: 'hero-v1',
   imageURL: '/admin/block-previews/hero-v1.svg',
+  admin: {
+    // initCollapsed: true, // Not supported in current Payload version
+  },
   labels: {
     singular: {
       en: 'Hero - Text with Image v1',
@@ -386,6 +389,9 @@ export const HeroV1Block: Block = {
 export const HeroV2Block: Block = {
   slug: 'hero-v2',
   imageURL: '/admin/block-previews/hero-v2.svg',
+  admin: {
+    // initCollapsed: true, // Not supported in current Payload version
+  },
   labels: {
     singular: {
       en: 'Hero - Center v1',
@@ -568,6 +574,50 @@ export const HeroV2Block: Block = {
         },
       ],
     },
+    {
+      name: 'paddingTop',
+      type: 'select',
+      label: {
+        en: 'Padding Top',
+        nl: 'Ruimte Boven',
+      },
+      defaultValue: 'medium',
+      options: [
+        { label: { en: 'None', nl: 'Geen' }, value: 'none' },
+        { label: { en: 'Small', nl: 'Klein' }, value: 'small' },
+        { label: { en: 'Medium', nl: 'Middel' }, value: 'medium' },
+        { label: { en: 'Large', nl: 'Groot' }, value: 'large' },
+        { label: { en: 'Extra Large', nl: 'Extra Groot' }, value: 'xlarge' },
+      ],
+      admin: {
+        description: {
+          en: 'Space above the hero section',
+          nl: 'Ruimte boven de hero sectie',
+        },
+      },
+    },
+    {
+      name: 'paddingBottom',
+      type: 'select',
+      label: {
+        en: 'Padding Bottom',
+        nl: 'Ruimte Onder',
+      },
+      defaultValue: 'medium',
+      options: [
+        { label: { en: 'None', nl: 'Geen' }, value: 'none' },
+        { label: { en: 'Small', nl: 'Klein' }, value: 'small' },
+        { label: { en: 'Medium', nl: 'Middel' }, value: 'medium' },
+        { label: { en: 'Large', nl: 'Groot' }, value: 'large' },
+        { label: { en: 'Extra Large', nl: 'Extra Groot' }, value: 'xlarge' },
+      ],
+      admin: {
+        description: {
+          en: 'Space below the hero section',
+          nl: 'Ruimte onder de hero sectie',
+        },
+      },
+    },
   ],
 };
 
@@ -577,6 +627,9 @@ export const HeroV2Block: Block = {
 export const ContentV1Block: Block = {
   slug: 'content-v1',
   imageURL: '/admin/block-previews/content-v1.svg',
+  admin: {
+    // initCollapsed: true, // Not supported in current Payload version
+  },
   labels: {
     singular: {
       en: 'Content v1',
@@ -724,6 +777,9 @@ export const ContentV1Block: Block = {
 export const VoiceoverV1Block: Block = {
   slug: 'voiceover-v1',
   imageURL: '/admin/block-previews/voiceover-v1.svg',
+  admin: {
+    // initCollapsed: true, // Not supported in current Payload version
+  },
   labels: {
     singular: {
       en: '14v Voiceover Cards v1',
@@ -763,6 +819,9 @@ export const VoiceoverV1Block: Block = {
 export const BlogSection1Block: Block = {
   slug: 'blog-section-1',
   imageURL: '/admin/block-previews/blog-section-1.svg',
+  admin: {
+    // initCollapsed: true, // Not supported in current Payload version
+  },
   labels: {
     singular: {
       en: 'Blog Section 1',
@@ -836,6 +895,127 @@ export const BlogSection1Block: Block = {
         },
       },
     },
+    {
+      name: 'paddingTop',
+      type: 'select',
+      label: {
+        en: 'Padding Top',
+        nl: 'Ruimte Boven',
+      },
+      defaultValue: 'medium',
+      options: [
+        { label: { en: 'None', nl: 'Geen' }, value: 'none' },
+        { label: { en: 'Small', nl: 'Klein' }, value: 'small' },
+        { label: { en: 'Medium', nl: 'Middel' }, value: 'medium' },
+        { label: { en: 'Large', nl: 'Groot' }, value: 'large' },
+        { label: { en: 'Extra Large', nl: 'Extra Groot' }, value: 'xlarge' },
+      ],
+      admin: {
+        description: {
+          en: 'Space above the blog section',
+          nl: 'Ruimte boven de blog sectie',
+        },
+      },
+    },
+    {
+      name: 'paddingBottom',
+      type: 'select',
+      label: {
+        en: 'Padding Bottom',
+        nl: 'Ruimte Onder',
+      },
+      defaultValue: 'medium',
+      options: [
+        { label: { en: 'None', nl: 'Geen' }, value: 'none' },
+        { label: { en: 'Small', nl: 'Klein' }, value: 'small' },
+        { label: { en: 'Medium', nl: 'Middel' }, value: 'medium' },
+        { label: { en: 'Large', nl: 'Groot' }, value: 'large' },
+        { label: { en: 'Extra Large', nl: 'Extra Groot' }, value: 'xlarge' },
+      ],
+      admin: {
+        description: {
+          en: 'Space below the blog section',
+          nl: 'Ruimte onder de blog sectie',
+        },
+      },
+    },
+  ],
+};
+
+/**
+ * Blog Post Header Block
+ * Shows the blog post title, author, date, and banner image
+ */
+export const BlogPostHeaderBlock: Block = {
+  slug: 'blog-post-header',
+  imageURL: '/admin/block-previews/blog-post-header.svg',
+  admin: {
+    // initCollapsed: true, // Not supported in current Payload version
+  },
+  labels: {
+    singular: {
+      en: 'Blog Post Header',
+      nl: 'Blogpost Header',
+    },
+    plural: {
+      en: 'Blog Post Headers',
+      nl: 'Blogpost Headers',
+    },
+  },
+  fields: [
+    {
+      name: 'title',
+      type: 'text',
+      label: {
+        en: 'Title Override (optional)',
+        nl: 'Titel Overschrijven (optioneel)',
+      },
+      admin: {
+        description: {
+          en: 'Leave empty to use the blog post title. This block automatically shows blog post header info.',
+          nl: 'Laat leeg om de blogpost titel te gebruiken. Dit blok toont automatisch de header informatie.',
+        },
+      },
+    },
+  ],
+};
+
+/**
+ * Blog Post Content Block
+ * Shows the main content of the blog post
+ */
+export const BlogPostContentBlock: Block = {
+  slug: 'blog-post-content',
+  imageURL: '/admin/block-previews/blog-post-content.svg',
+  admin: {
+    // initCollapsed: true, // Not supported in current Payload version
+  },
+  labels: {
+    singular: {
+      en: 'Blog Post Content',
+      nl: 'Blogpost Inhoud',
+    },
+    plural: {
+      en: 'Blog Post Content',
+      nl: 'Blogpost Inhoud',
+    },
+  },
+  fields: [
+    {
+      name: 'showComments',
+      type: 'checkbox',
+      label: {
+        en: 'Show Comments Section',
+        nl: 'Toon Reacties Sectie',
+      },
+      defaultValue: false,
+      admin: {
+        description: {
+          en: 'This block automatically displays the blog post content.',
+          nl: 'Dit blok toont automatisch de inhoud van de blogpost.',
+        },
+      },
+    },
   ],
 };
 
@@ -846,4 +1026,6 @@ export const pageBlocks = [
   ContentV1Block,
   VoiceoverV1Block,
   BlogSection1Block,
+  BlogPostHeaderBlock,
+  BlogPostContentBlock,
 ];

@@ -14,6 +14,8 @@ import type { PayloadVoiceover } from '@/types/voiceover';
 import LinkToBlogSection from '@/components/features/homepage/LinkToBlogSection';
 import ContentSection from '@/components/features/content/ContentSection';
 import { BlogSection1 } from '@/components/blocks/BlogSection1';
+import { BlogPostHeader } from '@/components/blocks/BlogPostHeader';
+import { BlogContent } from '@/components/blocks/BlogContent';
 import { useLivePreview } from '@payloadcms/live-preview-react';
 
 // Helper function to extract plain text from rich text
@@ -108,12 +110,14 @@ interface PageRendererProps {
   };
   voiceovers?: any[] | null;
   brandColor?: string;
+  blogPost?: any; // For blog post detail pages
 }
 
 export function PageRenderer({
   page: initialPage,
   voiceovers: initialVoiceovers,
   brandColor = '#6366f1',
+  blogPost,
 }: PageRendererProps): React.ReactElement {
   const router = useRouter();
 
@@ -280,6 +284,8 @@ export function PageRenderer({
                                 : null
                             }
                             brandColor={brandColor}
+                            paddingTop={block.paddingTop || 'medium'}
+                            paddingBottom={block.paddingBottom || 'medium'}
                           />
                         </div>
                       );
@@ -313,6 +319,31 @@ export function PageRenderer({
                             showCategories={block.showCategories !== false}
                             postsLimit={block.postsLimit || 8}
                           />
+                        </div>
+                      );
+                    }
+
+                    case 'blog-post-header': {
+                      return (
+                        <div key={`blog-header-${index}`}>
+                          <BlogPostHeader
+                            title={block.title}
+                            subtitle={block.subtitle}
+                            bannerImage={block.bannerImage}
+                            author={block.author}
+                            category={block.category}
+                            publishedDate={block.publishedDate}
+                            readingTime={block.readingTime}
+                            blogPost={blogPost}
+                          />
+                        </div>
+                      );
+                    }
+
+                    case 'blog-post-content': {
+                      return (
+                        <div key={`blog-content-${index}`}>
+                          <BlogContent content={block.content} blogPost={blogPost} />
                         </div>
                       );
                     }

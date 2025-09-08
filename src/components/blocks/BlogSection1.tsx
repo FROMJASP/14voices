@@ -56,13 +56,25 @@ interface BlogSection1Props {
   description?: string;
   showCategories?: boolean;
   postsLimit?: number;
+  paddingTop?: 'none' | 'small' | 'medium' | 'large' | 'xlarge';
+  paddingBottom?: 'none' | 'small' | 'medium' | 'large' | 'xlarge';
 }
+
+const paddingMap = {
+  none: '0',
+  small: '2rem',
+  medium: '4rem',
+  large: '6rem',
+  xlarge: '8rem',
+};
 
 export function BlogSection1({
   title = 'Latest Blog Posts',
   description,
   showCategories = true,
   postsLimit = 8,
+  paddingTop = 'medium',
+  paddingBottom = 'medium',
 }: BlogSection1Props) {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -70,48 +82,151 @@ export function BlogSection1({
   const [isPreview, setIsPreview] = useState(false);
 
   useEffect(() => {
-    // Check if we're in live preview mode
-    const checkPreviewMode = () => {
-      try {
-        // In live preview, we're in an iframe
-        setIsPreview(window.self !== window.top);
-      } catch {
-        setIsPreview(false);
-      }
-    };
-
-    checkPreviewMode();
+    let isCancelled = false;
 
     const fetchData = async () => {
-      // Skip fetching in preview mode to avoid CORS issues
-      if (window.self !== window.top) {
-        setLoading(false);
-        return;
-      }
+      console.log('BlogSection1: Starting fetch...');
+      setLoading(true);
 
       try {
-        // Fetch blog posts with category relationship
+        // Check if we're in preview/iframe mode first
+        let inIframe = false;
+        try {
+          inIframe = window.self !== window.top;
+        } catch {
+          inIframe = true; // Assume iframe if check fails
+        }
+
+        if (inIframe) {
+          console.log('BlogSection1: Detected iframe/preview mode, skipping fetch');
+          setIsPreview(true);
+          setPosts([]);
+          setCategories([]);
+          setLoading(false);
+          return;
+        }
+
+        // Fetch blog posts with category relationship from public API
         const postsResponse = await fetch(
-          `/api/blog-posts?limit=${postsLimit}&depth=2&where[status][equals]=published&sort=-publishedDate`
+          `/api/public/blog-posts?limit=${postsLimit}&depth=2&sort=-publishedDate`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            cache: 'no-store', // Ensure fresh data
+          }
         );
+
+        if (!postsResponse.ok) {
+          console.error('Failed to fetch posts:', postsResponse.status, postsResponse.statusText);
+          const errorText = await postsResponse.text();
+          console.error('Error response:', errorText);
+          throw new Error(`Failed to fetch posts: ${postsResponse.status}`);
+        }
+
         const postsData = await postsResponse.json();
-        setPosts(postsData.docs || []);
+        console.log('BlogSection1: Posts data received:', postsData);
+
+        if (isCancelled) return;
+
+        const fetchedPosts = postsData.docs || [];
+        console.log('BlogSection1: Setting posts:', fetchedPosts.length, 'posts');
+        setPosts(fetchedPosts);
 
         if (showCategories) {
-          // Fetch categories
-          const categoriesResponse = await fetch('/api/categories?limit=100');
-          const categoriesData = await categoriesResponse.json();
-          setCategories(categoriesData.docs || []);
+          try {
+            // Fetch categories from public API
+            const categoriesResponse = await fetch('/api/public/categories?limit=100', {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            console.log('Categories response status:', categoriesResponse.status);
+            if (categoriesResponse.ok) {
+              const categoriesData = await categoriesResponse.json();
+
+              if (isCancelled) return;
+
+              const fetchedCategories = categoriesData.docs || [];
+
+              // Fetch ALL published posts to get accurate category counts
+              const allPostsResponse = await fetch(`/api/public/blog-posts?limit=1000&depth=1`);
+
+              if (allPostsResponse.ok) {
+                const allPostsData = await allPostsResponse.json();
+
+                if (isCancelled) return;
+
+                const allPosts = allPostsData.docs || [];
+
+                // Calculate post counts for each category
+                const categoriesWithCounts = fetchedCategories.map((category: any) => {
+                  const postCount = allPosts.filter((post: any) => {
+                    // Check if post has this category
+                    if (typeof post.category === 'object' && post.category?.id === category.id) {
+                      return true;
+                    }
+                    if (typeof post.category === 'string' && post.category === category.id) {
+                      return true;
+                    }
+                    return false;
+                  }).length;
+
+                  return {
+                    ...category,
+                    postsCount: postCount,
+                  };
+                });
+
+                setCategories(categoriesWithCounts);
+              }
+            }
+          } catch (categoryError) {
+            console.error('Error fetching categories:', categoryError);
+            // Continue without categories
+            if (!isCancelled) {
+              setCategories([]);
+            }
+          }
+        }
+
+        // If we successfully fetched data, we're not in a restricted preview
+        if (!isCancelled) {
+          setIsPreview(false);
         }
       } catch (error) {
         console.error('Error fetching blog data:', error);
+
+        if (isCancelled) return;
+
+        // Set empty data but stop loading
+        setPosts([]);
+        setCategories([]);
+
+        // If fetch failed and we're in an iframe, we're likely in a restricted preview
+        try {
+          if (window.self !== window.top) {
+            setIsPreview(true);
+          }
+        } catch {
+          // Unable to check iframe status
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          console.log('BlogSection1: Fetch complete, setting loading to false');
+          setLoading(false);
+        } else {
+          console.log('BlogSection1: Fetch was cancelled');
+        }
       }
     };
 
     fetchData();
-  }, [postsLimit, showCategories]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [postsLimit, showCategories]); // Re-run when props change
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -128,10 +243,19 @@ export function BlogSection1({
     return media.url || null;
   };
 
-  if (loading && !isPreview) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="w-full">
+        <div
+          style={{
+            paddingTop: paddingMap[paddingTop],
+            paddingBottom: paddingMap[paddingBottom],
+          }}
+        >
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -140,20 +264,27 @@ export function BlogSection1({
   if (isPreview && posts.length === 0) {
     return (
       <div className="w-full">
-        {(title || description) && (
-          <div className="mb-8 text-center">
-            {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
-            {description && <p className="text-muted-foreground">{description}</p>}
-          </div>
-        )}
-        <div className="max-w-[var(--breakpoint-xl)] mx-auto py-10 lg:py-16 px-6 xl:px-0">
-          <div className="bg-muted/50 rounded-lg p-8 text-center">
-            <p className="text-muted-foreground">
-              Blog posts will appear here when viewing the live site.
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              (Preview mode detected - API calls disabled)
-            </p>
+        <div
+          style={{
+            paddingTop: paddingMap[paddingTop],
+            paddingBottom: paddingMap[paddingBottom],
+          }}
+        >
+          <div className="max-w-[var(--breakpoint-xl)] mx-auto px-6 xl:px-0">
+            {(title || description) && (
+              <div className="mb-8">
+                {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
+                {description && <p className="text-muted-foreground">{description}</p>}
+              </div>
+            )}
+            <div className="bg-muted/50 rounded-lg p-8 text-center">
+              <p className="text-muted-foreground">
+                Blog posts will appear here when viewing the live site.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                (Preview mode detected - API calls disabled)
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -162,93 +293,104 @@ export function BlogSection1({
 
   return (
     <div className="w-full">
-      {(title || description) && (
-        <div className="mb-8 text-center">
-          {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
-          {description && <p className="text-muted-foreground">{description}</p>}
-        </div>
-      )}
+      <div
+        style={{
+          paddingTop: paddingMap[paddingTop],
+          paddingBottom: paddingMap[paddingBottom],
+        }}
+      >
+        <div className="max-w-[var(--breakpoint-xl)] mx-auto px-6 xl:px-0">
+          {(title || description) && (
+            <div className="mb-8">
+              {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
+              {description && <p className="text-muted-foreground">{description}</p>}
+            </div>
+          )}
 
-      <div className="max-w-[var(--breakpoint-xl)] mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-start gap-12">
-        <div className="flex-1">
-          <div className="space-y-12">
-            {posts.map((post) => {
-              const category =
-                typeof (post as any).category === 'object' ? (post as any).category : null;
-              const imageUrl = getMediaUrl(post.bannerImage);
+          <div className="flex flex-col lg:flex-row items-start gap-12">
+            <div className="flex-1">
+              <div className="space-y-12">
+                {posts.map((post) => {
+                  const category =
+                    typeof (post as any).category === 'object' ? (post as any).category : null;
+                  const imageUrl = getMediaUrl(post.bannerImage);
 
-              return (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
-                  <Card className="flex flex-col sm:flex-row sm:items-center shadow-none overflow-hidden rounded-md border-none py-0 hover:bg-muted/50 transition-colors cursor-pointer">
-                    {imageUrl && (
-                      <div
-                        className="shrink-0 aspect-video grow sm:w-56 sm:aspect-square bg-muted rounded-lg bg-cover bg-center"
-                        style={{ backgroundImage: `url(${imageUrl})` }}
-                      />
-                    )}
-                    {!imageUrl && (
-                      <div className="shrink-0 aspect-video grow sm:w-56 sm:aspect-square bg-muted rounded-lg" />
-                    )}
-                    <CardContent className="px-0 sm:px-6 py-0 flex flex-col">
-                      {category && (
-                        <div className="flex items-center gap-6">
-                          <Badge className="bg-primary/5 text-primary hover:bg-primary/5 shadow-none">
-                            {category.name}
-                          </Badge>
+                  return (
+                    <Link key={post.id} href={`/blog/${post.slug}`}>
+                      <Card className="flex flex-col sm:flex-row sm:items-center shadow-none overflow-hidden rounded-md border-none py-0 hover:bg-muted/50 transition-colors cursor-pointer">
+                        {imageUrl && (
+                          <div
+                            className="shrink-0 aspect-video grow sm:w-56 sm:aspect-square bg-muted rounded-lg bg-cover bg-center"
+                            style={{ backgroundImage: `url(${imageUrl})` }}
+                          />
+                        )}
+                        {!imageUrl && (
+                          <div className="shrink-0 aspect-video grow sm:w-56 sm:aspect-square bg-muted rounded-lg" />
+                        )}
+                        <CardContent className="px-0 sm:px-6 py-0 flex flex-col">
+                          {category && (
+                            <div className="flex items-center gap-6">
+                              <Badge className="bg-primary/5 text-primary hover:bg-primary/5 shadow-none">
+                                {category.name}
+                              </Badge>
+                            </div>
+                          )}
+
+                          <h3 className="mt-4 text-2xl font-semibold tracking-tight">
+                            {post.title}
+                          </h3>
+                          {post.excerpt && (
+                            <p className="mt-2 text-muted-foreground line-clamp-3 text-ellipsis">
+                              {post.excerpt}
+                            </p>
+                          )}
+                          <div className="mt-4 flex items-center gap-6 text-muted-foreground text-sm font-medium">
+                            {post.readingTime && (
+                              <div className="flex items-center gap-2">
+                                <ClockIcon className="h-4 w-4" /> {post.readingTime} min read
+                              </div>
+                            )}
+                            {post.publishedDate && (
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" /> {formatDate(post.publishedDate)}
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            {showCategories && categories.length > 0 && (
+              <aside className="sticky top-8 shrink-0 lg:max-w-sm w-full">
+                <h3 className="text-xl font-semibold tracking-tight">Categories</h3>
+                <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
+                  {categories.map((category) => {
+                    const Icon = iconMap[category.icon] || Cpu;
+                    return (
+                      <Link
+                        key={category.id}
+                        href={`/blog?category=${category.slug}`}
+                        className="flex items-center justify-between gap-2 bg-muted p-3 rounded-md bg-opacity-15 dark:bg-opacity-25 hover:bg-opacity-25 dark:hover:bg-opacity-35 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon className="h-5 w-5" />
+                          <span className="font-medium">{category.name}</span>
                         </div>
-                      )}
-
-                      <h3 className="mt-4 text-2xl font-semibold tracking-tight">{post.title}</h3>
-                      {post.excerpt && (
-                        <p className="mt-2 text-muted-foreground line-clamp-3 text-ellipsis">
-                          {post.excerpt}
-                        </p>
-                      )}
-                      <div className="mt-4 flex items-center gap-6 text-muted-foreground text-sm font-medium">
-                        {post.readingTime && (
-                          <div className="flex items-center gap-2">
-                            <ClockIcon className="h-4 w-4" /> {post.readingTime} min read
-                          </div>
-                        )}
-                        {post.publishedDate && (
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4" /> {formatDate(post.publishedDate)}
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
+                        <Badge className="px-1.5 rounded-full bg-foreground/7 text-foreground">
+                          {category.postsCount || 0}
+                        </Badge>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </aside>
+            )}
           </div>
         </div>
-
-        {showCategories && categories.length > 0 && (
-          <aside className="sticky top-8 shrink-0 lg:max-w-sm w-full">
-            <h3 className="text-xl font-semibold tracking-tight">Categories</h3>
-            <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
-              {categories.map((category) => {
-                const Icon = iconMap[category.icon] || Cpu;
-                return (
-                  <Link
-                    key={category.id}
-                    href={`/blog?category=${category.slug}`}
-                    className="flex items-center justify-between gap-2 bg-muted p-3 rounded-md bg-opacity-15 dark:bg-opacity-25 hover:bg-opacity-25 dark:hover:bg-opacity-35 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon className="h-5 w-5" />
-                      <span className="font-medium">{category.name}</span>
-                    </div>
-                    <Badge className="px-1.5 rounded-full bg-foreground/7 text-foreground">
-                      {category.postsCount || 0}
-                    </Badge>
-                  </Link>
-                );
-              })}
-            </div>
-          </aside>
-        )}
       </div>
     </div>
   );

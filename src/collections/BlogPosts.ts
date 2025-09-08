@@ -183,14 +183,31 @@ const BlogPosts: CollectionConfig = {
               hooks: {
                 beforeValidate: [
                   ({ data, value }) => {
-                    if (!value && data?.content) {
-                      const plainText = data.content.root.children
-                        .map(
-                          (node: { children?: Array<{ text?: string }> }) =>
-                            node.children?.map((child) => child.text).join('') || ''
-                        )
-                        .join(' ');
-                      return plainText.substring(0, 160) + '...';
+                    if (!value && data?.content?.root) {
+                      // Recursive function to extract text from any node
+                      const extractText = (node: any): string => {
+                        let text = '';
+
+                        // If node has direct text, add it
+                        if (node.text) {
+                          text += node.text;
+                        }
+
+                        // If node has children, process them recursively
+                        if (node.children && Array.isArray(node.children)) {
+                          for (const child of node.children) {
+                            text += ' ' + extractText(child);
+                          }
+                        }
+
+                        return text;
+                      };
+
+                      const plainText = extractText(data.content.root).trim();
+                      if (plainText.length > 160) {
+                        return plainText.substring(0, 160) + '...';
+                      }
+                      return plainText;
                     }
                     return value;
                   },
@@ -527,22 +544,40 @@ const BlogPosts: CollectionConfig = {
         },
       },
       hooks: {
-        beforeValidate: [
+        afterRead: [
           ({ data }) => {
-            if (data?.content) {
-              // Extract plain text from Lexical content structure
-              const plainText = data.content.root.children
-                .map(
-                  (node: { children?: Array<{ text?: string }> }) =>
-                    node.children?.map((child) => child.text).join('') || ''
-                )
-                .join(' ');
+            if (data?.content?.root?.children) {
+              let totalWords = 0;
 
-              // Count words (split by whitespace)
-              const wordCount = plainText
+              // Recursive function to extract text from any node
+              const extractText = (node: any): string => {
+                let text = '';
+
+                // If node has direct text, add it
+                if (node.text) {
+                  text += node.text;
+                }
+
+                // If node has children, process them recursively
+                if (node.children && Array.isArray(node.children)) {
+                  for (const child of node.children) {
+                    text += ' ' + extractText(child);
+                  }
+                }
+
+                return text;
+              };
+
+              // Extract all text from the content
+              const plainText = extractText(data.content.root);
+
+              // Count words (split by whitespace and filter empty strings)
+              totalWords = plainText
+                .trim()
                 .split(/\s+/)
                 .filter((word: string) => word.length > 0).length;
-              return wordCount;
+
+              return totalWords || 0;
             }
             return 0;
           },
@@ -567,17 +602,32 @@ const BlogPosts: CollectionConfig = {
       hooks: {
         beforeValidate: [
           ({ data, value }) => {
-            if (data?.content) {
-              // Extract plain text from Lexical content structure
-              const plainText = data.content.root.children
-                .map(
-                  (node: { children?: Array<{ text?: string }> }) =>
-                    node.children?.map((child) => child.text).join('') || ''
-                )
-                .join(' ');
+            if (data?.content?.root?.children) {
+              // Recursive function to extract text from any node
+              const extractText = (node: any): string => {
+                let text = '';
+
+                // If node has direct text, add it
+                if (node.text) {
+                  text += node.text;
+                }
+
+                // If node has children, process them recursively
+                if (node.children && Array.isArray(node.children)) {
+                  for (const child of node.children) {
+                    text += ' ' + extractText(child);
+                  }
+                }
+
+                return text;
+              };
+
+              // Extract all text from the content
+              const plainText = extractText(data.content.root);
 
               // Count words (split by whitespace)
               const wordCount = plainText
+                .trim()
                 .split(/\s+/)
                 .filter((word: string) => word.length > 0).length;
 
@@ -599,6 +649,14 @@ const BlogPosts: CollectionConfig = {
         if (operation === 'create') {
           data.views = 0;
         }
+
+        // When updating and _status is not 'draft' (meaning it's being published)
+        // automatically set the status field to 'published' if it's still 'draft'
+        if (operation === 'update' && data._status !== 'draft' && data.status === 'draft') {
+          console.log('Auto-setting status to published because document is being published');
+          data.status = 'published';
+        }
+
         return data;
       },
     ],
