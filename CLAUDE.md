@@ -97,6 +97,76 @@ Common issues:
 - Buttons using hardcoded Tailwind classes like `bg-gray-900 dark:bg-white`
 - Missing background/text classes on main layout elements
 
+## Hiding Collections from Sidebar (Tab-Only Collections)
+
+When you want a collection to be accessible only through tabs in another collection (like Categories being accessible only through Blog Posts tabs):
+
+### DO NOT USE `hidden: true` or `hidden: () => true`
+
+This will make the collection completely inaccessible, even via direct URL, causing 404 errors when accessing through tabs.
+
+### Correct Implementation:
+
+1. **Keep the collection normally configured** in its file (e.g., `Categories.ts`):
+
+   ```typescript
+   admin: {
+     // Normal admin config, NO hidden property
+     components: {
+       beforeListTable: ['./components/admin/views/BlogPostsWithTabs#default'],
+     },
+   }
+   ```
+
+2. **Hide via CSS and JavaScript** in `NavIconsCSS.tsx`:
+
+   ```typescript
+   // CSS approach
+   css += `
+     nav a[href="/admin/collections/categories"],
+     ul li:has(a[href="/admin/collections/categories"]) {
+       display: none !important;
+     }
+   `;
+
+   // JavaScript approach with MutationObserver for dynamic content
+   const observer = new MutationObserver(() => {
+     const links = document.querySelectorAll('a[href="/admin/collections/categories"]');
+     links.forEach((link) => {
+       const parent = link.parentElement;
+       if (parent && parent.style.display !== 'none') {
+         parent.style.display = 'none';
+       }
+     });
+   });
+   ```
+
+3. **Create tab navigation component** (e.g., `BlogPostsWithTabs.tsx`):
+   - Add tabs that navigate between collections
+   - Use `router.push('/admin/collections/[collection-slug]')` for navigation
+   - Apply to both collections via `beforeListTable` component
+
+4. **Hide empty navigation groups**:
+   ```javascript
+   // In MutationObserver, also hide empty groups
+   const navGroups = document.querySelectorAll('[class*="nav-group"]');
+   navGroups.forEach(group => {
+     if (group.textContent?.includes('Inhoud')) {
+       const hasVisibleChildren = /* check for visible links */;
+       if (!hasVisibleChildren) {
+         group.style.display = 'none';
+       }
+     }
+   });
+   ```
+
+This approach ensures:
+
+- Collection remains fully accessible via direct URL
+- Collection is hidden from sidebar navigation
+- Collection can be accessed through custom tabs
+- No 404 errors when navigating to the collection
+
 ## Custom Payload CMS Cell Components
 
 When creating custom cell components for Payload admin tables:
@@ -252,30 +322,7 @@ export const pageBlocks = [
 ];
 ```
 
-### 2a. **Block Preview Thumbnail**
-
-Every block MUST have a preview thumbnail for the admin panel:
-
-- Location: `public/admin/block-previews/[block-slug].svg`
-- Dimensions: 600x400px SVG
-- Style: Light background (#F9FAFB), simplified representation of the block
-- Elements to include:
-  - Main content area representation
-  - Key visual elements (images as gray boxes, text as lines)
-  - Use brand colors sparingly (#818CF8 for primary elements)
-  - Add a descriptive label at the top
-
-Example SVG structure:
-
-```svg
-<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="600" height="400" fill="#F9FAFB"/>
-  <!-- Your block visualization here -->
-  <text x="300" y="30" text-anchor="middle" fill="#6B7280" font-family="system-ui" font-size="12">Block Name</text>
-</svg>
-```
-
-### 3. **PageRenderer Integration**
+### 2. **PageRenderer Integration**
 
 ```typescript
 // Update: src/components/common/widgets/PageRenderer.tsx
@@ -289,7 +336,7 @@ case 'your-block-slug': {
 }
 ```
 
-### 4. **Important Considerations**
+### 3. **Important Considerations**
 
 - **Live Preview Mode**: Components making API calls should detect and handle iframe context
 - **Migration Logic**: The Pages collection has migration logic for old data structures - be careful not to auto-add blocks
@@ -300,22 +347,21 @@ case 'your-block-slug': {
   - Client-side fetching with loading states
   - Live preview iframe limitations (CORS)
 
-### 5. **Common Pitfalls to Avoid**
+### 4. **Common Pitfalls to Avoid**
 
-1. **Don't assume blocks appear by default** - Only homepage has fallback blocks
-2. **Check for empty layout arrays** - `layout: []` means no blocks, not undefined
-3. **Handle missing data gracefully** - Voiceovers/categories might not be fetched for all pages
-4. **Use proper TypeScript types** - Import from `@/payload-types`
-5. **Test in both contexts** - Regular page view AND live preview iframe
+1. **Check for empty layout arrays** - `layout: []` means no blocks, not undefined
+2. **Handle missing data gracefully** - Voiceovers/categories might not be fetched for all pages
+3. **Use proper TypeScript types** - Import from `@/payload-types`
+4. **Test in both contexts** - Regular page view AND live preview iframe
 
-### 6. **Testing New Blocks**
+### 5. **Testing New Blocks**
 
 1. Clear any existing page data if needed: `bun run src/scripts/clear-blog-layout.ts`
 2. Add block via Admin Panel → Pages → Edit Page → Pagina Layout → Add Block
 3. Test live preview by editing in admin panel
 4. Verify block renders correctly on actual page
 
-### 7. **Default Values for Better UX**
+### 6. **Default Values for Better UX**
 
 ALWAYS add meaningful default values to block fields:
 
@@ -323,26 +369,3 @@ ALWAYS add meaningful default values to block fields:
 - Shows the block's potential immediately
 - Provides professional copy examples
 - Makes blocks look complete even when first added
-
-Example:
-
-```typescript
-{
-  name: 'title',
-  type: 'text',
-  defaultValue: 'Onze Diensten', // Meaningful Dutch default
-  // ... rest of field config
-}
-```
-
-### 8. **Example: Blog Section Block**
-
-When user provides code like "npx shadcn add [component]", follow these steps:
-
-1. Install shadcn components (check if already exist first)
-2. Create block component with live preview detection
-3. Add block definition to Pages/blocks/index.ts with preview thumbnail
-4. Update PageRenderer.tsx with new case
-5. Add meaningful default values to all fields
-6. Create SVG preview thumbnail in public/admin/block-previews/
-7. Test in both normal and preview modes

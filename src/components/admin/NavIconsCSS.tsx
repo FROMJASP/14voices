@@ -126,7 +126,31 @@ const NavIconsCSS: React.FC = () => {
 
     // Hide Categories from sidebar navigation (it's accessible via Blog Posts tabs)
     css += `
-      a[href="/admin/collections/categories"] {
+      /* Hide categories link in the sidebar - comprehensive selectors */
+      nav a[href="/admin/collections/categories"],
+      aside a[href="/admin/collections/categories"],
+      .nav-group a[href="/admin/collections/categories"],
+      [class*="nav"] a[href="/admin/collections/categories"],
+      [class*="sidebar"] a[href="/admin/collections/categories"],
+      a[href="/admin/collections/categories"][class*="nav"],
+      li:has(> a[href="/admin/collections/categories"]),
+      div:has(> a[href="/admin/collections/categories"]:only-child) {
+        display: none !important;
+      }
+      
+      /* Hide parent list item if it contains categories link */
+      ul li:has(a[href="/admin/collections/categories"]),
+      ol li:has(a[href="/admin/collections/categories"]) {
+        display: none !important;
+      }
+      
+      /* Hide any wrapper that only contains the categories link */
+      *:has(> a[href="/admin/collections/categories"]:only-child):not(body):not(html) {
+        display: none !important;
+      }
+      
+      /* Hide empty 'Inhoud' (Content) group if it has no visible children */
+      .nav-group:has(.nav-group__label:contains("Inhoud")):not(:has(li:not([style*="display: none"]))) {
         display: none !important;
       }
     `;
@@ -135,8 +159,56 @@ const NavIconsCSS: React.FC = () => {
     style.textContent = css;
     document.head.appendChild(style);
 
+    // Also use MutationObserver to hide categories link and empty groups dynamically
+    const observer = new MutationObserver(() => {
+      // Hide categories links
+      const categoriesLinks = document.querySelectorAll('a[href="/admin/collections/categories"]');
+      categoriesLinks.forEach((link) => {
+        const parent = link.parentElement;
+        if (parent && parent.style.display !== 'none') {
+          parent.style.display = 'none';
+        }
+      });
+
+      // Hide empty 'Inhoud' group
+      const navGroups = document.querySelectorAll(
+        '.nav-group, [class*="nav-group"], [class*="nav__group"]'
+      );
+      navGroups.forEach((group) => {
+        const groupText = group.textContent || '';
+        if (groupText.includes('Inhoud') || groupText.includes('Content')) {
+          const visibleLinks = group.querySelectorAll(
+            'a:not([href="/admin/collections/categories"])'
+          );
+          const hasVisibleChildren = Array.from(visibleLinks).some((link) => {
+            const parent = link.parentElement;
+            return (
+              parent &&
+              parent.style.display !== 'none' &&
+              window.getComputedStyle(parent).display !== 'none'
+            );
+          });
+
+          if (
+            !hasVisibleChildren &&
+            group instanceof HTMLElement &&
+            group.style.display !== 'none'
+          ) {
+            group.style.display = 'none';
+          }
+        }
+      });
+    });
+
+    // Start observing the document for changes
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
     return () => {
       // Cleanup on unmount
+      observer.disconnect();
       const styleEl = document.getElementById('nav-icons-styles');
       if (styleEl) {
         styleEl.remove();
