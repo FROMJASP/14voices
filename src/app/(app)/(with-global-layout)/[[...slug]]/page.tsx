@@ -184,9 +184,9 @@ export default async function Page({ params }: PageProps) {
         : page.sections?.map((section) => nullToUndefined(section)),
   } as Page & { content?: unknown; sections?: any[] };
 
-  // Fetch voiceovers if this is the homepage
+  // Fetch voiceovers if this is the homepage or blog page (might have voiceover blocks)
   let voiceovers = null;
-  if (slug === 'home') {
+  if (slug === 'home' || slug === 'blog') {
     // Fetch voiceovers with caching for better performance
     const [voiceoverResults] = await Promise.all([
       payload.find({

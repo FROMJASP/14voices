@@ -24,6 +24,7 @@ import EmailCampaigns from './collections/EmailCampaigns';
 import EmailAudiences from './collections/EmailAudiences';
 import EmailContacts from './collections/EmailContacts';
 import BlogPosts from './collections/BlogPosts';
+import Categories from './collections/Categories';
 import Pages from './collections/Pages';
 import Forms from './collections/Forms';
 import FormSubmissions from './collections/FormSubmissions';
@@ -110,6 +111,7 @@ export default buildConfig({
     // Website group - main website content
     Pages,
     BlogPosts,
+    Categories,
     Testimonials,
     FAQ,
     // Documents group

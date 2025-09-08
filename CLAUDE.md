@@ -214,3 +214,135 @@ To prevent creating too many versions during editing:
    - Toggle for auto-save on/off
    - Manual save button
    - Last saved timestamp
+
+## Adding New Blocks to Pages Collection
+
+When adding new page blocks that admins can use in the Pages collection:
+
+### 1. **Block Component Structure**
+
+```typescript
+// Create component in: src/components/blocks/BlockName.tsx
+// - Use 'use client' directive for client-side features
+// - Handle live preview mode (detect iframe context)
+// - Import UI components with correct casing (Badge.tsx not badge.tsx)
+```
+
+### 2. **Block Definition in Payload**
+
+```typescript
+// Add block definition in: src/collections/Pages/blocks/index.ts
+export const YourBlockName: Block = {
+  slug: 'your-block-slug',
+  imageURL: '/admin/block-previews/your-block.svg', // IMPORTANT: Create preview thumbnail
+  labels: {
+    singular: { en: 'Block Name', nl: 'Blok Naam' },
+    plural: { en: 'Block Names', nl: 'Blok Namen' },
+  },
+  fields: [
+    // Define admin-editable fields here
+    // IMPORTANT: Add defaultValue to fields for better preview experience
+  ],
+};
+
+// Add to pageBlocks array at the bottom
+export const pageBlocks = [
+  // ... existing blocks
+  YourBlockName,
+];
+```
+
+### 2a. **Block Preview Thumbnail**
+
+Every block MUST have a preview thumbnail for the admin panel:
+
+- Location: `public/admin/block-previews/[block-slug].svg`
+- Dimensions: 600x400px SVG
+- Style: Light background (#F9FAFB), simplified representation of the block
+- Elements to include:
+  - Main content area representation
+  - Key visual elements (images as gray boxes, text as lines)
+  - Use brand colors sparingly (#818CF8 for primary elements)
+  - Add a descriptive label at the top
+
+Example SVG structure:
+
+```svg
+<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="400" fill="#F9FAFB"/>
+  <!-- Your block visualization here -->
+  <text x="300" y="30" text-anchor="middle" fill="#6B7280" font-family="system-ui" font-size="12">Block Name</text>
+</svg>
+```
+
+### 3. **PageRenderer Integration**
+
+```typescript
+// Update: src/components/common/widgets/PageRenderer.tsx
+// Add case in the switch statement:
+case 'your-block-slug': {
+  return (
+    <div key={`your-block-${index}`}>
+      <YourBlockComponent {...block} />
+    </div>
+  );
+}
+```
+
+### 4. **Important Considerations**
+
+- **Live Preview Mode**: Components making API calls should detect and handle iframe context
+- **Migration Logic**: The Pages collection has migration logic for old data structures - be careful not to auto-add blocks
+- **Blog vs Homepage**: Blog page should start with empty layout, homepage may have default blocks
+- **Component Imports**: Always use exact file casing to avoid webpack warnings
+- **API Dependencies**: If block needs data (like blog posts), consider:
+  - Server-side fetching in page component
+  - Client-side fetching with loading states
+  - Live preview iframe limitations (CORS)
+
+### 5. **Common Pitfalls to Avoid**
+
+1. **Don't assume blocks appear by default** - Only homepage has fallback blocks
+2. **Check for empty layout arrays** - `layout: []` means no blocks, not undefined
+3. **Handle missing data gracefully** - Voiceovers/categories might not be fetched for all pages
+4. **Use proper TypeScript types** - Import from `@/payload-types`
+5. **Test in both contexts** - Regular page view AND live preview iframe
+
+### 6. **Testing New Blocks**
+
+1. Clear any existing page data if needed: `bun run src/scripts/clear-blog-layout.ts`
+2. Add block via Admin Panel → Pages → Edit Page → Pagina Layout → Add Block
+3. Test live preview by editing in admin panel
+4. Verify block renders correctly on actual page
+
+### 7. **Default Values for Better UX**
+
+ALWAYS add meaningful default values to block fields:
+
+- Helps admins understand what content goes where
+- Shows the block's potential immediately
+- Provides professional copy examples
+- Makes blocks look complete even when first added
+
+Example:
+
+```typescript
+{
+  name: 'title',
+  type: 'text',
+  defaultValue: 'Onze Diensten', // Meaningful Dutch default
+  // ... rest of field config
+}
+```
+
+### 8. **Example: Blog Section Block**
+
+When user provides code like "npx shadcn add [component]", follow these steps:
+
+1. Install shadcn components (check if already exist first)
+2. Create block component with live preview detection
+3. Add block definition to Pages/blocks/index.ts with preview thumbnail
+4. Update PageRenderer.tsx with new case
+5. Add meaningful default values to all fields
+6. Create SVG preview thumbnail in public/admin/block-previews/
+7. Test in both normal and preview modes

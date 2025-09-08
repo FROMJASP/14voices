@@ -1,11 +1,7 @@
 import type { CollectionConfig } from 'payload';
 import { getCollectionLabels } from '../i18n';
 import { pageEditorConfig } from '../fields/lexical/pageEditorConfig';
-import {
-  basicContentFields,
-  seoTab,
-  settingsTab,
-} from './Pages/index';
+import { basicContentFields, seoTab, settingsTab } from './Pages/index';
 import { pageBlocks } from './Pages/blocks';
 
 const labels = getCollectionLabels('pages');
@@ -200,10 +196,10 @@ const Pages: CollectionConfig = {
     ],
     afterRead: [
       async ({ doc }) => {
-        // Migrate from old structure to new blocks structure
-        if ((doc.slug === 'home' || doc.slug === 'blog') && !doc.layout?.length) {
+        // Migrate from old structure to new blocks structure - only for homepage now
+        if (doc.slug === 'home' && !doc.layout?.length) {
           const migratedLayout = [];
-          
+
           // Check if we have old pageBlocks structure
           if (doc.pageBlocks?.length) {
             // Migrate from old pageBlocks to new layout
@@ -213,48 +209,59 @@ const Pages: CollectionConfig = {
                 migratedLayout.push({
                   blockType: variant === 'variant1' ? 'hero-v1' : 'hero-v2',
                   // Migrate hero content if it exists
-                  ...(doc.hero ? {
-                    title: doc.hero.title,
-                    titleRichText: doc.hero.titleRichText,
-                    description: doc.hero.description,
-                    descriptionRichText: doc.hero.descriptionRichText,
-                    image: doc.hero.image,
-                    cta: doc.hero.cta,
-                    // Variant 1 specific
-                    ...(variant === 'variant1' ? {
-                      processSteps: doc.hero.processSteps || [],
-                      stats: doc.hero.stats || [],
-                    } : {}),
-                    // Variant 2 specific
-                    ...(variant === 'variant2' ? {
-                      badge: doc.hero.badge,
-                      subtitle: doc.hero.subtitle,
-                      subtitleRichText: doc.hero.subtitleRichText,
-                    } : {}),
-                  } : {}),
+                  ...(doc.hero
+                    ? {
+                        title: doc.hero.title,
+                        titleRichText: doc.hero.titleRichText,
+                        description: doc.hero.description,
+                        descriptionRichText: doc.hero.descriptionRichText,
+                        image: doc.hero.image,
+                        cta: doc.hero.cta,
+                        // Variant 1 specific
+                        ...(variant === 'variant1'
+                          ? {
+                              processSteps: doc.hero.processSteps || [],
+                              stats: doc.hero.stats || [],
+                            }
+                          : {}),
+                        // Variant 2 specific
+                        ...(variant === 'variant2'
+                          ? {
+                              badge: doc.hero.badge,
+                              subtitle: doc.hero.subtitle,
+                              subtitleRichText: doc.hero.subtitleRichText,
+                            }
+                          : {}),
+                      }
+                    : {}),
                 });
               }
-              
+
               if (block.blockType === 'linkToBlog' && block.enabled) {
                 migratedLayout.push({
                   blockType: 'content-v1',
                   enabled: block.enabled !== false,
-                  ...(doc.linkToBlog ? {
-                    title: doc.linkToBlog.title,
-                    description: doc.linkToBlog.description,
-                    links: doc.linkToBlog.links || [],
-                  } : {}),
+                  ...(doc.linkToBlog
+                    ? {
+                        title: doc.linkToBlog.title,
+                        description: doc.linkToBlog.description,
+                        links: doc.linkToBlog.links || [],
+                      }
+                    : {}),
                 });
               }
-              
-              if (block.blockType === 'voiceover' && block.enabled) {
+
+              if (
+                block.blockType === 'voiceover' &&
+                block.enabled &&
+                doc.voiceover &&
+                (doc.voiceover.title || doc.voiceover.description)
+              ) {
                 migratedLayout.push({
                   blockType: 'voiceover-v1',
-                  ...(doc.voiceover ? {
-                    title: doc.voiceover.title,
-                    description: doc.voiceover.description,
-                    showcase: doc.voiceover.showcase !== false,
-                  } : {}),
+                  title: doc.voiceover.title,
+                  description: doc.voiceover.description,
+                  showcase: doc.voiceover.showcase !== false,
                 });
               }
             });
@@ -270,18 +277,22 @@ const Pages: CollectionConfig = {
                 descriptionRichText: doc.hero.descriptionRichText,
                 image: doc.hero.image,
                 cta: doc.hero.cta,
-                ...(variant === 'variant1' ? {
-                  processSteps: doc.hero.processSteps || [],
-                  stats: doc.hero.stats || [],
-                } : {}),
-                ...(variant === 'variant2' ? {
-                  badge: doc.hero.badge,
-                  subtitle: doc.hero.subtitle,
-                  subtitleRichText: doc.hero.subtitleRichText,
-                } : {}),
+                ...(variant === 'variant1'
+                  ? {
+                      processSteps: doc.hero.processSteps || [],
+                      stats: doc.hero.stats || [],
+                    }
+                  : {}),
+                ...(variant === 'variant2'
+                  ? {
+                      badge: doc.hero.badge,
+                      subtitle: doc.hero.subtitle,
+                      subtitleRichText: doc.hero.subtitleRichText,
+                    }
+                  : {}),
               });
             }
-            
+
             if (doc.linkToBlog) {
               migratedLayout.push({
                 blockType: 'content-v1',
@@ -291,8 +302,8 @@ const Pages: CollectionConfig = {
                 links: doc.linkToBlog.links || [],
               });
             }
-            
-            if (doc.voiceover) {
+
+            if (doc.voiceover && (doc.voiceover.title || doc.voiceover.description)) {
               migratedLayout.push({
                 blockType: 'voiceover-v1',
                 title: doc.voiceover.title,
@@ -301,12 +312,12 @@ const Pages: CollectionConfig = {
               });
             }
           }
-          
+
           if (migratedLayout.length > 0) {
             doc.layout = migratedLayout;
           }
         }
-        
+
         return doc;
       },
     ],

@@ -55,6 +55,22 @@ export const HeroV1Block: Block = {
         en: 'Hero Title',
         nl: 'Hero Titel',
       },
+      defaultValue: {
+        root: {
+          type: 'root',
+          children: [
+            {
+              type: 'heading',
+              tag: 'h1',
+              children: [
+                { type: 'text', text: 'Professionele ' },
+                { type: 'text', text: 'voice-overs', format: ['bold'] },
+                { type: 'text', text: ' voor elk project' },
+              ],
+            },
+          ],
+        },
+      },
       admin: {
         description: {
           en: 'The main heading text. Use formatting like bold, italic, or colors to highlight specific words.',
@@ -69,6 +85,22 @@ export const HeroV1Block: Block = {
       label: {
         en: 'Hero Description',
         nl: 'Hero Beschrijving',
+      },
+      defaultValue: {
+        root: {
+          type: 'root',
+          children: [
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  type: 'text',
+                  text: 'Van commercials tot bedrijfsfilms, wij leveren de perfecte stem voor jouw project. Ontdek onze professionele stemacteurs en vraag direct een offerte aan.',
+                },
+              ],
+            },
+          ],
+        },
       },
       admin: {
         description: {
@@ -107,7 +139,7 @@ export const HeroV1Block: Block = {
         {
           name: 'primaryUrl',
           type: 'text',
-          defaultValue: '/voice-overs',
+          defaultValue: '/voiceovers',
           label: {
             en: 'Primary Button URL',
             nl: 'Primaire Knop URL',
@@ -385,7 +417,7 @@ export const HeroV2Block: Block = {
         {
           name: 'text',
           type: 'text',
-          defaultValue: 'Just released v1.0.0',
+          defaultValue: '🎉 Nieuw: AI Stemmen beschikbaar',
           label: {
             en: 'Badge Text',
             nl: 'Badge Tekst',
@@ -404,6 +436,21 @@ export const HeroV2Block: Block = {
         en: 'Hero Title',
         nl: 'Hero Titel',
       },
+      defaultValue: {
+        root: {
+          type: 'root',
+          children: [
+            {
+              type: 'heading',
+              tag: 'h1',
+              children: [
+                { type: 'text', text: 'De perfecte stem voor ' },
+                { type: 'text', text: 'jouw verhaal', format: ['bold'] },
+              ],
+            },
+          ],
+        },
+      },
       admin: {
         description: {
           en: 'The main heading text with formatting options.',
@@ -419,6 +466,17 @@ export const HeroV2Block: Block = {
         en: 'Hero Subtitle',
         nl: 'Hero Ondertitel',
       },
+      defaultValue: {
+        root: {
+          type: 'root',
+          children: [
+            {
+              type: 'paragraph',
+              children: [{ type: 'text', text: 'Professionele Voice-overs' }],
+            },
+          ],
+        },
+      },
       admin: {
         description: {
           en: 'Subtitle text above the main title.',
@@ -433,6 +491,22 @@ export const HeroV2Block: Block = {
       label: {
         en: 'Hero Description',
         nl: 'Hero Beschrijving',
+      },
+      defaultValue: {
+        root: {
+          type: 'root',
+          children: [
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  type: 'text',
+                  text: 'Breng je project tot leven met professionele stemacteurs. Van commercials tot e-learning, wij hebben de perfecte stem voor jouw boodschap.',
+                },
+              ],
+            },
+          ],
+        },
       },
       admin: {
         description: {
@@ -461,7 +535,7 @@ export const HeroV2Block: Block = {
         {
           name: 'primaryLabel',
           type: 'text',
-          defaultValue: 'Get Started',
+          defaultValue: 'Bekijk stemacteurs',
           label: {
             en: 'Primary Button Label',
             nl: 'Primaire Knop Label',
@@ -470,7 +544,7 @@ export const HeroV2Block: Block = {
         {
           name: 'primaryUrl',
           type: 'text',
-          defaultValue: '/voice-overs',
+          defaultValue: '/voiceovers',
           label: {
             en: 'Primary Button URL',
             nl: 'Primaire Knop URL',
@@ -564,6 +638,7 @@ export const ContentV1Block: Block = {
         en: 'Content Title',
         nl: 'Content Titel',
       },
+      defaultValue: 'Ontdek onze laatste projecten',
       admin: {
         description: {
           en: 'Main heading for the content section',
@@ -578,6 +653,8 @@ export const ContentV1Block: Block = {
         en: 'Content Description',
         nl: 'Content Beschrijving',
       },
+      defaultValue:
+        "Van internationale commercials tot lokale bedrijfsvideo's, onze stemacteurs hebben aan diverse projecten meegewerkt. Laat je inspireren door onze portfolio en ontdek wat wij voor jouw project kunnen betekenen.",
       admin: {
         description: {
           en: 'Supporting text that appears next to the title',
@@ -596,7 +673,7 @@ export const ContentV1Block: Block = {
         {
           name: 'label',
           type: 'text',
-          defaultValue: 'Learn More',
+          defaultValue: 'Bekijk portfolio',
           label: {
             en: 'Button Label',
             nl: 'Knop Label',
@@ -605,7 +682,7 @@ export const ContentV1Block: Block = {
         {
           name: 'url',
           type: 'text',
-          defaultValue: '#',
+          defaultValue: '/portfolio',
           label: {
             en: 'Button URL',
             nl: 'Knop URL',
@@ -665,6 +742,7 @@ export const VoiceoverV1Block: Block = {
         en: 'Section Title (optional)',
         nl: 'Sectie Titel (optioneel)',
       },
+      defaultValue: 'Onze Stemacteurs',
     },
     {
       name: 'showcase',
@@ -678,10 +756,94 @@ export const VoiceoverV1Block: Block = {
   ],
 };
 
+/**
+ * Blog Section 1 Block
+ * Shows blog posts with categories sidebar
+ */
+export const BlogSection1Block: Block = {
+  slug: 'blog-section-1',
+  imageURL: '/admin/block-previews/blog-section-1.svg',
+  labels: {
+    singular: {
+      en: 'Blog Section 1',
+      nl: 'Blog Sectie 1',
+    },
+    plural: {
+      en: 'Blog Section 1',
+      nl: 'Blog Sectie 1',
+    },
+  },
+  fields: [
+    {
+      name: 'title',
+      type: 'text',
+      label: {
+        en: 'Section Title',
+        nl: 'Sectie Titel',
+      },
+      defaultValue: 'Laatste Nieuws & Updates',
+      admin: {
+        description: {
+          en: 'Title displayed above the blog posts',
+          nl: 'Titel weergegeven boven de blogberichten',
+        },
+      },
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: {
+        en: 'Section Description',
+        nl: 'Sectie Beschrijving',
+      },
+      defaultValue: 'Ontdek tips, nieuws en inzichten uit de wereld van voice-overs',
+      admin: {
+        description: {
+          en: 'Optional description text below the title',
+          nl: 'Optionele beschrijvingstekst onder de titel',
+        },
+      },
+    },
+    {
+      name: 'postsLimit',
+      type: 'number',
+      label: {
+        en: 'Number of Posts',
+        nl: 'Aantal Berichten',
+      },
+      defaultValue: 8,
+      min: 1,
+      max: 20,
+      admin: {
+        description: {
+          en: 'How many blog posts to display',
+          nl: 'Hoeveel blogberichten weergeven',
+        },
+      },
+    },
+    {
+      name: 'showCategories',
+      type: 'checkbox',
+      label: {
+        en: 'Show Categories Sidebar',
+        nl: 'Toon Categorieën Zijbalk',
+      },
+      defaultValue: true,
+      admin: {
+        description: {
+          en: 'Display the categories sidebar with post counts',
+          nl: 'Toon de categorieën zijbalk met berichtentellers',
+        },
+      },
+    },
+  ],
+};
+
 // Export all blocks as an array
 export const pageBlocks = [
   HeroV1Block,
   HeroV2Block,
   ContentV1Block,
   VoiceoverV1Block,
+  BlogSection1Block,
 ];

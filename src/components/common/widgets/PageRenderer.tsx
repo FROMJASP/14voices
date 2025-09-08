@@ -13,6 +13,7 @@ import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 import LinkToBlogSection from '@/components/features/homepage/LinkToBlogSection';
 import ContentSection from '@/components/features/content/ContentSection';
+import { BlogSection1 } from '@/components/blocks/BlogSection1';
 import { useLivePreview } from '@payloadcms/live-preview-react';
 
 // Helper function to extract plain text from rich text
@@ -175,7 +176,7 @@ export function PageRenderer({
     if (!voiceovers || voiceovers.length === 0) return [];
 
     // Check if voiceovers are already transformed (have tags array)
-    if (voiceovers[0].tags && Array.isArray(voiceovers[0].tags)) {
+    if (voiceovers[0]?.tags && Array.isArray(voiceovers[0].tags)) {
       return voiceovers;
     }
 
@@ -189,109 +190,140 @@ export function PageRenderer({
   if (isHomepage || page.slug === 'blog') {
     // Check if we have new layout field (native blocks) or old structure
     const layoutBlocks = (page as any).layout;
-    const hasNewLayout = layoutBlocks && Array.isArray(layoutBlocks) && layoutBlocks.length > 0;
-    
+    const hasNewLayout = Array.isArray(layoutBlocks); // Check if layout exists as array (even if empty)
+
     if (hasNewLayout) {
-      // New blocks structure - each block contains its own content
+      // New blocks structure - even if empty array
       return (
         <>
           <div className="homepage-preview">
-            {layoutBlocks.map((block: any, index: number) => {
-              // Skip disabled blocks (for content-v1 blocks)
-              if (block.blockType === 'content-v1' && block.enabled === false) return null;
-              
-              switch (block.blockType) {
-                case 'hero-v1': {
-                  // Transform block data for hero variant 1
-                  const heroData = {
-                    hero: {
-                      layout: 'variant1',
-                      titleRichText: block.title, // Now title IS richText
-                      descriptionRichText: block.description, // Now description IS richText
-                      processSteps: block.processSteps,
-                      stats: block.stats,
-                      heroImage: block.image, // Fix: use heroImage not image
-                      // Transform CTA to button format
-                      primaryButton: block.cta?.primaryLabel ? {
-                        text: block.cta.primaryLabel,
-                        url: block.cta.primaryUrl || '#',
-                      } : null,
-                      secondaryButton: block.cta?.secondaryLabel ? {
-                        text: block.cta.secondaryLabel,
-                        url: block.cta.secondaryUrl || '#',
-                      } : null,
-                    },
-                  };
-                  const transformedData = transformHeroDataForHomepage(heroData as any);
-                  if (transformedData) {
-                    return (
-                      <div key={`hero-v1-${index}`}>
-                        <HeroSection heroSettings={transformedData} />
-                      </div>
-                    );
+            {layoutBlocks.length > 0
+              ? layoutBlocks.map((block: any, index: number) => {
+                  // Skip disabled blocks (for content-v1 blocks)
+                  if (block.blockType === 'content-v1' && block.enabled === false) return null;
+
+                  switch (block.blockType) {
+                    case 'hero-v1': {
+                      // Transform block data for hero variant 1
+                      const heroData = {
+                        hero: {
+                          layout: 'variant1',
+                          titleRichText: block.title, // Now title IS richText
+                          descriptionRichText: block.description, // Now description IS richText
+                          processSteps: block.processSteps,
+                          stats: block.stats,
+                          heroImage: block.image, // Fix: use heroImage not image
+                          // Transform CTA to button format
+                          primaryButton: block.cta?.primaryLabel
+                            ? {
+                                text: block.cta.primaryLabel,
+                                url: block.cta.primaryUrl || '#',
+                              }
+                            : null,
+                          secondaryButton: block.cta?.secondaryLabel
+                            ? {
+                                text: block.cta.secondaryLabel,
+                                url: block.cta.secondaryUrl || '#',
+                              }
+                            : null,
+                        },
+                      };
+                      const transformedData = transformHeroDataForHomepage(heroData as any);
+                      if (transformedData) {
+                        return (
+                          <div key={`hero-v1-${index}`}>
+                            <HeroSection heroSettings={transformedData} />
+                          </div>
+                        );
+                      }
+                      return null;
+                    }
+
+                    case 'hero-v2': {
+                      return (
+                        <div key={`hero-v2-${index}`}>
+                          <HeroVariant2
+                            badge={block.badge?.enabled !== false ? block.badge : null}
+                            title={extractPlainText(block.title)} // title is now richText
+                            subtitle={extractPlainText(block.subtitle)} // subtitle is now richText
+                            primaryButton={
+                              block.cta?.primaryLabel
+                                ? {
+                                    text: block.cta.primaryLabel,
+                                    url: block.cta.primaryUrl || '#',
+                                  }
+                                : null
+                            }
+                            secondaryButton={
+                              block.cta?.secondaryLabel
+                                ? {
+                                    text: block.cta.secondaryLabel,
+                                    url: block.cta.secondaryUrl || '#',
+                                  }
+                                : null
+                            }
+                            brandColor={brandColor}
+                          />
+                        </div>
+                      );
+                    }
+
+                    case 'voiceover-v1': {
+                      return (
+                        <div key={`voiceover-${index}`}>
+                          <VoiceoverSection
+                            initialVoiceovers={transformedVoiceovers}
+                            title={block.title || null}
+                          />
+                        </div>
+                      );
+                    }
+
+                    case 'content-v1': {
+                      return (
+                        <div key={`content-${index}`}>
+                          <ContentSection data={block} />
+                        </div>
+                      );
+                    }
+
+                    case 'blog-section-1': {
+                      return (
+                        <div key={`blog-section-${index}`}>
+                          <BlogSection1
+                            title={block.title}
+                            description={block.description}
+                            showCategories={block.showCategories !== false}
+                            postsLimit={block.postsLimit || 8}
+                          />
+                        </div>
+                      );
+                    }
+
+                    default:
+                      console.warn(`Unknown block type: ${block.blockType}`);
+                      return null;
                   }
-                  return null;
-                }
-                
-                case 'hero-v2': {
-                  return (
-                    <div key={`hero-v2-${index}`}>
-                      <HeroVariant2
-                        badge={block.badge?.enabled !== false ? block.badge : null}
-                        title={extractPlainText(block.title)} // title is now richText
-                        subtitle={extractPlainText(block.subtitle)} // subtitle is now richText
-                        primaryButton={block.cta?.primaryLabel ? {
-                          text: block.cta.primaryLabel,
-                          url: block.cta.primaryUrl || '#',
-                        } : null}
-                        secondaryButton={block.cta?.secondaryLabel ? {
-                          text: block.cta.secondaryLabel,
-                          url: block.cta.secondaryUrl || '#',
-                        } : null}
-                        brandColor={brandColor}
-                      />
-                    </div>
-                  );
-                }
-                
-                case 'voiceover-v1': {
-                  return (
-                    <div key={`voiceover-${index}`}>
-                      <VoiceoverSection
-                        initialVoiceovers={transformedVoiceovers}
-                        title={block.title || null}
-                      />
-                    </div>
-                  );
-                }
-                
-                case 'content-v1': {
-                  return (
-                    <div key={`content-${index}`}>
-                      <ContentSection data={block} />
-                    </div>
-                  );
-                }
-                
-                default:
-                  console.warn(`Unknown block type: ${block.blockType}`);
-                  return null;
-              }
-            })}
+                })
+              : null}
           </div>
         </>
       );
     }
-    
-    // Fallback to old structure for backwards compatibility
+
+    // Fallback to old structure for backwards compatibility - only for homepage
     const hero = page.hero as any;
     const voiceover = page.voiceover;
     const linkToBlog = page.linkToBlog;
-    const blocksArray = page.pageBlocks || [
-      { blockType: 'hero', enabled: true, heroVariant: 'variant1' },
-      { blockType: 'voiceover', enabled: true, voiceoverVariant: 'variant1' },
-      { blockType: 'linkToBlog', enabled: true, contentVariant: 'variant1' },
-    ];
+    const blocksArray =
+      page.pageBlocks ||
+      (isHomepage
+        ? [
+            { blockType: 'hero', enabled: true, heroVariant: 'variant1' },
+            { blockType: 'voiceover', enabled: true, voiceoverVariant: 'variant1' },
+            { blockType: 'linkToBlog', enabled: true, contentVariant: 'variant1' },
+          ]
+        : []);
 
     return (
       <>

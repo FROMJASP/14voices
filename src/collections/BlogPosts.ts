@@ -16,7 +16,7 @@ const BlogPosts: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'status', 'author', 'publishedDate', 'views'],
+    defaultColumns: ['title', 'category', 'status', 'author', 'publishedDate', 'views'],
     listSearchableFields: ['title', 'subtitle', 'content'],
     group: {
       en: 'Site Builder',
@@ -372,42 +372,19 @@ const BlogPosts: CollectionConfig = {
               },
             },
             {
-              name: 'categories',
-              type: 'array',
+              name: 'category',
+              type: 'relationship',
+              relationTo: 'categories' as const,
               label: {
-                en: 'Categories',
-                nl: 'Categorieën',
+                en: 'Category',
+                nl: 'Categorie',
               },
               admin: {
                 description: {
-                  en: 'Organize posts by categories',
-                  nl: 'Organiseer berichten per categorie',
+                  en: 'Select a category for this post',
+                  nl: 'Selecteer een categorie voor dit bericht',
                 },
               },
-              fields: [
-                {
-                  name: 'category',
-                  type: 'select',
-                  label: {
-                    en: 'Category',
-                    nl: 'Categorie',
-                  },
-                  options: [
-                    { label: { en: 'News', nl: 'Nieuws' }, value: 'news' },
-                    { label: { en: 'Tips & Tricks', nl: 'Tips & Trucs' }, value: 'tips-tricks' },
-                    {
-                      label: { en: 'Behind the Scenes', nl: 'Achter de Schermen' },
-                      value: 'behind-scenes',
-                    },
-                    {
-                      label: { en: 'Industry Insights', nl: 'Industrie Inzichten' },
-                      value: 'industry-insights',
-                    },
-                    { label: { en: 'Voice Acting', nl: 'Voice Acting' }, value: 'voice-acting' },
-                    { label: { en: 'Technology', nl: 'Technologie' }, value: 'technology' },
-                  ],
-                },
-              ],
             },
             {
               name: 'tags',
@@ -554,9 +531,11 @@ const BlogPosts: CollectionConfig = {
                     node.children?.map((child) => child.text).join('') || ''
                 )
                 .join(' ');
-              
+
               // Count words (split by whitespace)
-              const wordCount = plainText.split(/\s+/).filter((word: string) => word.length > 0).length;
+              const wordCount = plainText
+                .split(/\s+/)
+                .filter((word: string) => word.length > 0).length;
               return wordCount;
             }
             return 0;
@@ -590,14 +569,16 @@ const BlogPosts: CollectionConfig = {
                     node.children?.map((child) => child.text).join('') || ''
                 )
                 .join(' ');
-              
+
               // Count words (split by whitespace)
-              const wordCount = plainText.split(/\s+/).filter((word: string) => word.length > 0).length;
-              
+              const wordCount = plainText
+                .split(/\s+/)
+                .filter((word: string) => word.length > 0).length;
+
               // Calculate reading time based on 200 words per minute
               const wordsPerMinute = 200;
               const readingTimeMinutes = Math.ceil(wordCount / wordsPerMinute);
-              
+
               return readingTimeMinutes;
             }
             return value || 0;
