@@ -124,6 +124,13 @@ const NavIconsCSS: React.FC = () => {
       }
     });
 
+    // Hide Categories from sidebar navigation (it's accessible via Blog Posts tabs)
+    css += `
+      a[href="/admin/collections/categories"] {
+        display: none !important;
+      }
+    `;
+
     // Add styles to the document
     style.textContent = css;
     document.head.appendChild(style);
