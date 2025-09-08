@@ -22,6 +22,9 @@ const BlogPosts: CollectionConfig = {
       en: 'Site Builder',
       nl: 'Site Builder',
     },
+    components: {
+      beforeListTable: ['./components/admin/views/BlogPostsWithTabs#default'],
+    },
     preview: (doc) => {
       if (doc?.slug) {
         return `${process.env.NEXT_PUBLIC_SERVER_URL}/blog/${doc.slug}`;

@@ -40,6 +40,7 @@ import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93
 import { DateCell as DateCell_0089d93088416af0dfd832e408990326 } from '../../../components/admin/cells/DateCell'
 import { PagesList as PagesList_4fb21428ba2c94b4be1638c77bb40e3d } from '../../../components/admin/views/PagesList'
 import { SaveDraftControls as SaveDraftControls_b522b32cfa006a132e6ad153190fd577 } from '../../../components/admin/SaveDraftControls'
+import { default as default_91de4ae14ebd8a32f98c4575d6d4fb32 } from '../../../components/admin/views/BlogPostsWithTabs'
 import { OrderCell as OrderCell_3275d1149d4aec1af72bdef957c1e1c1 } from '@/components/admin/cells/OrderCell'
 import { default as default_26ff0c3c8c64756354667624f7216f27 } from '@/components/admin/EmailPreview'
 import { SecurityEventTypeCell as SecurityEventTypeCell_7d889b1ff63bec18bb82b7d6911cf087 } from '../../../components/admin/cells/SecurityEventTypeCell'
@@ -100,6 +101,7 @@ export const importMap = {
   "/components/admin/cells/DateCell#DateCell": DateCell_0089d93088416af0dfd832e408990326,
   "/components/admin/views/PagesList#PagesList": PagesList_4fb21428ba2c94b4be1638c77bb40e3d,
   "/components/admin/SaveDraftControls#SaveDraftControls": SaveDraftControls_b522b32cfa006a132e6ad153190fd577,
+  "./components/admin/views/BlogPostsWithTabs#default": default_91de4ae14ebd8a32f98c4575d6d4fb32,
   "@/components/admin/cells/OrderCell#OrderCell": OrderCell_3275d1149d4aec1af72bdef957c1e1c1,
   "@/components/admin/EmailPreview#default": default_26ff0c3c8c64756354667624f7216f27,
   "./components/admin/cells/SecurityEventTypeCell#SecurityEventTypeCell": SecurityEventTypeCell_7d889b1ff63bec18bb82b7d6911cf087,

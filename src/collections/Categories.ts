@@ -14,7 +14,11 @@ const Categories: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
+    hidden: true, // Hide from sidebar navigation
     defaultColumns: ['name', 'icon', 'postsCount', 'updatedAt'],
+    components: {
+      beforeListTable: ['./components/admin/views/BlogPostsWithTabs#default'],
+    },
     group: {
       en: 'Content',
       nl: 'Inhoud',

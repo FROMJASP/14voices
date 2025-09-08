@@ -1,0 +1,62 @@
+.blog-posts-tabs {
+  margin-bottom: 24px;
+  padding: 0 24px;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--theme-elevation-100);
+}
+
+.tab-button {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--theme-text-light);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -1px;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: var(--theme-text);
+  background: var(--theme-elevation-50);
+}
+
+.tab-button.active {
+  color: var(--theme-text);
+  border-bottom-color: var(--theme-success-500);
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--theme-success-500);
+}
+
+/* Dark mode support */
+html[data-theme='dark'] .tab-button {
+  color: var(--theme-text-light);
+}
+
+html[data-theme='dark'] .tab-button:hover {
+  background: var(--theme-elevation-100);
+}
+
+html[data-theme='dark'] .tab-button.active {
+  color: var(--theme-text);
+  border-bottom-color: var(--theme-success-400);
+}
+
+html[data-theme='dark'] .tab-button.active::after {
+  background: var(--theme-success-400);
+}
