@@ -387,6 +387,9 @@ const BlogPosts: CollectionConfig = {
                   en: 'Select a category for this post',
                   nl: 'Selecteer een categorie voor dit bericht',
                 },
+                components: {
+                  Cell: './components/admin/cells/CategoryCell#CategoryCell',
+                },
               },
             },
             {
