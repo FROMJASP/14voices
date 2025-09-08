@@ -41,7 +41,7 @@ export function BlogContent({ content, blogPost }: BlogContentProps) {
       case 'paragraph':
         return <p>{children}</p>;
       case 'heading':
-        const Tag = node.tag as keyof JSX.IntrinsicElements;
+        const Tag = node.tag as keyof React.JSX.IntrinsicElements;
         return <Tag>{children}</Tag>;
       case 'list':
         return node.listType === 'bullet' ? <ul>{children}</ul> : <ol>{children}</ol>;
