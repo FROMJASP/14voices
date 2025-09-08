@@ -120,6 +120,23 @@ export function PageRenderer({
   // Check if we're in the Payload admin iframe
   const isInIframe = typeof window !== 'undefined' && window.parent !== window;
 
+  // Handle scroll to voiceovers section after navigation
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !isInIframe) {
+      const shouldScroll = sessionStorage.getItem('scrollToVoiceovers');
+      if (shouldScroll === 'true') {
+        sessionStorage.removeItem('scrollToVoiceovers');
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          const voiceoverSection = document.getElementById('voiceovers');
+          if (voiceoverSection) {
+            voiceoverSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      }
+    }
+  }, [isInIframe]);
+
   // Use Payload's live preview hook for real-time updates
   const { data: livePreviewData } = useLivePreview<typeof initialPage>({
     initialData: initialPage,

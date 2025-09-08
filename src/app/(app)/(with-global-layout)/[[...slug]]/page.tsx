@@ -13,9 +13,9 @@ interface PageProps {
 }
 
 // Enable Incremental Static Regeneration (ISR) for better performance
-export const revalidate = 300; // Revalidate every 5 minutes
+export const revalidate = 60; // Revalidate every minute for fresher content
 export const dynamicParams = true;
-export const fetchCache = 'default-cache'; // Use browser cache when available
+export const fetchCache = 'force-cache'; // Force cache for better performance
 
 // Pre-generate static paths for common pages
 export async function generateStaticParams() {
@@ -184,22 +184,20 @@ export default async function Page({ params }: PageProps) {
         : page.sections?.map((section) => nullToUndefined(section)),
   } as Page & { content?: unknown; sections?: any[] };
 
-  // Fetch voiceovers if this is the homepage or blog page (might have voiceover blocks)
+  // Always fetch voiceovers for homepage for better caching
   let voiceovers = null;
   if (slug === 'home' || slug === 'blog') {
     // Fetch voiceovers with caching for better performance
-    const [voiceoverResults] = await Promise.all([
-      payload.find({
-        collection: 'voiceovers',
-        where: {
-          status: {
-            in: ['active', 'more-voices'],
-          },
+    const voiceoverResults = await payload.find({
+      collection: 'voiceovers',
+      where: {
+        status: {
+          in: ['active', 'more-voices'],
         },
-        depth: 2,
-        limit: 100,
-      }),
-    ]);
+      },
+      depth: 2,
+      limit: 100,
+    });
 
     voiceovers = voiceoverResults.docs;
   }

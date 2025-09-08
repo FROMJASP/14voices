@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, ArrowLeft, Infinity, Clock } from 'lucide-react';
 import { useCartStore, useDrawerStore } from '@/stores';
@@ -8,6 +8,7 @@ import { TransformedVoiceover } from '@/types/voiceover';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Bricolage_Grotesque } from 'next/font/google';
+import { useRouter } from 'next/navigation';
 import { VoiceoverPlayerCard } from './VoiceoverPlayerCard';
 import { ExtraOptions, EXTRA_OPTIONS_CONFIG, type ProductionType } from './ExtraOptions';
 import { SimpleScriptEditor } from './SimpleScriptEditor';
@@ -125,6 +126,8 @@ const EXTRA_OPTIONS = [
 ] as const;
 
 export function VoiceoverDetailClient({ voiceover }: VoiceoverDetailClientProps) {
+  const router = useRouter();
+
   // Create a unique storage key for this voiceover
   const storageKey = `voiceover-form-${voiceover.id}`;
 
@@ -157,6 +160,13 @@ export function VoiceoverDetailClient({ voiceover }: VoiceoverDetailClientProps)
   const addItem = useCartStore((state) => state.addItem);
   const openDrawer = useDrawerStore((state) => state.openDrawer);
   const firstName = getFirstName(voiceover.name);
+
+  // Handle navigation back to homepage with scroll
+  const handleBackToVoiceovers = useCallback(() => {
+    // Store scroll intent in sessionStorage
+    sessionStorage.setItem('scrollToVoiceovers', 'true');
+    router.push('/');
+  }, [router]);
 
   // Save form data to localStorage whenever it changes
   useEffect(() => {
@@ -337,16 +347,20 @@ export function VoiceoverDetailClient({ voiceover }: VoiceoverDetailClientProps)
 
   return (
     <div className={`min-h-screen bg-background ${bricolageGrotesque.variable} font-bricolage`}>
+      {/* Hidden prefetch link to preload homepage */}
+      <Link href="/" prefetch={true} className="sr-only" aria-hidden="true">
+        Homepage
+      </Link>
+
       {/* Back Button */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <Link
-          href="/#voiceovers"
-          prefetch={true}
+        <button
+          onClick={handleBackToVoiceovers}
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           <span className="text-sm font-medium">Terug naar alle stemmen</span>
-        </Link>
+        </button>
       </div>
 
       {/* Mobile Header - Shows name and key info without full card */}
