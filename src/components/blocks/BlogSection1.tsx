@@ -111,7 +111,8 @@ export function BlogSection1({
         // Build the full URL for the API call
         const baseUrl = inIframe ? window.location.origin : '';
 
-        const postsUrl = `${baseUrl}/api/public/blog-posts?limit=${postsLimit}&depth=2&sort=-publishedDate`;
+        // Use depth=1 instead of 2 to avoid timeout issues
+        const postsUrl = `${baseUrl}/api/public/blog-posts?limit=${postsLimit}&depth=1&sort=-publishedDate`;
 
         // Fetch blog posts with category relationship from public API
         const postsResponse = await fetch(postsUrl, {
