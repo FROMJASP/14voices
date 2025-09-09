@@ -1,7 +1,6 @@
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { createApiHandler } from '@/lib/api/handlers';
-import globalCache from '@/lib/cache';
 
 export const GET = createApiHandler(
   async () => {
