@@ -80,6 +80,7 @@ export function BlogSection1({
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPreview, setIsPreview] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isCancelled = false;
@@ -87,9 +88,20 @@ export function BlogSection1({
     const fetchData = async () => {
       // Starting fetch...
       setLoading(true);
+      setError(null);
+
+      // Add a timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        if (!isCancelled) {
+          setLoading(false);
+          setError('Request timed out. Please refresh the page.');
+          setPosts([]);
+          setCategories([]);
+        }
+      }, 10000); // 10 second timeout
 
       try {
-        // Check if we're in preview/iframe mode first
+        // Check if we're in preview/iframe mode
         let inIframe = false;
         try {
           inIframe = window.self !== window.top;
@@ -97,25 +109,26 @@ export function BlogSection1({
           inIframe = true; // Assume iframe if check fails
         }
 
-        if (inIframe) {
-          // Detected iframe/preview mode, skipping fetch
+        // For live preview, we need to detect if we're in Payload admin iframe
+        const isPayloadPreview = inIframe && window.location.pathname.includes('/admin');
+
+        if (isPayloadPreview) {
+          // In Payload preview, still try to fetch data but with different approach
           setIsPreview(true);
-          setPosts([]);
-          setCategories([]);
-          setLoading(false);
-          return;
         }
 
+        // Build the full URL for the API call
+        const baseUrl = inIframe ? window.location.origin : '';
+
+        const postsUrl = `${baseUrl}/api/public/blog-posts?limit=${postsLimit}&depth=2&sort=-publishedDate`;
+
         // Fetch blog posts with category relationship from public API
-        const postsResponse = await fetch(
-          `/api/public/blog-posts?limit=${postsLimit}&depth=2&sort=-publishedDate`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            cache: 'no-store', // Ensure fresh data
-          }
-        );
+        const postsResponse = await fetch(postsUrl, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store', // Ensure fresh data
+        });
 
         if (!postsResponse.ok) {
           console.error('Failed to fetch posts:', postsResponse.status, postsResponse.statusText);
@@ -136,7 +149,8 @@ export function BlogSection1({
         if (showCategories) {
           try {
             // Fetch categories from public API
-            const categoriesResponse = await fetch('/api/public/categories?limit=100', {
+            const categoriesUrl = `${baseUrl}/api/public/categories?limit=100`;
+            const categoriesResponse = await fetch(categoriesUrl, {
               headers: {
                 'Content-Type': 'application/json',
               },
@@ -151,7 +165,8 @@ export function BlogSection1({
 
               // Skip fetching all posts for category counts in build/preview mode
               // This was causing build timeouts
-              const allPostsResponse = await fetch(`/api/public/blog-posts?limit=100&depth=1`);
+              const allPostsUrl = `${baseUrl}/api/public/blog-posts?limit=100&depth=1`;
+              const allPostsResponse = await fetch(allPostsUrl);
 
               if (allPostsResponse.ok) {
                 const allPostsData = await allPostsResponse.json();
@@ -203,6 +218,7 @@ export function BlogSection1({
         // Set empty data but stop loading
         setPosts([]);
         setCategories([]);
+        setError('Unable to load blog posts. Please try again later.');
 
         // If fetch failed and we're in an iframe, we're likely in a restricted preview
         try {
@@ -213,6 +229,7 @@ export function BlogSection1({
           // Unable to check iframe status
         }
       } finally {
+        clearTimeout(timeoutId); // Clear the timeout
         if (!isCancelled) {
           // Fetch complete, setting loading to false
           setLoading(false);
@@ -261,8 +278,34 @@ export function BlogSection1({
     );
   }
 
-  // Show placeholder in preview mode
-  if (isPreview && posts.length === 0) {
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <div className="w-full">
+        <div
+          style={{
+            paddingTop: paddingMap[paddingTop],
+            paddingBottom: paddingMap[paddingBottom],
+          }}
+        >
+          <div className="max-w-[var(--breakpoint-xl)] mx-auto px-6 xl:px-0">
+            {(title || description) && (
+              <div className="mb-8">
+                {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
+                {description && <p className="text-muted-foreground">{description}</p>}
+              </div>
+            )}
+            <div className="bg-destructive/10 rounded-lg p-8 text-center">
+              <p className="text-destructive">{error}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show placeholder only if there are no posts and it's NOT loading
+  if (!loading && posts.length === 0) {
     return (
       <div className="w-full">
         <div
@@ -279,12 +322,12 @@ export function BlogSection1({
               </div>
             )}
             <div className="bg-muted/50 rounded-lg p-8 text-center">
-              <p className="text-muted-foreground">
-                Blog posts will appear here when viewing the live site.
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                (Preview mode detected - API calls disabled)
-              </p>
+              <p className="text-muted-foreground">No blog posts available yet.</p>
+              {isPreview && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Create some blog posts in the Blog Posts collection to see them here.
+                </p>
+              )}
             </div>
           </div>
         </div>
