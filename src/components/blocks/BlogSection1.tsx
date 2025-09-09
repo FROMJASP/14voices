@@ -1,7 +1,6 @@
 'use client';
 
 import { Badge } from '@/components/ui/Badge';
-import { Card, CardContent } from '@/components/ui/Card';
 import {
   BadgeDollarSign,
   Bike,
@@ -113,7 +112,7 @@ export function BlogSection1({
 
         // Use the optimized blog-section endpoint
         const url = `${baseUrl}/api/public/blog-section?limit=${postsLimit}&categories=${showCategories}`;
-        
+
         const response = await fetch(url, {
           headers: {
             'Content-Type': 'application/json',
@@ -130,18 +129,18 @@ export function BlogSection1({
           console.error('Blog section response not ok:', response.status);
           const errorData = await response.json().catch(() => ({}));
           console.error('Error response:', errorData);
-          
+
           // Check if we got partial data even with an error
           if (errorData.data) {
             setPosts(errorData.data.posts || []);
             setCategories(errorData.data.categories || []);
           }
-          
+
           throw new Error(errorData.message || `Failed to fetch blog data: ${response.status}`);
         }
 
         const responseData = await response.json();
-        
+
         if (!responseData.success) {
           // Use any partial data if available
           if (responseData.data) {
@@ -152,7 +151,7 @@ export function BlogSection1({
         }
 
         const { posts: fetchedPosts = [], categories: fetchedCategories = [] } = responseData.data;
-        
+
         setPosts(fetchedPosts);
         if (showCategories) {
           setCategories(fetchedCategories);
@@ -322,7 +321,7 @@ export function BlogSection1({
 
                   return (
                     <Link key={post.id} href={`/blog/${post.slug}`}>
-                      <Card className="flex flex-col sm:flex-row sm:items-center shadow-none overflow-hidden rounded-md border-none py-0 hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div className="flex flex-col sm:flex-row sm:items-center overflow-hidden rounded-md py-0 hover:bg-muted/30 transition-colors cursor-pointer">
                         {imageUrl && (
                           <div
                             className="shrink-0 aspect-video grow sm:w-56 sm:aspect-square bg-muted rounded-lg bg-cover bg-center"
@@ -332,10 +331,10 @@ export function BlogSection1({
                         {!imageUrl && (
                           <div className="shrink-0 aspect-video grow sm:w-56 sm:aspect-square bg-muted rounded-lg" />
                         )}
-                        <CardContent className="px-0 sm:px-6 py-0 flex flex-col">
+                        <div className="px-0 sm:px-6 py-0 flex flex-col">
                           {category && (
                             <div className="flex items-center gap-6">
-                              <Badge className="bg-primary/5 text-primary hover:bg-primary/5 shadow-none">
+                              <Badge className="bg-primary/10 text-primary hover:bg-primary/15 shadow-none">
                                 {category.name}
                               </Badge>
                             </div>
@@ -361,8 +360,8 @@ export function BlogSection1({
                               </div>
                             )}
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
                     </Link>
                   );
                 })}
