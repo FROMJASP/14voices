@@ -9,18 +9,24 @@ import { heroSubtitleConfig } from '@/fields/lexical/heroSubtitleConfig';
  */
 export const HeroV1Block: Block = {
   slug: 'hero-v1',
-  imageURL: '/admin/block-previews/hero-v1.svg',
+  imageURL: '/admin/block-previews/hero-1.jpg',
   admin: {
     // initCollapsed: true, // Not supported in current Payload version
+    custom: {
+      description: {
+        en: 'Hero section with process steps on the left and image on the right. Useful for homepage headers where you want to show at a glance what your brand stands for.',
+        nl: 'Hero sectie met processtappen links en afbeelding rechts. Handig voor homepage headers waarin je in 1 oogopslag wil laten zien waar je merk voor staat.',
+      },
+    },
   },
   labels: {
     singular: {
-      en: 'Hero - Text with Image v1',
-      nl: 'Hero - Tekst met Afbeelding v1',
+      en: 'Hero 1 (Text with image right)',
+      nl: 'Hero 1 (Tekst met afbeelding rechts)',
     },
     plural: {
-      en: 'Hero - Text with Image v1',
-      nl: 'Hero - Tekst met Afbeelding v1',
+      en: 'Hero 1 (Text with image right)',
+      nl: 'Hero 1 (Tekst met afbeelding rechts)',
     },
   },
   fields: [
@@ -388,18 +394,24 @@ export const HeroV1Block: Block = {
  */
 export const HeroV2Block: Block = {
   slug: 'hero-v2',
-  imageURL: '/admin/block-previews/hero-v2.svg',
+  imageURL: '/admin/block-previews/hero-2.jpg',
   admin: {
     // initCollapsed: true, // Not supported in current Payload version
+    custom: {
+      description: {
+        en: 'Centered hero section with badge, title, and subtitle. Great for landing pages and promotional content with a focused message.',
+        nl: "Gecentreerde hero sectie met badge, titel en ondertitel. Ideaal voor landingspagina's en promotionele content met een gerichte boodschap.",
+      },
+    },
   },
   labels: {
     singular: {
-      en: 'Hero - Center v1',
-      nl: 'Hero - Center v1',
+      en: 'Hero 2 (center)',
+      nl: 'Hero 2 (center)',
     },
     plural: {
-      en: 'Hero - Center v1',
-      nl: 'Hero - Center v1',
+      en: 'Hero 2 (center)',
+      nl: 'Hero 2 (center)',
     },
   },
   fields: [
@@ -626,18 +638,24 @@ export const HeroV2Block: Block = {
  */
 export const ContentV1Block: Block = {
   slug: 'content-v1',
-  imageURL: '/admin/block-previews/content-v1.svg',
+  imageURL: '/admin/block-previews/content-1.jpg',
   admin: {
     // initCollapsed: true, // Not supported in current Payload version
+    custom: {
+      description: {
+        en: 'Content section with image, title, description and call-to-action button. Use this to highlight specific content or link to other pages.',
+        nl: "Content sectie met afbeelding, titel, beschrijving en call-to-action knop. Gebruik dit om specifieke content te highlighten of te linken naar andere pagina's.",
+      },
+    },
   },
   labels: {
     singular: {
-      en: 'Content v1',
-      nl: 'Content v1',
+      en: 'Content 1',
+      nl: 'Content 1',
     },
     plural: {
-      en: 'Content v1',
-      nl: 'Content v1',
+      en: 'Content 1',
+      nl: 'Content 1',
     },
   },
   fields: [
@@ -776,18 +794,24 @@ export const ContentV1Block: Block = {
  */
 export const VoiceoverV1Block: Block = {
   slug: 'voiceover-v1',
-  imageURL: '/admin/block-previews/voiceover-v1.svg',
+  imageURL: '/admin/block-previews/products-1.jpg',
   admin: {
     // initCollapsed: true, // Not supported in current Payload version
+    custom: {
+      description: {
+        en: 'Product cards grid showing voice-over artists with their details and audio samples. Automatically pulls data from your voice-over collection.',
+        nl: 'Product kaarten grid met voice-over artiesten, hun details en audio samples. Haalt automatisch data op uit je voice-over collectie.',
+      },
+    },
   },
   labels: {
     singular: {
-      en: '14v Voiceover Cards v1',
-      nl: '14v Voiceover Kaarten v1',
+      en: 'Product cards 1',
+      nl: 'Product cards 1',
     },
     plural: {
-      en: '14v Voiceover Cards v1',
-      nl: '14v Voiceover Kaarten v1',
+      en: 'Product cards 1',
+      nl: 'Product cards 1',
     },
   },
   fields: [
@@ -818,9 +842,15 @@ export const VoiceoverV1Block: Block = {
  */
 export const BlogSection1Block: Block = {
   slug: 'blog-section-1',
-  imageURL: '/admin/block-previews/blog-section-1.svg',
+  imageURL: '/admin/block-previews/blog-section-1.jpg',
   admin: {
     // initCollapsed: true, // Not supported in current Payload version
+    custom: {
+      description: {
+        en: 'Blog posts grid with category sidebar. Shows latest blog posts with filtering options. Ideal for news sections or blog overviews.',
+        nl: 'Blog posts grid met categorieën zijbalk. Toont laatste blogberichten met filteropties. Ideaal voor nieuwssecties of blogoverzichten.',
+      },
+    },
   },
   labels: {
     singular: {
@@ -948,9 +978,15 @@ export const BlogSection1Block: Block = {
  */
 export const BlogPostHeaderBlock: Block = {
   slug: 'blog-post-header',
-  imageURL: '/admin/block-previews/blog-post-header.svg',
+  imageURL: '/admin/block-previews/blog-post-header.jpg',
   admin: {
     // initCollapsed: true, // Not supported in current Payload version
+    custom: {
+      description: {
+        en: 'Blog post header with title, author info, date, and featured image. Automatically uses blog post data. Use at the top of blog pages.',
+        nl: "Blog post header met titel, auteur info, datum en uitgelichte afbeelding. Gebruikt automatisch blog post data. Gebruik bovenaan blogpagina's.",
+      },
+    },
   },
   labels: {
     singular: {
@@ -986,9 +1022,15 @@ export const BlogPostHeaderBlock: Block = {
  */
 export const BlogPostContentBlock: Block = {
   slug: 'blog-post-content',
-  imageURL: '/admin/block-previews/blog-post-content.svg',
+  imageURL: '/admin/block-previews/blog-post-content.jpg',
   admin: {
     // initCollapsed: true, // Not supported in current Payload version
+    custom: {
+      description: {
+        en: 'Blog post content area that displays the main blog content. Place after the blog header block. Includes optional comments section.',
+        nl: 'Blog post content gebied dat de hoofdinhoud van de blog toont. Plaats na het blog header blok. Bevat optionele reactiesectie.',
+      },
+    },
   },
   labels: {
     singular: {

@@ -155,9 +155,193 @@ const NavIconsCSS: React.FC = () => {
       }
     `;
 
+    // Add custom blocks drawer styling
+    css += `
+      /* Custom styling for blocks drawer to show image + text layout */
+      .blocks-drawer__blocks {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        padding: 1rem !important;
+        grid-template-columns: unset !important;
+      }
+      
+      /* Force all images in blocks drawer to be small thumbnails */
+      .blocks-drawer__block img,
+      .blocks-drawer__blocks img,
+      .blocks-drawer img[src*="block-previews"],
+      .blocks-drawer img[src*=".jpg"],
+      .blocks-drawer img[src*=".png"],
+      .blocks-drawer img {
+        max-width: 180px !important;
+        max-height: 110px !important;
+        width: 180px !important;
+        height: 110px !important;
+        object-fit: cover !important;
+        flex-shrink: 0 !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        vertical-align: top !important;
+      }
+      
+      /* Special handling for specific images that need to show more */
+      .blocks-drawer img[src*="hero-1"],
+      .blocks-drawer img[src*="blog-section-1"] {
+        object-fit: contain !important;
+        background: #f5f5f5 !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
+      }
+      
+      /* Style each block option */
+      .blocks-drawer__block {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        padding: 1rem !important;
+        border: 1px solid var(--theme-elevation-100) !important;
+        border-radius: 8px !important;
+        transition: all 0.2s ease !important;
+        gap: 1rem !important;
+        cursor: pointer !important;
+        background: var(--theme-bg) !important;
+        text-align: left !important;
+        width: 100% !important;
+        height: auto !important;
+      }
+      
+      .blocks-drawer__block:hover {
+        background: var(--theme-elevation-50) !important;
+        border-color: var(--theme-elevation-150) !important;
+        transform: translateY(-1px) !important;
+      }
+      
+      /* If block has a button inside, style it too */
+      .blocks-drawer__block button {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+        width: 100% !important;
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        cursor: pointer !important;
+        font-family: inherit !important;
+        font-size: inherit !important;
+        color: inherit !important;
+        text-align: left !important;
+      }
+      
+      /* Block content wrapper */
+      .blocks-drawer__block-content {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        min-width: 0 !important;
+      }
+      
+      /* Block title */
+      .blocks-drawer__block-label,
+      .blocks-drawer__block .label {
+        font-size: 1.25rem !important; /* Increased from 1.125rem */
+        font-weight: 600 !important;
+        color: var(--theme-text) !important;
+        margin: 0 !important;
+        line-height: 1.3 !important;
+        display: block !important;
+      }
+      
+      /* Block description */
+      .blocks-drawer__block-description {
+        font-size: 1rem !important; /* Increased from 0.9375rem */
+        color: var(--theme-text-light) !important;
+        line-height: 1.5 !important;
+        margin: 0 !important;
+        display: block !important;
+        padding: 0 !important;
+      }
+      
+      /* Content container to hold title + description */
+      .blocks-drawer__block-text-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        flex: 1 !important;
+        padding-top: 0.75rem !important; /* Add padding to move content down */
+      }
+      
+      /* Override default Payload styles that might interfere */
+      .blocks-drawer__drawer .drawer__content {
+        padding: 0 !important;
+      }
+      
+      /* Hide default grid layout if it exists */
+      .blocks-field__drawer-blocks-grid {
+        display: none !important;
+      }
+      
+      /* Mobile adjustments */
+      @media (max-width: 768px) {
+        .blocks-drawer__block img,
+        .blocks-drawer img {
+          width: 120px !important;
+          height: 80px !important;
+          max-width: 120px !important;
+          max-height: 80px !important;
+        }
+        
+        .blocks-drawer__block-description {
+          -webkit-line-clamp: 1 !important;
+        }
+      }
+      
+      /* Dark mode support */
+      [data-theme="dark"] .blocks-drawer__block {
+        background: var(--theme-elevation-0) !important;
+      }
+      
+      [data-theme="dark"] .blocks-drawer__block:hover {
+        background: var(--theme-elevation-100) !important;
+      }
+    `;
+
     // Add styles to the document
     style.textContent = css;
     document.head.appendChild(style);
+
+    // Block descriptions for each block type
+    const blockDescriptions: Record<string, { en: string; nl: string }> = {
+      'hero-v1': {
+        en: 'Hero section with process steps on the left and image on the right. Useful for homepage headers where you want to show at a glance what your brand stands for.',
+        nl: 'Hero sectie met processtappen links en afbeelding rechts. Handig voor homepage headers waarin je in 1 oogopslag wil laten zien waar je merk voor staat.',
+      },
+      'hero-v2': {
+        en: 'Centered hero section with badge, title, and subtitle. Great for landing pages and promotional content with a focused message.',
+        nl: "Gecentreerde hero sectie met badge, titel en ondertitel. Ideaal voor landingspagina's en promotionele content met een gerichte boodschap.",
+      },
+      'content-v1': {
+        en: 'Content section with image, title, description and call-to-action button. Use this to highlight specific content or link to other pages.',
+        nl: "Content sectie met afbeelding, titel, beschrijving en call-to-action knop. Gebruik dit om specifieke content te highlighten of te linken naar andere pagina's.",
+      },
+      'voiceover-v1': {
+        en: 'Product cards grid showing voice-over artists with their details and audio samples. Automatically pulls data from your voice-over collection.',
+        nl: 'Product kaarten grid met voice-over artiesten, hun details en audio samples. Haalt automatisch data op uit je voice-over collectie.',
+      },
+      'blog-section-1': {
+        en: 'Blog posts grid with category sidebar. Shows latest blog posts with filtering options. Ideal for news sections or blog overviews.',
+        nl: 'Blog posts grid met categorieën zijbalk. Toont laatste blogberichten met filteropties. Ideaal voor nieuwssecties of blogoverzichten.',
+      },
+      'blog-post-header': {
+        en: 'Blog post header with title, author info, date, and featured image. Automatically uses blog post data. Use at the top of blog pages.',
+        nl: "Blog post header met titel, auteur info, datum en uitgelichte afbeelding. Gebruikt automatisch blog post data. Gebruik bovenaan blogpagina's.",
+      },
+      'blog-post-content': {
+        en: 'Blog post content area that displays the main blog content. Place after the blog header block. Includes optional comments section.',
+        nl: 'Blog post content gebied dat de hoofdinhoud van de blog toont. Plaats na het blog header blok. Bevat optionele reactiesectie.',
+      },
+    };
 
     // Also use MutationObserver to hide categories link and empty groups dynamically
     const observer = new MutationObserver(() => {
@@ -198,6 +382,97 @@ const NavIconsCSS: React.FC = () => {
           }
         }
       });
+
+      // Add descriptions to block items in the drawer
+      setTimeout(() => {
+        const blockItems = document.querySelectorAll('.blocks-drawer__block');
+
+        blockItems.forEach((item) => {
+          // Check if description already added
+          if (item.querySelector('.blocks-drawer__block-description')) return;
+
+          // Try multiple ways to get block slug
+          let blockSlug = null;
+
+          // Method 1: From image src - this is most reliable
+          const img = item.querySelector('img');
+          if (img && img.src) {
+            // Match patterns like hero-1.jpg, content-1.jpg, etc.
+            const match = img.src.match(/block-previews\/([\w-]+)\.(jpg|png|svg)/);
+            if (match) {
+              const filename = match[1];
+              // Map filename to block slug
+              if (filename === 'hero-1') blockSlug = 'hero-v1';
+              else if (filename === 'hero-2') blockSlug = 'hero-v2';
+              else if (filename === 'content-1') blockSlug = 'content-v1';
+              else if (filename === 'products-1') blockSlug = 'voiceover-v1';
+              else if (filename === 'blog-section-1') blockSlug = 'blog-section-1';
+              else if (filename === 'blog-post-header') blockSlug = 'blog-post-header';
+              else if (filename === 'blog-post-content') blockSlug = 'blog-post-content';
+            }
+          }
+
+          // Method 2: From text content
+          if (!blockSlug) {
+            const labelText = item.textContent?.toLowerCase() || '';
+            if (labelText.includes('hero 1')) blockSlug = 'hero-v1';
+            else if (labelText.includes('hero 2')) blockSlug = 'hero-v2';
+            else if (labelText.includes('content 1')) blockSlug = 'content-v1';
+            else if (labelText.includes('product cards')) blockSlug = 'voiceover-v1';
+            else if (labelText.includes('blog sectie') || labelText.includes('blog section'))
+              blockSlug = 'blog-section-1';
+            else if (
+              labelText.includes('blogpost header') ||
+              labelText.includes('blog post header')
+            )
+              blockSlug = 'blog-post-header';
+            else if (
+              labelText.includes('blogpost inhoud') ||
+              labelText.includes('blog post content')
+            )
+              blockSlug = 'blog-post-content';
+          }
+
+          if (blockSlug) {
+            // Get current language
+            const currentLang = document.documentElement.lang || 'en';
+            const description =
+              blockDescriptions[blockSlug]?.[currentLang as 'en' | 'nl'] ||
+              blockDescriptions[blockSlug]?.en;
+
+            if (description) {
+              // Find the title text (everything after the image)
+              const titleText = item.textContent?.trim() || '';
+
+              // Clear the current text content (but keep the image)
+              const img = item.querySelector('img');
+              item.textContent = '';
+              if (img) {
+                item.appendChild(img);
+              }
+
+              // Create a container for text content
+              const textContainer = document.createElement('div');
+              textContainer.className = 'blocks-drawer__block-text-content';
+
+              // Add title
+              const titleElement = document.createElement('div');
+              titleElement.className = 'blocks-drawer__block-label';
+              titleElement.textContent = titleText;
+              textContainer.appendChild(titleElement);
+
+              // Add description
+              const descriptionElement = document.createElement('div');
+              descriptionElement.className = 'blocks-drawer__block-description';
+              descriptionElement.textContent = description;
+              textContainer.appendChild(descriptionElement);
+
+              // Append text container to block item
+              item.appendChild(textContainer);
+            }
+          }
+        });
+      }, 500); // Delay to ensure DOM is ready
     });
 
     // Start observing the document for changes
