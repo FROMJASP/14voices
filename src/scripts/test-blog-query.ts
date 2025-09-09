@@ -22,7 +22,9 @@ async function testBlogQuery() {
         },
       },
     });
-    console.log(`Count result: ${countResult.totalDocs} published posts (${Date.now() - countStart}ms)`);
+    console.log(
+      `Count result: ${countResult.totalDocs} published posts (${Date.now() - countStart}ms)`
+    );
 
     // Test 2: Minimal fields query
     console.log('\nTest 2: Fetching minimal fields...');
@@ -42,7 +44,9 @@ async function testBlogQuery() {
         status: true,
       },
     });
-    console.log(`Minimal query: Found ${minimalResult.docs.length} docs (${Date.now() - minimalStart}ms)`);
+    console.log(
+      `Minimal query: Found ${minimalResult.docs.length} docs (${Date.now() - minimalStart}ms)`
+    );
     console.log('First doc:', minimalResult.docs[0]);
 
     // Test 3: Query with category relationship
@@ -60,12 +64,14 @@ async function testBlogQuery() {
       select: {
         id: true,
         title: true,
-        category: true,
+        categories: true,
         status: true,
       },
     });
-    console.log(`Category query: Found ${categoryResult.docs.length} docs (${Date.now() - categoryStart}ms)`);
-    console.log('Category data:', categoryResult.docs[0]?.category);
+    console.log(
+      `Category query: Found ${categoryResult.docs.length} docs (${Date.now() - categoryStart}ms)`
+    );
+    console.log('Categories data:', categoryResult.docs[0]?.categories);
 
     // Test 4: Full query as used in API
     console.log('\nTest 4: Full API query...');
@@ -89,7 +95,7 @@ async function testBlogQuery() {
         slug: true,
         excerpt: true,
         bannerImage: true,
-        category: true,
+        categories: true,
         publishedDate: true,
         readingTime: true,
         status: true,
@@ -105,11 +111,10 @@ async function testBlogQuery() {
       console.log('- id:', firstPost.id);
       console.log('- title:', firstPost.title);
       console.log('- bannerImage type:', typeof firstPost.bannerImage);
-      console.log('- category type:', typeof firstPost.category);
+      console.log('- categories type:', typeof firstPost.categories);
     }
 
     console.log(`\nTotal test time: ${Date.now() - startTime}ms`);
-
   } catch (error) {
     console.error('Error in blog query test:', error);
     if (error instanceof Error) {
