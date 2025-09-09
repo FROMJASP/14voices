@@ -125,6 +125,11 @@ const Categories: CollectionConfig = {
         afterRead: [
           async ({ req, siblingData }) => {
             try {
+              // Skip if we're already in a blog-posts context to avoid circular dependency
+              if (req.context?.skipCategoryCount) {
+                return 0;
+              }
+              
               const { totalDocs } = await req.payload.find({
                 collection: 'blog-posts',
                 where: {
@@ -133,6 +138,9 @@ const Categories: CollectionConfig = {
                   },
                 },
                 limit: 0,
+                context: {
+                  skipCategoryCount: true, // Prevent infinite loop
+                },
               });
               return totalDocs;
             } catch {

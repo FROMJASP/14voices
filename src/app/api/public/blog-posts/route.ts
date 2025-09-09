@@ -2,6 +2,11 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Don't cache the payload instance - it might be causing issues
+const getCachedPayload = async () => {
+  return await getPayload({ config: configPromise });
+};
+
 export async function OPTIONS() {
   const response = new NextResponse(null, { status: 200 });
   response.headers.set('Access-Control-Allow-Origin', '*');
@@ -16,20 +21,72 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get('limit') || '10');
-    // Reduce default depth to 0 to avoid timeout issues
-    const depth = parseInt(searchParams.get('depth') || '0');
+    const depth = parseInt(searchParams.get('depth') || '1'); // Back to depth 1 for category population
     const sort = searchParams.get('sort') || '-publishedDate';
 
     console.log('[Blog Posts API] Starting query with:', { limit, depth, sort });
 
-    // Add timeout check
+    // Get payload instance with caching
     console.log('[Blog Posts API] Getting payload instance...');
-    const payload = await getPayload({ config: configPromise });
-    console.log(`[Blog Posts API] Payload instance created in ${Date.now() - startTime}ms`);
+    const payload = await getCachedPayload();
+    console.log(`[Blog Posts API] Payload instance ready in ${Date.now() - startTime}ms`);
 
-    // First get the posts without deep population to avoid timeout
+    // Create a timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Query timeout')), 5000); // 5 second timeout
+    });
+
+    // Race between query and timeout
+    const queryPromise = payload.find({
+      collection: 'blog-posts',
+      where: {
+        status: {
+          equals: 'published',
+        },
+      },
+      limit,
+      depth,
+      sort,
+      context: {
+        skipCategoryCount: true, // Prevent circular dependency
+      },
+      // Optimize query by selecting only needed fields
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        bannerImage: true,
+        category: true,
+        publishedDate: true,
+        readingTime: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    const result = await Promise.race([queryPromise, timeoutPromise]).catch((error) => {
+      if (error.message === 'Query timeout') {
+        console.error('[Blog Posts API] Query timed out after 5 seconds');
+        // Return empty result on timeout
+        return {
+          docs: [],
+          totalDocs: 0,
+          totalPages: 0,
+          page: 1,
+          pagingCounter: 1,
+          hasPrevPage: false,
+          hasNextPage: false,
+          prevPage: null,
+          nextPage: null,
+        };
+      }
+      throw error;
+    });
+
     const {
-      docs: rawDocs,
+      docs,
       totalDocs,
       totalPages,
       page,
@@ -38,28 +95,9 @@ export async function GET(request: NextRequest) {
       hasNextPage,
       prevPage,
       nextPage,
-    } = await payload.find({
-      collection: 'blog-posts',
-      where: {
-        status: {
-          equals: 'published',
-        },
-      },
-      limit,
-      depth: 0, // Don't populate relationships initially
-      sort,
-    });
+    } = result as any;
 
-    console.log(`[Blog Posts API] Query completed. Found ${rawDocs.length} posts`);
-
-    // Manually populate only the category field if needed
-    const docs = await Promise.all(
-      rawDocs.map(async (post) => {
-        // Categories are already included as array in BlogPost type
-        // No need for manual population
-        return post;
-      })
-    );
+    console.log(`[Blog Posts API] Query completed in ${Date.now() - startTime}ms. Found ${docs.length} posts`);
 
     const response = NextResponse.json({
       docs,
@@ -77,10 +115,24 @@ export async function GET(request: NextRequest) {
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // Add cache headers for better performance
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
 
     return response;
   } catch (error) {
-    console.error('Error fetching blog posts:', error);
-    return NextResponse.json({ error: 'Failed to fetch blog posts' }, { status: 500 });
+    console.error('[Blog Posts API] Error:', error);
+    
+    // Return a more informative error response
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return NextResponse.json(
+      { 
+        error: 'Failed to fetch blog posts',
+        message: errorMessage,
+        docs: [],
+        totalDocs: 0,
+      }, 
+      { status: 500 }
+    );
   }
 }

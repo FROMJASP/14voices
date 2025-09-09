@@ -25,9 +25,18 @@ export async function GET() {
     const simpleQuery = await payload.find({
       collection: 'blog-posts',
       where: {
-        status: {
-          equals: 'published',
-        },
+        and: [
+          {
+            status: {
+              equals: 'published',
+            },
+          },
+          {
+            _status: {
+              equals: 'published',
+            },
+          },
+        ],
       },
       limit: 1,
       depth: 0, // No relationships
@@ -40,9 +49,18 @@ export async function GET() {
     const depth1Query = await payload.find({
       collection: 'blog-posts',
       where: {
-        status: {
-          equals: 'published',
-        },
+        and: [
+          {
+            status: {
+              equals: 'published',
+            },
+          },
+          {
+            _status: {
+              equals: 'published',
+            },
+          },
+        ],
       },
       limit: 1,
       depth: 1,
@@ -53,14 +71,48 @@ export async function GET() {
     const depth2Query = await payload.find({
       collection: 'blog-posts',
       where: {
-        status: {
-          equals: 'published',
-        },
+        and: [
+          {
+            status: {
+              equals: 'published',
+            },
+          },
+          {
+            _status: {
+              equals: 'published',
+            },
+          },
+        ],
       },
       limit: 1,
       depth: 2,
     });
     logs.push(`[${Date.now() - startTime}ms] Depth 2 query completed`);
+
+    // Step 6: Check for posts with different _status values
+    const draftStatusQuery = await payload.find({
+      collection: 'blog-posts',
+      where: {
+        _status: {
+          equals: 'draft',
+        },
+      },
+      limit: 5,
+      depth: 0,
+    });
+    logs.push(
+      `[${Date.now() - startTime}ms] Draft status query completed: ${draftStatusQuery.docs.length} draft posts found`
+    );
+
+    // Step 7: Check all posts regardless of status
+    const allPostsQuery = await payload.find({
+      collection: 'blog-posts',
+      limit: 5,
+      depth: 0,
+    });
+    logs.push(
+      `[${Date.now() - startTime}ms] All posts query completed: ${allPostsQuery.docs.length} posts found`
+    );
 
     return NextResponse.json({
       success: true,
@@ -70,7 +122,15 @@ export async function GET() {
         simpleQuery: simpleQuery.docs.length,
         depth1Query: depth1Query.docs.length,
         depth2Query: depth2Query.docs.length,
+        draftPosts: draftStatusQuery.docs.length,
+        allPosts: allPostsQuery.docs.length,
         samplePost: simpleQuery.docs[0] || null,
+        sampleAllPosts: allPostsQuery.docs.map(post => ({
+          id: post.id,
+          title: post.title,
+          status: post.status,
+          _status: post._status,
+        })),
       },
     });
   } catch (error) {

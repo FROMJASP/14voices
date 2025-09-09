@@ -97,7 +97,7 @@ export function BlogSection1({
           setPosts([]);
           setCategories([]);
         }
-      }, 10000); // 10 second timeout
+      }, 20000); // 20 second timeout to account for initial payload instance
 
       try {
         // Check if we're in preview/iframe mode
@@ -111,93 +111,51 @@ export function BlogSection1({
         // Build the full URL for the API call
         const baseUrl = inIframe ? window.location.origin : '';
 
-        // Use depth=1 instead of 2 to avoid timeout issues
-        const postsUrl = `${baseUrl}/api/public/blog-posts?limit=${postsLimit}&depth=1&sort=-publishedDate`;
-
-        // Fetch blog posts with category relationship from public API
-        const postsResponse = await fetch(postsUrl, {
+        // Use the optimized blog-section endpoint
+        const url = `${baseUrl}/api/public/blog-section?limit=${postsLimit}&categories=${showCategories}`;
+        
+        const response = await fetch(url, {
           headers: {
             'Content-Type': 'application/json',
           },
-          cache: 'no-store', // Ensure fresh data
-          // Add a shorter timeout for the fetch itself
-          signal: AbortSignal.timeout(8000), // 8 second timeout
+          // Use cache in production for better performance
+          cache: inIframe ? 'no-store' : 'force-cache',
+          // Add timeout for the fetch itself
+          signal: AbortSignal.timeout(18000), // 18 second timeout
         });
-
-        if (!postsResponse.ok) {
-          console.error('Failed to fetch posts:', postsResponse.status, postsResponse.statusText);
-          const errorText = await postsResponse.text();
-          console.error('Error response:', errorText);
-          throw new Error(`Failed to fetch posts: ${postsResponse.status}`);
-        }
-
-        const postsData = await postsResponse.json();
-        // Posts data received
 
         if (isCancelled) return;
 
-        const fetchedPosts = postsData.docs || [];
-        // Setting posts
-        setPosts(fetchedPosts);
-
-        if (showCategories) {
-          try {
-            // Fetch categories from public API
-            const categoriesUrl = `${baseUrl}/api/public/categories?limit=100`;
-            const categoriesResponse = await fetch(categoriesUrl, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            // Categories response received
-            if (categoriesResponse.ok) {
-              const categoriesData = await categoriesResponse.json();
-
-              if (isCancelled) return;
-
-              const fetchedCategories = categoriesData.docs || [];
-
-              // Skip fetching all posts for category counts in build/preview mode
-              // This was causing build timeouts
-              const allPostsUrl = `${baseUrl}/api/public/blog-posts?limit=100&depth=1`;
-              const allPostsResponse = await fetch(allPostsUrl);
-
-              if (allPostsResponse.ok) {
-                const allPostsData = await allPostsResponse.json();
-
-                if (isCancelled) return;
-
-                const allPosts = allPostsData.docs || [];
-
-                // Calculate post counts for each category
-                const categoriesWithCounts = fetchedCategories.map((category: any) => {
-                  const postCount = allPosts.filter((post: any) => {
-                    // Check if post has this category
-                    if (typeof post.category === 'object' && post.category?.id === category.id) {
-                      return true;
-                    }
-                    if (typeof post.category === 'string' && post.category === category.id) {
-                      return true;
-                    }
-                    return false;
-                  }).length;
-
-                  return {
-                    ...category,
-                    postsCount: postCount,
-                  };
-                });
-
-                setCategories(categoriesWithCounts);
-              }
-            }
-          } catch (categoryError) {
-            console.error('Error fetching categories:', categoryError);
-            // Continue without categories
-            if (!isCancelled) {
-              setCategories([]);
-            }
+        if (!response.ok) {
+          console.error('Blog section response not ok:', response.status);
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Error response:', errorData);
+          
+          // Check if we got partial data even with an error
+          if (errorData.data) {
+            setPosts(errorData.data.posts || []);
+            setCategories(errorData.data.categories || []);
           }
+          
+          throw new Error(errorData.message || `Failed to fetch blog data: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        
+        if (!responseData.success) {
+          // Use any partial data if available
+          if (responseData.data) {
+            setPosts(responseData.data.posts || []);
+            setCategories(responseData.data.categories || []);
+          }
+          throw new Error(responseData.message || 'Failed to fetch blog data');
+        }
+
+        const { posts: fetchedPosts = [], categories: fetchedCategories = [] } = responseData.data;
+        
+        setPosts(fetchedPosts);
+        if (showCategories) {
+          setCategories(fetchedCategories);
         }
 
         // Data fetched successfully
