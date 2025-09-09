@@ -215,6 +215,11 @@ export function PageRenderer({
 
     if (hasNewLayout) {
       // New blocks structure - even if empty array
+      console.log(
+        `[PageRenderer] ${page.slug} has new layout with ${layoutBlocks.length} blocks:`,
+        layoutBlocks.map((b: any) => b.blockType)
+      );
+
       return (
         <>
           <div className="homepage-preview">
@@ -318,6 +323,8 @@ export function PageRenderer({
                             description={block.description}
                             showCategories={block.showCategories !== false}
                             postsLimit={block.postsLimit || 8}
+                            paddingTop={block.paddingTop || 'medium'}
+                            paddingBottom={block.paddingBottom || 'medium'}
                           />
                         </div>
                       );
@@ -359,19 +366,24 @@ export function PageRenderer({
       );
     }
 
-    // Fallback to old structure for backwards compatibility - only for homepage
+    // Fallback to old structure for backwards compatibility - only for homepage without new layout
+    // IMPORTANT: If a page has been migrated to use the new layout system (even with empty array),
+    // we should NOT use the old fallback structure
     const hero = page.hero as any;
     const voiceover = page.voiceover;
     const linkToBlog = page.linkToBlog;
+
+    // Only use default blocks for homepage if it doesn't have pageBlocks configured
+    // For blog page or other pages, use empty array if no pageBlocks
     const blocksArray =
       page.pageBlocks ||
-      (isHomepage
+      (isHomepage && !hasNewLayout
         ? [
             { blockType: 'hero', enabled: true, heroVariant: 'variant1' },
             { blockType: 'voiceover', enabled: true, voiceoverVariant: 'variant1' },
             { blockType: 'linkToBlog', enabled: true, contentVariant: 'variant1' },
           ]
-        : []);
+        : []); // Empty array for non-homepage pages without blocks
 
     return (
       <>
