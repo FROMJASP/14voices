@@ -98,3 +98,39 @@ button[aria-label*='Language'] {
   }
 }
 
+/* Collapse page layout blocks by default */
+/* Target blocks within the layout field */
+[data-field-name='layout'] .blocks-field__row-collapsible {
+  /* Initially collapsed state */
+}
+
+[data-field-name='layout']
+  .blocks-field__row-collapsible:not(.blocks-field__row-collapsible--collapsed) {
+  /* Force collapse by default */
+}
+
+/* Ensure all blocks start collapsed when page loads */
+[data-field-name='layout'] .collapsible__content {
+  display: none;
+  height: 0;
+  overflow: hidden;
+}
+
+[data-field-name='layout'] .collapsible--is-open .collapsible__content {
+  display: block;
+  height: auto;
+}
+
+/* Alternative approach - target the block rows directly */
+.blocks-field__rows .collapsible:not(.collapsible--is-open) .collapsible__content {
+  display: none !important;
+}
+
+/* Ensure new blocks also start collapsed */
+.blocks-field__row--new .collapsible__content {
+  display: none !important;
+}
+
+.blocks-field__row--new .collapsible--is-open .collapsible__content {
+  display: block !important;
+}
