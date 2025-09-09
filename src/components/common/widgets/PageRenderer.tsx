@@ -16,6 +16,7 @@ import ContentSection from '@/components/features/content/ContentSection';
 import { BlogSection1 } from '@/components/blocks/BlogSection1';
 import { BlogPostHeader } from '@/components/blocks/BlogPostHeader';
 import { BlogContent } from '@/components/blocks/BlogContent';
+import { BlogPostBlock } from '@/components/blocks/BlogPostBlock';
 import { useLivePreview } from '@payloadcms/live-preview-react';
 
 // Helper function to extract plain text from rich text
@@ -207,18 +208,14 @@ export function PageRenderer({
     );
   }, [voiceovers]);
 
-  // For homepage or blog page with blocks
-  if (isHomepage || page.slug === 'blog') {
+  // For homepage, blog page, or blog post template with blocks
+  if (isHomepage || page.slug === 'blog' || page.slug === 'blog-post') {
     // Check if we have new layout field (native blocks) or old structure
     const layoutBlocks = (page as any).layout;
     const hasNewLayout = Array.isArray(layoutBlocks); // Check if layout exists as array (even if empty)
 
     if (hasNewLayout) {
       // New blocks structure - even if empty array
-      console.log(
-        `[PageRenderer] ${page.slug} has new layout with ${layoutBlocks.length} blocks:`,
-        layoutBlocks.map((b: any) => b.blockType)
-      );
 
       return (
         <>
@@ -351,6 +348,18 @@ export function PageRenderer({
                       return (
                         <div key={`blog-content-${index}`}>
                           <BlogContent content={block.content} blogPost={blogPost} />
+                        </div>
+                      );
+                    }
+
+                    case 'blog-post': {
+                      return (
+                        <div key={`blog-post-${index}`}>
+                          <BlogPostBlock
+                            showShareButtons={block.showShareButtons}
+                            showAuthor={block.showAuthor}
+                            blogPost={blogPost}
+                          />
                         </div>
                       );
                     }

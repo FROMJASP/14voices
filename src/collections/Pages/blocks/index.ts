@@ -973,88 +973,59 @@ export const BlogSection1Block: Block = {
 };
 
 /**
- * Blog Post Header Block
- * Shows the blog post title, author, date, and banner image
+ * Blog Post Block
+ * Shows the complete blog post with header and content
  */
-export const BlogPostHeaderBlock: Block = {
-  slug: 'blog-post-header',
-  imageURL: '/admin/block-previews/blog-post-header.jpg',
+export const BlogPostBlock: Block = {
+  slug: 'blog-post',
+  imageURL: '/admin/block-previews/blog-post.jpg',
   admin: {
     // initCollapsed: true, // Not supported in current Payload version
     custom: {
       description: {
-        en: 'Blog post header with title, author info, date, and featured image. Automatically uses blog post data. Use at the top of blog pages.',
-        nl: "Blog post header met titel, auteur info, datum en uitgelichte afbeelding. Gebruikt automatisch blog post data. Gebruik bovenaan blogpagina's.",
+        en: 'Complete blog post display with title, author info, date, banner image, share buttons and content. Automatically uses blog post data.',
+        nl: 'Volledige blogpost weergave met titel, auteur info, datum, banner afbeelding, deel knoppen en inhoud. Gebruikt automatisch blog post data.',
       },
     },
   },
   labels: {
     singular: {
-      en: 'Blog Post Header',
-      nl: 'Blogpost Header',
+      en: 'Blog Post',
+      nl: 'Blogpost',
     },
     plural: {
-      en: 'Blog Post Headers',
-      nl: 'Blogpost Headers',
+      en: 'Blog Posts',
+      nl: 'Blogposts',
     },
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
+      name: 'showShareButtons',
+      type: 'checkbox',
       label: {
-        en: 'Title Override (optional)',
-        nl: 'Titel Overschrijven (optioneel)',
+        en: 'Show Share Buttons',
+        nl: 'Toon Deel Knoppen',
       },
+      defaultValue: true,
       admin: {
         description: {
-          en: 'Leave empty to use the blog post title. This block automatically shows blog post header info.',
-          nl: 'Laat leeg om de blogpost titel te gebruiken. Dit blok toont automatisch de header informatie.',
+          en: 'Show social media share buttons (Facebook, X, LinkedIn)',
+          nl: 'Toon social media deel knoppen (Facebook, X, LinkedIn)',
         },
       },
     },
-  ],
-};
-
-/**
- * Blog Post Content Block
- * Shows the main content of the blog post
- */
-export const BlogPostContentBlock: Block = {
-  slug: 'blog-post-content',
-  imageURL: '/admin/block-previews/blog-post-content.jpg',
-  admin: {
-    // initCollapsed: true, // Not supported in current Payload version
-    custom: {
-      description: {
-        en: 'Blog post content area that displays the main blog content. Place after the blog header block. Includes optional comments section.',
-        nl: 'Blog post content gebied dat de hoofdinhoud van de blog toont. Plaats na het blog header blok. Bevat optionele reactiesectie.',
-      },
-    },
-  },
-  labels: {
-    singular: {
-      en: 'Blog Post Content',
-      nl: 'Blogpost Inhoud',
-    },
-    plural: {
-      en: 'Blog Post Content',
-      nl: 'Blogpost Inhoud',
-    },
-  },
-  fields: [
     {
-      name: 'showComments',
+      name: 'showAuthor',
       type: 'checkbox',
       label: {
-        en: 'Show Comments Section',
-        nl: 'Toon Reacties Sectie',
+        en: 'Show Author',
+        nl: 'Toon Auteur',
       },
-      defaultValue: false,
+      defaultValue: true,
       admin: {
         description: {
-          en: 'This block automatically displays the blog post content.',
-          nl: 'Dit blok toont automatisch de inhoud van de blogpost.',
+          en: 'Show "Written by" with author name',
+          nl: 'Toon "Geschreven door" met auteur naam',
         },
       },
     },
@@ -1068,6 +1039,5 @@ export const pageBlocks = [
   ContentV1Block,
   VoiceoverV1Block,
   BlogSection1Block,
-  BlogPostHeaderBlock,
-  BlogPostContentBlock,
+  BlogPostBlock,
 ];

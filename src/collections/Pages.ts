@@ -23,6 +23,13 @@ const Pages: CollectionConfig = {
     livePreview: {
       url: ({ data }) => {
         const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || '';
+
+        // Special handling for blog-post template page
+        if (data.slug === 'blog-post') {
+          // Use a query parameter to indicate this is a template preview
+          return `${baseURL}/blog/__template-preview__?preview=true`;
+        }
+
         const path = data.slug === 'home' ? '' : data.slug;
         return `${baseURL}/${path}`;
       },
@@ -60,11 +67,13 @@ const Pages: CollectionConfig = {
       // Only admins can delete pages
       if (user?.role !== 'admin') return false;
 
-      // Return a query to check for locked pages
+      // Return a query to check for locked pages - prevent deletion of system pages
       return {
-        slug: {
-          not_equals: 'home',
-        },
+        and: [
+          { slug: { not_equals: 'home' } },
+          { slug: { not_equals: 'blog' } },
+          { slug: { not_equals: 'blog-post' } },
+        ],
       };
     },
   },
@@ -107,7 +116,8 @@ const Pages: CollectionConfig = {
               },
               blocks: pageBlocks,
               admin: {
-                condition: (data) => data.slug === 'home' || data.slug === 'blog',
+                condition: (data) =>
+                  data.slug === 'home' || data.slug === 'blog' || data.slug === 'blog-post',
                 initCollapsed: true,
               },
             },
@@ -125,8 +135,8 @@ const Pages: CollectionConfig = {
                   nl: 'Hoofdinhoud van de pagina',
                 },
                 condition: (data) => {
-                  // Hide content field for homepage and blog since they use custom layouts
-                  return data.slug !== 'home' && data.slug !== 'blog';
+                  // Hide content field for system pages since they use custom layouts
+                  return data.slug !== 'home' && data.slug !== 'blog' && data.slug !== 'blog-post';
                 },
               },
             },
@@ -143,8 +153,8 @@ const Pages: CollectionConfig = {
                   nl: 'Voeg inhoudssecties toe om je pagina op te bouwen',
                 },
                 condition: (data) => {
-                  // Hide sections field for homepage and blog since they use custom layouts
-                  return data.slug !== 'home' && data.slug !== 'blog';
+                  // Hide sections field for system pages since they use custom layouts
+                  return data.slug !== 'home' && data.slug !== 'blog' && data.slug !== 'blog-post';
                 },
               },
               fields: [
@@ -186,8 +196,8 @@ const Pages: CollectionConfig = {
           data.publishedDate = new Date().toISOString();
         }
 
-        // Ensure home page remains locked
-        if (data.slug === 'home' || data.slug === 'blog') {
+        // Ensure system pages remain locked
+        if (data.slug === 'home' || data.slug === 'blog' || data.slug === 'blog-post') {
           data.locked = true;
         }
 

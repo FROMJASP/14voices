@@ -133,7 +133,7 @@ const Users: CollectionConfig = {
     },
   },
   admin: {
-    useAsTitle: 'email',
+    useAsTitle: 'name',
     defaultColumns: ['avatar', 'name', 'phone', 'lastLogin'],
     listSearchableFields: ['name', 'email', 'jobTitle'],
     group: {
@@ -331,6 +331,15 @@ const Users: CollectionConfig = {
           }
         }
         return args;
+      },
+    ],
+    beforeChange: [
+      async ({ data }) => {
+        // If name is empty, use the email prefix as name
+        if (!data.name && data.email) {
+          data.name = data.email.split('@')[0];
+        }
+        return data;
       },
     ],
     afterChange: [afterUserCreate],
