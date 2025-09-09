@@ -164,6 +164,55 @@ export function BlogPostBlock({
   }, [blogPost?.publishedDate]);
 
   if (!blogPost) {
+    // In admin preview mode, show a placeholder
+    const isInIframe = typeof window !== 'undefined' && window.parent !== window;
+    if (isInIframe) {
+      return (
+        <div className="px-4 py-24 mx-auto max-w-7xl">
+          <div className="w-full mx-auto mb-10 text-left md:w-3/4 lg:w-1/2">
+            <div className="pb-6 mb-6 border-b border-border">
+              <h1 className="mb-3 text-3xl font-bold text-foreground md:leading-tight md:text-4xl">
+                Voorbeeld Blog Titel
+              </h1>
+              <div className="text-base text-muted-foreground flex items-center gap-2">
+                <time>1 januari 2024</time>
+                {showAuthor && (
+                  <>
+                    <span>—</span>
+                    <span>Geschreven door Auteur Naam</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {showShareButtons && (
+              <div className="flex items-center mb-6 space-x-2">
+                <p className="text-muted-foreground">Deel dit artikel</p>
+                <span className="text-muted-foreground/50">[Deel knoppen]</span>
+              </div>
+            )}
+
+            <div className="h-64 bg-muted rounded-lg flex items-center justify-center">
+              <p className="text-muted-foreground">Banner afbeelding</p>
+            </div>
+          </div>
+
+          <div className="w-full mx-auto md:w-3/4 lg:w-1/2">
+            <div className="text-foreground space-y-4">
+              <p>
+                Dit is een voorbeeld van hoe je blogpost er uit zal zien. De werkelijke inhoud wordt
+                getoond wanneer een bezoeker naar een specifieke blogpost navigeert.
+              </p>
+              <p>
+                Je kunt de instellingen voor dit blok aanpassen in de Pagina Layout sectie
+                hieronder, zoals het tonen/verbergen van deel knoppen en auteur informatie.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="px-4 py-24 mx-auto max-w-7xl">
         <p className="text-center text-muted-foreground">Blog post niet gevonden</p>

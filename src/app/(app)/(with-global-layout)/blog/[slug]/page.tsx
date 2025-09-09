@@ -152,58 +152,56 @@ export default async function BlogPostPage({
       notFound();
     }
 
-    // Fetch the blog post template page
-    const { docs: templatePages } = await payload.find({
-      collection: 'pages',
-      where: {
-        slug: {
-          equals: 'blog-post',
+    // Try to fetch the blog post template page if it exists
+    let templatePage: Page | null = null;
+    try {
+      const { docs: templatePages } = await payload.find({
+        collection: 'pages',
+        where: {
+          slug: {
+            equals: 'blog-post',
+          },
         },
-      },
-      depth: 2,
-      limit: 1,
-      // Always use draft mode for template preview to get latest changes
-      ...(isTemplatePreview || isLivePreview || isPreviewParam ? { draft: true } : {}),
-    });
-
-    const templatePage = templatePages[0] as Page;
-
-    // If no template exists, create a default layout
-    if (
-      !templatePage ||
-      !(templatePage as any).layout ||
-      (templatePage as any).layout.length === 0
-    ) {
-      const defaultLayout = [
-        {
-          blockType: 'blog-post',
-          showShareButtons: true,
-          showAuthor: true,
-        } as any,
-      ];
-
-      const mockPage: any = {
-        id: 1,
-        title: post.title,
-        slug: 'blog-post', // Use blog-post slug for layout blocks rendering
-        layout: defaultLayout,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-      };
-
-      return <PageRenderer page={mockPage as any} blogPost={post} />;
+        depth: 2,
+        limit: 1,
+        // Always use draft mode for template preview to get latest changes
+        ...(isTemplatePreview || isLivePreview || isPreviewParam ? { draft: true } : {}),
+      });
+      templatePage = templatePages[0] as Page;
+    } catch (error) {
+      console.log('Blog post template page not found, using default layout');
     }
 
-    // Use the template page layout with blog post data injected
-    // IMPORTANT: Keep the template slug so PageRenderer knows to use layout blocks
-    const pageWithBlogData: Page = {
-      ...templatePage,
+    // Always use default layout for blog posts
+    // The blog-post page in Pages collection is just for template configuration
+    const defaultLayout = [
+      {
+        blockType: 'blog-post',
+        showShareButtons: true,
+        showAuthor: true,
+      } as any,
+    ];
+
+    // If template page exists and has layout configured, use its settings
+    const layout =
+      templatePage && (templatePage as any).layout?.length > 0
+        ? (templatePage as any).layout
+        : defaultLayout;
+
+    // Create a page object with the blog post data and layout
+    const pageWithBlogData: any = {
+      id: templatePage?.id || 1,
       title: post.title,
-      // Keep the template slug, not the post slug!
-      slug: templatePage.slug,
+      slug: 'blog-post', // Always use blog-post slug for block rendering
+      layout: layout,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      // Pass through SEO fields from the blog post, not the template
+      meta: post.meta,
+      openGraph: post.openGraph,
     };
 
-    return <PageRenderer page={pageWithBlogData as any} blogPost={post} />;
+    return <PageRenderer page={pageWithBlogData} blogPost={post} />;
   } catch (error) {
     console.error('Error loading blog post:', error);
     notFound();
