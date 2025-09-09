@@ -79,7 +79,6 @@ export function BlogSection1({
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isPreview, setIsPreview] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -109,14 +108,6 @@ export function BlogSection1({
           inIframe = true; // Assume iframe if check fails
         }
 
-        // For live preview, we need to detect if we're in Payload admin iframe
-        const isPayloadPreview = inIframe && window.location.pathname.includes('/admin');
-
-        if (isPayloadPreview) {
-          // In Payload preview, still try to fetch data but with different approach
-          setIsPreview(true);
-        }
-
         // Build the full URL for the API call
         const baseUrl = inIframe ? window.location.origin : '';
 
@@ -128,6 +119,8 @@ export function BlogSection1({
             'Content-Type': 'application/json',
           },
           cache: 'no-store', // Ensure fresh data
+          // Add a shorter timeout for the fetch itself
+          signal: AbortSignal.timeout(8000), // 8 second timeout
         });
 
         if (!postsResponse.ok) {
@@ -206,10 +199,7 @@ export function BlogSection1({
           }
         }
 
-        // If we successfully fetched data, we're not in a restricted preview
-        if (!isCancelled) {
-          setIsPreview(false);
-        }
+        // Data fetched successfully
       } catch (error) {
         console.error('Error fetching blog data:', error);
 
@@ -218,16 +208,23 @@ export function BlogSection1({
         // Set empty data but stop loading
         setPosts([]);
         setCategories([]);
-        setError('Unable to load blog posts. Please try again later.');
 
-        // If fetch failed and we're in an iframe, we're likely in a restricted preview
-        try {
-          if (window.self !== window.top) {
-            setIsPreview(true);
+        // Provide more specific error messages
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            setError('The request timed out. The blog posts API might be experiencing issues.');
+          } else if (error.message.includes('fetch')) {
+            setError(
+              'Unable to connect to the blog posts API. Please check if the server is running.'
+            );
+          } else {
+            setError(`Error loading blog posts: ${error.message}`);
           }
-        } catch {
-          // Unable to check iframe status
+        } else {
+          setError('Unable to load blog posts. Please try again later.');
         }
+
+        // Error has been set above
       } finally {
         clearTimeout(timeoutId); // Clear the timeout
         if (!isCancelled) {
@@ -305,7 +302,7 @@ export function BlogSection1({
   }
 
   // Show placeholder only if there are no posts and it's NOT loading
-  if (!loading && posts.length === 0) {
+  if (!loading && posts.length === 0 && !error) {
     return (
       <div className="w-full">
         <div
@@ -322,12 +319,17 @@ export function BlogSection1({
               </div>
             )}
             <div className="bg-muted/50 rounded-lg p-8 text-center">
-              <p className="text-muted-foreground">No blog posts available yet.</p>
-              {isPreview && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  Create some blog posts in the Blog Posts collection to see them here.
-                </p>
-              )}
+              <p className="text-muted-foreground mb-4">No blog posts available yet.</p>
+              <div className="text-sm text-muted-foreground space-y-2">
+                <p>To add blog posts:</p>
+                <ol className="list-decimal list-inside text-left max-w-md mx-auto">
+                  <li>Go to the Payload Admin panel</li>
+                  <li>Navigate to &quot;Blog Posts&quot; collection</li>
+                  <li>Create a new blog post</li>
+                  <li>Make sure to set the status to &quot;Published&quot;</li>
+                  <li>Save and refresh this page</li>
+                </ol>
+              </div>
             </div>
           </div>
         </div>
