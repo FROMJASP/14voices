@@ -143,6 +143,11 @@ export default async function BlogPostPage({ params }: Props) {
 }
 
 export async function generateStaticParams() {
+  // Temporarily disable static generation for blog posts
+  // to fix build timeout issues
+  return [];
+
+  /* Will re-enable after optimizing queries
   const payload = await getPayload({ config: configPromise });
 
   try {
@@ -164,4 +169,5 @@ export async function generateStaticParams() {
   } catch {
     return [];
   }
+  */
 }

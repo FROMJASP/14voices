@@ -149,8 +149,9 @@ export function BlogSection1({
 
               const fetchedCategories = categoriesData.docs || [];
 
-              // Fetch ALL published posts to get accurate category counts
-              const allPostsResponse = await fetch(`/api/public/blog-posts?limit=1000&depth=1`);
+              // Skip fetching all posts for category counts in build/preview mode
+              // This was causing build timeouts
+              const allPostsResponse = await fetch(`/api/public/blog-posts?limit=100&depth=1`);
 
               if (allPostsResponse.ok) {
                 const allPostsData = await allPostsResponse.json();

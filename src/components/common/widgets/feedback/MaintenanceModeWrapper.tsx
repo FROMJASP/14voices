@@ -65,6 +65,9 @@ export function MaintenanceModeWrapper({
           console.error('Error details:', error.message);
         }
         // Continue showing the site even if maintenance check fails
+        // Set default state when API fails
+        setIsMaintenanceMode(false);
+        setMaintenanceData({});
       } finally {
         setIsLoading(false);
       }
