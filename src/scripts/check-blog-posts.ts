@@ -23,22 +23,32 @@ async function checkBlogPosts() {
     blogPosts.docs
       .filter((p: any) => p.status === 'published')
       .forEach((post: any) => {
-        console.log(
-          `- ${post.title} (slug: ${post.slug}, category: ${post.category?.name || 'none'})`
-        );
+        const categories =
+          post.categories
+            ?.map((c: any) => c.category)
+            .filter(Boolean)
+            .join(', ') || 'none';
+        console.log(`- ${post.title} (slug: ${post.slug}, categories: ${categories})`);
       });
 
-    // Check categories too
+    // Categories are embedded in blog posts, not a separate collection
     console.log('\n=== Checking Categories ===\n');
 
-    const categories = await payload.find({
-      collection: 'categories',
-      limit: 100,
+    // Extract unique categories from blog posts
+    const categorySet = new Set<string>();
+    blogPosts.docs.forEach((post: any) => {
+      if (post.categories && Array.isArray(post.categories)) {
+        post.categories.forEach((catItem: any) => {
+          if (catItem.category) {
+            categorySet.add(catItem.category);
+          }
+        });
+      }
     });
 
-    console.log(`Total categories: ${categories.totalDocs}`);
-    categories.docs.forEach((cat: any) => {
-      console.log(`- ${cat.name} (slug: ${cat.slug})`);
+    console.log(`Unique categories found: ${categorySet.size}`);
+    categorySet.forEach((cat) => {
+      console.log(`- ${cat}`);
     });
   } catch (error) {
     console.error('Error:', error);

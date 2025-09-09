@@ -55,20 +55,9 @@ export async function GET(request: NextRequest) {
     // Manually populate only the category field if needed
     const docs = await Promise.all(
       rawDocs.map(async (post) => {
-        try {
-          if (post.category && typeof post.category === 'string') {
-            const category = await payload.findByID({
-              collection: 'categories',
-              id: post.category,
-              depth: 0,
-            });
-            return { ...post, category };
-          }
-          return post;
-        } catch (err) {
-          console.error(`[Blog Posts API] Error populating category for post ${post.id}:`, err);
-          return post;
-        }
+        // Categories are already included as array in BlogPost type
+        // No need for manual population
+        return post;
       })
     );
 
