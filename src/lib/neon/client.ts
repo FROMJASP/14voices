@@ -27,9 +27,9 @@ export const sql = createNeonClient();
  */
 export async function query<T = any>(text: string, params?: any[]): Promise<T[]> {
   try {
-    // Neon client uses template literals, not a query method
-    // For parameterized queries, we need to construct the query differently
-    const result = params && params.length > 0 ? await sql(text, params) : await sql(text);
+    // The neon client doesn't have a direct parameterized query method
+    // We'll use the template literal function directly
+    const result = await sql(text, ...(params || []));
     return result as T[];
   } catch (error) {
     console.error('Neon query error:', error);
@@ -50,10 +50,7 @@ export async function transaction<T = any>(
 
     const results: T[] = [];
     for (const query of queries) {
-      const result =
-        query.params && query.params.length > 0
-          ? await client(query.text, query.params)
-          : await client(query.text);
+      const result = await client(query.text, ...(query.params || []));
       results.push(result as T);
     }
 
