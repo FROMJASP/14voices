@@ -97,22 +97,22 @@ export async function GET(request: NextRequest) {
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-    
+
     // Add cache headers for better performance
     response.headers.set('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600');
 
     return response;
   } catch (error) {
     console.error('[Categories API] Error:', error);
-    
+
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch categories',
         message: errorMessage,
         docs: [],
         totalDocs: 0,
-      }, 
+      },
       { status: 500 }
     );
   }

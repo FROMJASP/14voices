@@ -4,7 +4,7 @@ const testCases = [
   { name: 'Marie van der Berg', expectedSlug: 'marie' },
   { name: 'Jan-Willem de Vries', expectedSlug: 'jan-willem' },
   { name: 'José García', expectedSlug: 'jos' }, // Special chars removed
-  { name: 'Anne-Marie O\'Connor', expectedSlug: 'anne-marie' },
+  { name: "Anne-Marie O'Connor", expectedSlug: 'anne-marie' },
   { name: 'Élise Dubois', expectedSlug: 'lise' }, // Accents removed
 ];
 
@@ -21,7 +21,7 @@ console.log('Testing voiceover slug generation:\n');
 testCases.forEach(({ name, expectedSlug }) => {
   const generatedSlug = generateSlug(name);
   const passed = generatedSlug === expectedSlug;
-  
+
   console.log(`Name: "${name}"`);
   console.log(`Expected: "${expectedSlug}"`);
   console.log(`Generated: "${generatedSlug}"`);

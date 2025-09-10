@@ -3,7 +3,17 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Play, Pause, Filter, Grid3X3, Grid2X2, ChevronLeft, ChevronRight, X, Download } from 'lucide-react';
+import {
+  Play,
+  Pause,
+  Filter,
+  Grid3X3,
+  Grid2X2,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Download,
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { TransformedVoiceover } from '@/types/voiceover';
 import './custom-card.css';
@@ -20,23 +30,19 @@ export function MobileFirstVoiceoverGrid({ voiceovers }: MobileFirstVoiceoverGri
   // Get unique tags
   const allTags = useMemo(() => {
     const tags = new Set<string>();
-    voiceovers.forEach(v => v.tags.forEach(tag => tags.add(tag)));
+    voiceovers.forEach((v) => v.tags.forEach((tag) => tags.add(tag)));
     return Array.from(tags).sort();
   }, [voiceovers]);
 
   // Filter voiceovers
   const filteredVoiceovers = useMemo(() => {
     if (selectedTags.length === 0) return voiceovers;
-    return voiceovers.filter(v => 
-      selectedTags.some(tag => v.tags.includes(tag))
-    );
+    return voiceovers.filter((v) => selectedTags.some((tag) => v.tags.includes(tag)));
   }, [voiceovers, selectedTags]);
 
   const toggleTag = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   };
 
@@ -88,16 +94,14 @@ export function MobileFirstVoiceoverGrid({ voiceovers }: MobileFirstVoiceoverGri
           </div>
         </div>
 
-        <p className="text-sm text-muted-foreground">
-          {filteredVoiceovers.length} stemmen
-        </p>
+        <p className="text-sm text-muted-foreground">{filteredVoiceovers.length} stemmen</p>
       </div>
 
       {/* Filter tags */}
       {showFilters && (
         <div className="mb-6 p-4 bg-muted/30 rounded-lg">
           <div className="flex flex-wrap gap-2">
-            {allTags.map(tag => (
+            {allTags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
@@ -112,10 +116,7 @@ export function MobileFirstVoiceoverGrid({ voiceovers }: MobileFirstVoiceoverGri
             ))}
           </div>
           {selectedTags.length > 0 && (
-            <button
-              onClick={clearFilters}
-              className="mt-3 text-sm text-muted-foreground"
-            >
+            <button onClick={clearFilters} className="mt-3 text-sm text-muted-foreground">
               Wis alle filters
             </button>
           )}
@@ -123,17 +124,15 @@ export function MobileFirstVoiceoverGrid({ voiceovers }: MobileFirstVoiceoverGri
       )}
 
       {/* Grid */}
-      <div className={`grid gap-6 ${
-        gridSize === 'large' 
-          ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-          : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
-      }`}>
-        {filteredVoiceovers.map(voiceover => (
-          <VoiceoverCard
-            key={voiceover.id}
-            voiceover={voiceover}
-            size={gridSize}
-          />
+      <div
+        className={`grid gap-6 ${
+          gridSize === 'large'
+            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+            : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+        }`}
+      >
+        {filteredVoiceovers.map((voiceover) => (
+          <VoiceoverCard key={voiceover.id} voiceover={voiceover} size={gridSize} />
         ))}
       </div>
 
@@ -143,10 +142,7 @@ export function MobileFirstVoiceoverGrid({ voiceovers }: MobileFirstVoiceoverGri
           <p className="text-muted-foreground mb-4">
             Geen stemacteurs gevonden met de geselecteerde filters.
           </p>
-          <button
-            onClick={clearFilters}
-            className="text-primary"
-          >
+          <button onClick={clearFilters} className="text-primary">
             Wis filters
           </button>
         </div>
@@ -156,10 +152,10 @@ export function MobileFirstVoiceoverGrid({ voiceovers }: MobileFirstVoiceoverGri
 }
 
 // Mobile-first card component with overlay design
-function VoiceoverCard({ 
-  voiceover, 
-  size
-}: { 
+function VoiceoverCard({
+  voiceover,
+  size,
+}: {
   voiceover: TransformedVoiceover;
   size: 'large' | 'small';
 }) {
@@ -188,7 +184,6 @@ function VoiceoverCard({
     };
   }, []);
 
-
   const handlePlayPause = () => {
     if (!hasDemos) return;
 
@@ -200,7 +195,7 @@ function VoiceoverCard({
       }
     } else if (currentDemo) {
       // Stop all other audio elements and close other players
-      document.querySelectorAll('audio').forEach(audio => audio.pause());
+      document.querySelectorAll('audio').forEach((audio) => audio.pause());
       // Dispatch custom event to close other players
       window.dispatchEvent(new CustomEvent('voiceover-play', { detail: { id: voiceover.id } }));
 
@@ -218,7 +213,7 @@ function VoiceoverCard({
           }
         });
       }
-      
+
       audioRef.current.play();
       setIsPlaying(true);
       setShowPlayer(true);
@@ -237,7 +232,7 @@ function VoiceoverCard({
   const handleClosePlayer = () => {
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = 0;  // Reset to beginning
+      audioRef.current.currentTime = 0; // Reset to beginning
     }
     setIsPlaying(false);
     setShowPlayer(false);
@@ -270,10 +265,11 @@ function VoiceoverCard({
   }, [voiceover.id]);
 
   const handleDemoChange = (direction: 'prev' | 'next') => {
-    const newIndex = direction === 'next' 
-      ? Math.min(currentDemoIndex + 1, voiceover.demos.length - 1)
-      : Math.max(currentDemoIndex - 1, 0);
-    
+    const newIndex =
+      direction === 'next'
+        ? Math.min(currentDemoIndex + 1, voiceover.demos.length - 1)
+        : Math.max(currentDemoIndex - 1, 0);
+
     if (newIndex !== currentDemoIndex) {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -299,12 +295,12 @@ function VoiceoverCard({
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current) return;
-    
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
     const newTime = (percentage / 100) * audioRef.current.duration;
-    
+
     audioRef.current.currentTime = newTime;
     setProgress(percentage);
     setCurrentTime(newTime);
@@ -314,14 +310,14 @@ function VoiceoverCard({
     // Don't navigate if clicking on interactive elements
     const target = e.target as HTMLElement;
     if (
-      target.closest('button') || 
+      target.closest('button') ||
       target.closest('[role="button"]') ||
       target.closest('.custom-card-play-button') ||
       showPlayer
     ) {
       return;
     }
-    
+
     // Navigate to voiceover detail page
     router.push(`/voiceovers/${voiceover.slug}`);
   };
@@ -334,17 +330,18 @@ function VoiceoverCard({
 
   return (
     <div className="group">
-      <div 
-        className="block cursor-pointer"
-        onClick={handleCardClick}
-      >
+      <div className="block cursor-pointer" onClick={handleCardClick}>
         <div className="custom-card-wrapper">
           {/* Main card */}
           <div className="custom-card">
             {/* Availability section inside card with trapezoid shape */}
             {voiceover.beschikbaar && (
               <div className="custom-card-availability-section">
-                <svg className="custom-card-trapezoid" viewBox="0 0 180 30" preserveAspectRatio="none">
+                <svg
+                  className="custom-card-trapezoid"
+                  viewBox="0 0 180 30"
+                  preserveAspectRatio="none"
+                >
                   {/* Fill without stroke */}
                   <path
                     d="M 0,0 L 180,0 L 153,30 L 27,30 Z"
@@ -354,15 +351,24 @@ function VoiceoverCard({
                   {/* Only side and bottom borders */}
                   <line x1="0" y1="0" x2="27" y2="30" stroke="var(--border)" strokeWidth="1" />
                   <line x1="180" y1="0" x2="153" y2="30" stroke="var(--border)" strokeWidth="1" />
-                  <line x1="27" y1="29.5" x2="153" y2="29.5" stroke="var(--border)" strokeWidth="1.5" />
+                  <line
+                    x1="27"
+                    y1="29.5"
+                    x2="153"
+                    y2="29.5"
+                    stroke="var(--border)"
+                    strokeWidth="1.5"
+                  />
                 </svg>
                 <div className="custom-card-availability">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-xs font-medium text-foreground">{voiceover.availabilityText || 'Nu beschikbaar'}</span>
+                  <span className="text-xs font-medium text-foreground">
+                    {voiceover.availabilityText || 'Nu beschikbaar'}
+                  </span>
                 </div>
               </div>
             )}
-            
+
             {/* Image container */}
             <div className="relative aspect-[3/4]">
               {voiceover.profilePhoto?.url ? (
@@ -371,7 +377,11 @@ function VoiceoverCard({
                   alt={firstName}
                   fill
                   className="object-cover"
-                  sizes={size === 'large' ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw' : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'}
+                  sizes={
+                    size === 'large'
+                      ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'
+                      : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                  }
                 />
               ) : (
                 <div className="absolute inset-0 bg-muted" />
@@ -381,7 +391,11 @@ function VoiceoverCard({
             {/* Bottom play button with trapezoid shape - same technique as availability */}
             {!showPlayer && hasDemos && (
               <div className="custom-card-play-section group/play">
-                <svg className="custom-card-trapezoid" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <svg
+                  className="custom-card-trapezoid"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                >
                   {/* Fill with curved corners and less steep sides */}
                   <path
                     d="M 30,0 Q 22,0 20,15 L 15,100 L 85,100 L 80,15 Q 78,0 70,0 Z"
@@ -406,21 +420,19 @@ function VoiceoverCard({
                 >
                   <div className="custom-card-play-wrapper">
                     <div className="custom-card-play-icon w-7 h-7 rounded-full border border-border bg-surface flex items-center justify-center transition-all hover:bg-muted">
-                      <svg 
-                        width="14" 
-                        height="14" 
-                        viewBox="0 0 24 24" 
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
                         fill="none"
                         style={{ marginLeft: '2px' }}
                       >
-                        <path 
-                          d="M9 6v12l9-6z" 
-                          fill="currentColor" 
-                          className="text-foreground"
-                        />
+                        <path d="M9 6v12l9-6z" fill="currentColor" className="text-foreground" />
                       </svg>
                     </div>
-                    <span className="custom-card-play-text text-sm font-medium text-foreground">Luisteren</span>
+                    <span className="custom-card-play-text text-sm font-medium text-foreground">
+                      Luisteren
+                    </span>
                   </div>
                 </button>
               </div>
@@ -473,7 +485,7 @@ function VoiceoverCard({
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                     className="w-full"
                   >
                     {/* Boeken button */}
@@ -535,14 +547,14 @@ function VoiceoverCard({
 
                     {/* Progress bar */}
                     <div className="mb-2 px-4">
-                      <div 
+                      <div
                         className="relative h-1 bg-white/20 rounded-full cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleProgressClick(e);
                         }}
                       >
-                        <motion.div 
+                        <motion.div
                           className="absolute inset-y-0 left-0 bg-white rounded-full"
                           initial={{ width: 0 }}
                           animate={{ width: `${progress}%` }}
@@ -553,7 +565,9 @@ function VoiceoverCard({
 
                     {/* Time and download */}
                     <div className="flex items-center justify-between text-white/80 text-xs px-4">
-                      <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
+                      <span>
+                        {formatTime(currentTime)} / {formatTime(duration)}
+                      </span>
                       <button
                         onClick={(e) => {
                           e.preventDefault();
@@ -576,7 +590,9 @@ function VoiceoverCard({
                       <span className="text-xs text-white/60">
                         {currentDemo?.title}
                         {voiceover.demos.length > 1 && (
-                          <span className="ml-2">({currentDemoIndex + 1}/{voiceover.demos.length})</span>
+                          <span className="ml-2">
+                            ({currentDemoIndex + 1}/{voiceover.demos.length})
+                          </span>
                         )}
                       </span>
                     </div>
@@ -584,14 +600,13 @@ function VoiceoverCard({
                 </motion.div>
               )}
             </AnimatePresence>
-
           </div>
         </div>
       </div>
 
       {/* Name and tags below card */}
       <div className="mt-3 px-1">
-        <h3 
+        <h3
           className="font-medium text-foreground text-base mb-1 hover:underline cursor-pointer"
           onClick={() => router.push(`/voiceovers/${voiceover.slug}`)}
         >

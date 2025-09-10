@@ -30,12 +30,14 @@ The main security module provides:
 The system validates the following file types using magic numbers:
 
 **Images:**
+
 - JPEG (all variants: JFIF, EXIF, Canon, Samsung, SPIFF)
 - PNG
 - GIF (87a and 89a)
 - WebP
 
 **Audio:**
+
 - MP3/MPEG (with ID3v2, MPEG-1/2/2.5 Layer 3)
 - WAV
 - M4A/MP4 Audio
@@ -44,6 +46,7 @@ The system validates the following file types using magic numbers:
 - FLAC
 
 **Documents:**
+
 - PDF
 
 ### Integration Points
@@ -73,11 +76,11 @@ export async function POST(request: NextRequest) {
     context: 'avatar',
     maxSize: 4 * 1024 * 1024, // 4MB
   });
-  
+
   if (!result.valid) {
     return result.response; // Pre-formatted error response
   }
-  
+
   // Process result.file
 }
 ```
@@ -108,8 +111,12 @@ Detects files that are valid in multiple formats (e.g., JPEG containing ZIP):
 
 ```typescript
 // Detects JPEG files with embedded ZIP archives
-if (buffer[i] === 0x50 && buffer[i + 1] === 0x4b && 
-    buffer[i + 2] === 0x03 && buffer[i + 3] === 0x04) {
+if (
+  buffer[i] === 0x50 &&
+  buffer[i + 1] === 0x4b &&
+  buffer[i + 2] === 0x03 &&
+  buffer[i + 3] === 0x04
+) {
   threats.push('JPEG file contains embedded ZIP archive');
 }
 ```
@@ -117,6 +124,7 @@ if (buffer[i] === 0x50 && buffer[i + 1] === 0x4b &&
 ### 2. SVG Security
 
 Special handling for SVG files to prevent XSS:
+
 - Detects `<script>` tags
 - Detects `<foreignObject>` elements
 - Detects event handlers (`onload`, `onclick`, etc.)
@@ -125,6 +133,7 @@ Special handling for SVG files to prevent XSS:
 ### 3. Executable Detection
 
 Identifies embedded executables by their signatures:
+
 - Windows (MZ header)
 - Linux (ELF)
 - macOS (Mach-O)
@@ -132,6 +141,7 @@ Identifies embedded executables by their signatures:
 ### 4. Threat Severity Levels
 
 Threats are classified into three severity levels:
+
 - **High**: Blocks upload (executables, scripts in SVG)
 - **Medium**: Logs warning (iframes, event handlers)
 - **Low**: Logs info (references to executable files)
@@ -139,6 +149,7 @@ Threats are classified into three severity levels:
 ## File Size Limits
 
 Default limits by file type:
+
 - **Images**: 10MB
 - **Audio**: 50MB
 - **Video**: 100MB
@@ -150,15 +161,10 @@ Default limits by file type:
 ### Basic File Validation
 
 ```typescript
-const validation = await validateFile(
-  buffer,
-  'document.pdf',
-  'application/pdf',
-  {
-    maxSize: 25 * 1024 * 1024,
-    allowedTypes: ['application/pdf'],
-  }
-);
+const validation = await validateFile(buffer, 'document.pdf', 'application/pdf', {
+  maxSize: 25 * 1024 * 1024,
+  allowedTypes: ['application/pdf'],
+});
 
 if (!validation.valid) {
   throw new Error(validation.error);
@@ -190,6 +196,7 @@ bun test file-security
 ```
 
 Tests cover:
+
 - Magic number validation for all supported types
 - File type detection
 - Threat scanning scenarios

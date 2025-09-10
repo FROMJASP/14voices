@@ -16,11 +16,11 @@ interface VirtualItem {
   height: number;
 }
 
-export function VirtualizedGrid({ 
-  voiceovers, 
+export function VirtualizedGrid({
+  voiceovers,
   gridSize,
   itemHeight = 400, // Height of each card including margins
-  containerHeight = 800 // Visible container height
+  containerHeight = 800, // Visible container height
 }: VirtualizedGridProps) {
   const [scrollTop, setScrollTop] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -46,18 +46,15 @@ export function VirtualizedGrid({
   // Calculate visible items
   const visibleItems = useMemo(() => {
     const startRow = Math.floor(scrollTop / itemHeight);
-    const endRow = Math.min(
-      totalRows,
-      Math.ceil((scrollTop + containerHeight) / itemHeight) + 1
-    );
+    const endRow = Math.min(totalRows, Math.ceil((scrollTop + containerHeight) / itemHeight) + 1);
 
     const items: VirtualItem[] = [];
-    
+
     for (let row = startRow; row < endRow; row++) {
       for (let col = 0; col < columns; col++) {
         const index = row * columns + col;
         if (index >= voiceovers.length) break;
-        
+
         items.push({
           index,
           top: row * itemHeight,
@@ -65,7 +62,7 @@ export function VirtualizedGrid({
         });
       }
     }
-    
+
     return items;
   }, [scrollTop, containerHeight, itemHeight, columns, totalRows, voiceovers.length]);
 
@@ -99,8 +96,8 @@ export function VirtualizedGrid({
         {/* Rendered items */}
         <div
           className={`grid gap-6 absolute w-full ${
-            gridSize === 'large' 
-              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+            gridSize === 'large'
+              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
               : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
           }`}
           style={{
@@ -145,14 +142,12 @@ function VirtualizedVoiceoverCard({
               </div>
             </div>
           )}
-          
+
           {/* Image with intersection observer for lazy loading */}
           <div className="relative aspect-[3/4]">
             {voiceover.profilePhoto?.url ? (
               <>
-                {!imageLoaded && (
-                  <div className="absolute inset-0 bg-muted animate-pulse" />
-                )}
+                {!imageLoaded && <div className="absolute inset-0 bg-muted animate-pulse" />}
                 <img
                   src={voiceover.profilePhoto.url}
                   alt={firstName}
@@ -184,9 +179,7 @@ function VirtualizedVoiceoverCard({
 
       {/* Card info */}
       <div className="mt-3 px-1">
-        <h3 className="font-medium text-foreground text-base mb-1">
-          {firstName}
-        </h3>
+        <h3 className="font-medium text-foreground text-base mb-1">{firstName}</h3>
         <div className="flex items-center gap-1.5 flex-wrap text-xs text-muted-foreground">
           {voiceover.tags.slice(0, 2).map((tag, index) => (
             <React.Fragment key={tag}>

@@ -31,10 +31,7 @@ export async function handleSecureFileUpload(
       return {
         valid: false,
         error: 'No file provided',
-        response: NextResponse.json(
-          { error: 'No file provided' },
-          { status: 400 }
-        ),
+        response: NextResponse.json({ error: 'No file provided' }, { status: 400 }),
       };
     }
 
@@ -43,7 +40,8 @@ export async function handleSecureFileUpload(
     const buffer = Buffer.from(arrayBuffer);
 
     // Determine allowed types
-    const allowedTypes = options.allowedTypes || 
+    const allowedTypes =
+      options.allowedTypes ||
       (options.context ? getAllowedMimeTypes(options.context) : getAllowedMimeTypes('media'));
 
     // Validate the file
@@ -64,7 +62,7 @@ export async function handleSecureFileUpload(
         valid: false,
         error: validation.error,
         response: NextResponse.json(
-          { 
+          {
             error: validation.error || 'File validation failed',
             details: validation.metadata,
           },
@@ -88,10 +86,7 @@ export async function handleSecureFileUpload(
     return {
       valid: false,
       error: 'Upload processing error',
-      response: NextResponse.json(
-        { error: 'Upload processing error' },
-        { status: 500 }
-      ),
+      response: NextResponse.json({ error: 'Upload processing error' }, { status: 500 }),
     };
   }
 }

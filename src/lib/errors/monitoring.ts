@@ -56,9 +56,12 @@ export class ErrorMonitoring {
         scope.setTag('error_code', error.code);
         scope.setTag('is_operational', error.isOperational);
         scope.setLevel(error.isOperational ? 'warning' : 'error');
-        
+
         if (error.details) {
-          scope.setContext('error_details', this.sanitizeData(error.details) as Record<string, any>);
+          scope.setContext(
+            'error_details',
+            this.sanitizeData(error.details) as Record<string, any>
+          );
         }
       }
 
@@ -78,7 +81,7 @@ export class ErrorMonitoring {
     // Track error metrics using tags and user feedback instead of deprecated metrics API
     Sentry.setTag('error_code', error.code);
     Sentry.setTag('is_operational', String(error.isOperational));
-    
+
     // Add domain information
     const domain = this.getErrorDomain(error);
     if (domain) {
@@ -148,7 +151,9 @@ export class ErrorMonitoring {
       message: breadcrumb.message,
       level: breadcrumb.level || 'info',
       category: breadcrumb.category || 'user-action',
-      data: breadcrumb.data ? this.sanitizeData(breadcrumb.data) as Record<string, any> : undefined,
+      data: breadcrumb.data
+        ? (this.sanitizeData(breadcrumb.data) as Record<string, any>)
+        : undefined,
       timestamp: breadcrumb.timestamp || Date.now(),
     });
   }
@@ -211,9 +216,7 @@ export class ErrorMonitoring {
 
     for (const [key, value] of Object.entries(data)) {
       // Check if key contains sensitive patterns
-      const isSensitive = this.config.sensitiveDataPatterns?.some((pattern) =>
-        pattern.test(key)
-      );
+      const isSensitive = this.config.sensitiveDataPatterns?.some((pattern) => pattern.test(key));
 
       if (isSensitive) {
         sanitized[key] = '[REDACTED]';

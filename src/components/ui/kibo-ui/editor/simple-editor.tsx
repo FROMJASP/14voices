@@ -20,11 +20,11 @@ export interface SimpleEditorProps {
   editable?: boolean;
 }
 
-const SimpleEditorContent = ({ 
-  content, 
-  onChange, 
+const SimpleEditorContent = ({
+  content,
+  onChange,
   className,
-  editable = true 
+  editable = true,
 }: SimpleEditorProps) => {
   const { editor } = useCurrentEditor();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -76,11 +76,7 @@ const SimpleEditorContent = ({
   }, [editor, onChange]);
 
   return (
-    <div className={cn(
-      'simple-editor-container',
-      !editable && 'editor-disabled',
-      className
-    )}>
+    <div className={cn('simple-editor-container', !editable && 'editor-disabled', className)}>
       {/* Editor content will be rendered here by TipTap */}
     </div>
   );
@@ -138,7 +134,7 @@ export const SimpleEditor: React.FC<SimpleEditorProps> = ({
         },
       }}
     >
-      <SimpleEditorContent 
+      <SimpleEditorContent
         content={content}
         onChange={onChange}
         className={className}

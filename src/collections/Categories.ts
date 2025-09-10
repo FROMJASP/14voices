@@ -129,7 +129,7 @@ const Categories: CollectionConfig = {
               if (req.context?.skipCategoryCount) {
                 return 0;
               }
-              
+
               const { totalDocs } = await req.payload.find({
                 collection: 'blog-posts',
                 where: {

@@ -9,8 +9,8 @@ export const FAQSettingsNav: React.FC = () => {
   const isNL = i18n.language === 'nl';
 
   return (
-    <div 
-      style={{ 
+    <div
+      style={{
         marginBottom: '1.5rem',
         padding: '1rem',
         backgroundColor: 'var(--theme-elevation-50)',
@@ -23,18 +23,12 @@ export const FAQSettingsNav: React.FC = () => {
     >
       <div style={{ flex: 1 }}>
         <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--theme-text-secondary)' }}>
-          {isNL 
+          {isNL
             ? 'Configureer hoe de FAQ sectie op de homepage wordt weergegeven via de instellingen.'
-            : 'Configure how the FAQ section appears on the homepage through settings.'
-          }
+            : 'Configure how the FAQ section appears on the homepage through settings.'}
         </p>
       </div>
-      <Button
-        el="link"
-        to="/admin/globals/faq-settings"
-        buttonStyle="primary"
-        size="small"
-      >
+      <Button el="link" to="/admin/globals/faq-settings" buttonStyle="primary" size="small">
         {isNL ? 'FAQ Instellingen' : 'FAQ Settings'}
       </Button>
     </div>

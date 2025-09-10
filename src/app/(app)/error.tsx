@@ -66,13 +66,17 @@ export default function Error({
         </div>
         <h1 className="text-3xl font-bold text-text-primary mb-4">Oops! Something went wrong</h1>
         <p className="text-text-secondary mb-8">
-          We apologize for the inconvenience. Our team has been automatically notified and is working to fix this issue.
+          We apologize for the inconvenience. Our team has been automatically notified and is
+          working to fix this issue.
         </p>
-        
+
         {/* Error ID for support reference */}
         {error.digest && (
           <p className="text-sm text-text-secondary mb-6">
-            Error ID: <code className="font-mono text-xs bg-background px-2 py-1 rounded">{error.digest}</code>
+            Error ID:{' '}
+            <code className="font-mono text-xs bg-background px-2 py-1 rounded">
+              {error.digest}
+            </code>
           </p>
         )}
 

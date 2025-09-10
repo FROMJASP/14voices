@@ -72,27 +72,27 @@ export class VoiceoverService {
         slug,
         locale || this.defaultOptions.defaultLocale
       );
-      
+
       const transformed = this.transformToFrontendFormat(entity);
-      
+
       logger.info(`Successfully fetched voiceover: ${slug}`, {
         action: 'voiceover_fetched',
         metadata: { slug, locale, voiceoverId: transformed.id },
       });
-      
+
       return transformed;
     } catch (error) {
       // Re-throw if it's already a known error
       if (error instanceof VoiceoverNotFoundError || error instanceof ValidationError) {
         throw error;
       }
-      
+
       // Log and wrap unknown errors
       logger.error(`Failed to fetch voiceover by slug: ${slug}`, error, {
         action: 'get_voiceover_by_slug_error',
         metadata: { slug, locale },
       });
-      
+
       throw new DatabaseError('getVoiceoverBySlug', error);
     }
   }
@@ -299,10 +299,11 @@ export class VoiceoverService {
     }));
 
     // Extract style tags for the tags property
-    const tags = entity.styleTags?.map(st => {
-      if (st.tag === 'custom' && st.customTag) return st.customTag;
-      return st.tag;
-    }) || [];
+    const tags =
+      entity.styleTags?.map((st) => {
+        if (st.tag === 'custom' && st.customTag) return st.customTag;
+        return st.tag;
+      }) || [];
 
     return {
       id: entity.id,

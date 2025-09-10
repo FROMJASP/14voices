@@ -23,7 +23,7 @@ interface FAQSettings {
 async function getFAQData() {
   try {
     const payload = await getPayload({ config: configPromise });
-    
+
     // Get FAQ settings from the dedicated FAQ settings global
     const faqSettingsGlobal = await payload.findGlobal({
       slug: 'faq-settings',
@@ -33,7 +33,8 @@ async function getFAQData() {
     const faqSettings: FAQSettings = faqSettingsGlobal?.settings || {
       enabled: true,
       title: 'Veelgestelde vragen',
-      description: 'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
+      description:
+        'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
       itemsToShow: 10,
     };
 
@@ -64,7 +65,8 @@ async function getFAQData() {
       settings: {
         enabled: true,
         title: 'Veelgestelde vragen',
-        description: 'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
+        description:
+          'Vind snel antwoorden op de meest gestelde vragen over onze voice-over diensten.',
       },
       items: [],
     };

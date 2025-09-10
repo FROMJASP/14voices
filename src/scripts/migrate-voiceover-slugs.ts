@@ -6,7 +6,7 @@ async function migrateVoiceoverSlugs() {
 
   try {
     console.log('Starting voiceover slug migration...');
-    
+
     // Fetch all voiceovers
     const { docs: voiceovers } = await payload.find({
       collection: 'voiceovers',
@@ -73,11 +73,12 @@ async function migrateVoiceoverSlugs() {
     console.log(`\nMigration complete!`);
     console.log(`✅ Updated: ${updated} voiceovers`);
     console.log(`⏭️  Skipped: ${skipped} voiceovers`);
-    
-    if (duplicates.length > 0) {
-      console.log(`\n⚠️  Remember to manually handle the ${duplicates.length} duplicate first names listed above!`);
-    }
 
+    if (duplicates.length > 0) {
+      console.log(
+        `\n⚠️  Remember to manually handle the ${duplicates.length} duplicate first names listed above!`
+      );
+    }
   } catch (error) {
     console.error('Migration failed:', error);
     process.exit(1);

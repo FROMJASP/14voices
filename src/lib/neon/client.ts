@@ -1,7 +1,4 @@
-import { neon, neonConfig } from '@neondatabase/serverless';
-
-// Configure Neon for serverless environments
-neonConfig.fetchConnectionCache = true;
+import { neon } from '@neondatabase/serverless';
 
 /**
  * Creates a Neon database client
@@ -30,9 +27,9 @@ export const sql = createNeonClient();
  */
 export async function query<T = any>(text: string, params?: any[]): Promise<T[]> {
   try {
-    // Use the query method for parameterized queries
-    const result =
-      params && params.length > 0 ? await sql.query(text, params) : await sql.query(text);
+    // Neon client uses template literals, not a query method
+    // For parameterized queries, we need to construct the query differently
+    const result = params && params.length > 0 ? await sql(text, params) : await sql(text);
     return result as T[];
   } catch (error) {
     console.error('Neon query error:', error);
@@ -55,8 +52,8 @@ export async function transaction<T = any>(
     for (const query of queries) {
       const result =
         query.params && query.params.length > 0
-          ? await client.query(query.text, query.params)
-          : await client.query(query.text);
+          ? await client(query.text, query.params)
+          : await client(query.text);
       results.push(result as T);
     }
 

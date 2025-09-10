@@ -27,17 +27,19 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
   const heroWithRichText = hero as any;
 
   // Check if title/description are already rich text (new structure) or need to check for legacy fields
-  const extractedTitle = heroWithRichText.title && typeof heroWithRichText.title === 'object'
-    ? extractTextFromLexical(heroWithRichText.title)  // New: title IS rich text
-    : heroWithRichText.titleRichText
-    ? extractTextFromLexical(heroWithRichText.titleRichText)  // Legacy: titleRichText field
-    : hero.title || '';  // Fallback to plain text
-  
-  const extractedDescription = heroWithRichText.description && typeof heroWithRichText.description === 'object'
-    ? extractTextFromLexical(heroWithRichText.description)  // New: description IS rich text
-    : heroWithRichText.descriptionRichText
-    ? extractTextFromLexical(heroWithRichText.descriptionRichText)  // Legacy: descriptionRichText field
-    : hero.description || '';  // Fallback to plain text
+  const extractedTitle =
+    heroWithRichText.title && typeof heroWithRichText.title === 'object'
+      ? extractTextFromLexical(heroWithRichText.title) // New: title IS rich text
+      : heroWithRichText.titleRichText
+        ? extractTextFromLexical(heroWithRichText.titleRichText) // Legacy: titleRichText field
+        : hero.title || ''; // Fallback to plain text
+
+  const extractedDescription =
+    heroWithRichText.description && typeof heroWithRichText.description === 'object'
+      ? extractTextFromLexical(heroWithRichText.description) // New: description IS rich text
+      : heroWithRichText.descriptionRichText
+        ? extractTextFromLexical(heroWithRichText.descriptionRichText) // Legacy: descriptionRichText field
+        : hero.description || ''; // Fallback to plain text
 
   // Extract hero image URL with multiple fallback strategies
   let heroImageUrl: string | null = null; // No default fallback

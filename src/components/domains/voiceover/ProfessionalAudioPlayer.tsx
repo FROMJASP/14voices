@@ -20,7 +20,13 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/common/ui';
 import { Slider } from '@/components/ui/Slider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/Select';
 
 interface ProfessionalAudioPlayerProps {
   demos: VoiceoverDemo[];
@@ -101,7 +107,7 @@ export function ProfessionalAudioPlayer({
       // Auto-advance to next demo if available
       if (currentDemoIndex < demos.length - 1) {
         setTimeout(() => {
-          setCurrentDemoIndex(prev => prev + 1);
+          setCurrentDemoIndex((prev) => prev + 1);
         }, 500);
       }
     };
@@ -239,13 +245,13 @@ export function ProfessionalAudioPlayer({
 
   const goToPrevious = () => {
     if (currentDemoIndex > 0) {
-      setCurrentDemoIndex(prev => prev - 1);
+      setCurrentDemoIndex((prev) => prev - 1);
     }
   };
 
   const goToNext = () => {
     if (currentDemoIndex < demos.length - 1) {
-      setCurrentDemoIndex(prev => prev + 1);
+      setCurrentDemoIndex((prev) => prev + 1);
     }
   };
 
@@ -315,12 +321,7 @@ export function ProfessionalAudioPlayer({
             </div>
             <div className="flex items-center gap-2 ml-4">
               {onDownload && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownload}
-                  className="h-8 px-3"
-                >
+                <Button variant="outline" size="sm" onClick={handleDownload} className="h-8 px-3">
                   <Download className="w-4 h-4 mr-2" />
                   Download
                 </Button>
@@ -342,11 +343,11 @@ export function ProfessionalAudioPlayer({
                 max={100}
                 step={0.1}
                 className={cn(
-                  "w-full",
-                  "[&_[role=slider]]:h-4 [&_[role=slider]]:w-4",
-                  "[&_[role=slider]]:border-2 [&_[role=slider]]:border-background",
-                  "[&>span:first-child]:h-2 [&>span:first-child]:bg-muted",
-                  "[&_[data-orientation=horizontal]]:h-2"
+                  'w-full',
+                  '[&_[role=slider]]:h-4 [&_[role=slider]]:w-4',
+                  '[&_[role=slider]]:border-2 [&_[role=slider]]:border-background',
+                  '[&>span:first-child]:h-2 [&>span:first-child]:bg-muted',
+                  '[&_[data-orientation=horizontal]]:h-2'
                 )}
                 disabled={isLoading}
               />
@@ -370,7 +371,7 @@ export function ProfessionalAudioPlayer({
               >
                 <ChevronLeft className="w-5 h-5" />
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="icon"
@@ -439,10 +440,10 @@ export function ProfessionalAudioPlayer({
                 max={100}
                 step={1}
                 className={cn(
-                  "flex-1",
-                  "[&_[role=slider]]:h-3 [&_[role=slider]]:w-3",
-                  "[&>span:first-child]:h-1.5 [&>span:first-child]:bg-muted",
-                  "[&_[data-orientation=horizontal]]:h-1.5"
+                  'flex-1',
+                  '[&_[role=slider]]:h-3 [&_[role=slider]]:w-3',
+                  '[&>span:first-child]:h-1.5 [&>span:first-child]:bg-muted',
+                  '[&_[data-orientation=horizontal]]:h-1.5'
                 )}
               />
             </div>
@@ -453,10 +454,8 @@ export function ProfessionalAudioPlayer({
         {demos.length > 1 && (
           <div className="px-6 py-4 border-t border-border bg-muted/10">
             <div className="space-y-3">
-              <label className="text-sm font-medium text-foreground">
-                Select Demo:
-              </label>
-              
+              <label className="text-sm font-medium text-foreground">Select Demo:</label>
+
               {/* Mobile: Dropdown */}
               <div className="block sm:hidden">
                 <Select
@@ -484,11 +483,7 @@ export function ProfessionalAudioPlayer({
                 >
                   <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {demos.map((demo, index) => (
-                      <TabsTrigger
-                        key={demo.id}
-                        value={index.toString()}
-                        className="truncate"
-                      >
+                      <TabsTrigger key={demo.id} value={index.toString()} className="truncate">
                         {demo.title}
                       </TabsTrigger>
                     ))}

@@ -16,13 +16,13 @@ export class ErrorAggregator {
   static async recordError(error: BaseError): Promise<void> {
     const timestamp = Date.now();
     const hour = Math.floor(timestamp / (1000 * 60 * 60));
-    
+
     // Update error counts
     await this.incrementErrorCount(error.code, hour);
-    
+
     // Update error history
     await this.addToErrorHistory(error);
-    
+
     // Check for error spikes
     await this.checkErrorSpike(error.code);
   }
@@ -48,10 +48,10 @@ export class ErrorAggregator {
     // Collect stats for each hour
     for (let hour = startHour; hour <= endHour; hour++) {
       const hourStats = await this.getHourlyStats(hour);
-      
+
       stats.totalErrors += hourStats.total;
       stats.errorsByHour[hour] = hourStats.total;
-      
+
       // Aggregate by error code
       for (const [code, count] of Object.entries(hourStats.byCode)) {
         stats.errorsByCode[code] = (stats.errorsByCode[code] || 0) + count;
@@ -77,7 +77,7 @@ export class ErrorAggregator {
   static async getRecentErrors(limit = 20): Promise<ErrorHistoryEntry[]> {
     const historyKey = `${this.ERROR_HISTORY_PREFIX}recent`;
     const history = await globalCache.get<ErrorHistoryEntry[]>(historyKey);
-    
+
     if (!history) {
       return [];
     }
@@ -88,10 +88,7 @@ export class ErrorAggregator {
   /**
    * Get error trends
    */
-  static async getErrorTrends(
-    errorCode: string,
-    hours = 24
-  ): Promise<ErrorTrend> {
+  static async getErrorTrends(errorCode: string, hours = 24): Promise<ErrorTrend> {
     const now = Date.now();
     const currentHour = Math.floor(now / (1000 * 60 * 60));
     const trend: ErrorTrend = {
@@ -167,7 +164,7 @@ export class ErrorAggregator {
    */
   private static async incrementErrorCount(code: string, hour: number): Promise<void> {
     const statsKey = `${this.ERROR_STATS_PREFIX}${hour}`;
-    const stats = await globalCache.get<HourlyErrorStats>(statsKey) || {
+    const stats = (await globalCache.get<HourlyErrorStats>(statsKey)) || {
       total: 0,
       byCode: {},
     };
@@ -180,7 +177,7 @@ export class ErrorAggregator {
 
   private static async addToErrorHistory(error: BaseError): Promise<void> {
     const historyKey = `${this.ERROR_HISTORY_PREFIX}recent`;
-    const history = await globalCache.get<ErrorHistoryEntry[]>(historyKey) || [];
+    const history = (await globalCache.get<ErrorHistoryEntry[]>(historyKey)) || [];
 
     const entry: ErrorHistoryEntry = {
       timestamp: new Date(),
@@ -191,7 +188,7 @@ export class ErrorAggregator {
     };
 
     history.unshift(entry);
-    
+
     // Keep only recent entries
     if (history.length > this.MAX_HISTORY_SIZE) {
       history.pop();
@@ -202,21 +199,23 @@ export class ErrorAggregator {
 
   private static async checkErrorSpike(code: string): Promise<void> {
     const trend = await this.getErrorTrends(code, 3);
-    
+
     if (trend.trend === 'increasing' && trend.average > 10) {
       // Log spike detection
       console.warn(`Error spike detected for ${code}: ${trend.total} errors in last 3 hours`);
-      
+
       // TODO: Send alert notification
     }
   }
 
   private static async getHourlyStats(hour: number): Promise<HourlyErrorStats> {
     const statsKey = `${this.ERROR_STATS_PREFIX}${hour}`;
-    return await globalCache.get<HourlyErrorStats>(statsKey) || {
-      total: 0,
-      byCode: {},
-    };
+    return (
+      (await globalCache.get<HourlyErrorStats>(statsKey)) || {
+        total: 0,
+        byCode: {},
+      }
+    );
   }
 
   private static async getErrorCountForHour(code: string, hour: number): Promise<number> {
@@ -251,10 +250,7 @@ export class ErrorAggregator {
     return criticalErrors;
   }
 
-  private static async getErrorSpikes(
-    _startTime: Date,
-    _endTime: Date
-  ): Promise<ErrorSpike[]> {
+  private static async getErrorSpikes(_startTime: Date, _endTime: Date): Promise<ErrorSpike[]> {
     // TODO: Implement spike detection logic
     return [];
   }
@@ -267,16 +263,22 @@ export class ErrorAggregator {
 
     // Check error rate
     if (stats.errorRate > 100) {
-      recommendations.push('High error rate detected. Consider scaling resources or investigating root cause.');
+      recommendations.push(
+        'High error rate detected. Consider scaling resources or investigating root cause.'
+      );
     }
 
     // Check for specific error patterns
     for (const { code, count } of stats.topErrors) {
       if (code === ErrorCode.RATE_LIMIT_EXCEEDED && count > 1000) {
-        recommendations.push('High rate limit errors. Consider increasing rate limits or implementing request queuing.');
+        recommendations.push(
+          'High rate limit errors. Consider increasing rate limits or implementing request queuing.'
+        );
       }
       if (code === ErrorCode.DATABASE_ERROR && count > 100) {
-        recommendations.push('Database errors detected. Check database health and connection pool settings.');
+        recommendations.push(
+          'Database errors detected. Check database health and connection pool settings.'
+        );
       }
     }
 

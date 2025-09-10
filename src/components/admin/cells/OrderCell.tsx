@@ -12,20 +12,18 @@ export const OrderCell: React.FC<DefaultCellComponentProps> = ({ cellData, rowDa
       // Find all rows in the current table
       const allRows = document.querySelectorAll('tbody tr');
       let position = 1;
-      
+
       // Find the position of the current row
       allRows.forEach((row, index) => {
         // Check if this row contains our data
         const cells = row.querySelectorAll('td');
-        const hasOurId = Array.from(cells).some(cell => 
-          cell.textContent?.includes(rowData.id)
-        );
-        
+        const hasOurId = Array.from(cells).some((cell) => cell.textContent?.includes(rowData.id));
+
         if (hasOurId) {
           position = index + 1;
         }
       });
-      
+
       setDisplayOrder(position);
     };
 
@@ -36,12 +34,14 @@ export const OrderCell: React.FC<DefaultCellComponentProps> = ({ cellData, rowDa
   }, [rowData.id, cellData]);
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: '8px',
-      fontSize: '14px',
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        fontSize: '14px',
+      }}
+    >
       <span>{displayOrder}</span>
     </div>
   );

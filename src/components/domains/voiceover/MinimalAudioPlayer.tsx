@@ -81,7 +81,7 @@ export function MinimalAudioPlayer({
       // Auto-advance to next demo
       if (currentDemoIndex < demos.length - 1) {
         setTimeout(() => {
-          setCurrentDemoIndex(prev => prev + 1);
+          setCurrentDemoIndex((prev) => prev + 1);
         }, 500);
       } else {
         // Collapse when finished
@@ -137,13 +137,13 @@ export function MinimalAudioPlayer({
 
   const goToPrevious = () => {
     if (currentDemoIndex > 0) {
-      setCurrentDemoIndex(prev => prev - 1);
+      setCurrentDemoIndex((prev) => prev - 1);
     }
   };
 
   const goToNext = () => {
     if (currentDemoIndex < demos.length - 1) {
-      setCurrentDemoIndex(prev => prev + 1);
+      setCurrentDemoIndex((prev) => prev + 1);
     }
   };
 
@@ -181,12 +181,12 @@ export function MinimalAudioPlayer({
 
       <motion.div
         initial={false}
-        animate={{ 
-          height: isExpanded ? 'auto' : 'auto'
+        animate={{
+          height: isExpanded ? 'auto' : 'auto',
         }}
-        transition={{ 
+        transition={{
           duration: 0.3,
-          ease: [0.16, 1, 0.3, 1]
+          ease: [0.16, 1, 0.3, 1],
         }}
         className="border border-border bg-background"
         style={{
@@ -247,12 +247,8 @@ export function MinimalAudioPlayer({
               {/* Header with demo info */}
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-foreground">
-                    {currentDemo.title}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {artistName}
-                  </div>
+                  <div className="text-sm font-medium text-foreground">{currentDemo.title}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{artistName}</div>
                 </div>
                 {demos.length > 1 && (
                   <div className="text-xs text-muted-foreground font-mono">

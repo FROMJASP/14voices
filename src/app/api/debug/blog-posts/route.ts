@@ -125,7 +125,7 @@ export async function GET() {
         draftPosts: draftStatusQuery.docs.length,
         allPosts: allPostsQuery.docs.length,
         samplePost: simpleQuery.docs[0] || null,
-        sampleAllPosts: allPostsQuery.docs.map(post => ({
+        sampleAllPosts: allPostsQuery.docs.map((post) => ({
           id: post.id,
           title: post.title,
           status: post.status,

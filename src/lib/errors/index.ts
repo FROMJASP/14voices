@@ -7,30 +7,30 @@ export {
   VoiceoverError,
   VoiceoverNotFoundError,
   VoiceoverUnavailableError,
-  
+
   // Booking errors
   BookingError,
   BookingNotFoundError,
   BookingAlreadyExistsError,
   BookingFailedError,
-  
+
   // Payment errors
   PaymentError,
   PaymentFailedError,
   PaymentProcessingError,
   InvalidPaymentMethodError,
-  
+
   // Email errors
   EmailError,
   EmailSendFailedError,
   EmailTemplateNotFoundError,
-  
+
   // File upload errors
   FileUploadError,
   FileUploadFailedError,
   FileTooLargeError,
   InvalidFileTypeError,
-  
+
   // Infrastructure errors
   DatabaseError,
   CacheError,

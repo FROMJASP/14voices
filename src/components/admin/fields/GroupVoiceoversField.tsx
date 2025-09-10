@@ -1,53 +1,53 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from 'react'
-import { useFormFields } from '@payloadcms/ui'
-import Link from 'next/link'
+import React, { useEffect, useState } from 'react';
+import { useFormFields } from '@payloadcms/ui';
+import Link from 'next/link';
 
 interface Voiceover {
-  id: string
-  name: string
-  status: string
+  id: string;
+  name: string;
+  status: string;
   availability?: {
-    isAvailable?: boolean
-  }
+    isAvailable?: boolean;
+  };
 }
 
 export const GroupVoiceoversField: React.FC = () => {
   const { id } = useFormFields(([fields]) => ({
     id: fields.id?.value,
-  }))
-  
-  const [voiceovers, setVoiceovers] = useState<Voiceover[]>([])
-  const [loading, setLoading] = useState(true)
+  }));
+
+  const [voiceovers, setVoiceovers] = useState<Voiceover[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) {
-      setLoading(false)
-      return
+      setLoading(false);
+      return;
     }
 
     const fetchVoiceovers = async () => {
       try {
-        const response = await fetch(`/api/voiceovers?where[group][equals]=${id}&limit=100`)
-        const data = await response.json()
-        setVoiceovers(data.docs || [])
+        const response = await fetch(`/api/voiceovers?where[group][equals]=${id}&limit=100`);
+        const data = await response.json();
+        setVoiceovers(data.docs || []);
       } catch (error) {
-        console.error('Failed to fetch voiceovers:', error)
+        console.error('Failed to fetch voiceovers:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchVoiceovers()
-  }, [id])
+    fetchVoiceovers();
+  }, [id]);
 
   if (!id) {
     return (
       <div className="field-type text">
         <p className="text-gray-500">Save the group first to see voiceovers</p>
       </div>
-    )
+    );
   }
 
   if (loading) {
@@ -55,7 +55,7 @@ export const GroupVoiceoversField: React.FC = () => {
       <div className="field-type text">
         <p>Loading voiceovers...</p>
       </div>
-    )
+    );
   }
 
   const statusColors = {
@@ -63,7 +63,7 @@ export const GroupVoiceoversField: React.FC = () => {
     draft: 'bg-gray-100 text-gray-800',
     'more-voices': 'bg-blue-100 text-blue-800',
     archived: 'bg-red-100 text-red-800',
-  }
+  };
 
   return (
     <div className="field-type">
@@ -81,7 +81,9 @@ export const GroupVoiceoversField: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="font-medium">{voiceover.name}</span>
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[voiceover.status as keyof typeof statusColors] || statusColors.draft}`}>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[voiceover.status as keyof typeof statusColors] || statusColors.draft}`}
+                    >
                       {voiceover.status}
                     </span>
                     {voiceover.availability?.isAvailable === false && (
@@ -101,7 +103,7 @@ export const GroupVoiceoversField: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GroupVoiceoversField
+export default GroupVoiceoversField;

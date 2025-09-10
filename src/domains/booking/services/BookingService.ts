@@ -3,12 +3,12 @@ import { BookingRepository } from '../repositories/BookingRepository';
 import { ScriptRepository } from '../repositories/ScriptRepository';
 import { ScriptService } from './ScriptService';
 import { Booking, BookingCreateParams, BookingUpdateParams, Script } from '../types';
-import { 
-  BookingNotFoundError, 
-  BookingFailedError, 
+import {
+  BookingNotFoundError,
+  BookingFailedError,
   ForbiddenError,
   ValidationError,
-  DatabaseError 
+  DatabaseError,
 } from '@/lib/errors';
 import { logger } from '@/lib/errors/logger';
 

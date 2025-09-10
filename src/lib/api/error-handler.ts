@@ -65,17 +65,18 @@ export function createErrorHandlingApiHandler<T = unknown>(
       const result = await handler(req, context);
 
       // Create success response
-      const response = result instanceof NextResponse 
-        ? result 
-        : NextResponse.json(
-            {
-              success: true,
-              data: result,
-              requestId,
-              timestamp: new Date().toISOString(),
-            },
-            { status: 200 }
-          );
+      const response =
+        result instanceof NextResponse
+          ? result
+          : NextResponse.json(
+              {
+                success: true,
+                data: result,
+                requestId,
+                timestamp: new Date().toISOString(),
+              },
+              { status: 200 }
+            );
 
       // Log successful response
       const duration = performance.now() - startTime;
@@ -96,9 +97,9 @@ export function createErrorHandlingApiHandler<T = unknown>(
 
       // Create error response
       const errorResponse = createErrorResponse(error, requestId);
-      
+
       // Log error response
-      logApiResponse(method, path, errorResponse.status, duration, { 
+      logApiResponse(method, path, errorResponse.status, duration, {
         requestId,
         metadata: { error: error instanceof Error ? error.message : 'Unknown error' },
       });
@@ -131,7 +132,7 @@ async function checkAuthentication(req: NextRequest): Promise<{
   // TODO: Implement actual authentication logic
   // This is a placeholder - integrate with your auth system
   const authHeader = req.headers.get('authorization');
-  
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return { authenticated: false };
   }
@@ -145,7 +146,7 @@ async function checkAuthentication(req: NextRequest): Promise<{
     //   userId: decoded.userId,
     //   sessionId: decoded.sessionId,
     // };
-    
+
     // Placeholder return
     return { authenticated: true, userId: 'placeholder-user' };
   } catch {
@@ -164,10 +165,9 @@ async function checkRateLimit(
   try {
     // Dynamic import to avoid Edge Runtime issues
     const { checkRateLimit: performRateLimitCheck } = await import('@/lib/api/handlers');
-    
-    const identifier = req.headers.get('x-forwarded-for') || 
-                      req.headers.get('x-real-ip') || 
-                      'anonymous';
+
+    const identifier =
+      req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous';
 
     const { allowed, resetAt } = await performRateLimitCheck(
       identifier,
@@ -183,7 +183,7 @@ async function checkRateLimit(
     if (error instanceof RateLimitError) {
       throw error;
     }
-    
+
     // Log but don't fail on rate limit check errors
     logger.warn('Rate limit check failed, allowing request', {
       requestId,

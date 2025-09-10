@@ -5,81 +5,80 @@ import path from 'path';
  * File type signatures (magic numbers) for validation
  * Enhanced with additional audio formats and more specific JPEG validation
  */
-const FILE_SIGNATURES: Record<string, { offset: number; bytes: number[]; description?: string }[]> = {
-  'image/jpeg': [
-    { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xdb], description: 'JPEG raw' },
-    { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe0], description: 'JPEG/JFIF' },
-    { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe1], description: 'JPEG/EXIF' },
-    { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe2], description: 'JPEG/Canon' },
-    { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe3], description: 'JPEG/Samsung' },
-    { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe8], description: 'JPEG/SPIFF' },
-  ],
-  'image/png': [
-    { offset: 0, bytes: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], description: 'PNG' }
-  ],
-  'image/gif': [
-    { offset: 0, bytes: [0x47, 0x49, 0x46, 0x38, 0x37, 0x61], description: 'GIF87a' },
-    { offset: 0, bytes: [0x47, 0x49, 0x46, 0x38, 0x39, 0x61], description: 'GIF89a' },
-  ],
-  'image/webp': [
-    { offset: 0, bytes: [0x52, 0x49, 0x46, 0x46], description: 'RIFF header' },
-    { offset: 8, bytes: [0x57, 0x45, 0x42, 0x50], description: 'WEBP format' },
-  ],
-  'application/pdf': [
-    { offset: 0, bytes: [0x25, 0x50, 0x44, 0x46, 0x2d], description: 'PDF' }, // %PDF-
-  ],
-  'audio/mpeg': [
-    { offset: 0, bytes: [0x49, 0x44, 0x33], description: 'MP3 with ID3v2' },
-    { offset: 0, bytes: [0xff, 0xfb], description: 'MPEG-1 Layer 3' },
-    { offset: 0, bytes: [0xff, 0xf3], description: 'MPEG-2 Layer 3' },
-    { offset: 0, bytes: [0xff, 0xf2], description: 'MPEG-2.5 Layer 3' },
-    { offset: 0, bytes: [0xff, 0xfa], description: 'MPEG-1 Layer 3 VBR' },
-  ],
-  'audio/mp3': [
-    // MP3 is essentially the same as audio/mpeg
-    { offset: 0, bytes: [0x49, 0x44, 0x33], description: 'MP3 with ID3v2' },
-    { offset: 0, bytes: [0xff, 0xfb], description: 'MP3' },
-    { offset: 0, bytes: [0xff, 0xf3], description: 'MP3' },
-    { offset: 0, bytes: [0xff, 0xf2], description: 'MP3' },
-  ],
-  'audio/wav': [
-    { offset: 0, bytes: [0x52, 0x49, 0x46, 0x46], description: 'RIFF header' },
-    { offset: 8, bytes: [0x57, 0x41, 0x56, 0x45], description: 'WAVE format' },
-  ],
-  'audio/x-wav': [
-    // Alternative MIME type for WAV
-    { offset: 0, bytes: [0x52, 0x49, 0x46, 0x46], description: 'RIFF header' },
-    { offset: 8, bytes: [0x57, 0x41, 0x56, 0x45], description: 'WAVE format' },
-  ],
-  'audio/mp4': [
-    { offset: 4, bytes: [0x66, 0x74, 0x79, 0x70, 0x4d, 0x34, 0x41], description: 'M4A audio' },
-    { offset: 4, bytes: [0x66, 0x74, 0x79, 0x70, 0x6d, 0x70, 0x34, 0x32], description: 'MP4 audio' },
-  ],
-  'audio/x-m4a': [
-    { offset: 4, bytes: [0x66, 0x74, 0x79, 0x70, 0x4d, 0x34, 0x41], description: 'M4A audio' },
-  ],
-  'audio/ogg': [
-    { offset: 0, bytes: [0x4f, 0x67, 0x67, 0x53], description: 'OGG container' },
-  ],
-  'audio/webm': [
-    { offset: 0, bytes: [0x1a, 0x45, 0xdf, 0xa3], description: 'WebM/Matroska' },
-  ],
-  'audio/flac': [
-    { offset: 0, bytes: [0x66, 0x4c, 0x61, 0x43], description: 'FLAC' },
-  ],
-  'image/svg+xml': [
-    // SVG files start with <?xml or <svg
-    { offset: 0, bytes: [0x3c, 0x3f, 0x78, 0x6d, 0x6c], description: 'SVG with XML declaration' }, // <?xml
-    { offset: 0, bytes: [0x3c, 0x73, 0x76, 0x67], description: 'SVG without declaration' }, // <svg
-  ],
-  'text/plain': [
-    // Text files don't have magic numbers, but we can check for BOM markers
-    { offset: 0, bytes: [0xef, 0xbb, 0xbf], description: 'UTF-8 BOM' },
-    { offset: 0, bytes: [0xff, 0xfe], description: 'UTF-16 LE BOM' },
-    { offset: 0, bytes: [0xfe, 0xff], description: 'UTF-16 BE BOM' },
-    // For text files without BOM, we'll accept any ASCII/UTF-8 content
-  ],
-};
+const FILE_SIGNATURES: Record<string, { offset: number; bytes: number[]; description?: string }[]> =
+  {
+    'image/jpeg': [
+      { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xdb], description: 'JPEG raw' },
+      { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe0], description: 'JPEG/JFIF' },
+      { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe1], description: 'JPEG/EXIF' },
+      { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe2], description: 'JPEG/Canon' },
+      { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe3], description: 'JPEG/Samsung' },
+      { offset: 0, bytes: [0xff, 0xd8, 0xff, 0xe8], description: 'JPEG/SPIFF' },
+    ],
+    'image/png': [
+      { offset: 0, bytes: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], description: 'PNG' },
+    ],
+    'image/gif': [
+      { offset: 0, bytes: [0x47, 0x49, 0x46, 0x38, 0x37, 0x61], description: 'GIF87a' },
+      { offset: 0, bytes: [0x47, 0x49, 0x46, 0x38, 0x39, 0x61], description: 'GIF89a' },
+    ],
+    'image/webp': [
+      { offset: 0, bytes: [0x52, 0x49, 0x46, 0x46], description: 'RIFF header' },
+      { offset: 8, bytes: [0x57, 0x45, 0x42, 0x50], description: 'WEBP format' },
+    ],
+    'application/pdf': [
+      { offset: 0, bytes: [0x25, 0x50, 0x44, 0x46, 0x2d], description: 'PDF' }, // %PDF-
+    ],
+    'audio/mpeg': [
+      { offset: 0, bytes: [0x49, 0x44, 0x33], description: 'MP3 with ID3v2' },
+      { offset: 0, bytes: [0xff, 0xfb], description: 'MPEG-1 Layer 3' },
+      { offset: 0, bytes: [0xff, 0xf3], description: 'MPEG-2 Layer 3' },
+      { offset: 0, bytes: [0xff, 0xf2], description: 'MPEG-2.5 Layer 3' },
+      { offset: 0, bytes: [0xff, 0xfa], description: 'MPEG-1 Layer 3 VBR' },
+    ],
+    'audio/mp3': [
+      // MP3 is essentially the same as audio/mpeg
+      { offset: 0, bytes: [0x49, 0x44, 0x33], description: 'MP3 with ID3v2' },
+      { offset: 0, bytes: [0xff, 0xfb], description: 'MP3' },
+      { offset: 0, bytes: [0xff, 0xf3], description: 'MP3' },
+      { offset: 0, bytes: [0xff, 0xf2], description: 'MP3' },
+    ],
+    'audio/wav': [
+      { offset: 0, bytes: [0x52, 0x49, 0x46, 0x46], description: 'RIFF header' },
+      { offset: 8, bytes: [0x57, 0x41, 0x56, 0x45], description: 'WAVE format' },
+    ],
+    'audio/x-wav': [
+      // Alternative MIME type for WAV
+      { offset: 0, bytes: [0x52, 0x49, 0x46, 0x46], description: 'RIFF header' },
+      { offset: 8, bytes: [0x57, 0x41, 0x56, 0x45], description: 'WAVE format' },
+    ],
+    'audio/mp4': [
+      { offset: 4, bytes: [0x66, 0x74, 0x79, 0x70, 0x4d, 0x34, 0x41], description: 'M4A audio' },
+      {
+        offset: 4,
+        bytes: [0x66, 0x74, 0x79, 0x70, 0x6d, 0x70, 0x34, 0x32],
+        description: 'MP4 audio',
+      },
+    ],
+    'audio/x-m4a': [
+      { offset: 4, bytes: [0x66, 0x74, 0x79, 0x70, 0x4d, 0x34, 0x41], description: 'M4A audio' },
+    ],
+    'audio/ogg': [{ offset: 0, bytes: [0x4f, 0x67, 0x67, 0x53], description: 'OGG container' }],
+    'audio/webm': [{ offset: 0, bytes: [0x1a, 0x45, 0xdf, 0xa3], description: 'WebM/Matroska' }],
+    'audio/flac': [{ offset: 0, bytes: [0x66, 0x4c, 0x61, 0x43], description: 'FLAC' }],
+    'image/svg+xml': [
+      // SVG files start with <?xml or <svg
+      { offset: 0, bytes: [0x3c, 0x3f, 0x78, 0x6d, 0x6c], description: 'SVG with XML declaration' }, // <?xml
+      { offset: 0, bytes: [0x3c, 0x73, 0x76, 0x67], description: 'SVG without declaration' }, // <svg
+    ],
+    'text/plain': [
+      // Text files don't have magic numbers, but we can check for BOM markers
+      { offset: 0, bytes: [0xef, 0xbb, 0xbf], description: 'UTF-8 BOM' },
+      { offset: 0, bytes: [0xff, 0xfe], description: 'UTF-16 LE BOM' },
+      { offset: 0, bytes: [0xfe, 0xff], description: 'UTF-16 BE BOM' },
+      // For text files without BOM, we'll accept any ASCII/UTF-8 content
+    ],
+  };
 
 /**
  * Validate file content matches declared MIME type
@@ -97,7 +96,7 @@ export async function validateFileContent(
 
   // Normalize MIME type (handle variations like audio/mp3 vs audio/mpeg)
   const normalizedMimeType = normalizeMimeType(declaredMimeType);
-  
+
   // Check file signatures for declared type
   const signatures = FILE_SIGNATURES[normalizedMimeType];
 
@@ -111,7 +110,7 @@ export async function validateFileContent(
         detectedType: detected.mimeType,
       };
     }
-    
+
     return {
       valid: false,
       error: `Unsupported file type: ${declaredMimeType}`,
@@ -156,17 +155,17 @@ export async function validateFileContent(
         detectedType: detected.mimeType,
       };
     }
-    
+
     return {
       valid: false,
       error: 'File content does not match declared type',
     };
   }
 
-  return { 
-    valid: true, 
+  return {
+    valid: true,
     actualType: normalizedMimeType,
-    detectedType: normalizedMimeType 
+    detectedType: normalizedMimeType,
   };
 }
 
@@ -320,8 +319,12 @@ export async function scanFileForThreats(
     // Check for JPEG with embedded ZIP
     if (buffer.length > 4 && buffer[0] === 0xff && buffer[1] === 0xd8) {
       for (let i = 2; i < Math.min(buffer.length - 4, 10000); i++) {
-        if (buffer[i] === 0x50 && buffer[i + 1] === 0x4b && 
-            buffer[i + 2] === 0x03 && buffer[i + 3] === 0x04) {
+        if (
+          buffer[i] === 0x50 &&
+          buffer[i + 1] === 0x4b &&
+          buffer[i + 2] === 0x03 &&
+          buffer[i + 3] === 0x04
+        ) {
           threats.push('JPEG file contains embedded ZIP archive');
           highSeverityFound = true;
           break;
@@ -349,7 +352,7 @@ export async function scanFileForThreats(
   // Scan text-like files and SVGs
   const textExtensions = /\.(txt|html|htm|svg|xml|json|js|css|md)$/i;
   const isSvg = mimeType === 'image/svg+xml' || filename.toLowerCase().endsWith('.svg');
-  
+
   if (filename.match(textExtensions) || isSvg) {
     const content = buffer.toString('utf8', 0, Math.min(buffer.length, 50000));
 
@@ -461,11 +464,12 @@ export async function validateFile(
   // 3. Check allowed types
   if (options?.allowedTypes && options.allowedTypes.length > 0) {
     const normalizedType = normalizeMimeType(declaredMimeType);
-    const isAllowed = options.allowedTypes.some(type => 
-      normalizeMimeType(type) === normalizedType || 
-      type.endsWith('/*') && normalizedType.startsWith(type.slice(0, -2))
+    const isAllowed = options.allowedTypes.some(
+      (type) =>
+        normalizeMimeType(type) === normalizedType ||
+        (type.endsWith('/*') && normalizedType.startsWith(type.slice(0, -2)))
     );
-    
+
     if (!isAllowed) {
       return {
         valid: false,
@@ -487,7 +491,7 @@ export async function validateFile(
     if (!threatScan.safe) {
       metadata.threats = threatScan.threats;
       metadata.threatSeverity = threatScan.severity;
-      
+
       if (threatScan.severity === 'high') {
         return {
           valid: false,
@@ -496,7 +500,9 @@ export async function validateFile(
           metadata,
         };
       } else {
-        warnings.push(`File contains ${threatScan.severity} severity threats: ${threatScan.threats?.join(', ')}`);
+        warnings.push(
+          `File contains ${threatScan.severity} severity threats: ${threatScan.threats?.join(', ')}`
+        );
       }
     }
   }
@@ -566,12 +572,7 @@ export function getAllowedMimeTypes(context: 'media' | 'avatar' | 'document' | '
       'audio/flac',
       'application/pdf',
     ],
-    avatar: [
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'image/webp',
-    ],
+    avatar: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
     document: [
       'application/pdf',
       'text/plain',

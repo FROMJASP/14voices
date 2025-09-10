@@ -3,7 +3,7 @@ import { getCachedPayload } from '@/lib/payload-cached';
 
 export async function GET() {
   const startTime = Date.now();
-  
+
   try {
     // Test 1: Can we get payload instance?
     const payloadStartTime = Date.now();
@@ -63,7 +63,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error('[Health Check] Error:', error);
-    
+
     return NextResponse.json(
       {
         status: 'unhealthy',

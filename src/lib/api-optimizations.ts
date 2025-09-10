@@ -12,26 +12,31 @@ export function compressResponse<T>(data: T): T {
   if (Array.isArray(data)) {
     return data.map(compressResponse) as T;
   }
-  
+
   if (data && typeof data === 'object') {
     const compressed: Record<string, unknown> = {};
-    
+
     for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
       // Skip null/undefined values
       if (value === null || value === undefined) continue;
-      
+
       // Skip empty arrays
       if (Array.isArray(value) && value.length === 0) continue;
-      
+
       // Skip empty objects
-      if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value as Record<string, unknown>).length === 0) continue;
-      
+      if (
+        typeof value === 'object' &&
+        !Array.isArray(value) &&
+        Object.keys(value as Record<string, unknown>).length === 0
+      )
+        continue;
+
       compressed[key] = compressResponse(value);
     }
-    
+
     return compressed as T;
   }
-  
+
   return data;
 }
 
@@ -41,10 +46,10 @@ export function selectFields<T extends Record<string, any>>(
   fields: string[] | undefined
 ): Partial<T> {
   if (!fields || fields.length === 0) return data;
-  
+
   const selected: Partial<T> = {};
-  
-  fields.forEach(field => {
+
+  fields.forEach((field) => {
     if (field.includes('.')) {
       // Handle nested field selection
       const [root, ...nested] = field.split('.');
@@ -61,7 +66,7 @@ export function selectFields<T extends Record<string, any>>(
       selected[field as keyof T] = data[field];
     }
   });
-  
+
   return selected;
 }
 
@@ -69,7 +74,7 @@ export function selectFields<T extends Record<string, any>>(
 export class OptimizedAPIResponse {
   private request: NextRequest;
   private cacheTTL: number;
-  
+
   constructor(request: NextRequest, cacheTTL: number = 300) {
     this.request = request;
     this.cacheTTL = cacheTTL * 1000; // Convert to milliseconds
@@ -79,16 +84,15 @@ export class OptimizedAPIResponse {
   private getCacheKey(): string {
     const url = new URL(this.request.url);
     const params = new URLSearchParams(url.search);
-    
+
     // Sort params for consistent caching
-    const sortedParams = Array.from(params.entries())
-      .sort(([a], [b]) => a.localeCompare(b));
-    
+    const sortedParams = Array.from(params.entries()).sort(([a], [b]) => a.localeCompare(b));
+
     const cacheableParams = sortedParams
       .filter(([key]) => !['_timestamp', 'cache-bust'].includes(key))
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-    
+
     return `api:${url.pathname}:${cacheableParams}`;
   }
 
@@ -102,7 +106,7 @@ export class OptimizedAPIResponse {
   parseQuery<T>(schema: z.ZodSchema<T>): T {
     const url = new URL(this.request.url);
     const params = Object.fromEntries(url.searchParams.entries());
-    
+
     // Convert string numbers to actual numbers
     const processedParams: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(params)) {
@@ -111,7 +115,7 @@ export class OptimizedAPIResponse {
       else if (!isNaN(Number(value)) && value !== '') processedParams[key] = Number(value);
       else processedParams[key] = value;
     }
-    
+
     return schema.parse(processedParams);
   }
 
@@ -126,16 +130,10 @@ export class OptimizedAPIResponse {
       compress?: boolean;
     } = {}
   ): Promise<NextResponse> {
-    const {
-      fields,
-      transform,
-      cacheKey,
-      headers = {},
-      compress = true
-    } = options;
+    const { fields, transform, cacheKey, headers = {}, compress = true } = options;
 
     const finalCacheKey = cacheKey || this.getCacheKey();
-    
+
     try {
       // Check cache first
       const cached = await globalCache.get(finalCacheKey);
@@ -145,7 +143,7 @@ export class OptimizedAPIResponse {
             'X-Cache': 'HIT',
             'Cache-Control': `public, max-age=${this.cacheTTL / 1000}`,
             ...headers,
-          }
+          },
         });
       }
 
@@ -155,11 +153,13 @@ export class OptimizedAPIResponse {
       const fetchTime = performance.now() - startTime;
 
       // Apply transformations
-      let processedData = transform ? transform(rawData) : rawData as R;
-      
+      let processedData = transform ? transform(rawData) : (rawData as R);
+
       // Select specific fields if requested
       if (fields && Array.isArray(processedData)) {
-        processedData = processedData.map((item: Record<string, unknown>) => selectFields(item, fields)) as R;
+        processedData = processedData.map((item: Record<string, unknown>) =>
+          selectFields(item, fields)
+        ) as R;
       } else if (fields && typeof processedData === 'object') {
         processedData = selectFields(processedData as Record<string, unknown>, fields) as R;
       }
@@ -187,21 +187,20 @@ export class OptimizedAPIResponse {
       }
 
       return NextResponse.json(processedData, { headers: responseHeaders });
-
     } catch (error) {
       console.error('API Response Error:', error);
-      
+
       return NextResponse.json(
-        { 
+        {
           error: 'Internal Server Error',
-          message: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
+          message: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined,
         },
-        { 
+        {
           status: 500,
           headers: {
             'X-Cache': 'ERROR',
             ...headers,
-          }
+          },
         }
       );
     }
@@ -218,13 +217,7 @@ export class OptimizedAPIResponse {
       transform?: (data: T[]) => any;
     } = {}
   ): Promise<NextResponse> {
-    const {
-      page = 1,
-      limit = 10,
-      maxLimit = 100,
-      fields,
-      transform
-    } = options;
+    const { page = 1, limit = 10, maxLimit = 100, fields, transform } = options;
 
     const finalLimit = Math.min(limit, maxLimit);
     const offset = (page - 1) * finalLimit;
@@ -232,7 +225,7 @@ export class OptimizedAPIResponse {
     return this.createResponse(
       async () => {
         const { data, total } = await dataFetcher(finalLimit, offset);
-        
+
         return {
           data: transform ? transform(data) : data,
           pagination: {
@@ -242,7 +235,7 @@ export class OptimizedAPIResponse {
             pages: Math.ceil(total / finalLimit),
             hasNext: page * finalLimit < total,
             hasPrev: page > 1,
-          }
+          },
         };
       },
       { fields }
@@ -256,26 +249,50 @@ export const commonSchemas = {
     page: z.number().min(1).default(1),
     limit: z.number().min(1).max(100).default(10),
   }),
-  
+
   fieldSelection: z.object({
-    fields: z.string().optional().transform(str => 
-      str ? str.split(',').map(f => f.trim()).filter(Boolean) : undefined
-    ),
+    fields: z
+      .string()
+      .optional()
+      .transform((str) =>
+        str
+          ? str
+              .split(',')
+              .map((f) => f.trim())
+              .filter(Boolean)
+          : undefined
+      ),
   }),
-  
+
   voiceoverQuery: z.object({
     page: z.number().min(1).default(1),
     limit: z.number().min(1).max(50).default(10),
     search: z.string().optional(),
     status: z.enum(['active', 'inactive', 'draft']).optional(),
-    tags: z.string().optional().transform(str => 
-      str ? str.split(',').map(t => t.trim()).filter(Boolean) : undefined
-    ),
+    tags: z
+      .string()
+      .optional()
+      .transform((str) =>
+        str
+          ? str
+              .split(',')
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : undefined
+      ),
     available: z.boolean().optional(),
     cohort: z.string().optional(),
-    fields: z.string().optional().transform(str => 
-      str ? str.split(',').map(f => f.trim()).filter(Boolean) : undefined
-    ),
+    fields: z
+      .string()
+      .optional()
+      .transform((str) =>
+        str
+          ? str
+              .split(',')
+              .map((f) => f.trim())
+              .filter(Boolean)
+          : undefined
+      ),
   }),
 };
 
@@ -317,43 +334,49 @@ export class APIPerformanceMonitor {
     }
   }
 
-  static getMetrics(timeframe: number = 3600000) { // 1 hour default
+  static getMetrics(timeframe: number = 3600000) {
+    // 1 hour default
     const cutoff = Date.now() - timeframe;
-    const recentMetrics = this.metrics.filter(m => m.timestamp > cutoff);
-    
+    const recentMetrics = this.metrics.filter((m) => m.timestamp > cutoff);
+
     if (recentMetrics.length === 0) {
       return { message: 'No metrics available' };
     }
 
     const totalRequests = recentMetrics.length;
-    const cacheHits = recentMetrics.filter(m => m.cacheHit).length;
-    const errors = recentMetrics.filter(m => m.status >= 400).length;
+    const cacheHits = recentMetrics.filter((m) => m.cacheHit).length;
+    const errors = recentMetrics.filter((m) => m.status >= 400).length;
     const avgResponseTime = recentMetrics.reduce((sum, m) => sum + m.duration, 0) / totalRequests;
 
-    const endpointStats = recentMetrics.reduce((acc, metric) => {
-      const key = `${metric.method} ${metric.endpoint}`;
-      if (!acc[key]) {
-        acc[key] = { count: 0, totalTime: 0, errors: 0 };
-      }
-      acc[key].count++;
-      acc[key].totalTime += metric.duration;
-      if (metric.status >= 400) acc[key].errors++;
-      return acc;
-    }, {} as Record<string, { count: number; totalTime: number; errors: number }>);
+    const endpointStats = recentMetrics.reduce(
+      (acc, metric) => {
+        const key = `${metric.method} ${metric.endpoint}`;
+        if (!acc[key]) {
+          acc[key] = { count: 0, totalTime: 0, errors: 0 };
+        }
+        acc[key].count++;
+        acc[key].totalTime += metric.duration;
+        if (metric.status >= 400) acc[key].errors++;
+        return acc;
+      },
+      {} as Record<string, { count: number; totalTime: number; errors: number }>
+    );
 
     return {
       summary: {
         totalRequests,
-        cacheHitRate: (cacheHits / totalRequests * 100).toFixed(2),
-        errorRate: (errors / totalRequests * 100).toFixed(2),
+        cacheHitRate: ((cacheHits / totalRequests) * 100).toFixed(2),
+        errorRate: ((errors / totalRequests) * 100).toFixed(2),
         avgResponseTime: avgResponseTime.toFixed(2),
       },
-      endpoints: Object.entries(endpointStats).map(([endpoint, stats]) => ({
-        endpoint,
-        requests: stats.count,
-        avgTime: (stats.totalTime / stats.count).toFixed(2),
-        errorRate: (stats.errors / stats.count * 100).toFixed(2),
-      })).sort((a, b) => parseFloat(b.avgTime) - parseFloat(a.avgTime)),
+      endpoints: Object.entries(endpointStats)
+        .map(([endpoint, stats]) => ({
+          endpoint,
+          requests: stats.count,
+          avgTime: (stats.totalTime / stats.count).toFixed(2),
+          errorRate: ((stats.errors / stats.count) * 100).toFixed(2),
+        }))
+        .sort((a, b) => parseFloat(b.avgTime) - parseFloat(a.avgTime)),
     };
   }
 }

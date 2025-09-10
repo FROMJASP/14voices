@@ -8,12 +8,7 @@ export type PillProps = ComponentProps<typeof Badge> & {
   themed?: boolean;
 };
 
-export const Pill = ({
-  variant = 'secondary',
-  themed = false,
-  className,
-  ...props
-}: PillProps) => (
+export const Pill = ({ variant = 'secondary', themed = false, className, ...props }: PillProps) => (
   <Badge
     className={cn('gap-2 rounded-full px-3 py-1.5 font-normal', className)}
     variant={variant}
@@ -21,15 +16,11 @@ export const Pill = ({
   />
 );
 
-
 export type PillButtonProps = ComponentProps<typeof Button>;
 
 export const PillButton = ({ className, ...props }: PillButtonProps) => (
   <Button
-    className={cn(
-      '-my-2 -mr-2 size-6 rounded-full p-0.5 hover:bg-foreground/5',
-      className
-    )}
+    className={cn('-my-2 -mr-2 size-6 rounded-full p-0.5 hover:bg-foreground/5', className)}
     size="icon"
     variant="ghost"
     {...props}
@@ -41,18 +32,8 @@ export type PillStatusProps = {
   className?: string;
 };
 
-export const PillStatus = ({
-  children,
-  className,
-  ...props
-}: PillStatusProps) => (
-  <div
-    className={cn(
-      'flex items-center gap-2 border-r pr-2 font-medium',
-      className
-    )}
-    {...props}
-  >
+export const PillStatus = ({ children, className, ...props }: PillStatusProps) => (
+  <div className={cn('flex items-center gap-2 border-r pr-2 font-medium', className)} {...props}>
     {children}
   </div>
 );
@@ -62,10 +43,7 @@ export type PillIndicatorProps = {
   pulse?: boolean;
 };
 
-export const PillIndicator = ({
-  variant = 'success',
-  pulse = false,
-}: PillIndicatorProps) => (
+export const PillIndicator = ({ variant = 'success', pulse = false }: PillIndicatorProps) => (
   <span className="relative flex size-2">
     {pulse && (
       <span
@@ -97,15 +75,11 @@ export type PillDeltaProps = {
 
 export const PillDelta = ({ className, delta }: PillDeltaProps) => {
   if (!delta) {
-    return (
-      <MinusIcon className={cn('size-3 text-muted-foreground', className)} />
-    );
+    return <MinusIcon className={cn('size-3 text-muted-foreground', className)} />;
   }
 
   if (delta > 0) {
-    return (
-      <ChevronUpIcon className={cn('size-3 text-emerald-500', className)} />
-    );
+    return <ChevronUpIcon className={cn('size-3 text-emerald-500', className)} />;
   }
 
   return <ChevronDownIcon className={cn('size-3 text-rose-500', className)} />;
@@ -116,15 +90,6 @@ export type PillIconProps = {
   className?: string;
 };
 
-export const PillIcon = ({
-  icon: Icon,
-  className,
-  ...props
-}: PillIconProps) => (
-  <Icon
-    className={cn('size-3 text-muted-foreground', className)}
-    size={12}
-    {...props}
-  />
+export const PillIcon = ({ icon: Icon, className, ...props }: PillIconProps) => (
+  <Icon className={cn('size-3 text-muted-foreground', className)} size={12} {...props} />
 );
-

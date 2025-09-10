@@ -7,12 +7,12 @@ import { Checkbox } from '@/components/ui/Checkbox';
 import { Label } from '@/components/ui/Label';
 
 // Production type enum for type safety
-export type ProductionType = 
-  | 'videoproductie' 
-  | 'e-learning' 
-  | 'radiospot' 
-  | 'tv-commercial' 
-  | 'web-commercial' 
+export type ProductionType =
+  | 'videoproductie'
+  | 'e-learning'
+  | 'radiospot'
+  | 'tv-commercial'
+  | 'web-commercial'
   | 'voice-response';
 
 // Extra option interface
@@ -26,50 +26,57 @@ export interface ExtraOption {
 
 // Extra options configuration by production type
 export const EXTRA_OPTIONS_CONFIG: Record<ProductionType, ExtraOption[]> = {
-  'videoproductie': [
+  videoproductie: [
     {
       item: 'Audio Cleanup',
       value: 'audio-cleanup',
       price: 50,
-      infoText: 'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
+      infoText:
+        'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
     },
     {
       item: 'Editing',
       value: 'editing',
       price: 50,
-      infoText: 'Professionele nabewerking van de audio-opname waarbij timing, pauzes en overgangen worden geoptimaliseerd voor een vloeiend eindresultaat.',
+      infoText:
+        'Professionele nabewerking van de audio-opname waarbij timing, pauzes en overgangen worden geoptimaliseerd voor een vloeiend eindresultaat.',
     },
     {
       item: 'Mixage',
       value: 'mixage',
       price: 100,
-      infoText: 'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
+      infoText:
+        'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
       dependencies: ['editing'],
     },
     {
       item: 'Sound Design',
       value: 'sound-design',
       price: 100,
-      infoText: 'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
+      infoText:
+        'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
       dependencies: ['editing', 'mixage'],
     },
     {
       item: 'Klantregie',
       value: 'klantregie',
       price: 75,
-      infoText: 'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
+      infoText:
+        'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
     },
     {
       item: 'Copywriting',
       value: 'copywriting',
       price: 125,
-      infoText: 'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
+      infoText:
+        'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
     },
     {
       item: 'Inspreken op beeld',
       value: 'inspreken-op-beeld',
       price: 75,
-      infoText: 'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
+      infoText:
+        'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
     },
   ],
   'e-learning': [
@@ -77,85 +84,98 @@ export const EXTRA_OPTIONS_CONFIG: Record<ProductionType, ExtraOption[]> = {
       item: 'Audio Cleanup',
       value: 'audio-cleanup',
       price: 50,
-      infoText: 'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
+      infoText:
+        'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
     },
     {
       item: 'Editing',
       value: 'editing',
       price: 50,
-      infoText: 'Professionele nabewerking van de audio-opname waarbij timing, pauzes en overgangen worden geoptimaliseerd voor een vloeiend eindresultaat.',
+      infoText:
+        'Professionele nabewerking van de audio-opname waarbij timing, pauzes en overgangen worden geoptimaliseerd voor een vloeiend eindresultaat.',
     },
     {
       item: 'Mixage',
       value: 'mixage',
       price: 100,
-      infoText: 'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
+      infoText:
+        'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
       dependencies: ['editing'],
     },
     {
       item: 'Sound Design',
       value: 'sound-design',
       price: 100,
-      infoText: 'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
+      infoText:
+        'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
       dependencies: ['editing', 'mixage'],
     },
     {
       item: 'Klantregie',
       value: 'klantregie',
       price: 75,
-      infoText: 'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
+      infoText:
+        'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
     },
     {
       item: 'Copywriting',
       value: 'copywriting',
       price: 125,
-      infoText: 'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
+      infoText:
+        'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
     },
     {
       item: 'Inspreken op beeld',
       value: 'inspreken-op-beeld',
       price: 75,
-      infoText: 'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
+      infoText:
+        'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
     },
   ],
-  'radiospot': [
+  radiospot: [
     {
       item: 'Audio Cleanup',
       value: 'audio-cleanup',
       price: 75,
-      infoText: 'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
+      infoText:
+        'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
     },
     {
       item: 'Editing',
       value: 'editing',
       price: 75,
-      infoText: 'Professionele nabewerking van de radiospot waarbij timing en ritme worden geoptimaliseerd voor maximale impact.',
+      infoText:
+        'Professionele nabewerking van de radiospot waarbij timing en ritme worden geoptimaliseerd voor maximale impact.',
     },
     {
       item: 'Mixage',
       value: 'mixage',
       price: 150,
-      infoText: 'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
+      infoText:
+        'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
       dependencies: ['editing'],
     },
     {
       item: 'Sound Design',
       value: 'sound-design',
       price: 150,
-      infoText: 'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
+      infoText:
+        'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
       dependencies: ['editing', 'mixage'],
     },
     {
       item: 'Klantregie',
       value: 'klantregie',
       price: 75,
-      infoText: 'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
+      infoText:
+        'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
     },
     {
       item: 'Copywriting',
       value: 'copywriting',
       price: 125,
-      infoText: 'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
+      infoText:
+        'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
     },
   ],
   'tv-commercial': [
@@ -163,45 +183,52 @@ export const EXTRA_OPTIONS_CONFIG: Record<ProductionType, ExtraOption[]> = {
       item: 'Audio Cleanup',
       value: 'audio-cleanup',
       price: 75,
-      infoText: 'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
+      infoText:
+        'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
     },
     {
       item: 'Editing',
       value: 'editing',
       price: 75,
-      infoText: 'Professionele nabewerking van de tv-commercial voice-over voor perfecte synchronisatie met beeld.',
+      infoText:
+        'Professionele nabewerking van de tv-commercial voice-over voor perfecte synchronisatie met beeld.',
     },
     {
       item: 'Mixage',
       value: 'mixage',
       price: 150,
-      infoText: 'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
+      infoText:
+        'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
       dependencies: ['editing'],
     },
     {
       item: 'Sound Design',
       value: 'sound-design',
       price: 150,
-      infoText: 'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
+      infoText:
+        'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
       dependencies: ['editing', 'mixage'],
     },
     {
       item: 'Klantregie',
       value: 'klantregie',
       price: 75,
-      infoText: 'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
+      infoText:
+        'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
     },
     {
       item: 'Copywriting',
       value: 'copywriting',
       price: 125,
-      infoText: 'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
+      infoText:
+        'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
     },
     {
       item: 'Inspreken op beeld',
       value: 'inspreken-op-beeld',
       price: 100,
-      infoText: 'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
+      infoText:
+        'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
     },
   ],
   'web-commercial': [
@@ -209,7 +236,8 @@ export const EXTRA_OPTIONS_CONFIG: Record<ProductionType, ExtraOption[]> = {
       item: 'Audio Cleanup',
       value: 'audio-cleanup',
       price: 75,
-      infoText: 'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
+      infoText:
+        'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
     },
     {
       item: 'Editing',
@@ -221,33 +249,38 @@ export const EXTRA_OPTIONS_CONFIG: Record<ProductionType, ExtraOption[]> = {
       item: 'Mixage',
       value: 'mixage',
       price: 150,
-      infoText: 'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
+      infoText:
+        'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
       dependencies: ['editing'],
     },
     {
       item: 'Sound Design',
       value: 'sound-design',
       price: 150,
-      infoText: 'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
+      infoText:
+        'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
       dependencies: ['editing', 'mixage'],
     },
     {
       item: 'Klantregie',
       value: 'klantregie',
       price: 75,
-      infoText: 'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
+      infoText:
+        'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
     },
     {
       item: 'Copywriting',
       value: 'copywriting',
       price: 125,
-      infoText: 'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
+      infoText:
+        'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
     },
     {
       item: 'Inspreken op beeld',
       value: 'inspreken-op-beeld',
       price: 100,
-      infoText: 'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
+      infoText:
+        'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
     },
   ],
   'voice-response': [
@@ -255,7 +288,8 @@ export const EXTRA_OPTIONS_CONFIG: Record<ProductionType, ExtraOption[]> = {
       item: 'Audio Cleanup',
       value: 'audio-cleanup',
       price: 50,
-      infoText: 'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
+      infoText:
+        'Al onze opnames worden standaard onbewerkt opgeleverd. Er kunnen dus ademhalingen, smakjes en andere oneffenheden te horen zijn. Kies Audio Cleanup wanneer je een volledig opgeschoond en geprocessed bestand wilt ontvangen dat kant en klaar te gebruiken is.',
     },
     {
       item: 'Editing',
@@ -267,33 +301,38 @@ export const EXTRA_OPTIONS_CONFIG: Record<ProductionType, ExtraOption[]> = {
       item: 'Mixage',
       value: 'mixage',
       price: 100,
-      infoText: 'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
+      infoText:
+        'Opname uitzendklaar door ons laten afmixen? Wij maken de perfecte radio- tv, of webmixage voor je zodat je productie goed klinkt en meteen gebruikt kan worden. Om mixing als extra dienst te selecteren moet je ook editing afnemen.',
       dependencies: ['editing'],
     },
     {
       item: 'Sound Design',
       value: 'sound-design',
       price: 100,
-      infoText: 'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
+      infoText:
+        'Heeft jouw productie een passend geluidsontwerp nodig? Wij voorzien de opnames in overleg met jou van passende geluidseffecten en leveren een kant en klaar eindproduct op. Om sounddesign als extra dienst te selecteren moet je ook editing & mixing afnemen.',
       dependencies: ['editing', 'mixage'],
     },
     {
       item: 'Klantregie',
       value: 'klantregie',
       price: 75,
-      infoText: 'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
+      infoText:
+        'Live meeluisteren en regisseren tijdens de opnames? Dat kan met Klantregie. Via een eenvoudige weblink kun je meeluisteren en feedback geven alsof je in de studio zit.',
     },
     {
       item: 'Copywriting',
       value: 'copywriting',
       price: 125,
-      infoText: 'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
+      infoText:
+        'Je scripts nog beter laten klinken? Kies Copywriting wanneer je jouw basistekst door ons wilt laten redigeren tot goed in te spreken copy die overbrengt wat de bedoeling is.',
     },
     {
       item: 'Inspreken op beeld',
       value: 'inspreken-op-beeld',
       price: 75,
-      infoText: 'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
+      infoText:
+        'Wil je dat jouw script op beeld wordt ingesproken? Stuur ons je video en we dubben de voice-over onder het beeld, zodat je qua timing altijd goed zit!',
     },
   ],
 };
@@ -315,7 +354,7 @@ interface OptionItemProps {
 function OptionItem({ option, isSelected, isDisabled, onToggle, productionType }: OptionItemProps) {
   // Auto-expand selected items
   const [isExpanded, setIsExpanded] = useState(isSelected);
-  
+
   // Update expanded state when selection changes
   useEffect(() => {
     if (isSelected) {
@@ -370,7 +409,7 @@ function OptionItem({ option, isSelected, isDisabled, onToggle, productionType }
                 </motion.div>
               </button>
             </Label>
-            
+
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
@@ -386,13 +425,17 @@ function OptionItem({ option, isSelected, isDisabled, onToggle, productionType }
                   {option.dependencies && option.dependencies.length > 0 && (
                     <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
                       <Info className="w-3 h-3" />
-                      Vereist: {option.dependencies.map((dep) => {
-                        if (!productionType) return '';
-                        const depOption = EXTRA_OPTIONS_CONFIG[productionType as ProductionType]?.find(
-                          (opt) => opt.value === dep
-                        );
-                        return depOption?.item;
-                      }).filter(Boolean).join(' & ')}
+                      Vereist:{' '}
+                      {option.dependencies
+                        .map((dep) => {
+                          if (!productionType) return '';
+                          const depOption = EXTRA_OPTIONS_CONFIG[
+                            productionType as ProductionType
+                          ]?.find((opt) => opt.value === dep);
+                          return depOption?.item;
+                        })
+                        .filter(Boolean)
+                        .join(' & ')}
                     </p>
                   )}
                 </motion.div>
@@ -431,13 +474,11 @@ export function ExtraOptions({ productionType, selectedExtras, onExtraToggle }: 
   const handleToggle = (optionValue: string) => {
     const option = options.find((opt) => opt.value === optionValue);
     const isCurrentlySelected = selectedExtras.includes(optionValue);
-    
+
     if (isCurrentlySelected && option) {
       // If deselecting, also deselect all options that depend on this one
-      const dependentOptions = options.filter((opt) => 
-        opt.dependencies?.includes(optionValue)
-      );
-      
+      const dependentOptions = options.filter((opt) => opt.dependencies?.includes(optionValue));
+
       // Remove this option and all dependent options
       const optionsToRemove = [optionValue, ...dependentOptions.map((opt) => opt.value)];
       optionsToRemove.forEach((value) => {
@@ -457,7 +498,7 @@ export function ExtraOptions({ productionType, selectedExtras, onExtraToggle }: 
         <Label className="text-sm font-medium text-foreground">2. Extra diensten</Label>
         <span className="text-xs text-muted-foreground">(optioneel)</span>
       </div>
-      
+
       <div className="space-y-3">
         {options.map((option) => (
           <OptionItem
@@ -470,7 +511,7 @@ export function ExtraOptions({ productionType, selectedExtras, onExtraToggle }: 
           />
         ))}
       </div>
-      
+
       {options.length === 0 && (
         <div className="border border-dashed border-border rounded-lg p-6 text-center">
           <p className="text-sm text-muted-foreground">

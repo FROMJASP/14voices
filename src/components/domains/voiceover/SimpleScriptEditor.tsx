@@ -12,11 +12,11 @@ interface SimpleScriptEditorProps {
   voiceoverName?: string;
 }
 
-export function SimpleScriptEditor({ 
-  value, 
-  onChange, 
+export function SimpleScriptEditor({
+  value,
+  onChange,
   onWordCountChange,
-  placeholder = "Voer hier je script in...",
+  placeholder = 'Voer hier je script in...',
   // voiceoverName // Currently unused
 }: SimpleScriptEditorProps) {
   const [wordCount, setWordCount] = useState(0);
@@ -51,7 +51,7 @@ export function SimpleScriptEditor({
           {wordCount} {wordCount === 1 ? 'woord' : 'woorden'}
         </span>
       </div>
-      
+
       <div className="relative">
         <textarea
           ref={textareaRef}
@@ -64,13 +64,14 @@ export function SimpleScriptEditor({
             userSelect: 'text',
             WebkitUserSelect: 'text',
             MozUserSelect: 'text',
-            msUserSelect: 'text'
+            msUserSelect: 'text',
           }}
         />
       </div>
-      
+
       <p className="text-xs text-muted-foreground">
-        <span className="font-semibold">Let op:</span> plaats geen instructies in het script. Je kunt instructies het best hieronder doorgeven.
+        <span className="font-semibold">Let op:</span> plaats geen instructies in het script. Je
+        kunt instructies het best hieronder doorgeven.
       </p>
     </div>
   );

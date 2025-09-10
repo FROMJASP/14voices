@@ -7,14 +7,9 @@ import globalCache from '@/lib/cache';
 export async function GET() {
   try {
     const startTime = performance.now();
-    
+
     // Gather performance metrics from different systems
-    const [
-      dbMetrics,
-      apiMetrics,
-      cacheStats,
-      globalCacheStats,
-    ] = await Promise.all([
+    const [dbMetrics, apiMetrics, cacheStats, globalCacheStats] = await Promise.all([
       OptimizedVoiceoverQueries.getPerformanceMetrics(),
       APIPerformanceMonitor.getMetrics(),
       getCacheStats(),
@@ -62,12 +57,11 @@ export async function GET() {
         'Content-Type': 'application/json',
       },
     });
-
   } catch (error) {
     console.error('Performance metrics error:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch performance metrics',
         timestamp: new Date().toISOString(),
       },

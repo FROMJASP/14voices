@@ -8,10 +8,12 @@ export interface WhatsAppTooltip {
   enabled?: boolean;
   title?: string;
   message?: string;
-  image?: {
-    url?: string;
-    alt?: string;
-  } | number;
+  image?:
+    | {
+        url?: string;
+        alt?: string;
+      }
+    | number;
 }
 
 export interface InfoNavbarData {

@@ -29,7 +29,7 @@ export const PageBlockLabel: React.FC<PageBlockLabelProps> = ({ data, index }) =
 
   // Get the variant based on block type
   let variantText = '';
-  
+
   if (data.blockType === 'hero' && data.heroVariant) {
     variantText = data.heroVariant === 'variant1' ? 'Variant 1' : 'Variant 2';
   } else if (data.blockType === 'voiceover' && data.voiceoverVariant) {
@@ -51,7 +51,7 @@ export const PageBlockLabel: React.FC<PageBlockLabelProps> = ({ data, index }) =
       >
         {blockLabel}
       </span>
-      
+
       {/* Variant badge */}
       {variantText && (
         <span
@@ -68,7 +68,7 @@ export const PageBlockLabel: React.FC<PageBlockLabelProps> = ({ data, index }) =
           {variantText}
         </span>
       )}
-      
+
       {/* Disabled indicator */}
       {!enabled && (
         <span

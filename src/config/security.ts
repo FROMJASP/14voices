@@ -200,12 +200,12 @@ export function getRateLimitConfig(type: keyof typeof securityConfig.rateLimits)
 
 /**
  * Build Content Security Policy header string
- * 
+ *
  * NOTE: While nonce-based CSP would be more secure, Next.js requires 'unsafe-inline'
  * for its hydration and runtime scripts to function properly. Implementing nonce-based
  * CSP with Next.js requires significant configuration changes and may break certain
  * features. The 'unsafe-inline' directive is maintained for compatibility.
- * 
+ *
  * For more information, see:
  * https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
  */
@@ -213,12 +213,15 @@ export function buildCSPHeader(): string {
   const csp = { ...securityConfig.csp };
 
   // Filter out undefined values (like upgrade-insecure-requests in dev)
-  const filteredCsp = Object.entries(csp).reduce((acc, [directive, values]) => {
-    if (values !== undefined) {
-      acc[directive] = values;
-    }
-    return acc;
-  }, {} as Record<string, string[]>);
+  const filteredCsp = Object.entries(csp).reduce(
+    (acc, [directive, values]) => {
+      if (values !== undefined) {
+        acc[directive] = values;
+      }
+      return acc;
+    },
+    {} as Record<string, string[]>
+  );
 
   return Object.entries(filteredCsp)
     .map(([directive, values]) => `${directive} ${values!.join(' ')}`)

@@ -60,25 +60,22 @@ export default function ContentSection({ data }: ContentSectionProps) {
         )}
 
         <div className="grid gap-6 md:grid-cols-2 md:gap-12">
-          {data.title && (
-            <h2 className="text-4xl font-medium">{data.title}</h2>
-          )}
+          {data.title && <h2 className="text-4xl font-medium">{data.title}</h2>}
           <div className="space-y-6">
             {data.description && (
               <p className="text-gray-600 dark:text-gray-400">{data.description}</p>
             )}
-            
+
             {data.button?.label && data.button?.url && (
               <Button
                 asChild
                 variant={data.button.style || 'secondary'}
                 size="sm"
-                className={data.button.showIcon !== false ? "gap-1 pr-1.5" : ""}>
+                className={data.button.showIcon !== false ? 'gap-1 pr-1.5' : ''}
+              >
                 <Link href={data.button.url}>
                   <span>{data.button.label}</span>
-                  {data.button.showIcon !== false && (
-                    <ChevronRight className="size-4" />
-                  )}
+                  {data.button.showIcon !== false && <ChevronRight className="size-4" />}
                 </Link>
               </Button>
             )}

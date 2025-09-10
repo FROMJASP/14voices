@@ -24,30 +24,16 @@ import {
   useCurrentEditor,
 } from '@tiptap/react';
 import { Button } from '@/components/ui/Button';
-import {
-  Command,
-  CommandEmpty,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/Command';
+import { Command, CommandEmpty, CommandItem, CommandList } from '@/components/ui/Command';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/Popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
 // import { Separator } from '@/components/ui/Separator'; // Commented out since BubbleMenu is not available
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/Tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/utils';
 
 export type { Editor, JSONContent } from '@tiptap/react';
@@ -101,10 +87,7 @@ interface SlashNodeAttrs {
   label?: string | null;
 }
 
-type SlashOptions<
-  SlashOptionSuggestionItem = unknown,
-  Attrs = SlashNodeAttrs,
-> = {
+type SlashOptions<SlashOptionSuggestionItem = unknown, Attrs = SlashNodeAttrs> = {
   HTMLAttributes: Record<string, unknown>;
   renderText: (props: {
     options: SlashOptions<SlashOptionSuggestionItem, Attrs>;
@@ -115,10 +98,7 @@ type SlashOptions<
     node: ProseMirrorNode;
   }) => DOMOutputSpec;
   deleteTriggerWithBackspace: boolean;
-  suggestion: Omit<
-    SuggestionOptions<SlashOptionSuggestionItem, Attrs>,
-    'editor'
-  >;
+  suggestion: Omit<SuggestionOptions<SlashOptionSuggestionItem, Attrs>, 'editor'>;
 };
 
 const SlashPluginKey = new PluginKey('slash');
@@ -131,127 +111,106 @@ export interface SuggestionItem {
   command: (props: { editor: Editor; range: Range }) => void;
 }
 
-export const defaultSlashSuggestions: SuggestionOptions<SuggestionItem>['items'] =
-  () => [
-    {
-      title: 'Text',
-      description: 'Just start typing with plain text.',
-      searchTerms: ['p', 'paragraph'],
-      icon: TextIcon,
-      command: ({ editor, range }) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .toggleNode('paragraph', 'paragraph')
-          .run();
-      },
+export const defaultSlashSuggestions: SuggestionOptions<SuggestionItem>['items'] = () => [
+  {
+    title: 'Text',
+    description: 'Just start typing with plain text.',
+    searchTerms: ['p', 'paragraph'],
+    icon: TextIcon,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleNode('paragraph', 'paragraph').run();
     },
-    {
-      title: 'To-do List',
-      description: 'Track tasks with a to-do list.',
-      searchTerms: ['todo', 'task', 'list', 'check', 'checkbox'],
-      icon: CheckSquareIcon,
-      command: ({ editor, range }) => {
-        editor.chain().focus().deleteRange(range).toggleTaskList().run();
-      },
+  },
+  {
+    title: 'To-do List',
+    description: 'Track tasks with a to-do list.',
+    searchTerms: ['todo', 'task', 'list', 'check', 'checkbox'],
+    icon: CheckSquareIcon,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleTaskList().run();
     },
-    {
-      title: 'Heading 1',
-      description: 'Big section heading.',
-      searchTerms: ['title', 'big', 'large'],
-      icon: Heading1Icon,
-      command: ({ editor, range }) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setNode('heading', { level: 1 })
-          .run();
-      },
+  },
+  {
+    title: 'Heading 1',
+    description: 'Big section heading.',
+    searchTerms: ['title', 'big', 'large'],
+    icon: Heading1Icon,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run();
     },
-    {
-      title: 'Heading 2',
-      description: 'Medium section heading.',
-      searchTerms: ['subtitle', 'medium'],
-      icon: Heading2Icon,
-      command: ({ editor, range }) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setNode('heading', { level: 2 })
-          .run();
-      },
+  },
+  {
+    title: 'Heading 2',
+    description: 'Medium section heading.',
+    searchTerms: ['subtitle', 'medium'],
+    icon: Heading2Icon,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run();
     },
-    {
-      title: 'Heading 3',
-      description: 'Small section heading.',
-      searchTerms: ['subtitle', 'small'],
-      icon: Heading3Icon,
-      command: ({ editor, range }) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setNode('heading', { level: 3 })
-          .run();
-      },
+  },
+  {
+    title: 'Heading 3',
+    description: 'Small section heading.',
+    searchTerms: ['subtitle', 'small'],
+    icon: Heading3Icon,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 3 }).run();
     },
-    {
-      title: 'Bullet List',
-      description: 'Create a simple bullet list.',
-      searchTerms: ['unordered', 'point'],
-      icon: ListIcon,
-      command: ({ editor, range }) => {
-        editor.chain().focus().deleteRange(range).toggleBulletList().run();
-      },
+  },
+  {
+    title: 'Bullet List',
+    description: 'Create a simple bullet list.',
+    searchTerms: ['unordered', 'point'],
+    icon: ListIcon,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleBulletList().run();
     },
-    {
-      title: 'Numbered List',
-      description: 'Create a list with numbering.',
-      searchTerms: ['ordered'],
-      icon: ListOrderedIcon,
-      command: ({ editor, range }) => {
-        editor.chain().focus().deleteRange(range).toggleOrderedList().run();
-      },
+  },
+  {
+    title: 'Numbered List',
+    description: 'Create a list with numbering.',
+    searchTerms: ['ordered'],
+    icon: ListOrderedIcon,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleOrderedList().run();
     },
-    {
-      title: 'Quote',
-      description: 'Capture a quote.',
-      searchTerms: ['blockquote'],
-      icon: TextQuoteIcon,
-      command: ({ editor, range }) =>
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .toggleNode('paragraph', 'paragraph')
-          .toggleBlockquote()
-          .run(),
-    },
-    {
-      title: 'Code',
-      description: 'Capture a code snippet.',
-      searchTerms: ['codeblock'],
-      icon: CodeIcon,
-      command: ({ editor, range }) =>
-        editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
-    },
-    {
-      title: 'Table',
-      description: 'Add a table view to organize data.',
-      searchTerms: ['table'],
-      icon: TableIcon,
-      command: ({ editor, range }) =>
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-          .run(),
-    },
-  ];
+  },
+  {
+    title: 'Quote',
+    description: 'Capture a quote.',
+    searchTerms: ['blockquote'],
+    icon: TextQuoteIcon,
+    command: ({ editor, range }) =>
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .toggleNode('paragraph', 'paragraph')
+        .toggleBlockquote()
+        .run(),
+  },
+  {
+    title: 'Code',
+    description: 'Capture a code snippet.',
+    searchTerms: ['codeblock'],
+    icon: CodeIcon,
+    command: ({ editor, range }) =>
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+  },
+  {
+    title: 'Table',
+    description: 'Add a table view to organize data.',
+    searchTerms: ['table'],
+    icon: TableIcon,
+    command: ({ editor, range }) =>
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+        .run(),
+  },
+];
 
 const Slash = Node.create<SlashOptions>({
   name: 'slash',
@@ -299,9 +258,7 @@ const Slash = Node.create<SlashOptions>({
             .run();
 
           // get reference to `window` object from editor element, to support cross-frame JS usage
-          editor.view.dom.ownerDocument.defaultView
-            ?.getSelection()
-            ?.collapseToEnd();
+          editor.view.dom.ownerDocument.defaultView?.getSelection()?.collapseToEnd();
         },
         allow: ({ state, range }) => {
           const $from = state.doc.resolve(range.from);
@@ -378,11 +335,7 @@ const Slash = Node.create<SlashOptions>({
     if (typeof html === 'string') {
       return [
         'span',
-        mergeAttributes(
-          { 'data-type': this.name },
-          this.options.HTMLAttributes,
-          HTMLAttributes
-        ),
+        mergeAttributes({ 'data-type': this.name }, this.options.HTMLAttributes, HTMLAttributes),
         html,
       ];
     }
@@ -412,9 +365,7 @@ const Slash = Node.create<SlashOptions>({
             if (node.type.name === this.name) {
               isMention = true;
               tr.insertText(
-                this.options.deleteTriggerWithBackspace
-                  ? ''
-                  : this.options.suggestion.char || '',
+                this.options.deleteTriggerWithBackspace ? '' : this.options.suggestion.char || '',
                 pos,
                 pos + node.nodeSize
               );
@@ -472,9 +423,7 @@ const EditorSlashMenu = ({ items, editor, range }: EditorSlashMenuProps) => (
           </div>
           <div className="flex flex-col">
             <span className="font-medium text-sm">{item.title}</span>
-            <span className="text-muted-foreground text-xs">
-              {item.description}
-            </span>
+            <span className="text-muted-foreground text-xs">{item.description}</span>
           </div>
         </CommandItem>
       ))}
@@ -621,8 +570,7 @@ export const EditorProvider = ({
               });
 
               popup = tippy(document.body, {
-                getReferenceClientRect: () =>
-                  onStartProps.clientRect?.() || new DOMRect(),
+                getReferenceClientRect: () => onStartProps.clientRect?.() || new DOMRect(),
                 appendTo: () => document.body,
                 content: component.element,
                 showOnCreate: true,
@@ -636,8 +584,7 @@ export const EditorProvider = ({
               component.updateProps(onUpdateProps);
 
               popup.setProps({
-                getReferenceClientRect: () =>
-                  onUpdateProps.clientRect?.() || new DOMRect(),
+                getReferenceClientRect: () => onUpdateProps.clientRect?.() || new DOMRect(),
               });
             },
 
@@ -670,16 +617,12 @@ export const EditorProvider = ({
     }),
     TableRow.configure({
       HTMLAttributes: {
-        class: cn(
-          'relative box-border min-w-[1em] border p-1 text-start align-top'
-        ),
+        class: cn('relative box-border min-w-[1em] border p-1 text-start align-top'),
       },
     }),
     TableCell.configure({
       HTMLAttributes: {
-        class: cn(
-          'relative box-border min-w-[1em] border p-1 text-start align-top'
-        ),
+        class: cn('relative box-border min-w-[1em] border p-1 text-start align-top'),
       },
     }),
     TableHeader.configure({
@@ -782,32 +725,17 @@ type EditorButtonProps = {
   hideName?: boolean;
 };
 
-const BubbleMenuButton = ({
-  name,
-  isActive,
-  command,
-  icon: Icon,
-  hideName,
-}: EditorButtonProps) => (
-  <Button
-    className="flex gap-4"
-    onClick={() => command()}
-    size="sm"
-    variant="ghost"
-  >
+const BubbleMenuButton = ({ name, isActive, command, icon: Icon, hideName }: EditorButtonProps) => (
+  <Button className="flex gap-4" onClick={() => command()} size="sm" variant="ghost">
     <Icon className="shrink-0 text-muted-foreground" size={12} />
     {!hideName && <span className="flex-1 text-left">{name}</span>}
-    {isActive() ? (
-      <CheckIcon className="shrink-0 text-muted-foreground" size={12} />
-    ) : null}
+    {isActive() ? <CheckIcon className="shrink-0 text-muted-foreground" size={12} /> : null}
   </Button>
 );
 
 export type EditorClearFormattingProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorClearFormatting = ({
-  hideName = true,
-}: EditorClearFormattingProps) => {
+export const EditorClearFormatting = ({ hideName = true }: EditorClearFormattingProps) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -827,9 +755,7 @@ export const EditorClearFormatting = ({
 
 export type EditorNodeTextProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeText = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeText = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -838,9 +764,7 @@ export const EditorNodeText = ({
 
   return (
     <BubbleMenuButton
-      command={() =>
-        editor.chain().focus().toggleNode('paragraph', 'paragraph').run()
-      }
+      command={() => editor.chain().focus().toggleNode('paragraph', 'paragraph').run()}
       hideName={hideName}
       // I feel like there has to be a more efficient way to do this – feel free to PR if you know how!
       icon={TextIcon}
@@ -858,9 +782,7 @@ export const EditorNodeText = ({
 
 export type EditorNodeHeading1Props = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeHeading1 = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeHeading1 = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -880,9 +802,7 @@ export const EditorNodeHeading1 = ({
 
 export type EditorNodeHeading2Props = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeHeading2 = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeHeading2 = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -902,9 +822,7 @@ export const EditorNodeHeading2 = ({
 
 export type EditorNodeHeading3Props = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeHeading3 = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeHeading3 = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -924,9 +842,7 @@ export const EditorNodeHeading3 = ({
 
 export type EditorNodeBulletListProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeBulletList = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeBulletList = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -968,9 +884,7 @@ export const EditorNodeOrderedList = ({
 
 export type EditorNodeTaskListProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeTaskList = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeTaskList = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -990,9 +904,7 @@ export const EditorNodeTaskList = ({
 
 export type EditorNodeQuoteProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeQuote = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeQuote = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -1002,12 +914,7 @@ export const EditorNodeQuote = ({
   return (
     <BubbleMenuButton
       command={() =>
-        editor
-          .chain()
-          .focus()
-          .toggleNode('paragraph', 'paragraph')
-          .toggleBlockquote()
-          .run()
+        editor.chain().focus().toggleNode('paragraph', 'paragraph').toggleBlockquote().run()
       }
       hideName={hideName}
       icon={TextQuoteIcon}
@@ -1019,9 +926,7 @@ export const EditorNodeQuote = ({
 
 export type EditorNodeCodeProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeCode = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeCode = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -1041,9 +946,7 @@ export const EditorNodeCode = ({
 
 export type EditorNodeTableProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorNodeTable = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorNodeTable = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -1053,11 +956,7 @@ export const EditorNodeTable = ({
   return (
     <BubbleMenuButton
       command={() =>
-        editor
-          .chain()
-          .focus()
-          .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-          .run()
+        editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
       }
       hideName={hideName}
       icon={TableIcon}
@@ -1090,21 +989,12 @@ export const EditorSelector = ({
   return (
     <Popover modal onOpenChange={onOpenChange} open={open}>
       <PopoverTrigger asChild>
-        <Button
-          className="gap-2 rounded-none border-none"
-          size="sm"
-          variant="ghost"
-        >
+        <Button className="gap-2 rounded-none border-none" size="sm" variant="ghost">
           <span className="whitespace-nowrap text-xs">{title}</span>
           <ChevronDownIcon size={12} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        className={cn('w-48 p-1', className)}
-        sideOffset={5}
-        {...props}
-      >
+      <PopoverContent align="start" className={cn('w-48 p-1', className)} sideOffset={5} {...props}>
         {children}
       </PopoverContent>
     </Popover>
@@ -1113,9 +1003,7 @@ export const EditorSelector = ({
 
 export type EditorFormatBoldProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorFormatBold = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorFormatBold = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -1135,9 +1023,7 @@ export const EditorFormatBold = ({
 
 export type EditorFormatItalicProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorFormatItalic = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorFormatItalic = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -1157,9 +1043,7 @@ export const EditorFormatItalic = ({
 
 export type EditorFormatStrikeProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorFormatStrike = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorFormatStrike = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -1179,9 +1063,7 @@ export const EditorFormatStrike = ({
 
 export type EditorFormatCodeProps = Pick<EditorButtonProps, 'hideName'>;
 
-export const EditorFormatCode = ({
-  hideName = false,
-}: Pick<EditorButtonProps, 'hideName'>) => {
+export const EditorFormatCode = ({ hideName = false }: Pick<EditorButtonProps, 'hideName'>) => {
   const { editor } = useCurrentEditor();
 
   if (!editor) {
@@ -1270,10 +1152,7 @@ export type EditorLinkSelectorProps = {
   onOpenChange?: (open: boolean) => void;
 };
 
-export const EditorLinkSelector = ({
-  open,
-  onOpenChange,
-}: EditorLinkSelectorProps) => {
+export const EditorLinkSelector = ({ open, onOpenChange }: EditorLinkSelectorProps) => {
   const [url, setUrl] = useState<string>('');
   const inputReference = useRef<HTMLInputElement>(null);
   const { editor } = useCurrentEditor();
@@ -1326,19 +1205,12 @@ export const EditorLinkSelector = ({
   return (
     <Popover modal onOpenChange={onOpenChange} open={open}>
       <PopoverTrigger asChild>
-        <Button
-          className="gap-2 rounded-none border-none"
-          size="sm"
-          variant="ghost"
-        >
+        <Button className="gap-2 rounded-none border-none" size="sm" variant="ghost">
           <ExternalLinkIcon size={12} />
           <p
-            className={cn(
-              'text-xs underline decoration-text-muted underline-offset-4',
-              {
-                'text-primary': editor.isActive('link'),
-              }
-            )}
+            className={cn('text-xs underline decoration-text-muted underline-offset-4', {
+              'text-primary': editor.isActive('link'),
+            })}
           >
             Link
           </p>
@@ -1408,9 +1280,7 @@ export type EditorTableGlobalMenuProps = {
   children: ReactNode;
 };
 
-export const EditorTableGlobalMenu = ({
-  children,
-}: EditorTableGlobalMenuProps) => {
+export const EditorTableGlobalMenu = ({ children }: EditorTableGlobalMenuProps) => {
   const { editor } = useCurrentEditor();
   const [top, setTop] = useState(0);
   const [left, setLeft] = useState(0);
@@ -1470,9 +1340,7 @@ export type EditorTableColumnMenuProps = {
   children: ReactNode;
 };
 
-export const EditorTableColumnMenu = ({
-  children,
-}: EditorTableColumnMenuProps) => {
+export const EditorTableColumnMenu = ({ children }: EditorTableColumnMenuProps) => {
   const { editor } = useCurrentEditor();
   const [top, setTop] = useState(0);
   const [left, setLeft] = useState(0);

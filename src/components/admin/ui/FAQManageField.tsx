@@ -44,13 +44,13 @@ export const FAQManageField: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         const categoryMap: Record<string, string> = {};
-        
+
         if (data.categories) {
           data.categories.forEach((cat: any) => {
             categoryMap[cat.slug] = cat.name;
           });
         }
-        
+
         setCategories(categoryMap);
       }
     } catch (err) {
@@ -87,9 +87,10 @@ export const FAQManageField: React.FC = () => {
   };
 
   const deleteFAQ = async (id: string) => {
-    const confirmMessage = i18n.language === 'nl' 
-      ? 'Weet je zeker dat je deze FAQ wilt verwijderen?' 
-      : 'Are you sure you want to delete this FAQ?';
+    const confirmMessage =
+      i18n.language === 'nl'
+        ? 'Weet je zeker dat je deze FAQ wilt verwijderen?'
+        : 'Are you sure you want to delete this FAQ?';
     if (!confirm(confirmMessage)) return;
 
     try {
@@ -102,7 +103,9 @@ export const FAQManageField: React.FC = () => {
         },
       });
       if (!response.ok) throw new Error('Failed to delete FAQ');
-      toast.success(i18n.language === 'nl' ? 'FAQ succesvol verwijderd' : 'FAQ deleted successfully');
+      toast.success(
+        i18n.language === 'nl' ? 'FAQ succesvol verwijderd' : 'FAQ deleted successfully'
+      );
       await fetchFAQs();
     } catch (err) {
       toast.error(i18n.language === 'nl' ? 'Fout bij verwijderen FAQ' : 'Failed to delete FAQ');
@@ -122,7 +125,7 @@ export const FAQManageField: React.FC = () => {
       });
       if (!response.ok) throw new Error('Failed to update FAQ');
       toast.success(
-        i18n.language === 'nl' 
+        i18n.language === 'nl'
           ? `FAQ succesvol ${!published ? 'gepubliceerd' : 'gedepubliceerd'}`
           : `FAQ ${!published ? 'published' : 'unpublished'} successfully`
       );
@@ -148,12 +151,12 @@ export const FAQManageField: React.FC = () => {
 
   const handleDrop = async (e: React.DragEvent, targetFaq: FAQ) => {
     e.preventDefault();
-    
+
     if (!draggedItem || draggedItem.id === targetFaq.id) return;
 
     const updatedFAQs = [...faqs];
-    const draggedIndex = updatedFAQs.findIndex(f => f.id === draggedItem.id);
-    const targetIndex = updatedFAQs.findIndex(f => f.id === targetFaq.id);
+    const draggedIndex = updatedFAQs.findIndex((f) => f.id === draggedItem.id);
+    const targetIndex = updatedFAQs.findIndex((f) => f.id === targetFaq.id);
 
     // Remove dragged item
     updatedFAQs.splice(draggedIndex, 1);
@@ -163,7 +166,7 @@ export const FAQManageField: React.FC = () => {
     // Update order values
     const reorderedFAQs = updatedFAQs.map((faq, index) => ({
       ...faq,
-      order: index * 10
+      order: index * 10,
     }));
 
     setFaqs(reorderedFAQs);
@@ -183,7 +186,9 @@ export const FAQManageField: React.FC = () => {
       }
       toast.success(i18n.language === 'nl' ? 'Volgorde bijgewerkt' : 'Order updated');
     } catch (err) {
-      toast.error(i18n.language === 'nl' ? 'Fout bij bijwerken volgorde' : 'Failed to update order');
+      toast.error(
+        i18n.language === 'nl' ? 'Fout bij bijwerken volgorde' : 'Failed to update order'
+      );
       await fetchFAQs(); // Reload original order
     }
 
@@ -191,15 +196,20 @@ export const FAQManageField: React.FC = () => {
   };
 
   if (loading) {
-    return <div style={{ padding: '20px', textAlign: 'center' }}>
-      {i18n.language === 'nl' ? 'FAQs laden...' : 'Loading FAQs...'}
-    </div>;
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        {i18n.language === 'nl' ? 'FAQs laden...' : 'Loading FAQs...'}
+      </div>
+    );
   }
 
   if (error) {
-    return <div style={{ padding: '20px', color: 'var(--theme-error-500)' }}>
-      {i18n.language === 'nl' ? 'Fout: ' : 'Error: '}{error}
-    </div>;
+    return (
+      <div style={{ padding: '20px', color: 'var(--theme-error-500)' }}>
+        {i18n.language === 'nl' ? 'Fout: ' : 'Error: '}
+        {error}
+      </div>
+    );
   }
 
   return (
@@ -217,43 +227,42 @@ export const FAQManageField: React.FC = () => {
             marginBottom: '10px',
           }}
         >
-          <h3 style={{ margin: 0 }}>
-            {i18n.language === 'nl' ? 'FAQ Beheer' : 'FAQ Management'}
-          </h3>
+          <h3 style={{ margin: 0 }}>{i18n.language === 'nl' ? 'FAQ Beheer' : 'FAQ Management'}</h3>
           <Link
-          href="/admin/collections/faq/create"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-block',
-            padding: '8px 16px',
-            backgroundColor: 'var(--theme-primary-600)',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '4px',
-            fontSize: '14px',
-            fontWeight: '500',
-          }}
-        >
-          {i18n.language === 'nl' ? 'Nieuwe FAQ Toevoegen' : 'Add New FAQ'}
-        </Link>
-        </div>
-        <p style={{ 
-          margin: '0 0 10px 0', 
-          fontSize: '14px', 
-          color: 'var(--theme-text-muted)' 
-        }}>
-          {i18n.language === 'nl' 
-            ? 'Voor meer opties zoals bulkacties en geavanceerd filteren, ga naar de '
-            : 'For more options like bulk actions and advanced filtering, go to the '
-          }
-          <Link 
-            href="/admin/collections/faq" 
+            href="/admin/collections/faq/create"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ 
-              color: 'var(--theme-primary-600)', 
-              textDecoration: 'underline' 
+            style={{
+              display: 'inline-block',
+              padding: '8px 16px',
+              backgroundColor: 'var(--theme-primary-600)',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontWeight: '500',
+            }}
+          >
+            {i18n.language === 'nl' ? 'Nieuwe FAQ Toevoegen' : 'Add New FAQ'}
+          </Link>
+        </div>
+        <p
+          style={{
+            margin: '0 0 10px 0',
+            fontSize: '14px',
+            color: 'var(--theme-text-muted)',
+          }}
+        >
+          {i18n.language === 'nl'
+            ? 'Voor meer opties zoals bulkacties en geavanceerd filteren, ga naar de '
+            : 'For more options like bulk actions and advanced filtering, go to the '}
+          <Link
+            href="/admin/collections/faq"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: 'var(--theme-primary-600)',
+              textDecoration: 'underline',
             }}
           >
             {i18n.language === 'nl' ? 'volledige FAQ collectie' : 'full FAQ collection'}
@@ -342,7 +351,12 @@ export const FAQManageField: React.FC = () => {
                 >
                   <td style={{ padding: '12px', width: '80px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ cursor: 'grab', color: 'var(--theme-text-muted)' }} title={i18n.language === 'nl' ? 'Sleep om te verplaatsen' : 'Drag to reorder'}>
+                      <span
+                        style={{ cursor: 'grab', color: 'var(--theme-text-muted)' }}
+                        title={
+                          i18n.language === 'nl' ? 'Sleep om te verplaatsen' : 'Drag to reorder'
+                        }
+                      >
                         ⋮⋮
                       </span>
                       {index + 1}
@@ -380,9 +394,14 @@ export const FAQManageField: React.FC = () => {
                           ? 'var(--theme-success-600)'
                           : 'var(--theme-text-muted)',
                       }}
-                      title={faq.published 
-                        ? (i18n.language === 'nl' ? 'Gepubliceerd' : 'Published')
-                        : (i18n.language === 'nl' ? 'Niet gepubliceerd' : 'Unpublished')
+                      title={
+                        faq.published
+                          ? i18n.language === 'nl'
+                            ? 'Gepubliceerd'
+                            : 'Published'
+                          : i18n.language === 'nl'
+                            ? 'Niet gepubliceerd'
+                            : 'Unpublished'
                       }
                     >
                       {faq.published ? '✓' : '○'}
@@ -440,10 +459,9 @@ export const FAQManageField: React.FC = () => {
         }}
       >
         <strong>{i18n.language === 'nl' ? 'Tip:' : 'Tip:'}</strong>{' '}
-        {i18n.language === 'nl' 
+        {i18n.language === 'nl'
           ? 'Sleep en plaats FAQ items om de volgorde te wijzigen.'
-          : 'Drag and drop FAQ items to change their order.'
-        }
+          : 'Drag and drop FAQ items to change their order.'}
       </div>
     </div>
   );

@@ -252,15 +252,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
                 {hero.stats.map((stat, index) => (
                   <div key={index} className="stat-item text-left flex-1 sm:flex-none">
                     {stat.link ? (
-                      <Link 
-                        href={stat.link} 
+                      <Link
+                        href={stat.link}
                         className="block group"
                         style={{
                           textDecoration: 'none',
                           transition: 'transform 0.2s ease',
-                          ...(stat.hoverEffect !== false ? {
-                            transform: 'scale(1)',
-                          } : {}),
+                          ...(stat.hoverEffect !== false
+                            ? {
+                                transform: 'scale(1)',
+                              }
+                            : {}),
                         }}
                         onMouseEnter={(e) => {
                           if (stat.hoverEffect !== false) {
@@ -298,13 +300,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
                         </div>
                       </Link>
                     ) : (
-                      <div 
+                      <div
                         className="block"
                         style={{
                           transition: 'transform 0.2s ease',
-                          ...(stat.hoverEffect !== false ? {
-                            transform: 'scale(1)',
-                          } : {}),
+                          ...(stat.hoverEffect !== false
+                            ? {
+                                transform: 'scale(1)',
+                              }
+                            : {}),
                         }}
                         onMouseEnter={(e) => {
                           if (stat.hoverEffect !== false) {

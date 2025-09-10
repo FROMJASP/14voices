@@ -97,7 +97,9 @@ export async function GET(request: NextRequest) {
       nextPage,
     } = result as any;
 
-    console.log(`[Blog Posts API] Query completed in ${Date.now() - startTime}ms. Found ${docs.length} posts`);
+    console.log(
+      `[Blog Posts API] Query completed in ${Date.now() - startTime}ms. Found ${docs.length} posts`
+    );
 
     const response = NextResponse.json({
       docs,
@@ -115,23 +117,23 @@ export async function GET(request: NextRequest) {
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-    
+
     // Add cache headers for better performance
     response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
 
     return response;
   } catch (error) {
     console.error('[Blog Posts API] Error:', error);
-    
+
     // Return a more informative error response
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch blog posts',
         message: errorMessage,
         docs: [],
         totalDocs: 0,
-      }, 
+      },
       { status: 500 }
     );
   }

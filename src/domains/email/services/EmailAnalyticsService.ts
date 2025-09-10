@@ -30,10 +30,7 @@ export class EmailAnalyticsService {
     return { overall, byTemplate };
   }
 
-  private calculateOverallStats(emailLogs: { 
-    totalDocs: number, 
-    docs: EmailLog[]
-  }): EmailStats {
+  private calculateOverallStats(emailLogs: { totalDocs: number; docs: EmailLog[] }): EmailStats {
     const totalSent = emailLogs.totalDocs;
     const totalDelivered = emailLogs.docs.filter((log) =>
       ['delivered', 'opened', 'clicked'].includes(log.status)
@@ -56,21 +53,19 @@ export class EmailAnalyticsService {
     };
   }
 
-  private calculateTemplateStats(emailLogs: { 
-    docs: EmailLog[]
-  }): TemplateStats[] {
+  private calculateTemplateStats(emailLogs: { docs: EmailLog[] }): TemplateStats[] {
     const templateMap = new Map<string, Omit<TemplateStats, 'openRate' | 'clickRate'>>();
 
     emailLogs.docs.forEach((log) => {
-      const templateId = 
-        typeof log.template === 'number' 
-          ? String(log.template) 
-          : (log.template && typeof log.template === 'object' && log.template.id) 
-            ? String(log.template.id) 
+      const templateId =
+        typeof log.template === 'number'
+          ? String(log.template)
+          : log.template && typeof log.template === 'object' && log.template.id
+            ? String(log.template.id)
             : 'unknown';
       const templateName =
-        typeof log.template === 'object' && log.template?.name 
-          ? log.template.name 
+        typeof log.template === 'object' && log.template?.name
+          ? log.template.name
           : 'Unknown Template';
 
       if (!templateMap.has(templateId)) {

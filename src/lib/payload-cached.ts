@@ -11,11 +11,11 @@ export async function getCachedPayload() {
 
   console.log('[Payload] Creating new instance...');
   const startTime = Date.now();
-  
+
   cachedPayload = await getPayload({ config: configPromise });
-  
+
   console.log(`[Payload] Instance created in ${Date.now() - startTime}ms`);
-  
+
   return cachedPayload;
 }
 

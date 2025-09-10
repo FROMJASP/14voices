@@ -11,20 +11,16 @@ interface CompactDemoPlayerProps {
   className?: string;
 }
 
-export function CompactDemoPlayer({
-  demos,
-  onDownload,
-  className = '',
-}: CompactDemoPlayerProps) {
+export function CompactDemoPlayer({ demos, onDownload, className = '' }: CompactDemoPlayerProps) {
   const [currentDemoIndex, setCurrentDemoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);
-  
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
-  
+
   const currentDemo = demos[currentDemoIndex];
 
   // Cleanup on unmount
@@ -45,7 +41,7 @@ export function CompactDemoPlayer({
     setCurrentTime(0);
     setDuration(0);
     setProgress(0);
-    
+
     if (progressInterval.current) {
       clearInterval(progressInterval.current);
     }
@@ -62,15 +58,15 @@ export function CompactDemoPlayer({
       }
     } else {
       // Stop all other audio elements
-      document.querySelectorAll('audio').forEach(audio => audio.pause());
+      document.querySelectorAll('audio').forEach((audio) => audio.pause());
 
       if (!audioRef.current || audioRef.current.src !== currentDemo.audioFile.url) {
         audioRef.current = new Audio(currentDemo.audioFile.url);
-        
+
         audioRef.current.addEventListener('loadedmetadata', () => {
           setDuration(audioRef.current?.duration || 0);
         });
-        
+
         audioRef.current.addEventListener('ended', () => {
           setIsPlaying(false);
           setProgress(0);
@@ -78,16 +74,16 @@ export function CompactDemoPlayer({
           if (progressInterval.current) {
             clearInterval(progressInterval.current);
           }
-          
+
           // Auto-play next if available
           if (currentDemoIndex < demos.length - 1) {
             setTimeout(() => {
-              setCurrentDemoIndex(prev => prev + 1);
+              setCurrentDemoIndex((prev) => prev + 1);
             }, 500);
           }
         });
       }
-      
+
       audioRef.current.play();
       setIsPlaying(true);
 
@@ -104,12 +100,12 @@ export function CompactDemoPlayer({
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current) return;
-    
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
     const newTime = (percentage / 100) * audioRef.current.duration;
-    
+
     audioRef.current.currentTime = newTime;
     setProgress(percentage);
     setCurrentTime(newTime);
@@ -121,7 +117,7 @@ export function CompactDemoPlayer({
         audioRef.current.pause();
         audioRef.current = null;
       }
-      setCurrentDemoIndex(prev => prev - 1);
+      setCurrentDemoIndex((prev) => prev - 1);
     }
   };
 
@@ -131,7 +127,7 @@ export function CompactDemoPlayer({
         audioRef.current.pause();
         audioRef.current = null;
       }
-      setCurrentDemoIndex(prev => prev + 1);
+      setCurrentDemoIndex((prev) => prev + 1);
     }
   };
 
@@ -167,7 +163,7 @@ export function CompactDemoPlayer({
               </span>
             )}
           </div>
-          
+
           {/* Download */}
           {onDownload && (
             <button
@@ -211,11 +207,7 @@ export function CompactDemoPlayer({
                 exit={{ scale: 0 }}
                 transition={{ duration: 0.1 }}
               >
-                {isPlaying ? (
-                  <Pause className="w-4 h-4" />
-                ) : (
-                  <Play className="w-4 h-4 ml-0.5" />
-                )}
+                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
               </motion.div>
             </AnimatePresence>
           </button>
@@ -242,12 +234,12 @@ export function CompactDemoPlayer({
           <span className="text-xs text-gray-500 dark:text-gray-400 tabular-nums">
             {formatTime(currentTime)}
           </span>
-          
-          <div 
+
+          <div
             className="flex-1 relative h-1 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer group"
             onClick={handleProgressClick}
           >
-            <motion.div 
+            <motion.div
               className="absolute inset-y-0 left-0 bg-gray-900 dark:bg-white rounded-full"
               style={{ width: `${progress}%` }}
             />
@@ -256,7 +248,7 @@ export function CompactDemoPlayer({
               style={{ left: `calc(${progress}% - 5px)` }}
             />
           </div>
-          
+
           <span className="text-xs text-gray-500 dark:text-gray-400 tabular-nums">
             {formatTime(duration)}
           </span>

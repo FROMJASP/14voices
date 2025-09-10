@@ -11,11 +11,11 @@ interface ScriptEditorProps {
   placeholder?: string;
 }
 
-export function ScriptEditor({ 
-  value, 
-  onChange, 
+export function ScriptEditor({
+  value,
+  onChange,
   onWordCountChange,
-  placeholder = "Voer hier je script in..."
+  placeholder = 'Voer hier je script in...',
 }: ScriptEditorProps) {
   const [wordCount, setWordCount] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -28,7 +28,7 @@ export function ScriptEditor({
       onWordCountChange?.(0);
     } else {
       // Split by whitespace and filter out empty strings
-      const words = text.split(/\s+/).filter(word => word.length > 0);
+      const words = text.split(/\s+/).filter((word) => word.length > 0);
       const count = words.length;
       setWordCount(count);
       onWordCountChange?.(count);
@@ -57,7 +57,7 @@ export function ScriptEditor({
           {wordCount} {wordCount === 1 ? 'woord' : 'woorden'}
         </span>
       </div>
-      
+
       <div className="relative">
         <textarea
           ref={textareaRef}
@@ -66,16 +66,16 @@ export function ScriptEditor({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="flex min-h-[150px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-          style={{ 
+          style={{
             lineHeight: '1.6',
-            fontFamily: 'inherit'
+            fontFamily: 'inherit',
           }}
         />
-        
       </div>
-      
+
       <p className="text-xs text-muted-foreground">
-        Tip: Je kunt je script hier direct typen of plakken. Het aantal woorden wordt automatisch bijgewerkt.
+        Tip: Je kunt je script hier direct typen of plakken. Het aantal woorden wordt automatisch
+        bijgewerkt.
       </p>
     </div>
   );

@@ -81,7 +81,7 @@ class SentryLogger implements Logger {
 
   info(message: string, context?: LogContext): void {
     this.consoleLogger.info(message, context);
-    
+
     if (process.env.NODE_ENV === 'production') {
       this.enrichScope(context);
       Sentry.addBreadcrumb({
@@ -95,7 +95,7 @@ class SentryLogger implements Logger {
 
   warn(message: string, context?: LogContext): void {
     this.consoleLogger.warn(message, context);
-    
+
     if (process.env.NODE_ENV === 'production') {
       this.enrichScope(context);
       Sentry.addBreadcrumb({
@@ -109,10 +109,10 @@ class SentryLogger implements Logger {
 
   error(message: string, error?: unknown, context?: LogContext): void {
     this.consoleLogger.error(message, error, context);
-    
+
     if (process.env.NODE_ENV === 'production') {
       this.enrichScope(context);
-      
+
       if (error instanceof Error) {
         Sentry.captureException(error, {
           extra: { message, ...context },
@@ -125,10 +125,10 @@ class SentryLogger implements Logger {
 
   fatal(message: string, error?: unknown, context?: LogContext): void {
     this.consoleLogger.fatal(message, error, context);
-    
+
     if (process.env.NODE_ENV === 'production') {
       this.enrichScope(context);
-      
+
       if (error instanceof Error) {
         Sentry.captureException(error, {
           level: 'fatal',
@@ -142,9 +142,8 @@ class SentryLogger implements Logger {
 }
 
 // Export singleton logger instance
-export const logger: Logger = process.env.NODE_ENV === 'production' 
-  ? new SentryLogger()
-  : new ConsoleLogger();
+export const logger: Logger =
+  process.env.NODE_ENV === 'production' ? new SentryLogger() : new ConsoleLogger();
 
 /**
  * Error logging utilities
@@ -177,21 +176,21 @@ export function logPerformance<T extends unknown[], R>(
     try {
       const result = await originalMethod.apply(this, args);
       const duration = performance.now() - start;
-      
+
       logger.info(`Performance: ${propertyKey} completed in ${duration.toFixed(2)}ms`, {
         ...context,
         metadata: { ...context.metadata, duration },
       });
-      
+
       return result;
     } catch (error) {
       const duration = performance.now() - start;
-      
+
       logger.error(`Performance: ${propertyKey} failed after ${duration.toFixed(2)}ms`, error, {
         ...context,
         metadata: { ...context.metadata, duration },
       });
-      
+
       throw error;
     }
   };
@@ -202,11 +201,7 @@ export function logPerformance<T extends unknown[], R>(
 /**
  * Log API request
  */
-export function logApiRequest(
-  method: string,
-  path: string,
-  context?: LogContext
-): void {
+export function logApiRequest(method: string, path: string, context?: LogContext): void {
   logger.info(`API Request: ${method} ${path}`, {
     ...context,
     action: 'api_request',
@@ -228,8 +223,9 @@ export function logApiResponse(
   duration: number,
   context?: LogContext
 ): void {
-  const level = statusCode >= 500 ? LogLevel.ERROR : statusCode >= 400 ? LogLevel.WARN : LogLevel.INFO;
-  
+  const level =
+    statusCode >= 500 ? LogLevel.ERROR : statusCode >= 400 ? LogLevel.WARN : LogLevel.INFO;
+
   logger[level](`API Response: ${method} ${path} - ${statusCode} (${duration.toFixed(2)}ms)`, {
     ...context,
     action: 'api_response',

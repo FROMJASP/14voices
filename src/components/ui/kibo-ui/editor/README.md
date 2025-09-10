@@ -51,6 +51,7 @@ function MyComponent() {
 ## Styling
 
 The editor combines a clean CSS approach with Tailwind CSS for optimal browser compatibility:
+
 - Custom CSS file (`editor.css`) for critical text selection and core styles
 - Tailwind CSS classes for additional customization
 - Proper focus ring styles with CSS variables
@@ -62,6 +63,7 @@ The editor combines a clean CSS approach with Tailwind CSS for optimal browser c
 ## Text Selection Fix
 
 The original editor had text selection issues in Tailwind CSS v4. This implementation fixes them by:
+
 - Using dedicated CSS file with browser-specific text selection properties
 - Proper CSS `user-select: text` with vendor prefixes (-webkit-, -moz-, -ms-)
 - Configuring TipTap with correct selection handling
@@ -72,6 +74,7 @@ The original editor had text selection issues in Tailwind CSS v4. This implement
 ### CSS Architecture
 
 The editor now uses a hybrid approach:
+
 1. **Critical styles** (text selection, core layout) in `editor.css`
 2. **Utility classes** from Tailwind for additional customization
 3. **CSS variables** for theme integration and dark mode support

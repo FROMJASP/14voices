@@ -64,7 +64,9 @@ export const heroBlock: Field = {
           admin: {
             condition: (data) => {
               // Check the pageBlocks array for which hero variant is selected
-              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              const heroBlock = data?.pageBlocks?.find(
+                (b: any) => b.blockType === 'hero' && b.enabled
+              );
               return heroBlock?.heroVariant === 'variant1';
             },
             initCollapsed: true,
@@ -114,7 +116,9 @@ export const heroBlock: Field = {
           admin: {
             condition: (data) => {
               // Check the pageBlocks array for which hero variant is selected
-              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              const heroBlock = data?.pageBlocks?.find(
+                (b: any) => b.blockType === 'hero' && b.enabled
+              );
               return heroBlock?.heroVariant === 'variant2';
             },
             initCollapsed: true,
@@ -325,7 +329,9 @@ export const heroBlock: Field = {
           admin: {
             condition: (data) => {
               // Check the pageBlocks array for which hero variant is selected
-              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              const heroBlock = data?.pageBlocks?.find(
+                (b: any) => b.blockType === 'hero' && b.enabled
+              );
               return heroBlock?.heroVariant === 'variant2';
             },
             hidden: true,
@@ -342,7 +348,9 @@ export const heroBlock: Field = {
           admin: {
             condition: (data) => {
               // Check the pageBlocks array for which hero variant is selected
-              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              const heroBlock = data?.pageBlocks?.find(
+                (b: any) => b.blockType === 'hero' && b.enabled
+              );
               return heroBlock?.heroVariant === 'variant2';
             },
             description: {
@@ -380,7 +388,9 @@ export const heroBlock: Field = {
           admin: {
             condition: (data) => {
               // Check the pageBlocks array for which hero variant is selected
-              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              const heroBlock = data?.pageBlocks?.find(
+                (b: any) => b.blockType === 'hero' && b.enabled
+              );
               return heroBlock?.heroVariant === 'variant1';
             },
             description: {
@@ -400,7 +410,9 @@ export const heroBlock: Field = {
           admin: {
             condition: (data) => {
               // Check the pageBlocks array for which hero variant is selected
-              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              const heroBlock = data?.pageBlocks?.find(
+                (b: any) => b.blockType === 'hero' && b.enabled
+              );
               return heroBlock?.heroVariant === 'variant1';
             },
             description: {
@@ -856,7 +868,9 @@ export const heroBlock: Field = {
           admin: {
             condition: (data) => {
               // Check the pageBlocks array for which hero variant is selected
-              const heroBlock = data?.pageBlocks?.find((b: any) => b.blockType === 'hero' && b.enabled);
+              const heroBlock = data?.pageBlocks?.find(
+                (b: any) => b.blockType === 'hero' && b.enabled
+              );
               return heroBlock?.heroVariant === 'variant1';
             },
             initCollapsed: true,

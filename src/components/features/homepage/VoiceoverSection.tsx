@@ -13,10 +13,7 @@ interface VoiceoverSectionProps {
   title?: string;
 }
 
-export function VoiceoverSection({
-  initialVoiceovers,
-  title,
-}: VoiceoverSectionProps) {
+export function VoiceoverSection({ initialVoiceovers, title }: VoiceoverSectionProps) {
   // Use cache store
   const {
     voiceovers: cachedVoiceovers,

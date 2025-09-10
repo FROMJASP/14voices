@@ -10,7 +10,7 @@ const CSRF_SECRET = process.env.CSRF_SECRET;
 if (!CSRF_SECRET) {
   console.warn(
     '[SECURITY] CSRF_SECRET not found, falling back to PAYLOAD_SECRET. ' +
-    'It is recommended to use a dedicated CSRF_SECRET for better security.'
+      'It is recommended to use a dedicated CSRF_SECRET for better security.'
   );
 }
 

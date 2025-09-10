@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -75,11 +75,15 @@ export function FAQSectionClient({ settings, items }: FAQSectionClientProps) {
       <section id="faq" className="py-16 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-text-primary mb-4" style={{ fontFamily: 'var(--font-bricolage)' }}>
+            <h2
+              className="text-4xl font-bold text-text-primary mb-4"
+              style={{ fontFamily: 'var(--font-bricolage)' }}
+            >
               {settings.title || 'Veelgestelde vragen'}
             </h2>
             <p className="text-text-secondary">
-              Er zijn nog geen FAQ items toegevoegd. Ga naar het admin panel om FAQ items toe te voegen.
+              Er zijn nog geen FAQ items toegevoegd. Ga naar het admin panel om FAQ items toe te
+              voegen.
             </p>
           </div>
         </div>
@@ -90,22 +94,22 @@ export function FAQSectionClient({ settings, items }: FAQSectionClientProps) {
   return (
     <section id="faq" className="py-16 bg-background">
       <div className="container mx-auto px-4 max-w-4xl">
-        <motion.div 
+        <motion.div
           className="text-center mb-12"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: '-50px' }}
           variants={containerVariants}
         >
-          <motion.h2 
-            className="text-4xl font-bold text-text-primary mb-4" 
+          <motion.h2
+            className="text-4xl font-bold text-text-primary mb-4"
             style={{ fontFamily: 'var(--font-bricolage)' }}
             variants={itemVariants}
           >
             {settings.title || 'Veelgestelde vragen'}
           </motion.h2>
           {settings.description && (
-            <motion.p 
+            <motion.p
               className="text-lg text-text-secondary max-w-2xl mx-auto"
               variants={itemVariants}
             >
@@ -114,20 +118,18 @@ export function FAQSectionClient({ settings, items }: FAQSectionClientProps) {
           )}
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="bg-surface border border-border rounded-lg shadow-sm overflow-hidden"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: '-50px' }}
           variants={itemVariants}
         >
           <Accordion type="single" collapsible className="w-full">
             {items.map((faq) => (
               <AccordionItem key={faq.id} value={faq.id.toString()} className="border-border">
                 <AccordionTrigger className="px-6 py-4 text-left hover:no-underline hover:bg-surface/50 transition-colors">
-                  <span className="text-base font-medium text-text-primary">
-                    {faq.question}
-                  </span>
+                  <span className="text-base font-medium text-text-primary">{faq.question}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4">
                   <div className="text-text-secondary leading-relaxed prose prose-sm max-w-none">
@@ -142,8 +144,8 @@ export function FAQSectionClient({ settings, items }: FAQSectionClientProps) {
         <div className="text-center mt-8">
           <p className="text-text-secondary">
             Heeft u nog andere vragen?{' '}
-            <a 
-              href="mailto:info@14voices.nl" 
+            <a
+              href="mailto:info@14voices.nl"
               className="text-primary hover:opacity-75 transition-opacity font-medium"
             >
               Neem contact met ons op

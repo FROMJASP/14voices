@@ -50,12 +50,9 @@ export class BookingError extends BaseError {
 
 export class BookingNotFoundError extends BookingError {
   constructor(bookingId: string) {
-    super(
-      `Booking not found: ${bookingId}`,
-      ErrorCode.BOOKING_NOT_FOUND,
-      HttpStatus.NOT_FOUND,
-      { bookingId }
-    );
+    super(`Booking not found: ${bookingId}`, ErrorCode.BOOKING_NOT_FOUND, HttpStatus.NOT_FOUND, {
+      bookingId,
+    });
   }
 
   getUserMessage(): string {
@@ -80,12 +77,7 @@ export class BookingAlreadyExistsError extends BookingError {
 
 export class BookingFailedError extends BookingError {
   constructor(reason: string, details?: unknown) {
-    super(
-      `Booking failed: ${reason}`,
-      ErrorCode.BOOKING_FAILED,
-      HttpStatus.BAD_REQUEST,
-      details
-    );
+    super(`Booking failed: ${reason}`, ErrorCode.BOOKING_FAILED, HttpStatus.BAD_REQUEST, details);
   }
 
   getUserMessage(): string {
@@ -104,12 +96,10 @@ export class PaymentError extends BaseError {
 
 export class PaymentFailedError extends PaymentError {
   constructor(reason: string, paymentMethodId?: string) {
-    super(
-      `Payment failed: ${reason}`,
-      ErrorCode.PAYMENT_FAILED,
-      HttpStatus.PAYMENT_REQUIRED,
-      { reason, paymentMethodId }
-    );
+    super(`Payment failed: ${reason}`, ErrorCode.PAYMENT_FAILED, HttpStatus.PAYMENT_REQUIRED, {
+      reason,
+      paymentMethodId,
+    });
   }
 
   getUserMessage(): string {
@@ -292,4 +282,3 @@ export class ExternalServiceError extends BaseError {
     return 'An external service is temporarily unavailable. Please try again later.';
   }
 }
-

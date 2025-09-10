@@ -71,13 +71,9 @@ export class ForbiddenError extends BaseError {
 
 export class NotFoundError extends BaseError {
   constructor(resource: string) {
-    super(
-      `Resource not found: ${resource}`,
-      ErrorCode.NOT_FOUND,
-      HttpStatus.NOT_FOUND,
-      true,
-      { resource }
-    );
+    super(`Resource not found: ${resource}`, ErrorCode.NOT_FOUND, HttpStatus.NOT_FOUND, true, {
+      resource,
+    });
   }
 
   getUserMessage(): string {
@@ -141,16 +137,13 @@ export function formatApiError(
     baseError = new ValidationError('Validation failed', { validationErrors });
   } else if (error instanceof Error) {
     // Generic error - treat as internal error
-    baseError = new InternalServerError(
-      error.message,
-      { originalError: error.message, stack: error.stack }
-    );
+    baseError = new InternalServerError(error.message, {
+      originalError: error.message,
+      stack: error.stack,
+    });
   } else {
     // Unknown error type
-    baseError = new InternalServerError(
-      'An unexpected error occurred',
-      { originalError: error }
-    );
+    baseError = new InternalServerError('An unexpected error occurred', { originalError: error });
   }
 
   // Log the error
@@ -178,13 +171,16 @@ export function formatApiError(
 
   // Add specific headers based on error type
   const headers = new Headers();
-  
+
   if (baseError.code === ErrorCode.RATE_LIMIT_EXCEEDED) {
     const details = baseError.details as any;
     headers.set('X-RateLimit-Limit', details.limit.toString());
     headers.set('X-RateLimit-Remaining', '0');
     headers.set('X-RateLimit-Reset', details.resetAt.toISOString());
-    headers.set('Retry-After', Math.ceil((details.resetAt.getTime() - Date.now()) / 1000).toString());
+    headers.set(
+      'Retry-After',
+      Math.ceil((details.resetAt.getTime() - Date.now()) / 1000).toString()
+    );
   }
 
   return {
@@ -199,10 +195,7 @@ export function formatApiError(
 /**
  * Create error response helper
  */
-export function createErrorResponse(
-  error: unknown,
-  requestId?: string
-): NextResponse {
+export function createErrorResponse(error: unknown, requestId?: string): NextResponse {
   const { response } = formatApiError(error, requestId);
   return response;
 }
