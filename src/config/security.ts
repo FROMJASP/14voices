@@ -68,7 +68,7 @@ export const securityConfig = {
 
   // Content Security Policy
   // NOTE: Next.js 15 still requires 'unsafe-inline' for scripts in production
-  // We mitigate this by using strict-dynamic and other security measures
+  // We temporarily disable strict-dynamic until we implement proper nonce support
   csp: {
     'default-src': ["'self'"],
     'script-src':
@@ -77,8 +77,11 @@ export const securityConfig = {
         : [
             "'self'",
             "'unsafe-inline'", // Required by Next.js 15
-            "'strict-dynamic'", // Allows only scripts loaded by trusted scripts
+            // Temporarily disabled: "'strict-dynamic'", // Requires nonce implementation
             'https://cdn.jsdelivr.net',
+            'https://dev.14voices.com',
+            'https://14voices.com',
+            'https://www.14voices.com',
           ],
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
@@ -88,6 +91,9 @@ export const securityConfig = {
       'https://api.resend.com',
       'https://*.ingest.sentry.io',
       'https://*.ingest.de.sentry.io',
+      'https://dev.14voices.com',
+      'https://14voices.com',
+      'https://www.14voices.com',
       'wss:',
       ...(process.env.NODE_ENV === 'development' ? ['ws://localhost:*', 'ws://127.0.0.1:*'] : []),
     ],
