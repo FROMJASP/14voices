@@ -105,6 +105,7 @@ export const securityConfig = {
       process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
       'https://14voices.com',
       'https://www.14voices.com',
+      'https://dev.14voices.com',
       'https://14voices.fromjasp.com', // Staging domain
     ],
     allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
