@@ -5,6 +5,7 @@ import { rateLimitMiddleware, getEndpointType } from '@/middleware/rate-limit';
 import { getEdgeSafeRateLimiter, getRateLimitConfig } from '@/lib/rate-limiter/edge-safe';
 import { handleStaticFiles } from '@/middleware/static-files';
 import { verifyCSRFToken } from '@/lib/csrf-edge';
+import { generateEdgeNonce } from '@/lib/csp-nonce';
 
 export async function middleware(request: NextRequest) {
   // Handle static file requests with proper headers
@@ -43,8 +44,13 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
     // Build CSP for admin panel with frame-ancestors allowing same-origin
-    const adminCSP = buildCSPHeader().replace("frame-ancestors 'none'", "frame-ancestors 'self'");
+    const adminNonce = generateEdgeNonce();
+    const adminCSP = buildCSPHeader(adminNonce).replace(
+      "frame-ancestors 'none'",
+      "frame-ancestors 'self'"
+    );
     response.headers.set('Content-Security-Policy', adminCSP);
+    response.headers.set('x-nonce', adminNonce);
 
     // Allow framing from same origin for preview functionality
     response.headers.set('X-Frame-Options', 'SAMEORIGIN');
@@ -96,7 +102,18 @@ export async function middleware(request: NextRequest) {
 
   // CSP is handled by buildCSPHeader with strict-dynamic for better security
 
-  const response = NextResponse.next();
+  // Generate CSP nonce for this request
+  const nonce = generateEdgeNonce();
+
+  // Create new headers with nonce
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
   // Add performance headers for API routes
   if (request.nextUrl.pathname.startsWith('/api/public')) {
@@ -146,8 +163,8 @@ export async function middleware(request: NextRequest) {
     'camera=(), microphone=(), geolocation=(), payment=()'
   );
 
-  // Add Content Security Policy with strict-dynamic for production security
-  response.headers.set('Content-Security-Policy', buildCSPHeader());
+  // Add Content Security Policy with nonce for production security
+  response.headers.set('Content-Security-Policy', buildCSPHeader(nonce));
 
   // Add additional security headers
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');

@@ -128,6 +128,17 @@ See `.env.example` for required variables. Key ones:
 - `CSRF_SECRET` - Security token
 - `S3_*` - MinIO configuration
 
+## Security
+
+### Content Security Policy (CSP)
+
+Nonce-based CSP for enhanced security:
+
+- **Middleware**: Generates unique nonce per request
+- **Scripts**: All inline scripts must include the nonce
+- **Configuration**: CSP headers set in middleware with `strict-dynamic`
+- **Usage**: Access nonce via `useNonce()` hook or pass as prop
+
 ## Notes
 
 - **Payload importMap**: Auto-generated but MUST be committed

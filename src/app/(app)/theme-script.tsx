@@ -1,4 +1,4 @@
-export function ThemeScript() {
+export function ThemeScript({ nonce }: { nonce?: string }) {
   const themeScript = `
     (function() {
       try {
@@ -38,5 +38,11 @@ export function ThemeScript() {
     })();
   `;
 
-  return <script dangerouslySetInnerHTML={{ __html: themeScript }} suppressHydrationWarning />;
+  return (
+    <script
+      nonce={nonce}
+      dangerouslySetInnerHTML={{ __html: themeScript }}
+      suppressHydrationWarning
+    />
+  );
 }

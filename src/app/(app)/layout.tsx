@@ -4,6 +4,8 @@ import { StoreHydration } from '@/components/common/StoreHydration';
 import { ThemeProvider } from '@/components/common/layout/ThemeProvider';
 import { ThemeScript } from './theme-script';
 import { ViewTransitionsProvider } from '@/components/common/transitions/ViewTransitionsProvider';
+import { headers } from 'next/headers';
+import { NonceProvider } from '@/components/common/NonceProvider';
 import './globals.css';
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -30,15 +32,17 @@ const geistMono = Geist_Mono({
 
 export { generateMetadata } from './metadata';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get('x-nonce') || undefined;
+
   return (
     <html lang="nl" suppressHydrationWarning>
       <head>
-        <ThemeScript />
+        <ThemeScript nonce={nonce} />
         {/* Resource hints for better performance */}
         <link rel="preconnect" href="https://minio.14voices.com" />
         <link rel="dns-prefetch" href="https://minio.14voices.com" />
@@ -56,19 +60,21 @@ export default function RootLayout({
         className={`${bricolageGrotesque.variable} ${instrumentSerif.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange={false}
-          storageKey="theme"
-        >
-          <ViewTransitionsProvider>
-            <StoreHydration>
-              <MaintenanceModeWrapper>{children}</MaintenanceModeWrapper>
-            </StoreHydration>
-          </ViewTransitionsProvider>
-        </ThemeProvider>
+        <NonceProvider nonce={nonce}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange={false}
+            storageKey="theme"
+          >
+            <ViewTransitionsProvider>
+              <StoreHydration>
+                <MaintenanceModeWrapper>{children}</MaintenanceModeWrapper>
+              </StoreHydration>
+            </ViewTransitionsProvider>
+          </ThemeProvider>
+        </NonceProvider>
       </body>
     </html>
   );
