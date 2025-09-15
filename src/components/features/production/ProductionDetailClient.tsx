@@ -7,7 +7,12 @@ import { ChevronDown, Check, ShoppingCart, Users, Mic, CheckCircle2 } from 'luci
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useVoiceoverStore, useCartStore, useCheckoutStore, useDrawerStore } from '@/stores';
+import {
+  useVoiceoverSelectionStore,
+  useCartStore,
+  useCheckoutStore,
+  useDrawerStore,
+} from '@/stores';
 import { getVoiceovers } from '@/lib/api';
 import type { TransformedVoiceover as Voiceover } from '@/types/voiceover';
 
@@ -402,8 +407,8 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
   const setWordCount = useCheckoutStore((state) => state.setWordCount);
   const setRegion = useCheckoutStore((state) => state.setRegion);
   const setExtras = useCheckoutStore((state) => state.setExtras);
-  const selectedVoiceover = useVoiceoverStore((state) => state.selectedVoiceover);
-  const setSelectedVoiceover = useVoiceoverStore((state) => state.setSelectedVoiceover);
+  const selectedVoiceover = useVoiceoverSelectionStore((state) => state.selectedVoiceover);
+  const setSelectedVoiceover = useVoiceoverSelectionStore((state) => state.setSelectedVoiceover);
   const openDrawer = useDrawerStore((state) => state.openDrawer);
 
   const [selectedWords, setSelectedWords] = useState<string | null>(null);

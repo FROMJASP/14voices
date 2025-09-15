@@ -1,7 +1,7 @@
-// Domain-specific components
-export * from './domains/voiceover';
-export * from './domains/production';
-export * from './domains/cart';
+// Feature-specific components
+export * from './features/voiceover';
+export * from './features/production';
+export * from './features/cart';
 // Pricing - use specific exports to avoid conflicts
 export {
   UnifiedPriceCalculatorOptimized,
@@ -10,7 +10,7 @@ export {
   PriceCalculatorFooter,
   PriceCalculatorForm,
   PriceCalculatorSummary,
-} from './domains/pricing';
+} from './features/pricing';
 // Use alias for pricing types to avoid conflicts
 export type {
   ExtraOption as PricingExtraOption,
@@ -20,7 +20,7 @@ export type {
   SelectedVoiceoverData,
   SimpleCartItem,
   ProductionData,
-} from './domains/pricing';
+} from './features/pricing';
 
 // Common components
 export * from './common/ui';

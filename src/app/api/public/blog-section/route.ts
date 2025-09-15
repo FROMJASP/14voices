@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCachedPayload } from '@/lib/payload-cached';
+import { applyCorsHeaders, handleCorsPreflightRequest } from '@/lib/cors';
+import { validateLimit } from '@/lib/query-validation';
 
 const getCachedBlogSectionData = async (limit: number, includeCategories: boolean) => {
   const startTime = Date.now();
@@ -103,12 +105,8 @@ const getCachedBlogSectionData = async (limit: number, includeCategories: boolea
   }
 };
 
-export async function OPTIONS() {
-  const response = new NextResponse(null, { status: 200 });
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-  return response;
+export async function OPTIONS(request: NextRequest) {
+  return handleCorsPreflightRequest(request) || new NextResponse(null, { status: 200 });
 }
 
 export async function GET(request: NextRequest) {
@@ -116,7 +114,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get('limit') || '8');
+    const limit = validateLimit(searchParams.get('limit'), 8, 20);
     const includeCategories = searchParams.get('categories') !== 'false';
 
     console.log('[Blog Section API] Fetching data with:', { limit, includeCategories });
@@ -144,16 +142,14 @@ export async function GET(request: NextRequest) {
 
     console.log(`[Blog Section API] Data fetched in ${Date.now() - startTime}ms`);
 
-    const response = NextResponse.json({
+    let response = NextResponse.json({
       success: true,
       data: data as any,
       timestamp: new Date().toISOString(),
     });
 
-    // Add CORS headers
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    // Apply CORS headers based on allowed origins
+    response = applyCorsHeaders(request, response);
 
     // Add cache headers
     response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
@@ -163,7 +159,7 @@ export async function GET(request: NextRequest) {
     console.error('[Blog Section API] Error:', error);
 
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    const response = NextResponse.json(
+    let response = NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch blog section data',
@@ -177,10 +173,8 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
 
-    // Add CORS headers even for error responses
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    // Apply CORS headers even for error responses
+    response = applyCorsHeaders(request, response);
 
     return response;
   }

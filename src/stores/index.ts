@@ -11,22 +11,22 @@ export { useDrawerStore } from './ui/drawerStore';
 // Theme (handled by next-themes now)
 // export { useThemeStore } from './theme/themeStore';
 
-// Voiceover
+// Voiceover selection
 export {
-  useVoiceoverStore,
+  useVoiceoverSelectionStore,
   scrollToVoiceovers,
   scrollToPriceCalculator,
   scrollToSection,
-} from './voiceover/voiceoverStore';
+} from './voiceover/voiceoverSelectionStore';
 
 // Voiceover cache
-export { useVoiceoverStore as useVoiceoverCacheStore } from './voiceoverStore';
+export { useVoiceoverCacheStore } from './voiceoverCacheStore';
 
 import { useCartStore } from './cart/cartStore';
 import { useCheckoutStore } from './checkout/checkoutStore';
 import { useCartModalStore } from './ui/cartModalStore';
 import { useDrawerStore } from './ui/drawerStore';
-import { useVoiceoverStore } from './voiceover/voiceoverStore';
+import { useVoiceoverSelectionStore } from './voiceover/voiceoverSelectionStore';
 
 // Utility function to reset all stores
 export const resetAllStores = () => {
@@ -35,5 +35,5 @@ export const resetAllStores = () => {
   useCheckoutStore.getState().resetProductionConfig();
   useDrawerStore.getState().closeDrawer();
   useCartModalStore.getState().setIsOpen(false);
-  useVoiceoverStore.getState().clearSelection();
+  useVoiceoverSelectionStore.getState().clearSelection();
 };

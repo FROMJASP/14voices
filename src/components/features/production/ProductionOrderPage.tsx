@@ -7,7 +7,12 @@ import { ChevronDown, Check, ShoppingCart, Users, Mic, CheckCircle2, X } from 'l
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useVoiceoverStore, useCartStore, useCheckoutStore, useDrawerStore } from '@/stores';
+import {
+  useVoiceoverSelectionStore,
+  useCartStore,
+  useCheckoutStore,
+  useDrawerStore,
+} from '@/stores';
 import type { TransformedVoiceover } from '@/types/voiceover';
 
 const bricolageGrotesque = Bricolage_Grotesque({
@@ -477,8 +482,8 @@ export const ProductionOrderPage = React.memo(function ProductionOrderPage({
   const setWordCount = useCheckoutStore((state) => state.setWordCount);
   const setRegion = useCheckoutStore((state) => state.setRegion);
   const setExtras = useCheckoutStore((state) => state.setExtras);
-  const selectedVoiceover = useVoiceoverStore((state) => state.selectedVoiceover);
-  const setSelectedVoiceover = useVoiceoverStore((state) => state.setSelectedVoiceover);
+  const selectedVoiceover = useVoiceoverSelectionStore((state) => state.selectedVoiceover);
+  const setSelectedVoiceover = useVoiceoverSelectionStore((state) => state.setSelectedVoiceover);
   const openDrawer = useDrawerStore((state) => state.openDrawer);
 
   const [selectedWords, setSelectedWords] = useState<string | null>(null);

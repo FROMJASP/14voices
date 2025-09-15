@@ -2,7 +2,7 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { notFound } from 'next/navigation';
 import type { BlogPost, Page } from '@/payload-types';
-import { PageRenderer } from '@/components/common/widgets/PageRenderer';
+import PageRenderer from '@/components/common/widgets/PageRenderer';
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 

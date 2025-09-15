@@ -1,6 +1,6 @@
 'use client';
 
-import { ProductionDetailNew } from '@/components/domains/production';
+import { ProductionDetailNew } from '@/components/features/production';
 import { useParams, useRouter } from 'next/navigation';
 
 const productionSlugs = [

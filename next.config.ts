@@ -1,6 +1,6 @@
 import type { NextConfig } from 'next';
 import { withPayload } from '@payloadcms/next/withPayload';
-// import { withSentryConfig } from '@sentry/nextjs';
+import { withSentryConfig } from '@sentry/nextjs';
 
 // Bundle analyzer configuration - only loads in development
 const withBundleAnalyzer = (config: NextConfig): NextConfig => {
@@ -209,17 +209,20 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Sentry configuration disabled temporarily
-// const sentryWebpackPluginOptions = {
-//   org: process.env.SENTRY_ORG,
-//   project: process.env.SENTRY_PROJECT,
-//   authToken: process.env.SENTRY_AUTH_TOKEN,
-//   silent: process.env.NODE_ENV === 'production',
-//   hideSourceMaps: true,
-//   disableLogger: true,
-//   telemetry: false, // Disable telemetry for now
-// };
+// Sentry configuration
+const sentryWebpackPluginOptions = {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: true, // Always silent to avoid build noise
+  hideSourceMaps: true,
+  disableLogger: true,
+  telemetry: false, // Disable telemetry
+  // Only enable in production
+  disabled: process.env.NODE_ENV !== 'production',
+};
 
-// Temporarily disable Sentry for build debugging
-export default withBundleAnalyzer(withPayload(nextConfig));
-// export default withBundleAnalyzer(withSentryConfig(withPayload(nextConfig), sentryWebpackPluginOptions));
+// Export with Sentry only in production
+export default process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN
+  ? withBundleAnalyzer(withSentryConfig(withPayload(nextConfig), sentryWebpackPluginOptions))
+  : withBundleAnalyzer(withPayload(nextConfig));

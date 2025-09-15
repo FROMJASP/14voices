@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload';
 import { afterUserCreate } from '@/hooks/emailTriggers';
 import { resolveAvatarURL, addImageProperty } from '@/hooks/userAvatar';
 import { afterLoginHook } from '@/hooks/afterLogin';
+import { securityConfig } from '@/config/security';
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -334,11 +335,52 @@ const Users: CollectionConfig = {
       },
     ],
     beforeChange: [
-      async ({ data }) => {
+      async ({ data, operation }) => {
         // If name is empty, use the email prefix as name
         if (!data.name && data.email) {
           data.name = data.email.split('@')[0];
         }
+
+        // Validate password complexity on create or when password is being changed
+        if (
+          (operation === 'create' && data.password) ||
+          (operation === 'update' && data.password)
+        ) {
+          const { password: requirements } = securityConfig;
+          const errors: string[] = [];
+          const pwd = data.password;
+
+          // Check minimum length
+          if (pwd.length < requirements.minLength) {
+            errors.push(`Password must be at least ${requirements.minLength} characters long`);
+          }
+
+          // Check for uppercase letters
+          if (requirements.requireUppercase && !/[A-Z]/.test(pwd)) {
+            errors.push('Password must contain at least one uppercase letter');
+          }
+
+          // Check for lowercase letters
+          if (requirements.requireLowercase && !/[a-z]/.test(pwd)) {
+            errors.push('Password must contain at least one lowercase letter');
+          }
+
+          // Check for numbers
+          if (requirements.requireNumbers && !/\d/.test(pwd)) {
+            errors.push('Password must contain at least one number');
+          }
+
+          // Check for special characters
+          if (requirements.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) {
+            errors.push('Password must contain at least one special character');
+          }
+
+          // Throw error if validation fails
+          if (errors.length > 0) {
+            throw new Error(errors.join('. '));
+          }
+        }
+
         return data;
       },
     ],

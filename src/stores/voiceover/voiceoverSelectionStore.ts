@@ -13,21 +13,24 @@ interface VoiceoverState {
   clearSelection: () => void;
 }
 
-export const useVoiceoverStore = createStore<VoiceoverState>('voiceover', (set) => ({
-  selectedVoiceover: null,
+export const useVoiceoverSelectionStore = createStore<VoiceoverState>(
+  'voiceover-selection',
+  (set) => ({
+    selectedVoiceover: null,
 
-  setSelectedVoiceover: (voiceover) => {
-    set((state) => {
-      state.selectedVoiceover = voiceover;
-    });
-  },
+    setSelectedVoiceover: (voiceover) => {
+      set((state) => {
+        state.selectedVoiceover = voiceover;
+      });
+    },
 
-  clearSelection: () => {
-    set((state) => {
-      state.selectedVoiceover = null;
-    });
-  },
-}));
+    clearSelection: () => {
+      set((state) => {
+        state.selectedVoiceover = null;
+      });
+    },
+  })
+);
 
 // Utility functions for scrolling (kept separate as they don't need state)
 export const scrollToSection = (sectionId: string) => {

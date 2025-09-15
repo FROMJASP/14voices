@@ -2,6 +2,8 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { NextRequest, NextResponse } from 'next/server';
 import { unstable_cache } from 'next/cache';
+import { applyCorsHeaders, handleCorsPreflightRequest } from '@/lib/cors';
+import { validateLimit, validateDepth } from '@/lib/query-validation';
 
 // Create cached payload instance getter
 const getCachedPayload = unstable_cache(
@@ -14,19 +16,15 @@ const getCachedPayload = unstable_cache(
   }
 );
 
-export async function OPTIONS() {
-  const response = new NextResponse(null, { status: 200 });
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-  return response;
+export async function OPTIONS(request: NextRequest) {
+  return handleCorsPreflightRequest(request) || new NextResponse(null, { status: 200 });
 }
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get('limit') || '100');
-    const depth = parseInt(searchParams.get('depth') || '0'); // Reduce depth to avoid timeouts
+    const limit = validateLimit(searchParams.get('limit'), 100, 200);
+    const depth = validateDepth(searchParams.get('depth'), 0, 1);
 
     const payload = await getCachedPayload();
 
@@ -81,7 +79,7 @@ export async function GET(request: NextRequest) {
       nextPage,
     } = result as any;
 
-    const response = NextResponse.json({
+    let response = NextResponse.json({
       docs,
       totalDocs,
       totalPages,
@@ -93,10 +91,8 @@ export async function GET(request: NextRequest) {
       nextPage,
     });
 
-    // Add CORS headers
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    // Apply CORS headers based on allowed origins
+    response = applyCorsHeaders(request, response);
 
     // Add cache headers for better performance
     response.headers.set('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600');

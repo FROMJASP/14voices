@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ProductionGrid } from '@/components/domains/production';
+import { ProductionGrid } from '@/components/features/production';
 import { PriceCalculatorForm } from './PriceCalculatorForm';
 import type { CartFormData } from './types';
 

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { VoiceoverDetailClient } from '@/components/domains/voiceover/VoiceoverDetailClient';
+import { VoiceoverDetailClient } from '@/components/features/voiceover/VoiceoverDetailClient';
 import { fetchOptimized } from '@/lib/data-fetching-server';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';

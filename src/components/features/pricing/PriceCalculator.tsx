@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { Bricolage_Grotesque } from 'next/font/google';
-import { useVoiceoverStore, useCartStore, useCheckoutStore } from '@/stores';
+import { useVoiceoverSelectionStore, useCartStore, useCheckoutStore } from '@/stores';
 import { PriceCalculatorHeader } from './PriceCalculatorHeader';
 import { PriceCalculatorContent } from './PriceCalculatorContent';
 import { PriceCalculatorFooter } from './PriceCalculatorFooter';
@@ -22,7 +22,7 @@ const bricolageGrotesque = Bricolage_Grotesque({
  * Handles production selection, price calculation, and cart management
  */
 export const UnifiedPriceCalculatorOptimized = React.memo(() => {
-  const selectedVoiceover = useVoiceoverStore((state) => state.selectedVoiceover);
+  const selectedVoiceover = useVoiceoverSelectionStore((state) => state.selectedVoiceover);
   const setProductionName = useCheckoutStore((state) => state.setProductionName);
   const setWordCount = useCheckoutStore((state) => state.setWordCount);
   const setRegion = useCheckoutStore((state) => state.setRegion);

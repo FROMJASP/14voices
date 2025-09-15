@@ -8,6 +8,7 @@ import { en } from '@payloadcms/translations/languages/en';
 import { nl } from '@payloadcms/translations/languages/nl';
 import { i18n as customI18n } from './i18n/index';
 import sharp from 'sharp';
+import { securityConfig } from '@/config/security';
 import Users from './collections/Users';
 import Media from './collections/Media';
 import Voiceovers from './collections/Voiceovers';
@@ -151,7 +152,7 @@ export default buildConfig({
     }
     return url;
   })(),
-  cors: '*', // Allow all origins for development - restrict this in production
+  cors: process.env.NODE_ENV === 'development' ? '*' : securityConfig.cors.allowedOrigins,
   csrf: [
     // Add your production domain here
     process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',

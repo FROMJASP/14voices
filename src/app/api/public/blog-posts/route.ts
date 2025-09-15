@@ -1,18 +1,16 @@
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { NextRequest, NextResponse } from 'next/server';
+import { applyCorsHeaders, handleCorsPreflightRequest } from '@/lib/cors';
+import { validateLimit, validateDepth, validateSort } from '@/lib/query-validation';
 
 // Don't cache the payload instance - it might be causing issues
 const getCachedPayload = async () => {
   return await getPayload({ config: configPromise });
 };
 
-export async function OPTIONS() {
-  const response = new NextResponse(null, { status: 200 });
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-  return response;
+export async function OPTIONS(request: NextRequest) {
+  return handleCorsPreflightRequest(request) || new NextResponse(null, { status: 200 });
 }
 
 export async function GET(request: NextRequest) {
@@ -20,9 +18,14 @@ export async function GET(request: NextRequest) {
 
   try {
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const depth = parseInt(searchParams.get('depth') || '1'); // Back to depth 1 for category population
-    const sort = searchParams.get('sort') || '-publishedDate';
+    const limit = validateLimit(searchParams.get('limit'), 10, 50);
+    const depth = validateDepth(searchParams.get('depth'), 1, 2);
+    const sort = validateSort(searchParams.get('sort'), '-publishedDate', [
+      'publishedDate',
+      'title',
+      'createdAt',
+      'updatedAt',
+    ]);
 
     console.log('[Blog Posts API] Starting query with:', { limit, depth, sort });
 
@@ -101,7 +104,7 @@ export async function GET(request: NextRequest) {
       `[Blog Posts API] Query completed in ${Date.now() - startTime}ms. Found ${docs.length} posts`
     );
 
-    const response = NextResponse.json({
+    let response = NextResponse.json({
       docs,
       totalDocs,
       totalPages,
@@ -113,10 +116,8 @@ export async function GET(request: NextRequest) {
       nextPage,
     });
 
-    // Add CORS headers
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    // Apply CORS headers based on allowed origins
+    response = applyCorsHeaders(request, response);
 
     // Add cache headers for better performance
     response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');

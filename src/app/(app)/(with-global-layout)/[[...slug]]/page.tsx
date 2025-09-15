@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { PageRenderer } from '@/components/common/widgets';
+import PageRenderer from '@/components/common/widgets/PageRenderer';
 import type { Page } from '@/payload-types';
 import { headers } from 'next/headers';
 
@@ -185,7 +185,7 @@ export default async function Page({ params }: PageProps) {
   } as Page & { content?: unknown; sections?: any[] };
 
   // Always fetch voiceovers for homepage for better caching
-  let voiceovers = null;
+  let voiceovers: any[] | undefined = undefined;
   if (slug === 'home' || slug === 'blog') {
     // Fetch voiceovers with caching for better performance
     const voiceoverResults = await payload.find({

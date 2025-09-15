@@ -4,7 +4,7 @@ import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { ProductionOrderPageWrapper } from '@/components/domains/production';
+import { ProductionOrderPageWrapper } from '@/components/features/production';
 
 const productionSlugs = [
   'videoproductie',

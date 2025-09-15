@@ -4,6 +4,7 @@ import { buildCSPHeader, isBlockedPath, isBlockedUserAgent } from '@/config/secu
 import { rateLimitMiddleware, getEndpointType } from '@/middleware/rate-limit';
 import { getEdgeSafeRateLimiter, getRateLimitConfig } from '@/lib/rate-limiter/edge-safe';
 import { handleStaticFiles } from '@/middleware/static-files';
+import { verifyCSRFToken } from '@/lib/csrf-edge';
 
 export async function middleware(request: NextRequest) {
   // Handle static file requests with proper headers
@@ -62,25 +63,40 @@ export async function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 404 });
   }
 
-  // Apply rate limiting for API routes
+  // Apply rate limiting and CSRF protection for API routes
   if (request.nextUrl.pathname.startsWith('/api/')) {
+    // Rate limiting first
     const rateLimitResponse = await rateLimitMiddleware(request);
     if (rateLimitResponse) {
       return rateLimitResponse;
     }
+
+    // CSRF protection for mutation endpoints (skip for safe methods and public endpoints)
+    const isPublicEndpoint = request.nextUrl.pathname.startsWith('/api/public/');
+    const isSafeMethod = ['GET', 'HEAD', 'OPTIONS'].includes(request.method);
+    const isWebhook = request.nextUrl.pathname.includes('/webhook');
+    const isHealthCheck = request.nextUrl.pathname.includes('/health');
+
+    if (!isPublicEndpoint && !isSafeMethod && !isWebhook && !isHealthCheck) {
+      // Check for CSRF token
+      const headerToken = request.headers.get('x-csrf-token');
+      const cookieToken = request.cookies.get('csrf-token')?.value;
+
+      if (!headerToken || !cookieToken || headerToken !== cookieToken) {
+        return NextResponse.json({ error: 'Invalid or missing CSRF token' }, { status: 403 });
+      }
+
+      // Verify token validity
+      const isValidToken = await verifyCSRFToken(headerToken);
+      if (!isValidToken) {
+        return NextResponse.json({ error: 'Invalid or expired CSRF token' }, { status: 403 });
+      }
+    }
   }
 
-  // For now, we'll skip nonce generation in middleware due to Edge Runtime limitations
-  // In production, consider using a different approach like hash-based CSP or
-  // generating nonces in server components
-  const nonce = null;
+  // CSP is handled by buildCSPHeader with strict-dynamic for better security
 
   const response = NextResponse.next();
-
-  // Pass nonce to the request for use in components if needed
-  if (nonce) {
-    response.headers.set('x-nonce', nonce);
-  }
 
   // Add performance headers for API routes
   if (request.nextUrl.pathname.startsWith('/api/public')) {
@@ -130,7 +146,7 @@ export async function middleware(request: NextRequest) {
     'camera=(), microphone=(), geolocation=(), payment=()'
   );
 
-  // Add Content Security Policy
+  // Add Content Security Policy with strict-dynamic for production security
   response.headers.set('Content-Security-Policy', buildCSPHeader());
 
   // Add additional security headers

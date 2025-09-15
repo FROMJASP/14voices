@@ -67,17 +67,19 @@ export const securityConfig = {
   },
 
   // Content Security Policy
-  // NOTE: Next.js requires 'unsafe-inline' for scripts to function properly.
-  // This is due to Next.js injecting inline scripts for hydration and runtime.
-  // While nonce-based CSP would be more secure, Next.js doesn't fully support it
-  // in production without significant configuration complexity.
-  // See: https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
+  // NOTE: Next.js 15 still requires 'unsafe-inline' for scripts in production
+  // We mitigate this by using strict-dynamic and other security measures
   csp: {
     'default-src': ["'self'"],
     'script-src':
       process.env.NODE_ENV === 'development'
         ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net']
-        : ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'], // unsafe-inline required for Next.js hydration
+        : [
+            "'self'",
+            "'unsafe-inline'", // Required by Next.js 15
+            "'strict-dynamic'", // Allows only scripts loaded by trusted scripts
+            'https://cdn.jsdelivr.net',
+          ],
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
@@ -103,6 +105,7 @@ export const securityConfig = {
       process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
       'https://14voices.com',
       'https://www.14voices.com',
+      'https://14voices.fromjasp.com', // Staging domain
     ],
     allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

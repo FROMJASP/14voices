@@ -2,23 +2,23 @@
 
 import React, { useState, useCallback, lazy, Suspense, memo } from 'react';
 import { usePathname } from 'next/navigation';
-import { UnifiedPriceCalculatorOptimized } from '@/components/domains/pricing';
+import { UnifiedPriceCalculatorOptimized } from '@/components/features/pricing';
 import { HeroSection } from './HeroSection';
 import FAQSection from './FAQSection'; // Uses default export (client wrapper)
 import type { HomepageSettings } from '@/lib/homepage-settings';
 import { LoadingSpinner } from '@/components/common/ui';
 import type { TransformedVoiceover } from '@/types/voiceover';
-import { OptimizedVoiceoverGrid } from '@/components/domains/voiceover';
+import { OptimizedVoiceoverGrid } from '@/components/features/voiceover';
 
 // Lazy load heavy components that are only shown conditionally
 const ProductionDrawerOptimized = lazy(() =>
-  import('@/components/domains/production').then((module) => ({
+  import('@/components/features/production').then((module) => ({
     default: module.ProductionDrawer,
   }))
 );
 
 const ProductionOrderPage = lazy(() =>
-  import('@/components/domains/production/ProductionOrderPage').then((module) => ({
+  import('@/components/features/production/ProductionOrderPage').then((module) => ({
     default: module.ProductionOrderPage,
   }))
 );

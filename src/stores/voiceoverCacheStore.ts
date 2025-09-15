@@ -12,7 +12,7 @@ interface VoiceoverStore {
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-export const useVoiceoverStore = create<VoiceoverStore>()(
+export const useVoiceoverCacheStore = create<VoiceoverStore>()(
   persist(
     (set, get) => ({
       voiceovers: [],

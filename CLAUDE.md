@@ -1,371 +1,136 @@
-# CLAUDE.md
+# CLAUDE.md - 14voices Development Guide
 
-## Tech Stack
+## Quick Reference
 
-- **Framework**: Next.js 15.4.5 with App Router
-- **Hosting**: Vercel
-- **Database**: Neon (PostgreSQL)
-- **CMS**: Payload CMS 3.53.0
-- **Storage**: MinIO (S3-compatible, self-hosted on a VPS running Coolify)
-- **Styling**: Tailwind CSS v4
-- **Animations**: Motion (Framer Motion)
-- **View Transitions**: @ssgoi/react (smooth page transitions)
-- **Package Manager**: Bun (required)
-- **Email**: Resend API
-- **Error Tracking**: Sentry
-- **Global State Management**: Zustand
+### ⚠️ CRITICAL: Before Deployment
 
-## Development Commands
+1. **ALWAYS run** `bun run payload:generate:importmap` before pushing
+2. **COMMIT** the generated `src/app/(payload)/admin/importMap.js` file
+3. **NEVER** change `.env.local` without permission
+
+### Tech Stack
+
+**Next.js 15.4.5** | **Payload CMS 3.53.0** | **Neon DB** | **MinIO S3** | **Tailwind v4** | **Motion** | **Bun** | **Zustand**
+
+### Essential Commands
 
 ```bash
-# Install dependencies
-bun install
+bun dev                              # Start development
+bun run build                        # Build for production
+bun payload generate:types           # Generate TypeScript types
+bun run payload:generate:importmap   # Generate importMap.js (REQUIRED!)
+bun run typecheck                    # TypeScript checking
+bun run lint                         # ESLint
+```
 
-# Development
-bun dev
+### Project Structure
 
-# Build for production
-bun run build
+```
+src/
+├── app/           # Next.js App Router
+├── collections/   # Payload CMS collections
+├── components/    # React components
+├── domains/       # Domain logic (DDD)
+├── lib/          # Utilities
+└── stores/       # Zustand stores
+```
 
-# Start production server
-bun start
+## Common Issues & Solutions
 
-# Payload CMS
-bun payload generate:types  # Generate TypeScript types
-bun payload migrate         # Run database migrations
-bun run payload:generate:importmap  # Generate importMap.js (required for build)
+### 1. Admin Panel Build Errors
 
-# Testing & Linting
-bun test                   # Run tests
-bun run lint              # Run ESLint
-bun run format            # Format with Prettier
-bun run typecheck         # TypeScript checking
+**Problem**: Build fails with admin panel errors  
+**Solution**:
+
+```bash
+rm -rf .next
+bun run payload:generate:importmap
+git add src/app/(payload)/admin/importMap.js
+git commit -m "Update importMap"
+```
+
+### 2. Dark Mode Implementation
+
+**Problem**: Components show light mode in dark mode  
+**Solution**:
+
+- ✅ Use theme utilities: `bg-background text-foreground`
+- ❌ Never hardcode: `style={{ backgroundColor: 'var(--gray-50)' }}`
+- ✅ Add to layout wrappers: `<div className="bg-background text-foreground">`
+
+### 3. Hiding Collections from Sidebar
+
+**Problem**: Collection shows 404 when accessed via tabs  
+**Solution**: Hide via CSS, not `hidden: true`
+
+```typescript
+// In NavIconsCSS.tsx:
+css += `
+  nav a[href="/admin/collections/categories"] {
+    display: none !important;
+  }
+`;
+```
+
+### 4. Live Preview Not Updating
+
+**Problem**: Homepage preview doesn't refresh  
+**Solution**:
+
+```typescript
+// Use memoized data + key prop:
+const heroData = useMemo(() => transformHeroDataForHomepage(page), [page.hero]);
+return <Hero key={`hero-${page.id}-${page.updatedAt}`} {...heroData} />;
+```
+
+## Adding New Page Blocks
+
+### 1. Create Block Component
+
+```typescript
+// src/components/blocks/YourBlock.tsx
+'use client';
+export function YourBlock(props: YourBlockType) {
+  // Handle iframe context for live preview
+  const isInIframe = typeof window !== 'undefined' && window.parent !== window;
+  return <div>...</div>;
+}
+```
+
+### 2. Define Block Schema
+
+```typescript
+// src/collections/Pages/blocks/index.ts
+export const YourBlock: Block = {
+  slug: 'your-block',
+  imageURL: '/admin/block-previews/your-block.svg',
+  fields: [
+    // Add defaultValue for better UX
+    { name: 'title', type: 'text', defaultValue: 'Example Title' },
+  ],
+};
+```
+
+### 3. Add to PageRenderer
+
+```typescript
+// src/components/common/widgets/PageRenderer.tsx
+case 'your-block':
+  return <YourBlock key={`block-${index}`} {...block} />;
 ```
 
 ## Environment Variables
 
-See `.env.example` for required environment variables.
-
-## Project Structure
-
-```
-src/
-├── app/                # Next.js App Router
-├── collections/        # Payload CMS collections
-├── components/         # React components
-├── domains/           # Domain logic (DDD)
-├── config/            # Configuration
-├── lib/               # Utilities
-├── hooks/             # React hooks
-└── types/             # TypeScript types
-```
-
-## Deployment
-
-1. ALWAYS think about the importMap before pushing code
-2. Push to main branch
-3. Vercel automatically builds and deploys
-4. Database migrations run automatically via Payload
-
-## Important Notes
-
-- **Payload importMap**: The file `src/app/(payload)/admin/importMap.js` is auto-generated but MUST be committed to git
-- **Admin panel errors**: Clear cache with `rm -rf .next` and regenerate importMap if needed
-- Never change our .env.local without our permission
-
-## Payload CMS Admin Table Column Order
-
-To change column order in Payload CMS admin tables:
-
-1. The `defaultColumns` array in collection config only controls which columns are shown, not their order
-2. The actual visual order is determined by field definition order in the collection
-3. For more control, use DOM manipulation in a `beforeListTable` component (see `PagesList.tsx`)
-4. Column reordering happens client-side after the table renders
-
-## Dark Mode Implementation
-
-When implementing dark mode, ensure all components use CSS variables instead of hardcoded colors:
-
-1. **Never hardcode CSS variables in inline styles** - This overrides the dark mode CSS
-2. **Use theme-aware utility classes** - `bg-background`, `text-foreground`, etc.
-3. **For custom colors, use CSS variables** - `var(--primary)`, `var(--text-primary)`, etc.
-4. **Main wrapper elements need proper classes** - Add `bg-background text-foreground` to layout wrappers
-
-Common issues:
-
-- PageRenderer had hardcoded light mode CSS variables in inline styles
-- Buttons using hardcoded Tailwind classes like `bg-gray-900 dark:bg-white`
-- Missing background/text classes on main layout elements
-
-## Hiding Collections from Sidebar (Tab-Only Collections)
-
-When you want a collection to be accessible only through tabs in another collection (like Categories being accessible only through Blog Posts tabs):
-
-### DO NOT USE `hidden: true` or `hidden: () => true`
-
-This will make the collection completely inaccessible, even via direct URL, causing 404 errors when accessing through tabs.
-
-### Correct Implementation:
-
-1. **Keep the collection normally configured** in its file (e.g., `Categories.ts`):
-
-   ```typescript
-   admin: {
-     // Normal admin config, NO hidden property
-     components: {
-       beforeListTable: ['./components/admin/views/BlogPostsWithTabs#default'],
-     },
-   }
-   ```
-
-2. **Hide via CSS and JavaScript** in `NavIconsCSS.tsx`:
-
-   ```typescript
-   // CSS approach
-   css += `
-     nav a[href="/admin/collections/categories"],
-     ul li:has(a[href="/admin/collections/categories"]) {
-       display: none !important;
-     }
-   `;
-
-   // JavaScript approach with MutationObserver for dynamic content
-   const observer = new MutationObserver(() => {
-     const links = document.querySelectorAll('a[href="/admin/collections/categories"]');
-     links.forEach((link) => {
-       const parent = link.parentElement;
-       if (parent && parent.style.display !== 'none') {
-         parent.style.display = 'none';
-       }
-     });
-   });
-   ```
-
-3. **Create tab navigation component** (e.g., `BlogPostsWithTabs.tsx`):
-   - Add tabs that navigate between collections
-   - Use `router.push('/admin/collections/[collection-slug]')` for navigation
-   - Apply to both collections via `beforeListTable` component
-
-4. **Hide empty navigation groups**:
-   ```javascript
-   // In MutationObserver, also hide empty groups
-   const navGroups = document.querySelectorAll('[class*="nav-group"]');
-   navGroups.forEach(group => {
-     if (group.textContent?.includes('Inhoud')) {
-       const hasVisibleChildren = /* check for visible links */;
-       if (!hasVisibleChildren) {
-         group.style.display = 'none';
-       }
-     }
-   });
-   ```
-
-This approach ensures:
-
-- Collection remains fully accessible via direct URL
-- Collection is hidden from sidebar navigation
-- Collection can be accessed through custom tabs
-- No 404 errors when navigating to the collection
-
-## Custom Payload CMS Cell Components
-
-When creating custom cell components for Payload admin tables:
-
-1. **Handling Relationship Fields**:
-   - Relationship fields (like `avatar`) often return just the ID in list views
-   - Use `afterRead` hooks to populate the full object server-side
-   - The `cellData` prop contains the field value (might be just an ID)
-   - The `rowData` prop contains the entire row data
-
-2. **Resolving Media URLs**:
-   - Media fields may need manual URL resolution
-   - Use virtual fields with `FieldHook` to resolve URLs server-side
-   - Check for both `url` property and construct from `filename` if needed
-   - For MinIO/S3: URLs should be constructed using `S3_PUBLIC_URL` environment variable
-
-3. **Example Pattern for Avatar Display**:
-
-   ```typescript
-   // In collection hooks:
-   afterRead: [
-     async ({ doc, req }) => {
-       if (doc?.avatar && typeof doc.avatar === 'string') {
-         const media = await req.payload.findByID({
-           collection: 'media',
-           id: doc.avatar,
-           depth: 0,
-         });
-         doc.avatar = media; // Replace ID with full object
-       }
-       return doc;
-     }
-   ]
-
-   // Virtual field for resolved URL:
-   {
-     name: 'avatarURL',
-     type: 'text',
-     virtual: true,
-     hooks: {
-       afterRead: [resolveAvatarURL], // Custom hook to resolve URL
-     },
-   }
-   ```
-
-4. **Custom List Views**:
-   - Use custom list components to ensure proper query depth
-   - Set `depth: 2` for nested relationships
-   - Example: `admin.components.views.list: './components/admin/lists/UsersList#UsersList'`
-
-5. **Cell Component Pattern**:
-   ```typescript
-   // Always check multiple sources for the data
-   if (cellData && typeof cellData === 'object' && cellData.url) {
-     return { imageUrl: cellData.url };
-   }
-   if (rowData?.avatarURL && !rowData.avatarURL.includes('data:image/svg')) {
-     return { imageUrl: rowData.avatarURL };
-   }
-   ```
-
-## Live Preview Implementation
-
-The Payload CMS live preview is implemented with the following key components:
-
-1. **Payload Configuration** (`payload.config.ts`):
-   - Added `livePreview` configuration with the site URL
-   - Added CORS configuration to allow WebSocket connections
-   - Added CSRF configuration for security
-
-2. **Page Collection** (`collections/Pages.ts`):
-   - Configured `livePreview.url` to generate proper preview URLs
-   - For home page, uses root URL `/` instead of `/home`
-
-3. **Page Route** (`app/(app)/(with-global-layout)/[[...slug]]/page.tsx`):
-   - Uses optional catch-all route `[[...slug]]` to handle both home and other pages
-   - Detects live preview mode via `x-payload-live-preview` header
-   - Fetches draft content when in preview mode
-
-4. **PageRenderer Component** (`components/common/widgets/PageRenderer.tsx`):
-   - Uses `useLivePreview` hook from `@payloadcms/live-preview-react`
-   - Implements message listener for save events to refresh the page
-   - For homepage, uses memoized transformation and key prop for proper updates
-
-5. **Rich Text Fields**:
-   - Hero title and description use rich text fields (`titleRichText`, `descriptionRichText`)
-   - `transformHeroDataForHomepage` extracts plain text from Lexical rich text format
-   - Legacy fields (`title`, `description`) are maintained for backward compatibility
-
-### Troubleshooting Live Preview
-
-If live preview stops working:
-
-1. Ensure dev server is restarted after config changes
-2. Check browser console for WebSocket connection errors
-3. Verify `NEXT_PUBLIC_SERVER_URL` is set correctly in `.env.local`
-4. Clear browser cache and reload admin panel
-5. Ensure the preview window URL is within the iframe (check for `x-payload-live-preview` header)
-
-## Version/Draft Management
-
-To prevent creating too many versions during editing:
-
-1. **Pages Collection Configuration** (`collections/Pages.ts`):
-   - Autosave interval set to 5 minutes (300000ms)
-   - Maximum 20 versions per document
-   - Custom SaveDraftControls component for manual save control
-
-2. **Global Configuration** (`payload.config.ts`):
-   - Admin autosave interval set to 2 seconds (debounced)
-   - Prevents saving on every keystroke
-
-3. **Custom Save Controls** (`components/admin/SaveDraftControls.tsx`):
-   - Visual indicator for unsaved changes
-   - Toggle for auto-save on/off
-   - Manual save button
-   - Last saved timestamp
-
-## Adding New Blocks to Pages Collection
-
-When adding new page blocks that admins can use in the Pages collection:
-
-### 1. **Block Component Structure**
-
-```typescript
-// Create component in: src/components/blocks/BlockName.tsx
-// - Use 'use client' directive for client-side features
-// - Handle live preview mode (detect iframe context)
-// - Import UI components with correct casing (Badge.tsx not badge.tsx)
-```
-
-### 2. **Block Definition in Payload**
-
-```typescript
-// Add block definition in: src/collections/Pages/blocks/index.ts
-export const YourBlockName: Block = {
-  slug: 'your-block-slug',
-  imageURL: '/admin/block-previews/your-block.svg', // IMPORTANT: Create preview thumbnail
-  labels: {
-    singular: { en: 'Block Name', nl: 'Blok Naam' },
-    plural: { en: 'Block Names', nl: 'Blok Namen' },
-  },
-  fields: [
-    // Define admin-editable fields here
-    // IMPORTANT: Add defaultValue to fields for better preview experience
-  ],
-};
-
-// Add to pageBlocks array at the bottom
-export const pageBlocks = [
-  // ... existing blocks
-  YourBlockName,
-];
-```
-
-### 2. **PageRenderer Integration**
-
-```typescript
-// Update: src/components/common/widgets/PageRenderer.tsx
-// Add case in the switch statement:
-case 'your-block-slug': {
-  return (
-    <div key={`your-block-${index}`}>
-      <YourBlockComponent {...block} />
-    </div>
-  );
-}
-```
-
-### 3. **Important Considerations**
-
-- **Live Preview Mode**: Components making API calls should detect and handle iframe context
-- **Migration Logic**: The Pages collection has migration logic for old data structures - be careful not to auto-add blocks
-- **Blog vs Homepage**: Blog page should start with empty layout, homepage may have default blocks
-- **Component Imports**: Always use exact file casing to avoid webpack warnings
-- **API Dependencies**: If block needs data (like blog posts), consider:
-  - Server-side fetching in page component
-  - Client-side fetching with loading states
-  - Live preview iframe limitations (CORS)
-
-### 4. **Common Pitfalls to Avoid**
-
-1. **Check for empty layout arrays** - `layout: []` means no blocks, not undefined
-2. **Handle missing data gracefully** - Voiceovers/categories might not be fetched for all pages
-3. **Use proper TypeScript types** - Import from `@/payload-types`
-4. **Test in both contexts** - Regular page view AND live preview iframe
-
-### 5. **Testing New Blocks**
-
-1. Clear any existing page data if needed: `bun run src/scripts/clear-blog-layout.ts`
-2. Add block via Admin Panel → Pages → Edit Page → Pagina Layout → Add Block
-3. Test live preview by editing in admin panel
-4. Verify block renders correctly on actual page
-
-### 6. **Default Values for Better UX**
-
-ALWAYS add meaningful default values to block fields:
-
-- Helps admins understand what content goes where
-- Shows the block's potential immediately
-- Provides professional copy examples
-- Makes blocks look complete even when first added
+See `.env.example` for required variables. Key ones:
+
+- `DATABASE_URL` - Neon PostgreSQL
+- `PAYLOAD_SECRET` - CMS secret
+- `CSRF_SECRET` - Security token
+- `S3_*` - MinIO configuration
+
+## Notes
+
+- **Payload importMap**: Auto-generated but MUST be committed
+- **Clear cache**: `rm -rf .next` if admin panel issues
+- **Blog page**: Should start with empty layout (`layout: []`)
+- **Component imports**: Use exact casing (Badge.tsx not badge.tsx)

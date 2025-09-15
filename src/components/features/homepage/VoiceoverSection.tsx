@@ -6,7 +6,7 @@ import type { TransformedVoiceover } from '@/types/voiceover';
 import { useVoiceoverCacheStore } from '@/stores';
 
 // Import directly for immediate rendering
-import { OptimizedVoiceoverGrid } from '@/components/domains/voiceover';
+import { OptimizedVoiceoverGrid } from '@/components/features/voiceover';
 
 interface VoiceoverSectionProps {
   initialVoiceovers?: TransformedVoiceover[];
