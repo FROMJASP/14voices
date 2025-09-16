@@ -217,11 +217,24 @@ export function buildCSPHeader(nonce?: string): string {
   const csp = { ...securityConfig.csp };
 
   // If nonce is provided, update script-src to use it
-  if (nonce) {
+  if (nonce && process.env.NODE_ENV === 'production') {
+    // In production, use nonce but still need unsafe-inline for Next.js 15
     csp['script-src'] = [
       "'self'",
       `'nonce-${nonce}'`,
-      "'strict-dynamic'", // Re-enable with nonce
+      "'unsafe-inline'", // Still required by Next.js 15 even in production
+      'https://cdn.jsdelivr.net',
+      'https://dev.14voices.com',
+      'https://14voices.com',
+      'https://www.14voices.com',
+    ];
+  } else if (nonce && process.env.NODE_ENV === 'development') {
+    // In development, we need unsafe-inline and unsafe-eval for Next.js HMR
+    csp['script-src'] = [
+      "'self'",
+      `'nonce-${nonce}'`,
+      "'unsafe-inline'",
+      "'unsafe-eval'",
       'https://cdn.jsdelivr.net',
     ];
   }
