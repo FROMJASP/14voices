@@ -3,10 +3,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Play, Pause, ChevronLeft, ChevronRight, X, Download } from 'lucide-react';
+import {
+  Play,
+  Pause,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Download,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { TransformedVoiceover } from '@/types/voiceover';
 import { useAudioStore } from '@/store/audioStore';
+import { Slider } from '@/components/ui/Slider';
 
 interface AnimatedPlayerProps {
   voiceover: TransformedVoiceover;
@@ -29,6 +39,9 @@ export function AnimatedPlayer({
   const [duration, setDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+  const [volume, setVolume] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
@@ -117,6 +130,7 @@ export function AnimatedPlayer({
 
     // Set source and register
     audio.src = currentDemo.audioFile.url;
+    audio.volume = isMuted ? 0 : volume;
     audioRef.current = audio;
     registerAudio(playerId, audio);
     pauseOthers(playerId);
@@ -137,6 +151,13 @@ export function AnimatedPlayer({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay, currentDemo, playerId]);
+
+  // Update audio volume when volume or mute state changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume;
+    }
+  }, [volume, isMuted]);
 
   const handlePlayPause = async () => {
     if (!currentDemo || !audioRef.current) return;
@@ -249,6 +270,24 @@ export function AnimatedPlayer({
 
   const handleChooseClick = () => {
     router.push(`/voiceovers/${voiceover.slug}`);
+  };
+
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
+    setIsMuted(newVolume === 0);
+  };
+
+  const handleMuteToggle = () => {
+    if (isMuted) {
+      setIsMuted(false);
+      if (volume === 0) setVolume(0.7);
+    } else {
+      setIsMuted(true);
+    }
+  };
+
+  const handleVolumeSliderChange = (values: number[]) => {
+    handleVolumeChange(values[0] / 100);
   };
 
   return (
@@ -448,7 +487,7 @@ export function AnimatedPlayer({
           </div>
         </div>
 
-        {/* Time and download */}
+        {/* Time, volume and download */}
         <div
           className={`flex items-center justify-between text-foreground/80 ${
             gridSize === 'small'
@@ -459,19 +498,75 @@ export function AnimatedPlayer({
           <span>
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
-          <button
-            onClick={handleDownload}
-            className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
-            aria-label="Download audio"
-          >
-            <Download
-              className={
-                gridSize === 'small'
-                  ? 'w-2.5 h-2.5'
-                  : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
-              }
-            />
-          </button>
+          <div className="flex items-center gap-1">
+            {/* Volume control */}
+            <div className="relative">
+              <button
+                onClick={handleMuteToggle}
+                onMouseEnter={() => setShowVolumeSlider(true)}
+                className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
+                aria-label={isMuted ? 'Unmute' : 'Mute'}
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX
+                    className={
+                      gridSize === 'small'
+                        ? 'w-2.5 h-2.5'
+                        : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
+                    }
+                  />
+                ) : (
+                  <Volume2
+                    className={
+                      gridSize === 'small'
+                        ? 'w-2.5 h-2.5'
+                        : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
+                    }
+                  />
+                )}
+              </button>
+
+              {/* Volume slider - appears on hover */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: showVolumeSlider ? 1 : 0, scale: showVolumeSlider ? 1 : 0.9 }}
+                transition={{ duration: 0.2 }}
+                onMouseEnter={() => setShowVolumeSlider(true)}
+                onMouseLeave={() => setShowVolumeSlider(false)}
+                className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-background border border-border rounded-lg shadow-lg overflow-hidden ${
+                  showVolumeSlider ? 'pointer-events-auto' : 'pointer-events-none'
+                }`}
+              >
+                <div className="h-24 w-6 flex items-center justify-center p-2">
+                  <Slider
+                    value={[isMuted ? 0 : volume * 100]}
+                    onValueChange={handleVolumeSliderChange}
+                    orientation="vertical"
+                    className="h-20"
+                    aria-label="Volume control"
+                    min={0}
+                    max={100}
+                    step={1}
+                  />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Download button */}
+            <button
+              onClick={handleDownload}
+              className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
+              aria-label="Download audio"
+            >
+              <Download
+                className={
+                  gridSize === 'small'
+                    ? 'w-2.5 h-2.5'
+                    : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
+                }
+              />
+            </button>
+          </div>
         </div>
 
         {/* Demo info */}
