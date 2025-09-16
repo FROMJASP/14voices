@@ -2,9 +2,19 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Play, Pause, ChevronLeft, ChevronRight, Download, X } from 'lucide-react';
+import {
+  Play,
+  Pause,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  X,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { TransformedVoiceover } from '@/types/voiceover';
+import { Slider } from '@/components/ui/Slider';
 import './custom-card.css';
 
 interface VoiceoverPlayerCardProps {
@@ -19,6 +29,10 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [showDownloadTooltip, setShowDownloadTooltip] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
 
@@ -53,6 +67,7 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
 
       if (!audioRef.current || audioRef.current.src !== currentDemo.audioFile.url) {
         audioRef.current = new Audio(currentDemo.audioFile.url);
+        audioRef.current.volume = isMuted ? 0 : volume;
         audioRef.current.addEventListener('loadedmetadata', () => {
           setDuration(audioRef.current?.duration || 0);
         });
@@ -153,6 +168,31 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
     }
   };
 
+  // Update audio volume when volume or mute state changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume;
+    }
+  }, [volume, isMuted]);
+
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
+    setIsMuted(newVolume === 0);
+  };
+
+  const handleMuteToggle = () => {
+    if (isMuted) {
+      setIsMuted(false);
+      if (volume === 0) setVolume(0.7);
+    } else {
+      setIsMuted(true);
+    }
+  };
+
+  const handleVolumeSliderChange = (values: number[]) => {
+    handleVolumeChange(values[0] / 100);
+  };
+
   if (!hasDemos) {
     return (
       <div className="custom-card-wrapper">
@@ -170,8 +210,24 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="custom-card-wrapper"
+      className="custom-card-wrapper relative"
     >
+      {/* Tooltips positioned outside the card to avoid clipping */}
+      {showDownloadTooltip && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.15 }}
+          className="absolute bottom-[60px] right-[80px] px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-full whitespace-nowrap shadow-lg z-50 pointer-events-none"
+          style={{
+            boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.15)',
+          }}
+        >
+          Download {firstName}&apos;s demo
+        </motion.div>
+      )}
+
       <div className="custom-card">
         {/* Availability section inside card with trapezoid shape */}
         {voiceover.beschikbaar && (
@@ -185,7 +241,7 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
               <line x1="27" y1="29.5" x2="153" y2="29.5" stroke="var(--border)" strokeWidth="1.5" />
             </svg>
             <div className="custom-card-availability">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <div className="w-2 h-2 bg-green-500 rounded-full" />
               <span className="text-xs font-medium text-foreground">
                 {voiceover.availabilityText || 'Nu beschikbaar'}
               </span>
@@ -194,7 +250,7 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
         )}
 
         {/* Content wrapper with rounded corners */}
-        <div className="overflow-hidden rounded-[1rem]">
+        <div className="relative overflow-hidden rounded-[1rem]">
           {/* Image container with player overlay */}
           <div className="relative aspect-[4/5]">
             {/* Background image */}
@@ -316,17 +372,67 @@ export function VoiceoverPlayerCard({ voiceover }: Omit<VoiceoverPlayerCardProps
                   </div>
                 </div>
 
-                {/* Time and download */}
+                {/* Time, volume and download */}
                 <div className="flex items-center justify-between text-white/80 text-xs px-4">
                   <span>
                     {formatTime(currentTime)} / {formatTime(duration)}
                   </span>
-                  <button
-                    onClick={handleDownload}
-                    className="p-1.5 rounded-full transition-colors hover:bg-white/10"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    {/* Volume control */}
+                    <div className="relative">
+                      <button
+                        onClick={handleMuteToggle}
+                        onMouseEnter={() => setShowVolumeSlider(true)}
+                        className="p-1.5 rounded-full transition-colors hover:bg-white/10"
+                        aria-label={isMuted ? 'Unmute' : 'Mute'}
+                      >
+                        {isMuted || volume === 0 ? (
+                          <VolumeX className="w-3.5 h-3.5" />
+                        ) : (
+                          <Volume2 className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+
+                      {/* Volume slider - appears on hover */}
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{
+                          opacity: showVolumeSlider ? 1 : 0,
+                          scale: showVolumeSlider ? 1 : 0.9,
+                        }}
+                        transition={{ duration: 0.2 }}
+                        onMouseEnter={() => setShowVolumeSlider(true)}
+                        onMouseLeave={() => setShowVolumeSlider(false)}
+                        className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-black/80 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg overflow-hidden ${
+                          showVolumeSlider ? 'pointer-events-auto' : 'pointer-events-none'
+                        }`}
+                      >
+                        <div className="h-24 w-6 flex items-center justify-center p-2">
+                          <Slider
+                            value={[isMuted ? 0 : volume * 100]}
+                            onValueChange={handleVolumeSliderChange}
+                            orientation="vertical"
+                            className="h-20 [&_[data-slot='slider-track']]:bg-white/20 [&_[data-slot='slider-range']]:bg-white [&_[data-slot='slider-thumb']]:bg-white [&_[data-slot='slider-thumb']]:border-white/30"
+                            aria-label="Volume control"
+                            min={0}
+                            max={100}
+                            step={1}
+                          />
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Download button */}
+                    <button
+                      onClick={handleDownload}
+                      onMouseEnter={() => setShowDownloadTooltip(true)}
+                      onMouseLeave={() => setShowDownloadTooltip(false)}
+                      className="p-1.5 rounded-full transition-colors hover:bg-white/10"
+                      aria-label="Download audio"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Demo info */}

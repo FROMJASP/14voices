@@ -570,13 +570,16 @@ export function AnimatedPlayer({
                   }
                 />
               </button>
-              
+
               {/* Download tooltip */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: showDownloadTooltip ? 1 : 0, scale: showDownloadTooltip ? 1 : 0.9 }}
+                animate={{
+                  opacity: showDownloadTooltip ? 1 : 0,
+                  scale: showDownloadTooltip ? 1 : 0.9,
+                }}
                 transition={{ duration: 0.15 }}
-                className={`absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-full whitespace-nowrap shadow-lg ${
+                className={`absolute bottom-full left-0 mb-2 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-full whitespace-nowrap shadow-lg ${
                   showDownloadTooltip ? 'pointer-events-none' : 'pointer-events-none opacity-0'
                 }`}
                 style={{
