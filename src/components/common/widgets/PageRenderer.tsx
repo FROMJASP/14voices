@@ -1,43 +1,24 @@
 'use client';
 
-import React, { useEffect, lazy, Suspense, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import type { Page } from '@/payload-types';
 import { transformHeroDataForHomepage } from '@/lib/homepage-utils';
 import { useRouter } from 'next/navigation';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
-import { useLivePreview } from '@payloadcms/live-preview-react';
-import { LoadingSpinner } from '@/components/common/ui';
+// import { useLivePreview } from '@payloadcms/live-preview-react';
 
-// Static imports for critical above-the-fold components
+// Static imports for all components
 import { PageHeroSection } from './PageHeroSection';
 import { HeroSection } from '@/components/features/homepage/HeroSection';
-
-// Dynamic imports for below-the-fold and conditional components
-const HeroVariant2 = lazy(() =>
-  import('@/components/features/homepage/HeroVariant2').then((mod) => ({
-    default: mod.HeroVariant2,
-  }))
-);
-const VoiceoverSection = lazy(() =>
-  import('@/components/features/homepage/VoiceoverSection').then((mod) => ({
-    default: mod.VoiceoverSection,
-  }))
-);
-const LinkToBlogSection = lazy(() => import('@/components/features/homepage/LinkToBlogSection'));
-const ContentSection = lazy(() => import('@/components/features/content/ContentSection'));
-const BlogSection1 = lazy(() =>
-  import('@/components/blocks/BlogSection1').then((mod) => ({ default: mod.BlogSection1 }))
-);
-const BlogPostHeader = lazy(() =>
-  import('@/components/blocks/BlogPostHeader').then((mod) => ({ default: mod.BlogPostHeader }))
-);
-const BlogContent = lazy(() =>
-  import('@/components/blocks/BlogContent').then((mod) => ({ default: mod.BlogContent }))
-);
-const BlogPostBlock = lazy(() =>
-  import('@/components/blocks/BlogPostBlock').then((mod) => ({ default: mod.BlogPostBlock }))
-);
+import { HeroVariant2 } from '@/components/features/homepage/HeroVariant2';
+import { VoiceoverSection } from '@/components/features/homepage/VoiceoverSection';
+import LinkToBlogSection from '@/components/features/homepage/LinkToBlogSection';
+import ContentSection from '@/components/features/content/ContentSection';
+import { BlogSection1 } from '@/components/blocks/BlogSection1';
+import { BlogPostHeader } from '@/components/blocks/BlogPostHeader';
+import { BlogContent } from '@/components/blocks/BlogContent';
+import { BlogPostBlock } from '@/components/blocks/BlogPostBlock';
 
 // Memoized helper function to extract plain text from rich text
 const extractPlainText = (richText: any): string => {
@@ -82,13 +63,6 @@ interface PageRendererProps {
   blogPost?: any;
 }
 
-// Component for loading state
-const BlockLoading = () => (
-  <div className="flex items-center justify-center py-12">
-    <LoadingSpinner />
-  </div>
-);
-
 export default function PageRenderer({
   page,
   voiceovers,
@@ -97,16 +71,23 @@ export default function PageRenderer({
 }: PageRendererProps) {
   const router = useRouter();
   const isInIframe = typeof window !== 'undefined' && window.parent !== window;
-
-  // Hook for live preview - always called
-  const { data: liveData } = useLivePreview({
-    initialData: page,
-    serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
-    depth: 2,
+  
+  console.log('PageRenderer initialized with page:', {
+    slug: page?.slug,
+    hasLayout: Array.isArray((page as any)?.layout),
+    layoutLength: Array.isArray((page as any)?.layout) ? (page as any).layout.length : 0,
+    status: page?.status
   });
 
-  // Use live data if available
-  const currentPage = (liveData || page) as Page;
+  // Temporarily disable live preview to fix re-render issue
+  // const { data: liveData } = useLivePreview({
+  //   initialData: page,
+  //   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  //   depth: 2,
+  // });
+
+  // Use page directly for now
+  const currentPage = page as Page;
 
   // Memoize page metadata
   const pageMetadata = useMemo(
@@ -202,7 +183,6 @@ export default function PageRenderer({
         case 'hero-v2': {
           return (
             <div key={blockKey}>
-              <Suspense fallback={<BlockLoading />}>
                 <HeroVariant2
                   badge={block.badge?.enabled !== false ? block.badge : null}
                   title={extractPlainText(block.title)}
@@ -227,7 +207,6 @@ export default function PageRenderer({
                   paddingTop={block.paddingTop || 'medium'}
                   paddingBottom={block.paddingBottom || 'medium'}
                 />
-              </Suspense>
             </div>
           );
         }
@@ -235,12 +214,10 @@ export default function PageRenderer({
         case 'voiceover-v1': {
           return (
             <div key={blockKey}>
-              <Suspense fallback={<BlockLoading />}>
                 <VoiceoverSection
                   initialVoiceovers={transformedVoiceovers}
                   title={block.title || undefined}
                 />
-              </Suspense>
             </div>
           );
         }
@@ -248,9 +225,7 @@ export default function PageRenderer({
         case 'content-v1': {
           return (
             <div key={blockKey}>
-              <Suspense fallback={<BlockLoading />}>
                 <ContentSection data={block} />
-              </Suspense>
             </div>
           );
         }
@@ -258,7 +233,6 @@ export default function PageRenderer({
         case 'blog-section-1': {
           return (
             <div key={blockKey}>
-              <Suspense fallback={<BlockLoading />}>
                 <BlogSection1
                   title={block.title}
                   description={block.description}
@@ -267,7 +241,6 @@ export default function PageRenderer({
                   paddingTop={block.paddingTop || 'medium'}
                   paddingBottom={block.paddingBottom || 'medium'}
                 />
-              </Suspense>
             </div>
           );
         }
@@ -275,7 +248,6 @@ export default function PageRenderer({
         case 'blog-post-header': {
           return (
             <div key={blockKey}>
-              <Suspense fallback={<BlockLoading />}>
                 <BlogPostHeader
                   title={block.title}
                   subtitle={block.subtitle}
@@ -286,7 +258,6 @@ export default function PageRenderer({
                   readingTime={block.readingTime}
                   blogPost={blogPost}
                 />
-              </Suspense>
             </div>
           );
         }
@@ -294,9 +265,7 @@ export default function PageRenderer({
         case 'blog-post-content': {
           return (
             <div key={blockKey}>
-              <Suspense fallback={<BlockLoading />}>
                 <BlogContent content={block.content} blogPost={blogPost} />
-              </Suspense>
             </div>
           );
         }
@@ -304,13 +273,11 @@ export default function PageRenderer({
         case 'blog-post': {
           return (
             <div key={blockKey}>
-              <Suspense fallback={<BlockLoading />}>
                 <BlogPostBlock
                   showShareButtons={block.showShareButtons}
                   showAuthor={block.showAuthor}
                   blogPost={blogPost}
                 />
-              </Suspense>
             </div>
           );
         }
@@ -326,11 +293,20 @@ export default function PageRenderer({
   // For pages with new block layout
   if (pageMetadata.hasNewLayout) {
     const layoutBlocks = (currentPage as any).layout;
+    
+    console.log('PageRenderer - Rendering page with layout blocks:', {
+      slug: currentPage.slug,
+      layoutLength: layoutBlocks?.length,
+      blocks: layoutBlocks?.map((b: any) => ({ type: b.blockType, id: b.id }))
+    });
 
     return (
       <div className="homepage-preview">
         {layoutBlocks.length > 0
-          ? layoutBlocks.map((block: any, index: number) => renderBlock(block, index))
+          ? layoutBlocks.map((block: any, index: number) => {
+              console.log(`Rendering block ${index}:`, block.blockType, block);
+              return renderBlock(block, index);
+            })
           : null}
       </div>
     );
@@ -344,12 +320,8 @@ export default function PageRenderer({
           key={`hero-${currentPage.id}-${currentPage.updatedAt}`}
           heroSettings={heroSettings}
         />
-        <Suspense fallback={<BlockLoading />}>
           <VoiceoverSection initialVoiceovers={transformedVoiceovers} title={undefined} />
-        </Suspense>
-        <Suspense fallback={<BlockLoading />}>
           <LinkToBlogSection data={{ enabled: true }} />
-        </Suspense>
       </>
     );
   }

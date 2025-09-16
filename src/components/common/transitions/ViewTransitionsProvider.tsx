@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 // Dynamically import SSGOI to avoid SSR issues
 const Ssgoi = dynamic(() => import('@ssgoi/react').then((mod) => mod.Ssgoi), {
   ssr: false,
-  loading: () => <div style={{ position: 'relative', minHeight: '100vh' }}>{null}</div>,
+  loading: () => null, // Don't show anything while loading
 });
 
 interface ViewTransitionsProviderProps {
@@ -20,13 +20,14 @@ export function ViewTransitionsProvider({ children }: ViewTransitionsProviderPro
     setMounted(true);
   }, []);
 
+  // Always render children immediately to avoid hydration mismatch
   if (!mounted) {
-    return <div style={{ position: 'relative', minHeight: '100vh' }}>{children}</div>;
+    return <>{children}</>;
   }
 
   return (
     <Ssgoi config={{}}>
-      <div style={{ position: 'relative', minHeight: '100vh' }}>{children}</div>
+      {children}
     </Ssgoi>
   );
 }

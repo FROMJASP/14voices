@@ -42,6 +42,7 @@ export function AnimatedPlayer({
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [showDownloadTooltip, setShowDownloadTooltip] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
@@ -553,19 +554,38 @@ export function AnimatedPlayer({
             </div>
 
             {/* Download button */}
-            <button
-              onClick={handleDownload}
-              className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
-              aria-label="Download audio"
-            >
-              <Download
-                className={
-                  gridSize === 'small'
-                    ? 'w-2.5 h-2.5'
-                    : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
-                }
-              />
-            </button>
+            <div className="relative">
+              <button
+                onClick={handleDownload}
+                onMouseEnter={() => setShowDownloadTooltip(true)}
+                onMouseLeave={() => setShowDownloadTooltip(false)}
+                className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
+                aria-label="Download audio"
+              >
+                <Download
+                  className={
+                    gridSize === 'small'
+                      ? 'w-2.5 h-2.5'
+                      : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
+                  }
+                />
+              </button>
+              
+              {/* Download tooltip */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: showDownloadTooltip ? 1 : 0, scale: showDownloadTooltip ? 1 : 0.9 }}
+                transition={{ duration: 0.15 }}
+                className={`absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-full whitespace-nowrap shadow-lg ${
+                  showDownloadTooltip ? 'pointer-events-none' : 'pointer-events-none opacity-0'
+                }`}
+                style={{
+                  boxShadow: showDownloadTooltip ? '0 4px 12px 0 rgba(0, 0, 0, 0.15)' : 'none',
+                }}
+              >
+                Download {firstName}&apos;s demo
+              </motion.div>
+            </div>
           </div>
         </div>
 

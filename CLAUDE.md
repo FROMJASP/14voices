@@ -10,7 +10,7 @@
 
 ### Tech Stack
 
-**Next.js 15.4.5** | **Payload CMS 3.53.0** | **Neon DB** | **MinIO S3** | **Tailwind v4** | **Motion** | **Bun** | **Zustand**
+**Next.js 15.5.3** | **Payload CMS 3.55.1** | **Neon DB** | **MinIO S3** | **Tailwind v4** | **Motion** | **Bun** | **Zustand**
 
 ### Essential Commands
 
@@ -27,12 +27,29 @@ bun run lint                         # ESLint
 
 ```
 src/
+├── access/        # Access control functions
 ├── app/           # Next.js App Router
 ├── collections/   # Payload CMS collections
 ├── components/    # React components
+├── config/        # Configuration files
+├── contexts/      # React contexts
 ├── domains/       # Domain logic (DDD)
-├── lib/          # Utilities
-└── stores/       # Zustand stores
+├── fields/        # Lexical editor configs
+├── globals/       # Payload global configs
+├── hooks/         # Custom hooks
+├── i18n/          # Internationalization
+├── lib/           # Utilities & helpers
+├── middleware/    # Express middleware
+├── migrations/    # Database migrations
+├── providers/     # React providers
+├── scripts/       # Utility scripts
+├── seed/          # Database seeders
+├── store/         # Legacy store files
+├── stores/        # Zustand stores
+├── test/          # Test utilities
+├── translations/  # Language files
+├── types/         # TypeScript types
+└── utilities/     # Helper functions
 ```
 
 ## Common Issues & Solutions

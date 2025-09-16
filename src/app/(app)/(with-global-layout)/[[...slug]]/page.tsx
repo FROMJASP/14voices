@@ -214,6 +214,15 @@ export default async function Page({ params }: PageProps) {
     console.error('Failed to fetch site settings:', error);
   }
 
+  // Log what we're passing to PageRenderer
+  console.log('Page component - Rendering with:', {
+    pageSlug: transformedPage.slug,
+    hasLayout: Array.isArray((transformedPage as any).layout),
+    layoutLength: (transformedPage as any).layout?.length,
+    voiceoverCount: voiceovers?.length,
+    brandColor
+  });
+
   // No Suspense needed - data is already loaded server-side with ISR
   return <PageRenderer page={transformedPage} voiceovers={voiceovers} brandColor={brandColor} />;
 }
