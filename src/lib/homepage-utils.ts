@@ -99,8 +99,11 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
           filename = filename.substring(6);
         }
 
+        // Ensure s3PublicUrl doesn't end with a slash
+        const cleanS3Url = s3PublicUrl.endsWith('/') ? s3PublicUrl.slice(0, -1) : s3PublicUrl;
+
         // Construct the full URL with /media/ path
-        heroImageUrl = `${s3PublicUrl}/media/${filename}`;
+        heroImageUrl = `${cleanS3Url}/media/${filename}`;
       }
     }
   }

@@ -409,11 +409,26 @@ export const HeroV1Block: Block = {
                 });
 
                 if (media?.url) {
-                  return media.url;
+                  // Fix any double slashes in the URL
+                  return media.url
+                    .replace(/\/\//g, '/')
+                    .replace('https:/', 'https://')
+                    .replace('http:/', 'http://');
                 } else if (media?.filename) {
                   const publicUrl = process.env.S3_PUBLIC_URL;
                   if (publicUrl) {
-                    return `${publicUrl}/media/${media.filename}`;
+                    let filename = media.filename;
+                    // Clean the filename
+                    if (filename.startsWith('/')) {
+                      filename = filename.substring(1);
+                    }
+                    if (filename.startsWith('media/')) {
+                      filename = filename.substring(6);
+                    }
+                    const cleanPublicUrl = publicUrl.endsWith('/')
+                      ? publicUrl.slice(0, -1)
+                      : publicUrl;
+                    return `${cleanPublicUrl}/media/${filename}`;
                   }
                   return `/media/${media.filename}`;
                 }
@@ -446,10 +461,28 @@ export const HeroV1Block: Block = {
                 if (publicUrl) {
                   // Clean the filename if it has any path prefixes
                   let filename = imageObj.filename;
-                  if (filename.includes('/')) {
-                    filename = filename.split('/').pop();
+
+                  // Remove leading slashes
+                  if (filename.startsWith('/')) {
+                    filename = filename.substring(1);
                   }
-                  return `${publicUrl}/media/${filename}`;
+
+                  // Remove 'media/' prefix if already included
+                  if (filename.startsWith('media/')) {
+                    filename = filename.substring(6);
+                  }
+
+                  // Extract just the filename if there are any remaining paths
+                  if (filename.includes('/')) {
+                    filename = filename.split('/').pop() || filename;
+                  }
+
+                  // Ensure publicUrl doesn't end with a slash
+                  const cleanPublicUrl = publicUrl.endsWith('/')
+                    ? publicUrl.slice(0, -1)
+                    : publicUrl;
+
+                  return `${cleanPublicUrl}/media/${filename}`;
                 }
                 return `/media/${imageObj.filename}`;
               }
