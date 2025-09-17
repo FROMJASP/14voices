@@ -69,8 +69,14 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
         heroImageUrl = heroImageObj.url;
       } else if (heroImageObj.filename) {
         // Use the known S3 public URL for storage.iam-studios.com
-        const s3PublicUrl = process.env.S3_PUBLIC_URL || 'https://storage.iam-studios.com';
-        heroImageUrl = `${s3PublicUrl}/media/${heroImageObj.filename}`;
+        // This URL is hardcoded because environment variables might not be available
+        // in all build contexts (especially in production builds)
+        const s3PublicUrl = 'https://storage.iam-studios.com';
+        // Ensure proper path construction
+        const filename = heroImageObj.filename.startsWith('/')
+          ? heroImageObj.filename.substring(1)
+          : heroImageObj.filename;
+        heroImageUrl = `${s3PublicUrl}/${filename}`;
       }
     }
   }
