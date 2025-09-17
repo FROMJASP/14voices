@@ -141,12 +141,25 @@ export default function PageRenderer({
               }
             }
 
+            // Extract text from rich text fields
+            const titleText = block.title
+              ? typeof block.title === 'string'
+                ? block.title
+                : extractPlainText(block.title)
+              : '';
+
+            const descriptionText = block.description
+              ? typeof block.description === 'string'
+                ? block.description
+                : extractPlainText(block.description)
+              : '';
+
             // Create hero settings directly from block data
             const heroSettings = {
               hero: {
-                title: block.title || '',
+                title: titleText,
                 subtitle: block.subtitle || '',
-                description: block.description || '',
+                description: descriptionText,
                 heroImage: heroImageUrl,
                 primaryButton: block.cta?.primaryLabel
                   ? {
