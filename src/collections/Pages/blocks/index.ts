@@ -385,6 +385,62 @@ export const HeroV1Block: Block = {
         },
       ],
     },
+    // Virtual field for resolved image URL
+    {
+      name: 'imageURL',
+      type: 'text',
+      virtual: true,
+      admin: {
+        hidden: true,
+      },
+      hooks: {
+        afterRead: [
+          async ({ siblingData, req }) => {
+            // Only process if we have an image
+            if (!siblingData?.image) return null;
+
+            // If image is just an ID string, fetch the media
+            if (typeof siblingData.image === 'string') {
+              try {
+                const media = await req.payload.findByID({
+                  collection: 'media',
+                  id: siblingData.image,
+                  depth: 0,
+                });
+
+                if (media?.url) {
+                  return media.url;
+                } else if (media?.filename) {
+                  const publicUrl = process.env.S3_PUBLIC_URL;
+                  if (publicUrl) {
+                    return `${publicUrl}/media/${media.filename}`;
+                  }
+                  return `/media/${media.filename}`;
+                }
+              } catch (error) {
+                console.error('Error fetching hero image media:', error);
+              }
+            }
+            // If image is already populated as an object
+            else if (typeof siblingData.image === 'object') {
+              const imageObj = siblingData.image as any;
+
+              if (imageObj.url) {
+                return imageObj.url;
+              } else if (imageObj.filename) {
+                const publicUrl = process.env.S3_PUBLIC_URL;
+                if (publicUrl) {
+                  return `${publicUrl}/media/${imageObj.filename}`;
+                }
+                return `/media/${imageObj.filename}`;
+              }
+            }
+
+            return null;
+          },
+        ],
+      },
+    },
   ],
 };
 

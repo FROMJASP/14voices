@@ -49,6 +49,7 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
   let heroImageUrl: string | null = null; // No default fallback
 
   // Check for image field (used in hero blocks)
+  // Note: Hero1 block uses 'image', legacy hero uses 'heroImage'
   const imageField = heroWithRichText.image || heroWithRichText.heroImage;
 
   // Log for debugging (will only run server-side during build)
@@ -60,8 +61,12 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
     });
   }
 
-  // First check for the virtual heroImageURL field (this is the most reliable)
-  if ((hero as any).heroImageURL) {
+  // First check for the virtual imageURL field (used in Hero1 block)
+  if ((hero as any).imageURL) {
+    heroImageUrl = (hero as any).imageURL;
+  }
+  // Then check for the virtual heroImageURL field (legacy hero blocks)
+  else if ((hero as any).heroImageURL) {
     heroImageUrl = (hero as any).heroImageURL;
   }
   // Then check the image/heroImage field
