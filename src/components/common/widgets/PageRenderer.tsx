@@ -161,6 +161,8 @@ export default function PageRenderer({
                 subtitle: block.subtitle || '',
                 description: descriptionText,
                 heroImage: heroImageUrl,
+                processSteps: block.processSteps || [],
+                stats: block.stats || [],
                 primaryButton: block.cta?.primaryLabel
                   ? {
                       text: block.cta.primaryLabel,

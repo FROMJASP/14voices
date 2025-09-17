@@ -57,8 +57,31 @@ export async function seedPages(payload: Payload) {
                 ],
               },
             },
-            processSteps: [],
-            stats: [],
+            processSteps: [
+              {
+                text: 'Script ontvangen',
+              },
+              {
+                text: 'Offerte opstellen',
+              },
+              {
+                text: 'Recording & levering',
+              },
+            ],
+            stats: [
+              {
+                value: '14',
+                label: 'Voice-over talenten',
+              },
+              {
+                value: '500+',
+                label: 'Projecten voltooid',
+              },
+              {
+                value: '24u',
+                label: 'Snelle levering',
+              },
+            ],
             cta: {
               primaryLabel: 'Get Started',
               primaryUrl: '/contact',
