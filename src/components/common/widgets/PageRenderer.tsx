@@ -6,6 +6,7 @@ import { transformHeroDataForHomepage } from '@/lib/homepage-utils';
 import { useRouter } from 'next/navigation';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
+import { makeMediaUrlRelative } from '@/lib/media-utils';
 // import { useLivePreview } from '@payloadcms/live-preview-react';
 
 // Static imports for all components
@@ -133,10 +134,9 @@ export default function PageRenderer({
             if (block.image) {
               if (typeof block.image === 'object') {
                 if (block.image.url) {
-                  heroImageUrl = block.image.url;
+                  heroImageUrl = makeMediaUrlRelative(block.image.url);
                 } else if (block.image.filename) {
-                  // Construct S3 URL
-                  heroImageUrl = `https://storage.iam-studios.com/media/${block.image.filename}`;
+                  heroImageUrl = makeMediaUrlRelative(`/media/${block.image.filename}`);
                 }
               }
             }

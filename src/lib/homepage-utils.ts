@@ -1,5 +1,6 @@
 import type { Page } from '@/payload-types';
 import type { HomepageSettings } from './homepage-settings';
+import { makeMediaUrlRelative } from './media-utils';
 
 // Helper function to extract plain text from Lexical rich text
 function extractTextFromLexical(richText: unknown): string {
@@ -75,28 +76,11 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
 
       // Try different possible URL properties
       if (heroImageObj.url) {
-        // Keep the full URL for external images
-        heroImageUrl = heroImageObj.url;
+        // Use makeMediaUrlRelative to ensure consistent handling
+        heroImageUrl = makeMediaUrlRelative(heroImageObj.url);
       } else if (heroImageObj.filename) {
-        // Construct the URL based on the filename
-        // The media files are served from storage.iam-studios.com/media/
-        const s3PublicUrl = 'https://storage.iam-studios.com';
-
-        // Handle different filename formats
-        let filename = heroImageObj.filename;
-
-        // Remove leading slash if present
-        if (filename.startsWith('/')) {
-          filename = filename.substring(1);
-        }
-
-        // Remove 'media/' prefix if already included in filename
-        if (filename.startsWith('media/')) {
-          filename = filename.substring(6);
-        }
-
-        // Construct the full URL with /media/ path
-        heroImageUrl = `${s3PublicUrl}/media/${filename}`;
+        // Construct a relative URL for the media file
+        heroImageUrl = makeMediaUrlRelative(`/media/${heroImageObj.filename}`);
       }
     }
   }

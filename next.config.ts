@@ -197,6 +197,16 @@ const nextConfig: NextConfig = {
         hostname: '14voices.fromjasp.com',
         pathname: '/api/media/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'storage.iam-studios.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'minio-*.sslip.io',
+        pathname: '/**',
+      },
     ],
     // Performance optimizations
     formats: ['image/avif', 'image/webp'],
