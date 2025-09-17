@@ -231,41 +231,11 @@ const Media: CollectionConfig = {
       async ({ doc }) => {
         // Ensure URL is always populated correctly
         // This prevents Payload from trying to use /api/media/file/
-        if (doc && doc.filename) {
+        if (doc && !doc.url && doc.filename) {
+          // If we have S3_PUBLIC_URL, use it to construct the URL
           const publicUrl = process.env.S3_PUBLIC_URL;
-
-          // Always override URL if we have S3_PUBLIC_URL configured
           if (publicUrl) {
-            // Clean the filename if it has any path prefixes
-            let filename = doc.filename;
-
-            // Remove leading slashes
-            if (filename.startsWith('/')) {
-              filename = filename.substring(1);
-            }
-
-            // Remove 'media/' prefix if already included
-            if (filename.startsWith('media/')) {
-              filename = filename.substring(6);
-            }
-
-            // Extract just the filename if there are any remaining paths
-            if (filename.includes('/')) {
-              filename = filename.split('/').pop() || filename;
-            }
-
-            // Ensure publicUrl doesn't end with a slash
-            const cleanPublicUrl = publicUrl.endsWith('/') ? publicUrl.slice(0, -1) : publicUrl;
-
-            doc.url = `${cleanPublicUrl}/media/${filename}`;
-          }
-          // If the URL contains the incorrect /api/media/file pattern, fix it
-          else if (doc.url && doc.url.includes('/api/media/file/')) {
-            // This shouldn't happen in production, but fix it if it does
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || '';
-            if (serverUrl) {
-              doc.url = doc.url.replace('/api/media/file/', '/media/');
-            }
+            doc.url = `${publicUrl}/media/${doc.filename}`;
           }
         }
         return doc;

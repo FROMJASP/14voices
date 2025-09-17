@@ -71,7 +71,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ heroSettings }) => {
   const titleParts = parseTitle(hero.title);
 
   // Handle image URL extraction - should already be resolved by transformHeroDataForHomepage
-  const imageUrl = hero.heroImage;
+  let imageUrl = hero.heroImage;
+
+  // Fix malformed URLs on production
+  if (imageUrl) {
+    // Fix double slashes in URL (except after protocol)
+    imageUrl = imageUrl.replace(/([^:])\/\//g, '$1/');
+
+    // If URL starts with //media/, it's missing the domain
+    if (imageUrl.startsWith('//media/') || imageUrl.startsWith('/media/')) {
+      imageUrl = `https://storage.iam-studios.com${imageUrl.startsWith('//') ? imageUrl.substring(1) : imageUrl}`;
+    }
+
+    // If it's an /api/media/file URL, replace with S3 URL
+    if (imageUrl.includes('/api/media/file/')) {
+      const filename = imageUrl.split('/').pop();
+      if (filename) {
+        imageUrl = `https://storage.iam-studios.com/media/${filename}`;
+      }
+    }
+  }
 
   return (
     <section className="hero bg-background px-6 py-10">

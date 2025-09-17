@@ -49,8 +49,8 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
   let heroImageUrl: string | null = null; // No default fallback
 
   // Check for image field (used in hero blocks)
-  // Note: Hero1 block uses 'image', legacy hero uses 'heroImage'
-  const imageField = heroWithRichText.image || heroWithRichText.heroImage;
+  // Hero1 uses 'image', legacy uses 'heroImage'
+  const imageField = heroWithRichText.image || heroWithRichText.heroImage || (hero as any).image;
 
   // Log for debugging (will only run server-side during build)
   if (process.env.NODE_ENV !== 'production' && imageField && typeof imageField === 'object') {
@@ -61,12 +61,8 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
     });
   }
 
-  // First check for the virtual imageURL field (used in Hero1 block)
-  if ((hero as any).imageURL) {
-    heroImageUrl = (hero as any).imageURL;
-  }
-  // Then check for the virtual heroImageURL field (legacy hero blocks)
-  else if ((hero as any).heroImageURL) {
+  // First check for the virtual heroImageURL field (this is the most reliable)
+  if ((hero as any).heroImageURL) {
     heroImageUrl = (hero as any).heroImageURL;
   }
   // Then check the image/heroImage field
@@ -99,11 +95,8 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
           filename = filename.substring(6);
         }
 
-        // Ensure s3PublicUrl doesn't end with a slash
-        const cleanS3Url = s3PublicUrl.endsWith('/') ? s3PublicUrl.slice(0, -1) : s3PublicUrl;
-
         // Construct the full URL with /media/ path
-        heroImageUrl = `${cleanS3Url}/media/${filename}`;
+        heroImageUrl = `${s3PublicUrl}/media/${filename}`;
       }
     }
   }
