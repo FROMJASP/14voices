@@ -426,11 +426,30 @@ export const HeroV1Block: Block = {
               const imageObj = siblingData.image as any;
 
               if (imageObj.url) {
-                return imageObj.url;
-              } else if (imageObj.filename) {
+                // Check if URL contains the incorrect /api/media/file pattern
+                if (imageObj.url.includes('/api/media/file/')) {
+                  // Extract filename and rebuild with S3 URL
+                  const filename = imageObj.url.split('/').pop();
+                  const publicUrl = process.env.S3_PUBLIC_URL;
+                  if (publicUrl && filename) {
+                    return `${publicUrl}/media/${filename}`;
+                  }
+                }
+                // Only use the URL if it's a proper S3 URL
+                if (imageObj.url.startsWith('http')) {
+                  return imageObj.url;
+                }
+              }
+
+              if (imageObj.filename) {
                 const publicUrl = process.env.S3_PUBLIC_URL;
                 if (publicUrl) {
-                  return `${publicUrl}/media/${imageObj.filename}`;
+                  // Clean the filename if it has any path prefixes
+                  let filename = imageObj.filename;
+                  if (filename.includes('/')) {
+                    filename = filename.split('/').pop();
+                  }
+                  return `${publicUrl}/media/${filename}`;
                 }
                 return `/media/${imageObj.filename}`;
               }
