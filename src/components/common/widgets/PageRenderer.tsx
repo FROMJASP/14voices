@@ -128,36 +128,46 @@ export default function PageRenderer({
 
         switch (block.blockType) {
           case 'hero-v1': {
-            // Create a mock page structure that transformHeroDataForHomepage expects
-            const mockPage = {
-              layout: [block], // Pass the block in the layout array
+            // Extract image URL similar to ContentSection
+            let heroImageUrl: string | null = null;
+            if (block.image) {
+              if (typeof block.image === 'object') {
+                if (block.image.url) {
+                  heroImageUrl = block.image.url;
+                } else if (block.image.filename) {
+                  // Construct S3 URL
+                  heroImageUrl = `https://storage.iam-studios.com/media/${block.image.filename}`;
+                }
+              }
+            }
+
+            // Create hero settings directly from block data
+            const heroSettings = {
+              hero: {
+                title: block.title || '',
+                subtitle: block.subtitle || '',
+                description: block.description || '',
+                heroImage: heroImageUrl,
+                primaryButton: block.cta?.primaryLabel
+                  ? {
+                      text: block.cta.primaryLabel,
+                      url: block.cta.primaryUrl || '#',
+                    }
+                  : null,
+                secondaryButton: block.cta?.secondaryLabel
+                  ? {
+                      text: block.cta.secondaryLabel,
+                      url: block.cta.secondaryUrl || '#',
+                    }
+                  : null,
+              },
             };
 
-            const transformedData = transformHeroDataForHomepage(mockPage as any);
-
-            // Add the buttons from the CTA fields
-            if (transformedData) {
-              // Override with proper button data from block.cta
-              transformedData.hero.primaryButton = block.cta?.primaryLabel
-                ? {
-                    text: block.cta.primaryLabel,
-                    url: block.cta.primaryUrl || '#',
-                  }
-                : null;
-              transformedData.hero.secondaryButton = block.cta?.secondaryLabel
-                ? {
-                    text: block.cta.secondaryLabel,
-                    url: block.cta.secondaryUrl || '#',
-                  }
-                : null;
-
-              return (
-                <div key={blockKey}>
-                  <HeroSection heroSettings={transformedData} />
-                </div>
-              );
-            }
-            return null;
+            return (
+              <div key={blockKey}>
+                <HeroSection heroSettings={heroSettings} />
+              </div>
+            );
           }
 
           case 'hero-v2': {
