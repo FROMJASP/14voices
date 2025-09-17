@@ -51,6 +51,15 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
   // Check for image field (used in hero blocks)
   const imageField = heroWithRichText.image || heroWithRichText.heroImage;
 
+  // Log for debugging (will only run server-side during build)
+  if (process.env.NODE_ENV !== 'production' && imageField && typeof imageField === 'object') {
+    console.log('Hero image field:', {
+      hasUrl: !!(imageField as any).url,
+      hasFilename: !!(imageField as any).filename,
+      keys: Object.keys(imageField as any),
+    });
+  }
+
   // First check for the virtual heroImageURL field (this is the most reliable)
   if ((hero as any).heroImageURL) {
     heroImageUrl = (hero as any).heroImageURL;
@@ -68,15 +77,25 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
         // Keep the full URL for external images
         heroImageUrl = heroImageObj.url;
       } else if (heroImageObj.filename) {
-        // Use the known S3 public URL for storage.iam-studios.com
-        // This URL is hardcoded because environment variables might not be available
-        // in all build contexts (especially in production builds)
+        // Construct the URL based on the filename
+        // The media files are served from storage.iam-studios.com/media/
         const s3PublicUrl = 'https://storage.iam-studios.com';
-        // Ensure proper path construction
-        const filename = heroImageObj.filename.startsWith('/')
-          ? heroImageObj.filename.substring(1)
-          : heroImageObj.filename;
-        heroImageUrl = `${s3PublicUrl}/${filename}`;
+
+        // Handle different filename formats
+        let filename = heroImageObj.filename;
+
+        // Remove leading slash if present
+        if (filename.startsWith('/')) {
+          filename = filename.substring(1);
+        }
+
+        // Remove 'media/' prefix if already included in filename
+        if (filename.startsWith('media/')) {
+          filename = filename.substring(6);
+        }
+
+        // Construct the full URL with /media/ path
+        heroImageUrl = `${s3PublicUrl}/media/${filename}`;
       }
     }
   }
