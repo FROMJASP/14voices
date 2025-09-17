@@ -67,19 +67,22 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    voiceovers: Voiceover;
+    groups: Group;
+    productions: Production;
+    'extra-services': ExtraService;
     users: User;
     media: Media;
-    groups: Group;
-    voiceovers: Voiceover;
+    pages: Page;
+    'blog-posts': BlogPost;
+    categories: Category;
+    testimonials: Testimonial;
+    faq: Faq;
     bookings: Booking;
     scripts: Script;
     invoices: Invoice;
-    'blog-posts': BlogPost;
-    pages: Page;
     forms: Form;
     'form-submissions': FormSubmission;
-    testimonials: Testimonial;
-    faq: Faq;
     'email-components': EmailComponent;
     'email-templates': EmailTemplate;
     'email-sequences': EmailSequence;
@@ -95,19 +98,22 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    voiceovers: VoiceoversSelect<false> | VoiceoversSelect<true>;
+    groups: GroupsSelect<false> | GroupsSelect<true>;
+    productions: ProductionsSelect<false> | ProductionsSelect<true>;
+    'extra-services': ExtraServicesSelect<false> | ExtraServicesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    groups: GroupsSelect<false> | GroupsSelect<true>;
-    voiceovers: VoiceoversSelect<false> | VoiceoversSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
     scripts: ScriptsSelect<false> | ScriptsSelect<true>;
     invoices: InvoicesSelect<false> | InvoicesSelect<true>;
-    'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
-    pages: PagesSelect<false> | PagesSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
-    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
-    faq: FaqSelect<false> | FaqSelect<true>;
     'email-components': EmailComponentsSelect<false> | EmailComponentsSelect<true>;
     'email-templates': EmailTemplatesSelect<false> | EmailTemplatesSelect<true>;
     'email-sequences': EmailSequencesSelect<false> | EmailSequencesSelect<true>;
@@ -160,147 +166,6 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name?: string | null;
-  /**
-   * Upload a custom profile photo
-   */
-  avatar?: (number | null) | Media;
-  avatarURL?: string | null;
-  /**
-   * Color for default avatar when no image is uploaded
-   */
-  avatarColor?: string | null;
-  role: 'admin' | 'editor' | 'user';
-  jobTitle?: string | null;
-  phone?: string | null;
-  /**
-   * Short bio about yourself
-   */
-  bio?: string | null;
-  /**
-   * Social media profiles
-   */
-  socialLinks?: {
-    linkedin?: string | null;
-    instagram?: string | null;
-  };
-  /**
-   * Last login time
-   */
-  lastLogin?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  /**
-   * Alternative text for images (required for accessibility)
-   */
-  alt: string;
-  /**
-   * Optional caption for media files
-   */
-  caption?: string | null;
-  uploadedBy?: (number | null) | User;
-  scanStatus?: ('pending' | 'safe' | 'suspicious' | 'blocked') | null;
-  scanDetails?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    tablet?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "groups".
- */
-export interface Group {
-  id: number;
-  /**
-   * Name of the cohort (e.g., "November 2025", "Summer Voices")
-   */
-  name: string;
-  /**
-   * URL-friendly version (e.g., "nov-2025")
-   */
-  slug: string;
-  /**
-   * Optional description of this cohort
-   */
-  description?: string | null;
-  /**
-   * Whether this cohort is currently active
-   */
-  isActive?: boolean | null;
-  voiceoverCount?: number | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -396,6 +261,1049 @@ export interface Voiceover {
      */
     unavailableUntil?: string | null;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Alternative text for images (required for accessibility)
+   */
+  alt: string;
+  /**
+   * Optional caption for media files
+   */
+  caption?: string | null;
+  uploadedBy?: (number | null) | User;
+  scanStatus?: ('pending' | 'safe' | 'suspicious' | 'blocked') | null;
+  scanDetails?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    tablet?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  /**
+   * Upload a custom profile photo
+   */
+  avatar?: (number | null) | Media;
+  avatarURL?: string | null;
+  /**
+   * Color for default avatar when no image is uploaded
+   */
+  avatarColor?: string | null;
+  role: 'admin' | 'editor' | 'user';
+  jobTitle?: string | null;
+  phone?: string | null;
+  /**
+   * Short bio about yourself
+   */
+  bio?: string | null;
+  /**
+   * Social media profiles
+   */
+  socialLinks?: {
+    linkedin?: string | null;
+    instagram?: string | null;
+  };
+  /**
+   * Last login time
+   */
+  lastLogin?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "groups".
+ */
+export interface Group {
+  id: number;
+  /**
+   * Name of the cohort (e.g., "November 2025", "Summer Voices")
+   */
+  name: string;
+  /**
+   * URL-friendly version (e.g., "nov-2025")
+   */
+  slug: string;
+  /**
+   * Optional description of this cohort
+   */
+  description?: string | null;
+  /**
+   * Whether this cohort is currently active
+   */
+  isActive?: boolean | null;
+  voiceoverCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "productions".
+ */
+export interface Production {
+  id: number;
+  /**
+   * The name of the production type
+   */
+  name: string;
+  /**
+   * Base price in euros (excl. VAT)
+   */
+  basePrice: number;
+  /**
+   * Short description of this production type
+   */
+  description?: string | null;
+  /**
+   * Preview video for this production type
+   */
+  videoUrl?: (number | null) | Media;
+  /**
+   * How long the recordings can be used (use "infinity" for unlimited)
+   */
+  buyoutDuration?: string | null;
+  /**
+   * How is the price calculated?
+   */
+  pricingType: 'wordBased' | 'versionBased';
+  /**
+   * Ask for regional/national selection
+   */
+  requiresRegion?: boolean | null;
+  /**
+   * Pricing tiers for different word counts
+   */
+  wordPricingTiers?:
+    | {
+        /**
+         * Minimum words
+         */
+        minWords: number;
+        /**
+         * Maximum words (0 = unlimited)
+         */
+        maxWords: number;
+        /**
+         * Additional price in euros
+         */
+        additionalPrice: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Formula for price calculation above highest tier
+   */
+  wordPricingFormula?: {
+    /**
+     * Use formula for large word counts
+     */
+    enabled?: boolean | null;
+    /**
+     * Price per word above highest tier
+     */
+    pricePerWord?: number | null;
+    /**
+     * Explanation for customers about price calculation
+     */
+    explanation?: string | null;
+  };
+  /**
+   * Prices per number of versions
+   */
+  versionPricing?:
+    | {
+        /**
+         * Number of versions
+         */
+        versionCount: number;
+        /**
+         * Regional price
+         */
+        regionalPrice?: number | null;
+        /**
+         * National price
+         */
+        nationalPrice?: number | null;
+        /**
+         * Price
+         */
+        price?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  formSettings?: {
+    /**
+     * Placeholder text for the script field
+     */
+    scriptPlaceholder?: string | null;
+    /**
+     * Placeholder text for the instructions field
+     */
+    instructionsPlaceholder?: string | null;
+    /**
+     * Maximum recording time for instructions in minutes
+     */
+    maxRecordingMinutes?: number | null;
+    /**
+     * Show optional video link field
+     */
+    showVideoLinkField?: boolean | null;
+    /**
+     * Placeholder for video link field
+     */
+    videoLinkPlaceholder?: string | null;
+  };
+  /**
+   * Status of this production type
+   */
+  status: 'active' | 'inactive' | 'hidden';
+  /**
+   * Order in lists (low to high)
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "extra-services".
+ */
+export interface ExtraService {
+  id: number;
+  /**
+   * The name of the extra service
+   */
+  name: string;
+  /**
+   * Unique identifier
+   */
+  slug: string;
+  /**
+   * Standard price in euros (excl. VAT)
+   */
+  basePrice: number;
+  /**
+   * Description of this service
+   */
+  description?: string | null;
+  /**
+   * Extended explanation shown for more info
+   */
+  infoText?: string | null;
+  /**
+   * Which productions is this service available for
+   */
+  productions: (number | Production)[];
+  /**
+   * Different prices per production type
+   */
+  productionPriceOverrides?:
+    | {
+        production: number | Production;
+        /**
+         * Price for this specific production
+         */
+        overridePrice: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Other services that must be selected first
+   */
+  dependencies?: (number | ExtraService)[] | null;
+  status: 'active' | 'inactive';
+  /**
+   * Order in lists (low to high)
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  /**
+   * URL path for this page (e.g., "about-us")
+   */
+  slug: string;
+  /**
+   * Page title displayed in browser tabs and search results
+   */
+  title: string;
+  layout?:
+    | (
+        | {
+            processSteps?:
+              | {
+                  text: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * The main heading text. Use formatting like bold, italic, or colors to highlight specific words.
+             */
+            title?: {
+              root: {
+                type: string;
+                children: {
+                  type: string;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            /**
+             * Supporting text below the title. You can use formatting and links.
+             */
+            description?: {
+              root: {
+                type: string;
+                children: {
+                  type: string;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            image?: (number | null) | Media;
+            cta?: {
+              primaryLabel?: string | null;
+              primaryUrl?: string | null;
+              primaryStyle?: {
+                /**
+                 * Hex color code (e.g., #000000)
+                 */
+                backgroundColor?: string | null;
+                textColor?: string | null;
+                borderRadius?: ('none' | 'small' | 'medium' | 'large' | 'rounded' | 'full') | null;
+                icon?: ('none' | 'arrow-right' | 'arrow-left' | 'play' | 'download' | 'external') | null;
+                iconPosition?: ('left' | 'right') | null;
+              };
+              secondaryLabel?: string | null;
+              secondaryUrl?: string | null;
+              secondaryStyle?: {
+                backgroundColor?: string | null;
+                textColor?: string | null;
+                borderColor?: string | null;
+                borderRadius?: ('none' | 'small' | 'medium' | 'large' | 'rounded' | 'full') | null;
+                icon?: ('none' | 'arrow-right' | 'arrow-left' | 'play' | 'download' | 'external') | null;
+                iconPosition?: ('left' | 'right') | null;
+              };
+            };
+            stats?:
+              | {
+                  /**
+                   * The number or percentage to display (e.g., "14+", "100%", "24h")
+                   */
+                  value: string;
+                  /**
+                   * The description text below the value
+                   */
+                  label: string;
+                  /**
+                   * Make this statistic clickable by adding a URL
+                   */
+                  link?: string | null;
+                  /**
+                   * Add a subtle scale effect on hover
+                   */
+                  hoverEffect?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero-v1';
+          }
+        | {
+            badge?: {
+              enabled?: boolean | null;
+              text?: string | null;
+            };
+            /**
+             * The main heading text with formatting options.
+             */
+            title?: {
+              root: {
+                type: string;
+                children: {
+                  type: string;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            /**
+             * Subtitle text above the main title.
+             */
+            subtitle?: {
+              root: {
+                type: string;
+                children: {
+                  type: string;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            /**
+             * Supporting text with formatting and link options.
+             */
+            description?: {
+              root: {
+                type: string;
+                children: {
+                  type: string;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            image?: (number | null) | Media;
+            cta?: {
+              primaryLabel?: string | null;
+              primaryUrl?: string | null;
+              secondaryLabel?: string | null;
+              secondaryUrl?: string | null;
+            };
+            /**
+             * Space above the hero section
+             */
+            paddingTop?: ('none' | 'small' | 'medium' | 'large' | 'xlarge') | null;
+            /**
+             * Space below the hero section
+             */
+            paddingBottom?: ('none' | 'small' | 'medium' | 'large' | 'xlarge') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero-v2';
+          }
+        | {
+            /**
+             * Image to display above the content
+             */
+            image?: (number | null) | Media;
+            imageStyle?: {
+              grayscale?: boolean | null;
+              rounded?: boolean | null;
+            };
+            /**
+             * Main heading for the content section
+             */
+            title?: string | null;
+            /**
+             * Supporting text that appears next to the title
+             */
+            description?: string | null;
+            button?: {
+              label?: string | null;
+              url?: string | null;
+              style?: ('default' | 'secondary' | 'outline' | 'ghost') | null;
+              showIcon?: boolean | null;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'content-v1';
+          }
+        | {
+            title?: string | null;
+            showcase?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'voiceover-v1';
+          }
+        | {
+            /**
+             * Title displayed above the blog posts
+             */
+            title?: string | null;
+            /**
+             * Optional description text below the title
+             */
+            description?: string | null;
+            /**
+             * How many blog posts to display
+             */
+            postsLimit?: number | null;
+            /**
+             * Display the categories sidebar with post counts
+             */
+            showCategories?: boolean | null;
+            /**
+             * Space above the blog section
+             */
+            paddingTop?: ('none' | 'small' | 'medium' | 'large' | 'xlarge') | null;
+            /**
+             * Space below the blog section
+             */
+            paddingBottom?: ('none' | 'small' | 'medium' | 'large' | 'xlarge') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'blog-section-1';
+          }
+        | {
+            /**
+             * Show social media share buttons (Facebook, X, LinkedIn)
+             */
+            showShareButtons?: boolean | null;
+            /**
+             * Show "Written by" with author name
+             */
+            showAuthor?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'blog-post';
+          }
+        | PriceCalculatorBlock
+      )[]
+    | null;
+  /**
+   * Main page content
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Add content sections to build your page
+   */
+  sections?:
+    | {
+        type: 'richText' | 'twoColumn' | 'cta' | 'contact' | 'pricing' | 'testimonials' | 'faq' | 'gallery';
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    /**
+     * SEO meta title (overrides page title if set)
+     */
+    title?: string | null;
+    /**
+     * SEO meta description for search results
+     */
+    description?: string | null;
+    /**
+     * SEO keywords (not used by most search engines)
+     */
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Social media preview image
+     */
+    image?: (number | null) | Media;
+    /**
+     * Prevent search engines from indexing this page
+     */
+    noIndex?: boolean | null;
+  };
+  openGraph?: {
+    /**
+     * OG title for social sharing
+     */
+    title?: string | null;
+    /**
+     * OG description for social sharing
+     */
+    description?: string | null;
+    type?: ('website' | 'article') | null;
+  };
+  /**
+   * Set a parent page to create a hierarchy
+   */
+  parent?: (number | null) | Page;
+  /**
+   * Page visibility status
+   */
+  status: 'draft' | 'published' | 'archived';
+  /**
+   * Prevent deletion and structural changes to this page
+   */
+  locked?: boolean | null;
+  /**
+   * Schedule page publication
+   */
+  publishedDate?: string | null;
+  /**
+   * Show this page in the navigation menu
+   */
+  showInNav?: boolean | null;
+  /**
+   * Order in navigation (lower numbers appear first)
+   */
+  navOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PriceCalculatorBlock".
+ */
+export interface PriceCalculatorBlock {
+  /**
+   * Titel van de prijscalculator sectie
+   */
+  title: string;
+  /**
+   * Ondertitel/beschrijving
+   */
+  subtitle?: string | null;
+  /**
+   * Toon alle actieve producties
+   */
+  showAllProductions?: boolean | null;
+  /**
+   * Selecteer specifieke producties om te tonen
+   */
+  selectedProductions?: (number | Production)[] | null;
+  /**
+   * Kies de visuele weergave
+   */
+  layout?: ('cards' | 'accordion' | 'tabs') | null;
+  /**
+   * Toon ook voice-over selectie in de calculator
+   */
+  showVoiceoverSelection?: boolean | null;
+  ctaSettings?: {
+    /**
+     * Toon call-to-action na prijsberekening
+     */
+    showCTA?: boolean | null;
+    /**
+     * Tekst voor de CTA knop
+     */
+    ctaText?: string | null;
+    /**
+     * Link voor de CTA knop
+     */
+    ctaLink?: string | null;
+  };
+  /**
+   * Achtergrondkleur van de sectie
+   */
+  backgroundColor?: ('default' | 'gray' | 'white') | null;
+  /**
+   * ID voor navigatie anker (bijv. voor #prijzen in URL)
+   */
+  anchorId?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'price-calculator';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-posts".
+ */
+export interface BlogPost {
+  id: number;
+  /**
+   * The main title of your blog post
+   */
+  title: string;
+  /**
+   * Optional subtitle or tagline
+   */
+  subtitle?: string | null;
+  /**
+   * URL-friendly version of the title
+   */
+  slug?: string | null;
+  /**
+   * Hero image displayed at the top of the post
+   */
+  bannerImage: number | Media;
+  /**
+   * The main content of your blog post
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Short summary for previews and listings (auto-generated if empty)
+   */
+  excerpt?: string | null;
+  meta?: Meta;
+  openGraph?: {
+    /**
+     * OG title for social sharing
+     */
+    title?: string | null;
+    /**
+     * OG description for social sharing
+     */
+    description?: string | null;
+    type?: ('article' | 'website') | null;
+  };
+  /**
+   * The author of this post
+   */
+  author: number | User;
+  /**
+   * Select a category for this post
+   */
+  category?: (number | null) | Category;
+  /**
+   * Add tags for better discoverability
+   */
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Post visibility status
+   */
+  status: 'draft' | 'published' | 'archived';
+  /**
+   * Schedule post publication
+   */
+  publishedDate?: string | null;
+  /**
+   * Feature this post on the homepage
+   */
+  featured?: boolean | null;
+  /**
+   * Allow comments on this post
+   */
+  enableComments?: boolean | null;
+  /**
+   * Number of times this post has been viewed
+   */
+  views?: number | null;
+  /**
+   * Total number of words in the blog post content
+   */
+  wordCount?: number | null;
+  /**
+   * Automatically calculated based on content length. Assumes an average reading speed of 200 words per minute. The total word count is divided by 200 to estimate reading time.
+   */
+  readingTime?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Meta".
+ */
+export interface Meta {
+  /**
+   * Override the default title for SEO (defaults to post title)
+   */
+  title?: string | null;
+  /**
+   * Meta description for search engines (defaults to excerpt)
+   */
+  description?: string | null;
+  /**
+   * SEO keywords for this post
+   */
+  keywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Social media preview image (defaults to banner image)
+   */
+  image?: (number | null) | Media;
+  /**
+   * Prevent search engines from indexing this page
+   */
+  noIndex?: boolean | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  icon:
+    | 'cpu'
+    | 'briefcase'
+    | 'dollar'
+    | 'health'
+    | 'lifestyle'
+    | 'politics'
+    | 'science'
+    | 'sports'
+    | 'education'
+    | 'entertainment'
+    | 'food'
+    | 'travel'
+    | 'art'
+    | 'gaming'
+    | 'photography';
+  /**
+   * Optional description for the category
+   */
+  description?: string | null;
+  /**
+   * Number of blog posts in this category
+   */
+  postsCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  /**
+   * Client name
+   */
+  name: string;
+  /**
+   * Job title or role
+   */
+  title?: string | null;
+  /**
+   * Company name
+   */
+  company?: string | null;
+  /**
+   * Client photo or avatar
+   */
+  avatar?: (number | null) | Media;
+  /**
+   * The testimonial text
+   */
+  testimonial: string;
+  /**
+   * Star rating
+   */
+  rating?: ('5' | '4' | '3' | '2' | '1') | null;
+  /**
+   * Show in featured testimonials
+   */
+  featured?: boolean | null;
+  publishedDate?: string | null;
+  media?: {
+    type?: ('none' | 'video' | 'audio') | null;
+    /**
+     * YouTube or Vimeo URL
+     */
+    videoUrl?: string | null;
+    /**
+     * Video thumbnail image
+     */
+    videoThumbnail?: (number | null) | Media;
+    /**
+     * Audio testimonial file
+     */
+    audioFile?: (number | null) | Media;
+    /**
+     * Duration (e.g., 2:30)
+     */
+    duration?: string | null;
+  };
+  project?: {
+    /**
+     * Related voiceover artist
+     */
+    voiceover?: (number | null) | Voiceover;
+    projectType?:
+      | ('commercial' | 'narration' | 'character' | 'elearning' | 'ivr' | 'podcast' | 'audiobook' | 'other')
+      | null;
+    /**
+     * Name of the project
+     */
+    projectName?: string | null;
+    /**
+     * When the project was completed
+     */
+    completedDate?: string | null;
+  };
+  display?: {
+    /**
+     * Show company name
+     */
+    showCompany?: boolean | null;
+    /**
+     * Show job title
+     */
+    showTitle?: boolean | null;
+    /**
+     * Show avatar/photo
+     */
+    showAvatar?: boolean | null;
+    /**
+     * Show star rating
+     */
+    showRating?: boolean | null;
+    /**
+     * Text to highlight in the testimonial (will be bolded)
+     */
+    highlightText?: string | null;
+    /**
+     * Tags for filtering
+     */
+    tags?:
+      | {
+          tag?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  status?: ('published' | 'draft' | 'archived') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  category?: ('general' | 'pricing' | 'delivery' | 'technical' | 'rights') | null;
+  order?: number | null;
+  published?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -567,551 +1475,6 @@ export interface Invoice {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blog-posts".
- */
-export interface BlogPost {
-  id: number;
-  /**
-   * The main title of your blog post
-   */
-  title: string;
-  /**
-   * Optional subtitle or tagline
-   */
-  subtitle?: string | null;
-  /**
-   * URL-friendly version of the title
-   */
-  slug?: string | null;
-  /**
-   * Hero image displayed at the top of the post
-   */
-  bannerImage: number | Media;
-  /**
-   * The main content of your blog post
-   */
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  /**
-   * Short summary for previews and listings (auto-generated if empty)
-   */
-  excerpt?: string | null;
-  meta?: Meta;
-  openGraph?: {
-    /**
-     * OG title for social sharing
-     */
-    title?: string | null;
-    /**
-     * OG description for social sharing
-     */
-    description?: string | null;
-    type?: ('article' | 'website') | null;
-  };
-  /**
-   * The author of this post
-   */
-  author: number | User;
-  /**
-   * Organize posts by categories
-   */
-  categories?:
-    | {
-        category?:
-          | ('news' | 'tips-tricks' | 'behind-scenes' | 'industry-insights' | 'voice-acting' | 'technology')
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Add tags for better discoverability
-   */
-  tags?:
-    | {
-        tag?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Post visibility status
-   */
-  status: 'draft' | 'published' | 'archived';
-  /**
-   * Schedule post publication
-   */
-  publishedDate?: string | null;
-  /**
-   * Feature this post on the homepage
-   */
-  featured?: boolean | null;
-  /**
-   * Allow comments on this post
-   */
-  enableComments?: boolean | null;
-  /**
-   * Number of times this post has been viewed
-   */
-  views?: number | null;
-  /**
-   * Estimated reading time in minutes
-   */
-  readingTime?: number | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Meta".
- */
-export interface Meta {
-  /**
-   * Override the default title for SEO (defaults to post title)
-   */
-  title?: string | null;
-  /**
-   * Meta description for search engines (defaults to excerpt)
-   */
-  description?: string | null;
-  /**
-   * SEO keywords for this post
-   */
-  keywords?:
-    | {
-        keyword?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Social media preview image (defaults to banner image)
-   */
-  image?: (number | null) | Media;
-  /**
-   * Prevent search engines from indexing this page
-   */
-  noIndex?: boolean | null;
-}
-/**
- * Manage site pages. Note: The home page cannot be deleted.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages".
- */
-export interface Page {
-  id: number;
-  /**
-   * Page title displayed in browser tabs and search results
-   */
-  title: string;
-  /**
-   * URL path for this page (e.g., "about-us")
-   */
-  slug: string;
-  hero?: {
-    type?: ('none' | 'simple' | 'image' | 'video' | 'gradient' | 'homepage') | null;
-    /**
-     * The small process steps displayed at the top of the hero
-     */
-    processSteps?:
-      | {
-          /**
-           * Text for this step (e.g., "1. Kies de stem")
-           */
-          text: string;
-          id?: string | null;
-        }[]
-      | null;
-    /**
-     * Hero title text
-     */
-    title?: string | null;
-    subtitle?: string | null;
-    /**
-     * Hero description text
-     */
-    description?: string | null;
-    image?: (number | null) | Media;
-    /**
-     * Main image displayed in the oval-shaped container on the right (recommended: high-quality portrait photo, minimum 400x500px)
-     */
-    heroImage?: (number | null) | Media;
-    /**
-     * YouTube or Vimeo URL
-     */
-    videoUrl?: string | null;
-    primaryButton?: {
-      /**
-       * Text for the primary call-to-action button
-       */
-      text: string;
-      /**
-       * URL for the primary button (e.g., #voiceovers, /voiceovers)
-       */
-      url: string;
-    };
-    secondaryButton?: {
-      /**
-       * Text for the secondary button
-       */
-      text: string;
-      /**
-       * URL for the secondary button
-       */
-      url: string;
-    };
-    cta?: {
-      text?: string | null;
-      link?: string | null;
-      style?: ('primary' | 'secondary' | 'outline') | null;
-    };
-    /**
-     * Statistics displayed below the buttons
-     */
-    stats?:
-      | {
-          /**
-           * The statistic number/value (e.g., "14", "<48u", "9.1/10")
-           */
-          number: string;
-          /**
-           * The statistic label (e.g., "Stemacteurs", "Snelle levering")
-           */
-          label: string;
-          id?: string | null;
-        }[]
-      | null;
-  };
-  /**
-   * Settings for the voice-over section on the homepage
-   */
-  voiceover?: {
-    /**
-     * The title displayed above the voice actors grid
-     */
-    title: string;
-  };
-  /**
-   * Main page content
-   */
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Add content sections to build your page
-   */
-  sections?:
-    | {
-        type: 'richText' | 'twoColumn' | 'cta' | 'contact' | 'pricing' | 'testimonials' | 'faq' | 'gallery';
-        richTextContent?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        leftColumn?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        rightColumn?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        columnRatio?: ('50-50' | '60-40' | '40-60' | '70-30' | '30-70') | null;
-        ctaHeading?: string | null;
-        ctaText?: string | null;
-        ctaButtons?:
-          | {
-              text: string;
-              link: string;
-              style?: ('primary' | 'secondary' | 'outline') | null;
-              id?: string | null;
-            }[]
-          | null;
-        ctaBackgroundColor?: ('white' | 'gray' | 'primary' | 'dark') | null;
-        contactHeading?: string | null;
-        contactSubheading?: string | null;
-        showContactForm?: boolean | null;
-        contactEmail?: string | null;
-        contactPhone?: string | null;
-        pricingHeading?: string | null;
-        pricingSubheading?: string | null;
-        pricingPlans?:
-          | {
-              name: string;
-              price: string;
-              description?: string | null;
-              features?:
-                | {
-                    feature: string;
-                    id?: string | null;
-                  }[]
-                | null;
-              highlighted?: boolean | null;
-              buttonText?: string | null;
-              buttonLink?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        testimonialsHeading?: string | null;
-        testimonialsSubheading?: string | null;
-        testimonialsSource?: ('featured' | 'latest' | 'selected') | null;
-        selectedTestimonials?: (number | Testimonial)[] | null;
-        testimonialsLimit?: number | null;
-        faqHeading?: string | null;
-        faqSubheading?: string | null;
-        faqs?:
-          | {
-              question: string;
-              answer: {
-                root: {
-                  type: string;
-                  children: {
-                    type: string;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              };
-              id?: string | null;
-            }[]
-          | null;
-        galleryHeading?: string | null;
-        galleryImages?: (number | Media)[] | null;
-        galleryLayout?: ('grid' | 'masonry' | 'carousel') | null;
-        id?: string | null;
-      }[]
-    | null;
-  meta?: {
-    /**
-     * Override page title for SEO (60 chars max)
-     */
-    title?: string | null;
-    /**
-     * Meta description for search engines (160 chars max)
-     */
-    description?: string | null;
-    /**
-     * SEO keywords for this page
-     */
-    keywords?:
-      | {
-          keyword?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    /**
-     * Social media preview image
-     */
-    image?: (number | null) | Media;
-    /**
-     * Prevent search engines from indexing this page
-     */
-    noIndex?: boolean | null;
-  };
-  openGraph?: {
-    /**
-     * OG title for social sharing
-     */
-    title?: string | null;
-    /**
-     * OG description for social sharing
-     */
-    description?: string | null;
-    type?: ('website' | 'article') | null;
-  };
-  /**
-   * Set a parent page to create a hierarchy
-   */
-  parent?: (number | null) | Page;
-  /**
-   * Page visibility status
-   */
-  status: 'draft' | 'published' | 'archived';
-  /**
-   * Schedule page publication
-   */
-  publishedDate?: string | null;
-  /**
-   * Include in navigation menus
-   */
-  showInNav?: boolean | null;
-  /**
-   * Order in navigation (lower numbers appear first)
-   */
-  navOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials".
- */
-export interface Testimonial {
-  id: number;
-  /**
-   * Client name
-   */
-  name: string;
-  /**
-   * Job title or role
-   */
-  title?: string | null;
-  /**
-   * Company name
-   */
-  company?: string | null;
-  /**
-   * Client photo or avatar
-   */
-  avatar?: (number | null) | Media;
-  /**
-   * The testimonial text
-   */
-  testimonial: string;
-  /**
-   * Star rating
-   */
-  rating?: ('5' | '4' | '3' | '2' | '1') | null;
-  /**
-   * Show in featured testimonials
-   */
-  featured?: boolean | null;
-  publishedDate?: string | null;
-  media?: {
-    type?: ('none' | 'video' | 'audio') | null;
-    /**
-     * YouTube or Vimeo URL
-     */
-    videoUrl?: string | null;
-    /**
-     * Video thumbnail image
-     */
-    videoThumbnail?: (number | null) | Media;
-    /**
-     * Audio testimonial file
-     */
-    audioFile?: (number | null) | Media;
-    /**
-     * Duration (e.g., 2:30)
-     */
-    duration?: string | null;
-  };
-  project?: {
-    /**
-     * Related voiceover artist
-     */
-    voiceover?: (number | null) | Voiceover;
-    projectType?:
-      | ('commercial' | 'narration' | 'character' | 'elearning' | 'ivr' | 'podcast' | 'audiobook' | 'other')
-      | null;
-    /**
-     * Name of the project
-     */
-    projectName?: string | null;
-    /**
-     * When the project was completed
-     */
-    completedDate?: string | null;
-  };
-  display?: {
-    /**
-     * Show company name
-     */
-    showCompany?: boolean | null;
-    /**
-     * Show job title
-     */
-    showTitle?: boolean | null;
-    /**
-     * Show avatar/photo
-     */
-    showAvatar?: boolean | null;
-    /**
-     * Show star rating
-     */
-    showRating?: boolean | null;
-    /**
-     * Text to highlight in the testimonial (will be bolded)
-     */
-    highlightText?: string | null;
-    /**
-     * Tags for filtering
-     */
-    tags?:
-      | {
-          tag?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
-  status?: ('published' | 'draft' | 'archived') | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1311,51 +1674,6 @@ export interface FormSubmission {
   submittedBy?: (number | null) | User;
   ipAddress?: string | null;
   userAgent?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Manage frequently asked questions and configure how they appear on the homepage
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faq".
- */
-export interface Faq {
-  id: number;
-  /**
-   * The question that visitors frequently ask
-   */
-  question: string;
-  /**
-   * Detailed answer to the question
-   */
-  answer: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  /**
-   * Category to group related questions
-   */
-  category?: ('general' | 'pricing' | 'delivery' | 'technical' | 'rights') | null;
-  /**
-   * Lower numbers appear first (0, 1, 2, ...)
-   */
-  order?: number | null;
-  /**
-   * Only published FAQ items will be shown on the website
-   */
-  published?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2039,6 +2357,22 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'voiceovers';
+        value: number | Voiceover;
+      } | null)
+    | ({
+        relationTo: 'groups';
+        value: number | Group;
+      } | null)
+    | ({
+        relationTo: 'productions';
+        value: number | Production;
+      } | null)
+    | ({
+        relationTo: 'extra-services';
+        value: number | ExtraService;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -2047,12 +2381,24 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'groups';
-        value: number | Group;
+        relationTo: 'pages';
+        value: number | Page;
       } | null)
     | ({
-        relationTo: 'voiceovers';
-        value: number | Voiceover;
+        relationTo: 'blog-posts';
+        value: number | BlogPost;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'faq';
+        value: number | Faq;
       } | null)
     | ({
         relationTo: 'bookings';
@@ -2067,28 +2413,12 @@ export interface PayloadLockedDocument {
         value: number | Invoice;
       } | null)
     | ({
-        relationTo: 'blog-posts';
-        value: number | BlogPost;
-      } | null)
-    | ({
-        relationTo: 'pages';
-        value: number | Page;
-      } | null)
-    | ({
         relationTo: 'forms';
         value: number | Form;
       } | null)
     | ({
         relationTo: 'form-submissions';
         value: number | FormSubmission;
-      } | null)
-    | ({
-        relationTo: 'testimonials';
-        value: number | Testimonial;
-      } | null)
-    | ({
-        relationTo: 'faq';
-        value: number | Faq;
       } | null)
     | ({
         relationTo: 'email-components';
@@ -2167,6 +2497,131 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "voiceovers_select".
+ */
+export interface VoiceoversSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  profilePhoto?: T;
+  additionalPhotos?:
+    | T
+    | {
+        photo?: T;
+        caption?: T;
+        id?: T;
+      };
+  styleTags?:
+    | T
+    | {
+        tag?: T;
+        customTag?: T;
+        id?: T;
+      };
+  fullDemoReel?: T;
+  commercialsDemo?: T;
+  narrativeDemo?: T;
+  status?: T;
+  group?: T;
+  availability?:
+    | T
+    | {
+        isAvailable?: T;
+        unavailableFrom?: T;
+        unavailableUntil?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "groups_select".
+ */
+export interface GroupsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  isActive?: T;
+  voiceoverCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "productions_select".
+ */
+export interface ProductionsSelect<T extends boolean = true> {
+  name?: T;
+  basePrice?: T;
+  description?: T;
+  videoUrl?: T;
+  buyoutDuration?: T;
+  pricingType?: T;
+  requiresRegion?: T;
+  wordPricingTiers?:
+    | T
+    | {
+        minWords?: T;
+        maxWords?: T;
+        additionalPrice?: T;
+        id?: T;
+      };
+  wordPricingFormula?:
+    | T
+    | {
+        enabled?: T;
+        pricePerWord?: T;
+        explanation?: T;
+      };
+  versionPricing?:
+    | T
+    | {
+        versionCount?: T;
+        regionalPrice?: T;
+        nationalPrice?: T;
+        price?: T;
+        id?: T;
+      };
+  formSettings?:
+    | T
+    | {
+        scriptPlaceholder?: T;
+        instructionsPlaceholder?: T;
+        maxRecordingMinutes?: T;
+        showVideoLinkField?: T;
+        videoLinkPlaceholder?: T;
+      };
+  status?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "extra-services_select".
+ */
+export interface ExtraServicesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  basePrice?: T;
+  description?: T;
+  infoText?: T;
+  productions?: T;
+  productionPriceOverrides?:
+    | T
+    | {
+        production?: T;
+        overridePrice?: T;
+        id?: T;
+      };
+  dependencies?: T;
+  status?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2263,52 +2718,331 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "groups_select".
+ * via the `definition` "pages_select".
  */
-export interface GroupsSelect<T extends boolean = true> {
+export interface PagesSelect<T extends boolean = true> {
+  slug?: T;
+  title?: T;
+  layout?:
+    | T
+    | {
+        'hero-v1'?:
+          | T
+          | {
+              processSteps?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              title?: T;
+              description?: T;
+              image?: T;
+              cta?:
+                | T
+                | {
+                    primaryLabel?: T;
+                    primaryUrl?: T;
+                    primaryStyle?:
+                      | T
+                      | {
+                          backgroundColor?: T;
+                          textColor?: T;
+                          borderRadius?: T;
+                          icon?: T;
+                          iconPosition?: T;
+                        };
+                    secondaryLabel?: T;
+                    secondaryUrl?: T;
+                    secondaryStyle?:
+                      | T
+                      | {
+                          backgroundColor?: T;
+                          textColor?: T;
+                          borderColor?: T;
+                          borderRadius?: T;
+                          icon?: T;
+                          iconPosition?: T;
+                        };
+                  };
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    link?: T;
+                    hoverEffect?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'hero-v2'?:
+          | T
+          | {
+              badge?:
+                | T
+                | {
+                    enabled?: T;
+                    text?: T;
+                  };
+              title?: T;
+              subtitle?: T;
+              description?: T;
+              image?: T;
+              cta?:
+                | T
+                | {
+                    primaryLabel?: T;
+                    primaryUrl?: T;
+                    secondaryLabel?: T;
+                    secondaryUrl?: T;
+                  };
+              paddingTop?: T;
+              paddingBottom?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'content-v1'?:
+          | T
+          | {
+              image?: T;
+              imageStyle?:
+                | T
+                | {
+                    grayscale?: T;
+                    rounded?: T;
+                  };
+              title?: T;
+              description?: T;
+              button?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    style?: T;
+                    showIcon?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'voiceover-v1'?:
+          | T
+          | {
+              title?: T;
+              showcase?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'blog-section-1'?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              postsLimit?: T;
+              showCategories?: T;
+              paddingTop?: T;
+              paddingBottom?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'blog-post'?:
+          | T
+          | {
+              showShareButtons?: T;
+              showAuthor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'price-calculator'?: T | PriceCalculatorBlockSelect<T>;
+      };
+  content?: T;
+  sections?:
+    | T
+    | {
+        type?: T;
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        image?: T;
+        noIndex?: T;
+      };
+  openGraph?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        type?: T;
+      };
+  parent?: T;
+  status?: T;
+  locked?: T;
+  publishedDate?: T;
+  showInNav?: T;
+  navOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PriceCalculatorBlock_select".
+ */
+export interface PriceCalculatorBlockSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  showAllProductions?: T;
+  selectedProductions?: T;
+  layout?: T;
+  showVoiceoverSelection?: T;
+  ctaSettings?:
+    | T
+    | {
+        showCTA?: T;
+        ctaText?: T;
+        ctaLink?: T;
+      };
+  backgroundColor?: T;
+  anchorId?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-posts_select".
+ */
+export interface BlogPostsSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  slug?: T;
+  bannerImage?: T;
+  content?: T;
+  excerpt?: T;
+  meta?: T | MetaSelect<T>;
+  openGraph?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        type?: T;
+      };
+  author?: T;
+  category?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  status?: T;
+  publishedDate?: T;
+  featured?: T;
+  enableComments?: T;
+  views?: T;
+  wordCount?: T;
+  readingTime?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Meta_select".
+ */
+export interface MetaSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  image?: T;
+  noIndex?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  icon?: T;
   description?: T;
-  isActive?: T;
-  voiceoverCount?: T;
+  postsCount?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "voiceovers_select".
+ * via the `definition` "testimonials_select".
  */
-export interface VoiceoversSelect<T extends boolean = true> {
+export interface TestimonialsSelect<T extends boolean = true> {
   name?: T;
-  slug?: T;
-  description?: T;
-  profilePhoto?: T;
-  additionalPhotos?:
+  title?: T;
+  company?: T;
+  avatar?: T;
+  testimonial?: T;
+  rating?: T;
+  featured?: T;
+  publishedDate?: T;
+  media?:
     | T
     | {
-        photo?: T;
-        caption?: T;
-        id?: T;
+        type?: T;
+        videoUrl?: T;
+        videoThumbnail?: T;
+        audioFile?: T;
+        duration?: T;
       };
-  styleTags?:
+  project?:
     | T
     | {
-        tag?: T;
-        customTag?: T;
-        id?: T;
+        voiceover?: T;
+        projectType?: T;
+        projectName?: T;
+        completedDate?: T;
       };
-  fullDemoReel?: T;
-  commercialsDemo?: T;
-  narrativeDemo?: T;
+  display?:
+    | T
+    | {
+        showCompany?: T;
+        showTitle?: T;
+        showAvatar?: T;
+        showRating?: T;
+        highlightText?: T;
+        tags?:
+          | T
+          | {
+              tag?: T;
+              id?: T;
+            };
+      };
   status?: T;
-  group?: T;
-  availability?:
-    | T
-    | {
-        isAvailable?: T;
-        unavailableFrom?: T;
-        unavailableUntil?: T;
-      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  order?: T;
+  published?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2399,207 +3133,6 @@ export interface InvoicesSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blog-posts_select".
- */
-export interface BlogPostsSelect<T extends boolean = true> {
-  title?: T;
-  subtitle?: T;
-  slug?: T;
-  bannerImage?: T;
-  content?: T;
-  excerpt?: T;
-  meta?: T | MetaSelect<T>;
-  openGraph?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        type?: T;
-      };
-  author?: T;
-  categories?:
-    | T
-    | {
-        category?: T;
-        id?: T;
-      };
-  tags?:
-    | T
-    | {
-        tag?: T;
-        id?: T;
-      };
-  status?: T;
-  publishedDate?: T;
-  featured?: T;
-  enableComments?: T;
-  views?: T;
-  readingTime?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Meta_select".
- */
-export interface MetaSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  keywords?:
-    | T
-    | {
-        keyword?: T;
-        id?: T;
-      };
-  image?: T;
-  noIndex?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages_select".
- */
-export interface PagesSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  hero?:
-    | T
-    | {
-        type?: T;
-        processSteps?:
-          | T
-          | {
-              text?: T;
-              id?: T;
-            };
-        title?: T;
-        subtitle?: T;
-        description?: T;
-        image?: T;
-        heroImage?: T;
-        videoUrl?: T;
-        primaryButton?:
-          | T
-          | {
-              text?: T;
-              url?: T;
-            };
-        secondaryButton?:
-          | T
-          | {
-              text?: T;
-              url?: T;
-            };
-        cta?:
-          | T
-          | {
-              text?: T;
-              link?: T;
-              style?: T;
-            };
-        stats?:
-          | T
-          | {
-              number?: T;
-              label?: T;
-              id?: T;
-            };
-      };
-  content?: T;
-  sections?:
-    | T
-    | {
-        type?: T;
-        richTextContent?: T;
-        leftColumn?: T;
-        rightColumn?: T;
-        columnRatio?: T;
-        ctaHeading?: T;
-        ctaText?: T;
-        ctaButtons?:
-          | T
-          | {
-              text?: T;
-              link?: T;
-              style?: T;
-              id?: T;
-            };
-        ctaBackgroundColor?: T;
-        contactHeading?: T;
-        contactSubheading?: T;
-        showContactForm?: T;
-        contactEmail?: T;
-        contactPhone?: T;
-        pricingHeading?: T;
-        pricingSubheading?: T;
-        pricingPlans?:
-          | T
-          | {
-              name?: T;
-              price?: T;
-              description?: T;
-              features?:
-                | T
-                | {
-                    feature?: T;
-                    id?: T;
-                  };
-              highlighted?: T;
-              buttonText?: T;
-              buttonLink?: T;
-              id?: T;
-            };
-        testimonialsHeading?: T;
-        testimonialsSubheading?: T;
-        testimonialsSource?: T;
-        selectedTestimonials?: T;
-        testimonialsLimit?: T;
-        faqHeading?: T;
-        faqSubheading?: T;
-        faqs?:
-          | T
-          | {
-              question?: T;
-              answer?: T;
-              id?: T;
-            };
-        galleryHeading?: T;
-        galleryImages?: T;
-        galleryLayout?: T;
-        id?: T;
-      };
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        keywords?:
-          | T
-          | {
-              keyword?: T;
-              id?: T;
-            };
-        image?: T;
-        noIndex?: T;
-      };
-  openGraph?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        type?: T;
-      };
-  parent?: T;
-  status?: T;
-  publishedDate?: T;
-  showInNav?: T;
-  navOrder?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2718,68 +3251,6 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
   submittedBy?: T;
   ipAddress?: T;
   userAgent?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials_select".
- */
-export interface TestimonialsSelect<T extends boolean = true> {
-  name?: T;
-  title?: T;
-  company?: T;
-  avatar?: T;
-  testimonial?: T;
-  rating?: T;
-  featured?: T;
-  publishedDate?: T;
-  media?:
-    | T
-    | {
-        type?: T;
-        videoUrl?: T;
-        videoThumbnail?: T;
-        audioFile?: T;
-        duration?: T;
-      };
-  project?:
-    | T
-    | {
-        voiceover?: T;
-        projectType?: T;
-        projectName?: T;
-        completedDate?: T;
-      };
-  display?:
-    | T
-    | {
-        showCompany?: T;
-        showTitle?: T;
-        showAvatar?: T;
-        showRating?: T;
-        highlightText?: T;
-        tags?:
-          | T
-          | {
-              tag?: T;
-              id?: T;
-            };
-      };
-  status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faq_select".
- */
-export interface FaqSelect<T extends boolean = true> {
-  question?: T;
-  answer?: T;
-  category?: T;
-  order?: T;
-  published?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3260,14 +3731,6 @@ export interface SiteSetting {
    */
   siteName: string;
   /**
-   * The company logo that appears in the website header. Recommended size: 200x50 pixels. Used for brand identity and navigation. For best results, use SVG or PNG with transparent background.
-   */
-  logo?: (number | null) | Media;
-  /**
-   * The small icon that appears in browser tabs and bookmarks. Recommended: 32x32px SVG or PNG. If no favicon is uploaded, a default dark "14" icon will be used. Important for brand recognition and professional appearance.
-   */
-  favicon?: (number | null) | Media;
-  /**
    * The complete URL of the website (e.g., https://14voices.com). Used for generating absolute URLs in sitemaps, RSS feeds, and social media meta tags. Critical for SEO and proper functioning of sharing features.
    */
   siteUrl: string;
@@ -3402,6 +3865,10 @@ export interface SiteSetting {
      */
     logoText?: string | null;
     /**
+     * Font family for the text logo
+     */
+    logoFont?: ('instrument-serif' | 'bricolage-grotesque' | 'geist-mono') | null;
+    /**
      * Image to use as logo (recommended: SVG or PNG with transparent background)
      */
     logoImage?: (number | null) | Media;
@@ -3409,6 +3876,14 @@ export interface SiteSetting {
      * Optional: Different logo for dark mode (if not provided, same logo will be used)
      */
     logoImageDark?: (number | null) | Media;
+    /**
+     * Primary brand color used throughout the website. This color will be available in the text editor for highlighting important words.
+     */
+    brandColor?: string | null;
+    /**
+     * The small icon that appears in browser tabs and bookmarks. Recommended: 32x32px SVG or PNG. If no favicon is uploaded, a default dark "14" icon will be used. Important for brand recognition and professional appearance.
+     */
+    favicon?: (number | null) | Media;
   };
   navigation?: {
     /**
@@ -3601,8 +4076,6 @@ export interface FaqSettingsSelect<T extends boolean = true> {
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
-  logo?: T;
-  favicon?: T;
   siteUrl?: T;
   language?: T;
   contact?:
@@ -3674,8 +4147,11 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         logoType?: T;
         logoText?: T;
+        logoFont?: T;
         logoImage?: T;
         logoImageDark?: T;
+        brandColor?: T;
+        favicon?: T;
       };
   navigation?:
     | T

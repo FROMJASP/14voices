@@ -107,3 +107,51 @@ button[aria-label*='Language'] {
 [data-field-name='layout'] .collapsible__content {
   transition: height 0.2s ease-in-out;
 }
+
+/* Fix sidebar scrolling issue */
+.nav__wrap {
+  height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Payload 3 specific nav fix - remove flex spacer */
+.nav {
+  position: relative !important;
+}
+
+/* Adjust first nav group to have appropriate spacing */
+.nav__scroll {
+  padding-top: 4rem !important;
+  margin-top: 0 !important;
+}
+
+.nav__scroll > :first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Hide the flex spacer that Payload inserts */
+.nav > :nth-child(2)[style*='flex-grow'] {
+  display: none !important;
+}
+
+/* Alternative selector for the spacer */
+.nav > div[style*='flex: 1 1 0%'] {
+  display: none !important;
+}
+
+/* Fix logo container positioning to not affect layout */
+#nav-logo-container {
+  position: absolute !important;
+  z-index: 100 !important;
+  top: 0 !important;
+  right: 0 !important;
+  height: 60px !important;
+}
+
+/* Ensure nav starts at the top */
+.nav > :first-child:not(#nav-logo-container) {
+  margin-top: 0 !important;
+  padding-top: 1rem !important;
+}

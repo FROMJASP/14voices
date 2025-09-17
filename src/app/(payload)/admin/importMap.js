@@ -1,4 +1,3 @@
-import { GroupVoiceoversField as GroupVoiceoversField_621d5f85c6a7254d73ace35d46f4e4fe } from '../../../components/admin/fields/GroupVoiceoversField'
 import { NameCell as NameCell_9c0639e919331889896aa9ea1c557661 } from '../../../components/admin/cells/NameCell'
 import { StyleTagsCell as StyleTagsCell_789abce5a437648d513c3e44bd81ed9c } from '../../../components/admin/cells/StyleTagsCell'
 import { AudioDemoCell as AudioDemoCell_c5277311b993037e42bbdbf8c691c657 } from '../../../components/admin/cells/AudioDemoCell'
@@ -6,6 +5,7 @@ import { StatusCell as StatusCell_9552c302193d4c39b8e8f39758f33f86 } from '../..
 import { GroupCell as GroupCell_4f97fbdb7152b6433c40f3aaa21af63b } from '../../../components/admin/cells/GroupCell'
 import { WarningMessage as WarningMessage_7a3c835c149af2187667980e88c5e3e3 } from '../../../components/admin/fields/WarningMessage'
 import { AvailabilityCell as AvailabilityCell_f18f4f9ba3a684cf14cb7d599fed8813 } from '../../../components/admin/cells/AvailabilityCell'
+import { GroupVoiceoversField as GroupVoiceoversField_621d5f85c6a7254d73ace35d46f4e4fe } from '../../../components/admin/fields/GroupVoiceoversField'
 import { UserInfoCell as UserInfoCell_2498c455506837329098564ecaa127bb } from '../../../components/admin/cells/UserInfoCell'
 import { UserAvatarCell as UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd } from '../../../components/admin/cells/UserAvatarCell'
 import { UserRoleCell as UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d } from '../../../components/admin/cells/UserRoleCell'
@@ -60,7 +60,6 @@ import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc056
 import { default as default_52fc470c96be62b5d8029b692894d144 } from '../../../components/admin/Root'
 
 export const importMap = {
-  "./components/admin/fields/GroupVoiceoversField#GroupVoiceoversField": GroupVoiceoversField_621d5f85c6a7254d73ace35d46f4e4fe,
   "./components/admin/cells/NameCell#NameCell": NameCell_9c0639e919331889896aa9ea1c557661,
   "./components/admin/cells/StyleTagsCell#StyleTagsCell": StyleTagsCell_789abce5a437648d513c3e44bd81ed9c,
   "./components/admin/cells/AudioDemoCell#AudioDemoCell": AudioDemoCell_c5277311b993037e42bbdbf8c691c657,
@@ -68,6 +67,7 @@ export const importMap = {
   "./components/admin/cells/GroupCell#GroupCell": GroupCell_4f97fbdb7152b6433c40f3aaa21af63b,
   "./components/admin/fields/WarningMessage#WarningMessage": WarningMessage_7a3c835c149af2187667980e88c5e3e3,
   "./components/admin/cells/AvailabilityCell#AvailabilityCell": AvailabilityCell_f18f4f9ba3a684cf14cb7d599fed8813,
+  "./components/admin/fields/GroupVoiceoversField#GroupVoiceoversField": GroupVoiceoversField_621d5f85c6a7254d73ace35d46f4e4fe,
   "./components/admin/cells/UserInfoCell#UserInfoCell": UserInfoCell_2498c455506837329098564ecaa127bb,
   "./components/admin/cells/UserAvatarCell#UserAvatarCell": UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd,
   "./components/admin/cells/UserRoleCell#UserRoleCell": UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d,

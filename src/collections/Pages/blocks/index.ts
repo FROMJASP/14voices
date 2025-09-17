@@ -1032,6 +1032,9 @@ export const BlogPostBlock: Block = {
   ],
 };
 
+// Import the PriceCalculator block
+import { PriceCalculator } from './PriceCalculator';
+
 // Export all blocks as an array
 export const pageBlocks = [
   HeroV1Block,
@@ -1040,4 +1043,5 @@ export const pageBlocks = [
   VoiceoverV1Block,
   BlogSection1Block,
   BlogPostBlock,
+  PriceCalculator,
 ];

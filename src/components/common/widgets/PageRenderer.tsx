@@ -9,7 +9,6 @@ import type { PayloadVoiceover } from '@/types/voiceover';
 // import { useLivePreview } from '@payloadcms/live-preview-react';
 
 // Static imports for all components
-import { PageHeroSection } from './PageHeroSection';
 import { HeroSection } from '@/components/features/homepage/HeroSection';
 import { HeroVariant2 } from '@/components/features/homepage/HeroVariant2';
 import { VoiceoverSection } from '@/components/features/homepage/VoiceoverSection';
@@ -19,6 +18,7 @@ import { BlogSection1 } from '@/components/blocks/BlogSection1';
 import { BlogPostHeader } from '@/components/blocks/BlogPostHeader';
 import { BlogContent } from '@/components/blocks/BlogContent';
 import { BlogPostBlock } from '@/components/blocks/BlogPostBlock';
+import { PriceCalculator } from '@/components/blocks/PriceCalculator';
 
 // Memoized helper function to extract plain text from rich text
 const extractPlainText = (richText: any): string => {
@@ -40,22 +40,6 @@ const extractPlainText = (richText: any): string => {
   return extractText(richText.root.children);
 };
 
-// Define section type union for all possible section types
-type PageSection = {
-  type:
-    | 'richText'
-    | 'twoColumn'
-    | 'cta'
-    | 'contact'
-    | 'pricing'
-    | 'testimonials'
-    | 'features'
-    | 'gallery'
-    | 'stats';
-  content?: any;
-  // Add other possible properties based on your section types
-};
-
 interface PageRendererProps {
   page: Page;
   voiceovers?: PayloadVoiceover[];
@@ -71,12 +55,12 @@ export default function PageRenderer({
 }: PageRendererProps) {
   const router = useRouter();
   const isInIframe = typeof window !== 'undefined' && window.parent !== window;
-  
+
   console.log('PageRenderer initialized with page:', {
     slug: page?.slug,
     hasLayout: Array.isArray((page as any)?.layout),
     layoutLength: Array.isArray((page as any)?.layout) ? (page as any).layout.length : 0,
-    status: page?.status
+    status: page?.status,
   });
 
   // Temporarily disable live preview to fix re-render issue
@@ -116,15 +100,19 @@ export default function PageRenderer({
 
   // Memoize hero transformation
   const heroSettings = useMemo(() => {
-    const hero = currentPage.hero as any;
-    const isHeroVariant1 = hero?.layout === 'variant1';
+    // Find hero block in layout
+    const heroBlock = currentPage.layout?.find(
+      (block) => block.blockType === 'hero-v1' || block.blockType === 'hero-v2'
+    );
+
+    const isHeroVariant1 = heroBlock?.blockType === 'hero-v1';
     const isHomeOrBlog = pageMetadata.isHomepage || pageMetadata.isBlog;
 
     if (isHomeOrBlog && isHeroVariant1) {
       return transformHeroDataForHomepage(currentPage);
     }
     return null;
-  }, [currentPage.hero, pageMetadata.isHomepage, pageMetadata.isBlog, currentPage]);
+  }, [currentPage.layout, pageMetadata.isHomepage, pageMetadata.isBlog, currentPage]);
 
   // Memoize voiceover transformation
   const transformedVoiceovers = useMemo(() => {
@@ -138,51 +126,52 @@ export default function PageRenderer({
 
   // Memoized block renderer
   const renderBlock = useMemo(
-    () => (block: any, index: number) => {
-      // Skip disabled blocks
-      if (block.blockType === 'content-v1' && block.enabled === false) return null;
+    () =>
+      function BlockRenderer(block: any, index: number) {
+        // Skip disabled blocks
+        if (block.blockType === 'content-v1' && block.enabled === false) return null;
 
-      const blockKey = `${block.blockType}-${index}`;
+        const blockKey = `${block.blockType}-${index}`;
 
-      switch (block.blockType) {
-        case 'hero-v1': {
-          // Hero variant 1 is critical, so not lazy loaded
-          const heroData = {
-            hero: {
-              layout: 'variant1',
-              titleRichText: block.title,
-              descriptionRichText: block.description,
-              processSteps: block.processSteps,
-              stats: block.stats,
-              heroImage: block.image,
-              primaryButton: block.cta?.primaryLabel
-                ? {
-                    text: block.cta.primaryLabel,
-                    url: block.cta.primaryUrl || '#',
-                  }
-                : null,
-              secondaryButton: block.cta?.secondaryLabel
-                ? {
-                    text: block.cta.secondaryLabel,
-                    url: block.cta.secondaryUrl || '#',
-                  }
-                : null,
-            },
-          };
-          const transformedData = transformHeroDataForHomepage(heroData as any);
-          if (transformedData) {
+        switch (block.blockType) {
+          case 'hero-v1': {
+            // Hero variant 1 is critical, so not lazy loaded
+            const heroData = {
+              hero: {
+                layout: 'variant1',
+                titleRichText: block.title,
+                descriptionRichText: block.description,
+                processSteps: block.processSteps,
+                stats: block.stats,
+                heroImage: block.image,
+                primaryButton: block.cta?.primaryLabel
+                  ? {
+                      text: block.cta.primaryLabel,
+                      url: block.cta.primaryUrl || '#',
+                    }
+                  : null,
+                secondaryButton: block.cta?.secondaryLabel
+                  ? {
+                      text: block.cta.secondaryLabel,
+                      url: block.cta.secondaryUrl || '#',
+                    }
+                  : null,
+              },
+            };
+            const transformedData = transformHeroDataForHomepage(heroData as any);
+            if (transformedData) {
+              return (
+                <div key={blockKey}>
+                  <HeroSection heroSettings={transformedData} />
+                </div>
+              );
+            }
+            return null;
+          }
+
+          case 'hero-v2': {
             return (
               <div key={blockKey}>
-                <HeroSection heroSettings={transformedData} />
-              </div>
-            );
-          }
-          return null;
-        }
-
-        case 'hero-v2': {
-          return (
-            <div key={blockKey}>
                 <HeroVariant2
                   badge={block.badge?.enabled !== false ? block.badge : null}
                   title={extractPlainText(block.title)}
@@ -207,32 +196,32 @@ export default function PageRenderer({
                   paddingTop={block.paddingTop || 'medium'}
                   paddingBottom={block.paddingBottom || 'medium'}
                 />
-            </div>
-          );
-        }
+              </div>
+            );
+          }
 
-        case 'voiceover-v1': {
-          return (
-            <div key={blockKey}>
+          case 'voiceover-v1': {
+            return (
+              <div key={blockKey}>
                 <VoiceoverSection
                   initialVoiceovers={transformedVoiceovers}
                   title={block.title || undefined}
                 />
-            </div>
-          );
-        }
+              </div>
+            );
+          }
 
-        case 'content-v1': {
-          return (
-            <div key={blockKey}>
+          case 'content-v1': {
+            return (
+              <div key={blockKey}>
                 <ContentSection data={block} />
-            </div>
-          );
-        }
+              </div>
+            );
+          }
 
-        case 'blog-section-1': {
-          return (
-            <div key={blockKey}>
+          case 'blog-section-1': {
+            return (
+              <div key={blockKey}>
                 <BlogSection1
                   title={block.title}
                   description={block.description}
@@ -241,13 +230,13 @@ export default function PageRenderer({
                   paddingTop={block.paddingTop || 'medium'}
                   paddingBottom={block.paddingBottom || 'medium'}
                 />
-            </div>
-          );
-        }
+              </div>
+            );
+          }
 
-        case 'blog-post-header': {
-          return (
-            <div key={blockKey}>
+          case 'blog-post-header': {
+            return (
+              <div key={blockKey}>
                 <BlogPostHeader
                   title={block.title}
                   subtitle={block.subtitle}
@@ -258,46 +247,54 @@ export default function PageRenderer({
                   readingTime={block.readingTime}
                   blogPost={blogPost}
                 />
-            </div>
-          );
-        }
+              </div>
+            );
+          }
 
-        case 'blog-post-content': {
-          return (
-            <div key={blockKey}>
+          case 'blog-post-content': {
+            return (
+              <div key={blockKey}>
                 <BlogContent content={block.content} blogPost={blogPost} />
-            </div>
-          );
-        }
+              </div>
+            );
+          }
 
-        case 'blog-post': {
-          return (
-            <div key={blockKey}>
+          case 'blog-post': {
+            return (
+              <div key={blockKey}>
                 <BlogPostBlock
                   showShareButtons={block.showShareButtons}
                   showAuthor={block.showAuthor}
                   blogPost={blogPost}
                 />
-            </div>
-          );
-        }
+              </div>
+            );
+          }
 
-        default:
-          console.warn(`Unknown block type: ${block.blockType}`);
-          return null;
-      }
-    },
+          case 'price-calculator': {
+            return (
+              <div key={blockKey}>
+                <PriceCalculator {...block} />
+              </div>
+            );
+          }
+
+          default:
+            console.warn(`Unknown block type: ${block.blockType}`);
+            return null;
+        }
+      },
     [transformedVoiceovers, brandColor, blogPost]
   );
 
   // For pages with new block layout
   if (pageMetadata.hasNewLayout) {
     const layoutBlocks = (currentPage as any).layout;
-    
+
     console.log('PageRenderer - Rendering page with layout blocks:', {
       slug: currentPage.slug,
       layoutLength: layoutBlocks?.length,
-      blocks: layoutBlocks?.map((b: any) => ({ type: b.blockType, id: b.id }))
+      blocks: layoutBlocks?.map((b: any) => ({ type: b.blockType, id: b.id })),
     });
 
     return (
@@ -320,32 +317,21 @@ export default function PageRenderer({
           key={`hero-${currentPage.id}-${currentPage.updatedAt}`}
           heroSettings={heroSettings}
         />
-          <VoiceoverSection initialVoiceovers={transformedVoiceovers} title={undefined} />
-          <LinkToBlogSection data={{ enabled: true }} />
+        <VoiceoverSection initialVoiceovers={transformedVoiceovers} title={undefined} />
+        <LinkToBlogSection data={{ enabled: true }} />
       </>
     );
   }
 
-  // For other pages, try hero variant 2
-  const hero = currentPage.hero as any;
-  if (hero?.layout === 'variant2') {
+  // For other pages, render content if available
+  if (currentPage.content) {
     return (
-      <>
-        <PageHeroSection hero={hero} />
-        {currentPage.sections && currentPage.sections.length > 0 && (
-          <div className="sections-container">
-            {/* @ts-expect-error - section rendering not implemented */}
-            {(currentPage.sections as PageSection[]).map((section, index) => (
-              <div key={`section-${index}`} className="section-wrapper">
-                {/* Add section rendering logic here based on section.type */}
-              </div>
-            ))}
-          </div>
-        )}
-      </>
+      <div className="prose prose-lg max-w-none">
+        {/* Content will be rendered by the page itself */}
+      </div>
     );
   }
 
-  // Default fallback
-  return <PageHeroSection hero={currentPage.hero || { type: 'none' }} />;
+  // Default fallback - empty fragment
+  return <></>;
 }

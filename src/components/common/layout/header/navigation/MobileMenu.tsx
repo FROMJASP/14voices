@@ -6,6 +6,7 @@ import { TransitionLink as Link } from '@/components/common/navigation';
 import { X, ChevronDown, Mail } from 'lucide-react';
 import { Instrument_Serif, Bricolage_Grotesque } from 'next/font/google';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { ThemeToggle } from './ThemeToggle';
 import type { MenuItem } from './Navigation.types';
 import type { InfoNavbarData } from '../info-navbar/InfoNavbar.types';
@@ -52,6 +53,7 @@ export function MobileMenu({
 }: MobileMenuProps) {
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -59,6 +61,34 @@ export function MobileMenu({
 
   const toggleDropdown = (index: number) => {
     setExpandedItem(expandedItem === index ? null : index);
+  };
+
+  const handleHashLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
+    if (url.startsWith('/#')) {
+      e.preventDefault();
+      const elementId = url.substring(2);
+      const element = document.getElementById(elementId);
+
+      onClose(); // Close mobile menu first
+
+      // Small delay to allow menu to close
+      setTimeout(() => {
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          });
+        } else {
+          router.push(url);
+        }
+      }, 300);
+    } else {
+      onClose();
+    }
   };
 
   // Return empty portal container during SSR to prevent hydration mismatch
@@ -173,7 +203,7 @@ export function MobileMenu({
                           ) : (
                             <Link
                               href={item.url}
-                              onClick={onClose}
+                              onClick={(e) => handleHashLinkClick(e, item.url)}
                               target={item.openInNewTab ? '_blank' : undefined}
                               rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
                               className="font-bricolage block px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-muted transition-all cursor-pointer"

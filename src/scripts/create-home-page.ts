@@ -27,6 +27,7 @@ async function createHomePage() {
           title: 'Home',
           slug: 'home',
           status: 'published',
+          // @ts-expect-error - Hero field removed, use layout blocks instead
           hero: {
             type: 'homepage',
             processSteps: [
@@ -97,6 +98,7 @@ async function createHomePage() {
           title: 'Home',
           slug: 'home',
           status: 'published',
+          // @ts-expect-error - Hero field removed, use layout blocks instead
           hero: {
             type: 'homepage',
             processSteps: [

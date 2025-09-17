@@ -32,6 +32,8 @@ import FormSubmissions from './collections/FormSubmissions';
 import Testimonials from './collections/Testimonials';
 import SecurityLogs from './collections/SecurityLogs';
 import FAQ from './collections/FAQ';
+import Productions from './collections/Productions';
+import ExtraServices from './collections/ExtraServices';
 import { EmailSettings } from './globals/EmailSettings';
 import { FAQSettings } from './globals/FAQSettings';
 import { SiteSettings } from './globals/SiteSettings';
@@ -103,8 +105,11 @@ export default buildConfig({
   },
   collections: [
     // Beheer Stemmen group - voiceover specific content
-    Groups,
     Voiceovers,
+    Groups,
+    // Beheer Diensten group - manage services and pricing
+    Productions,
+    ExtraServices,
     // Account Management group
     Users,
     // Opslag group - media storage

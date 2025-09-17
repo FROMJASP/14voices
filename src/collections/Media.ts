@@ -108,6 +108,11 @@ const Media: CollectionConfig = {
       'audio/mpeg',
       'audio/wav',
       'audio/mp3',
+      'video/mp4',
+      'video/quicktime',
+      'video/webm',
+      'video/x-msvideo',
+      'video/x-ms-wmv',
       'application/pdf',
     ],
     // Storage handled by hybrid adapter

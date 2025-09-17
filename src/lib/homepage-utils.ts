@@ -23,7 +23,12 @@ function extractTextFromLexical(richText: unknown): string {
 }
 
 export function transformHeroDataForHomepage(page: Page): HomepageSettings {
-  const hero = page.hero || {};
+  // Find hero block in layout
+  const heroBlock = page.layout?.find(
+    (block) => block.blockType === 'hero-v1' || block.blockType === 'hero-v2'
+  );
+
+  const hero = heroBlock || {};
   const heroWithRichText = hero as any;
 
   // Check if title/description are already rich text (new structure) or need to check for legacy fields
@@ -32,14 +37,14 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
       ? extractTextFromLexical(heroWithRichText.title) // New: title IS rich text
       : heroWithRichText.titleRichText
         ? extractTextFromLexical(heroWithRichText.titleRichText) // Legacy: titleRichText field
-        : hero.title || ''; // Fallback to plain text
+        : heroWithRichText.title || ''; // Fallback to plain text
 
   const extractedDescription =
     heroWithRichText.description && typeof heroWithRichText.description === 'object'
       ? extractTextFromLexical(heroWithRichText.description) // New: description IS rich text
       : heroWithRichText.descriptionRichText
         ? extractTextFromLexical(heroWithRichText.descriptionRichText) // Legacy: descriptionRichText field
-        : hero.description || ''; // Fallback to plain text
+        : heroWithRichText.description || ''; // Fallback to plain text
 
   // Extract hero image URL with multiple fallback strategies
   let heroImageUrl: string | null = null; // No default fallback
@@ -49,12 +54,12 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
     heroImageUrl = makeMediaUrlRelative((hero as any).heroImageURL);
   }
   // Then check the heroImage field
-  else if (hero.heroImage) {
-    if (typeof hero.heroImage === 'string') {
+  else if (heroWithRichText.heroImage) {
+    if (typeof heroWithRichText.heroImage === 'string') {
       // If it's just an ID (not populated), we can't use it directly
       heroImageUrl = null; // No fallback image
-    } else if (typeof hero.heroImage === 'object') {
-      const heroImageObj = hero.heroImage as any;
+    } else if (typeof heroWithRichText.heroImage === 'object') {
+      const heroImageObj = heroWithRichText.heroImage as any;
 
       // Try different possible URL properties
       if (heroImageObj.url) {
@@ -75,11 +80,11 @@ export function transformHeroDataForHomepage(page: Page): HomepageSettings {
       // Use rich text fields first, fall back to legacy fields
       title: extractedTitle,
       description: extractedDescription,
-      processSteps: hero.processSteps || [],
-      primaryButton: hero.primaryButton || null,
-      secondaryButton: hero.secondaryButton || null,
+      processSteps: heroWithRichText.processSteps || [],
+      primaryButton: heroWithRichText.primaryButton || null,
+      secondaryButton: heroWithRichText.secondaryButton || null,
       heroImage: heroImageUrl,
-      stats: hero.stats || [],
+      stats: heroWithRichText.stats || [],
     },
   };
 }

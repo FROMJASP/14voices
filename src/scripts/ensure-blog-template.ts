@@ -26,7 +26,6 @@ async function ensureBlogTemplate() {
           title: 'Blog Post Template',
           slug: 'blog-post',
           status: 'published',
-          // @ts-expect-error - layout field exists but not in type definition
           layout: [
             {
               blockType: 'blog-post',
@@ -55,7 +54,6 @@ async function ensureBlogTemplate() {
           collection: 'pages',
           id: templatePage.id,
           data: {
-            // @ts-expect-error - layout field exists but not in type definition
             layout: [
               {
                 blockType: 'blog-post',

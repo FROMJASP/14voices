@@ -71,7 +71,7 @@ async function testBlogQuery() {
     console.log(
       `Category query: Found ${categoryResult.docs.length} docs (${Date.now() - categoryStart}ms)`
     );
-    console.log('Categories data:', categoryResult.docs[0]?.categories);
+    console.log('Category data:', categoryResult.docs[0]?.category);
 
     // Test 4: Full query as used in API
     console.log('\nTest 4: Full API query...');
@@ -111,7 +111,7 @@ async function testBlogQuery() {
       console.log('- id:', firstPost.id);
       console.log('- title:', firstPost.title);
       console.log('- bannerImage type:', typeof firstPost.bannerImage);
-      console.log('- categories type:', typeof firstPost.categories);
+      console.log('- category type:', typeof firstPost.category);
     }
 
     console.log(`\nTotal test time: ${Date.now() - startTime}ms`);

@@ -36,7 +36,7 @@ const defaultMenuItems: MenuItem[] = [
     url: '#voiceovers',
     hasDropdown: true,
   },
-  { label: 'Prijzen', url: '/prijzen' },
+  { label: 'Prijzen', url: '/#prijzen' },
 ];
 
 export function Navigation({

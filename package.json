@@ -13,6 +13,7 @@
     "payload:generate:importmap": "NODE_OPTIONS=\"--import tsx\" payload generate:importmap",
     "payload:migrate": "payload migrate",
     "seed": "tsx src/seed/run-seed.ts",
+    "seed:productions": "tsx src/seed/run-seeders.ts",
     "admin:reset": "bun src/scripts/reset-admin-access.ts",
     "postinstall": "node scripts/postinstall.js",
     "test": "vitest",

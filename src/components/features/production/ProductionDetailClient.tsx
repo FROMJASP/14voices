@@ -15,6 +15,7 @@ import {
 } from '@/stores';
 import { getVoiceovers } from '@/lib/api';
 import type { TransformedVoiceover as Voiceover } from '@/types/voiceover';
+import { useProductions } from '@/hooks/useProductions';
 
 const bricolageGrotesque = Bricolage_Grotesque({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -31,34 +32,18 @@ const instrumentSerif = Instrument_Serif({
   variable: '--font-instrument-serif',
 });
 
-// Production data types
-interface PriceItem {
-  item: string;
-  price: number;
-}
+// Production slugs for navigation
+const productionSlugs = [
+  'videoproductie',
+  'e-learning',
+  'radiospots',
+  'tv-commercial',
+  'web-commercial',
+  'voice-response',
+];
 
-interface ExtraOption {
-  item: string;
-  price: number;
-  infoText: string;
-  dependencies?: string[];
-}
-
-interface ProductionType {
-  name: string;
-  price: number;
-  description: string;
-  videoUrl: string;
-  color: string;
-  accentColor: string;
-  titleTwo: string;
-  itemlistTwo: PriceItem[];
-  titleThree: string;
-  itemlistThree: ExtraOption[];
-  uitzendgebied?: Array<{ name: string; price: number }>;
-}
-
-const productionData: ProductionType[] = [
+// Keep hardcoded data temporarily for fields not in API
+const productionData = [
   {
     name: 'Videoproductie',
     price: 175,
@@ -386,21 +371,13 @@ const productionData: ProductionType[] = [
   },
 ];
 
-const productionSlugs = [
-  'videoproductie',
-  'e-learning',
-  'radiospots',
-  'tv-commercial',
-  'web-commercial',
-  'voice-response',
-];
-
 interface ProductionDetailNewProps {
-  productionIndex: number;
+  productionSlug: string;
 }
 
-export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProps) {
+export function ProductionDetailNew({ productionSlug }: ProductionDetailNewProps) {
   const router = useRouter();
+  const { productions, loading: dataLoading } = useProductions();
   const clearCart = useCartStore((state) => state.clearCart);
   const addItem = useCartStore((state) => state.addItem);
   const setProductionName = useCheckoutStore((state) => state.setProductionName);
@@ -420,13 +397,18 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
   const [openAccordions, setOpenAccordions] = useState<Set<string>>(new Set());
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const production = productionData[productionIndex];
+  // Find production from API data based on slug
+  const production = productions.find((p) => p.slug === productionSlug);
+
+  // Fallback to hardcoded data for now (for fields not in API)
+  const hardcodedProduction =
+    productionData[productionSlugs.indexOf(productionSlug)] || productionData[0];
 
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.play().catch(() => {});
     }
-  }, [productionIndex]);
+  }, [productionSlug]);
 
   useEffect(() => {
     async function fetchVoiceovers() {
@@ -438,23 +420,25 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
 
   // Calculate total price
   const calculateTotal = () => {
-    let total = production.price;
+    let total = displayProduction.price;
 
     // Add word/version price
     if (selectedWords) {
-      const wordItem = production.itemlistTwo.find((item) => item.item === selectedWords);
+      const wordItem = displayProduction.itemlistTwo.find((item) => item.item === selectedWords);
       if (wordItem) total += wordItem.price;
     }
 
     // Add option prices
     selectedOptions.forEach((option) => {
-      const optionItem = production.itemlistThree.find((item) => item.item === option);
+      const optionItem = displayProduction.itemlistThree.find((item) => item.item === option);
       if (optionItem) total += optionItem.price;
     });
 
     // Add region price
-    if (production.uitzendgebied && selectedRegion) {
-      const regionItem = production.uitzendgebied.find((item) => item.name === selectedRegion);
+    if (displayProduction.uitzendgebied && selectedRegion) {
+      const regionItem = displayProduction.uitzendgebied.find(
+        (item) => item.name === selectedRegion
+      );
       if (regionItem) total += regionItem.price;
     }
 
@@ -462,13 +446,13 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
   };
 
   const handleOptionToggle = (option: string) => {
-    const optionData = production.itemlistThree.find((item) => item.item === option);
+    const optionData = displayProduction.itemlistThree.find((item) => item.item === option);
     const newOptions = new Set(selectedOptions);
 
     if (newOptions.has(option)) {
       newOptions.delete(option);
       // Remove dependent options
-      production.itemlistThree.forEach((item) => {
+      displayProduction.itemlistThree.forEach((item) => {
         if (item.dependencies?.includes(option)) {
           newOptions.delete(item.item);
         }
@@ -500,18 +484,18 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
     // Add production type
     newCartItems.push({
       id: 'production',
-      name: production.name,
-      price: production.price,
+      name: displayProduction.name,
+      price: displayProduction.price,
       details: [],
     });
 
     // Add word/version price
     if (selectedWords) {
-      const wordItem = production.itemlistTwo.find((item) => item.item === selectedWords);
+      const wordItem = displayProduction.itemlistTwo.find((item) => item.item === selectedWords);
       if (wordItem && wordItem.price > 0) {
         newCartItems.push({
           id: 'words',
-          name: `${selectedWords} ${production.name === 'Radiospots' || production.name === 'TV Commercial' || production.name === 'Web Commercial' ? 'versies' : 'woorden'}`,
+          name: `${selectedWords} ${displayProduction.name === 'Radiospots' || displayProduction.name === 'TV Commercial' || displayProduction.name === 'Web Commercial' ? 'versies' : 'woorden'}`,
           price: wordItem.price,
           details: [],
         });
@@ -519,8 +503,10 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
     }
 
     // Add region price if applicable
-    if (production.uitzendgebied && selectedRegion) {
-      const regionItem = production.uitzendgebied.find((item) => item.name === selectedRegion);
+    if (displayProduction.uitzendgebied && selectedRegion) {
+      const regionItem = displayProduction.uitzendgebied.find(
+        (item) => item.name === selectedRegion
+      );
       if (regionItem && regionItem.price > 0) {
         newCartItems.push({
           id: 'region',
@@ -533,7 +519,7 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
 
     // Add extra options
     selectedOptions.forEach((option) => {
-      const optionItem = production.itemlistThree.find((item) => item.item === option);
+      const optionItem = displayProduction.itemlistThree.find((item) => item.item === option);
       if (optionItem) {
         newCartItems.push({
           id: `option-${option}`,
@@ -545,10 +531,10 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
     });
 
     // Update checkout configuration
-    setProductionName(production.name);
+    setProductionName(displayProduction.name);
     setWordCount(
       selectedWords
-        ? `${selectedWords} ${production.name === 'Radiospots' || production.name === 'TV Commercial' || production.name === 'Web Commercial' ? 'versies' : 'woorden'}`
+        ? `${selectedWords} ${displayProduction.name === 'Radiospots' || displayProduction.name === 'TV Commercial' || displayProduction.name === 'Web Commercial' ? 'versies' : 'woorden'}`
         : undefined
     );
     setRegion(selectedRegion || undefined);
@@ -571,6 +557,27 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
     alert('Product toegevoegd aan winkelwagen!');
   };
 
+  // Show loading state while data is being fetched
+  if (dataLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Laden...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect if production not found
+  if (!dataLoading && !production && productions.length > 0) {
+    router.push('/');
+    return null;
+  }
+
+  // Use hardcoded data as fallback for missing fields
+  const displayProduction = hardcodedProduction;
+
   return (
     <div
       className={`${bricolageGrotesque.variable} ${instrumentSerif.variable} font-bricolage min-h-screen bg-background`}
@@ -583,7 +590,7 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
             <div className="relative aspect-video rounded-xl overflow-hidden bg-black mb-6">
               <video
                 ref={videoRef}
-                src={production.videoUrl}
+                src={production?.videoUrl?.url || displayProduction.videoUrl}
                 loop
                 muted
                 autoPlay
@@ -593,10 +600,10 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
             </div>
 
             <h1 className="text-3xl lg:text-4xl font-bold mb-4 font-instrument-serif">
-              {production.name}
+              {production?.name || displayProduction.name}
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              {production.description}
+              {production?.description || displayProduction.description}
             </p>
 
             {/* Production Switcher */}
@@ -608,12 +615,15 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                     key={prod.name}
                     onClick={() => handleProductionChange(productionSlugs[idx])}
                     className={`p-3 rounded-lg text-sm font-medium transition-all ${
-                      idx === productionIndex
+                      productionSlugs[idx] === productionSlug
                         ? 'text-black shadow-sm'
                         : 'bg-muted hover:bg-muted/80 text-muted-foreground'
                     }`}
                     style={{
-                      backgroundColor: idx === productionIndex ? production.color : undefined,
+                      backgroundColor:
+                        productionSlugs[idx] === productionSlug
+                          ? displayProduction.color
+                          : undefined,
                     }}
                   >
                     {prod.name}
@@ -753,7 +763,7 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                 {/* Words/Versions Selection - Compact */}
                 <div>
                   <label className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 block">
-                    {production.titleTwo}
+                    {displayProduction.titleTwo}
                   </label>
                   <div className="relative">
                     <button
@@ -782,7 +792,7 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                           exit={{ opacity: 0, y: -10 }}
                           className="absolute z-40 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden"
                         >
-                          {production.itemlistTwo.map((item) => (
+                          {displayProduction.itemlistTwo.map((item) => (
                             <button
                               key={item.item}
                               onClick={() => {
@@ -806,10 +816,10 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                 {/* Extra Options - New Design */}
                 <div>
                   <label className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 block">
-                    {production.titleThree}
+                    {displayProduction.titleThree}
                   </label>
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-3 space-y-2">
-                    {production.itemlistThree.map((option) => {
+                    {displayProduction.itemlistThree.map((option) => {
                       const isSelected = selectedOptions.has(option.item);
                       const isDisabled = option.dependencies?.some(
                         (dep) => !selectedOptions.has(dep)
@@ -918,13 +928,13 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                 </div>
 
                 {/* Region Selection (if applicable) - Compact */}
-                {production.uitzendgebied && (
+                {displayProduction.uitzendgebied && (
                   <div>
                     <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5 block">
                       Uitzendgebied
                     </label>
                     <div className="grid grid-cols-2 gap-1.5">
-                      {production.uitzendgebied.map((region) => (
+                      {displayProduction.uitzendgebied.map((region) => (
                         <button
                           key={region.name}
                           onClick={() => setSelectedRegion(region.name)}
@@ -956,8 +966,10 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                   {/* Selected Items */}
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">{production.name}</span>
-                      <span className="font-medium">€{production.price}</span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {displayProduction.name}
+                      </span>
+                      <span className="font-medium">€{displayProduction.price}</span>
                     </div>
 
                     {selectedVoiceover && (
@@ -975,19 +987,20 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                         <span className="text-gray-600 dark:text-gray-400">
                           {selectedWords} woorden
                         </span>
-                        {production.itemlistTwo.find((item) => item.item === selectedWords)
+                        {displayProduction.itemlistTwo.find((item) => item.item === selectedWords)
                           ?.price !== 0 && (
                           <span className="font-medium">
                             +€
-                            {production.itemlistTwo.find((item) => item.item === selectedWords)
-                              ?.price || 0}
+                            {displayProduction.itemlistTwo.find(
+                              (item) => item.item === selectedWords
+                            )?.price || 0}
                           </span>
                         )}
                       </div>
                     )}
 
                     {Array.from(selectedOptions).map((option) => {
-                      const optionData = production.itemlistThree.find(
+                      const optionData = displayProduction.itemlistThree.find(
                         (item) => item.item === option
                       );
                       return (
@@ -1000,13 +1013,14 @@ export function ProductionDetailNew({ productionIndex }: ProductionDetailNewProp
                       );
                     })}
 
-                    {selectedRegion && production.uitzendgebied && (
+                    {selectedRegion && displayProduction.uitzendgebied && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600 dark:text-gray-400">{selectedRegion}</span>
                         <span className="font-medium">
                           +€
-                          {production.uitzendgebied.find((item) => item.name === selectedRegion)
-                            ?.price || 0}
+                          {displayProduction.uitzendgebied.find(
+                            (item) => item.name === selectedRegion
+                          )?.price || 0}
                         </span>
                       </div>
                     )}

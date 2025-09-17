@@ -4,9 +4,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { ReactMediaRecorder } from 'react-media-recorder';
 import { Upload, Mic, Square, Play, Pause, X, FileAudio, AlertCircle } from 'lucide-react';
-import { Label } from '@/components/ui/Label';
+// Label import removed - not used
 import { motion, AnimatePresence } from 'framer-motion';
-import { SimpleEditor } from '@/components/ui/kibo-ui/editor';
+// Removed SimpleEditor import - using native textarea instead
 
 interface AudioNotesProps {
   textValue: string;
@@ -94,14 +94,20 @@ export function AudioNotes({
 
   return (
     <div className="space-y-4">
-      <Label className="text-sm font-medium text-foreground">4. Instructies (optioneel)</Label>
-
-      {/* Text input with TipTap editor */}
-      <div>
-        <SimpleEditor content={textValue} onChange={onTextChange} placeholder={placeholder} />
-        <p className="text-xs text-muted-foreground mt-2">
-          Je kunt hier instructies typen en/of een audiobestand uploaden met aanwijzingen
-        </p>
+      {/* Text input with native textarea */}
+      <div className="relative">
+        <textarea
+          value={textValue}
+          onChange={(e) => onTextChange(e.target.value)}
+          placeholder={placeholder}
+          className="min-h-[120px] w-full rounded-md bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all resize-none"
+          style={{
+            userSelect: 'text',
+            WebkitUserSelect: 'text',
+            MozUserSelect: 'text',
+            msUserSelect: 'text',
+          }}
+        />
       </div>
 
       {/* Audio section */}
@@ -158,48 +164,87 @@ export function AudioNotes({
           </motion.div>
         )}
 
-        {/* Upload and record options */}
+        {/* Compact Upload and Record Options */}
         {!currentAudioUrl && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* File upload */}
+          <div className="flex items-center gap-3">
+            {/* File upload button */}
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+              className={`flex-1 flex items-center gap-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors ${
                 isDragActive
                   ? 'border-primary bg-primary/5'
                   : 'border-border hover:border-border/60 hover:bg-muted/30'
               }`}
             >
               <input {...getInputProps()} />
-              <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm font-medium text-foreground">Upload audiobestand</p>
-              <p className="text-xs text-muted-foreground mt-1">MP3, M4A, OGG (max. 3 min)</p>
+              <Upload className="w-4 h-4 text-muted-foreground" />
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">Upload audiobestand</p>
+                <p className="text-xs text-muted-foreground">MP3, M4A, OGG (max. 3 min)</p>
+              </div>
             </div>
 
-            {/* Audio recording */}
+            <div className="text-xs text-muted-foreground">of</div>
+
+            {/* Audio recording button */}
             <ReactMediaRecorder
               audio
-              onStop={(blobUrl, blob) => {
+              mediaRecorderOptions={{
+                mimeType: 'audio/webm;codecs=opus',
+              }}
+              onStop={async (blobUrl, blob) => {
                 setRecordedAudioUrl(blobUrl);
-                const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+                // Convert to a more compatible format
+                const file = new File([blob], 'recording.webm', {
+                  type: blob.type || 'audio/webm',
+                });
                 onAudioFileChange(file);
               }}
-              render={({ status, startRecording, stopRecording }) => {
+              render={({ status, startRecording, stopRecording, error }) => {
                 const recordingActive = status === 'recording';
                 if (recordingActive !== isRecording) {
                   setIsRecording(recordingActive);
                 }
 
+                // Check for MediaRecorder support
+                if (error || (typeof window !== 'undefined' && !window.MediaRecorder)) {
+                  return (
+                    <div className="flex-1 border border-dashed border-border rounded-lg px-4 py-3 opacity-50">
+                      <div className="flex items-center gap-3">
+                        <Mic className="w-4 h-4 text-muted-foreground" />
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Opnemen niet beschikbaar
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Browser ondersteunt geen audio opname
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <button
-                    onClick={() => {
+                    type="button"
+                    onClick={async () => {
                       if (status === 'recording') {
                         stopRecording();
                       } else {
-                        startRecording();
+                        try {
+                          // Request microphone permission explicitly
+                          await navigator.mediaDevices.getUserMedia({ audio: true });
+                          startRecording();
+                        } catch (err) {
+                          console.error('Microphone access denied:', err);
+                          alert(
+                            'Microfoon toegang is vereist om audio op te nemen. Controleer je browser instellingen.'
+                          );
+                        }
                       }
                     }}
-                    className={`border-2 rounded-lg p-6 transition-all ${
+                    className={`flex-1 flex items-center gap-3 border rounded-lg px-4 py-3 transition-all ${
                       status === 'recording'
                         ? 'border-red-500 bg-red-500/5 animate-pulse'
                         : 'border-border hover:border-border/60 hover:bg-muted/30'
@@ -207,17 +252,19 @@ export function AudioNotes({
                   >
                     {status === 'recording' ? (
                       <>
-                        <Square className="w-8 h-8 mx-auto mb-2 text-red-500" />
-                        <p className="text-sm font-medium text-foreground">Stop opname</p>
-                        <p className="text-xs text-red-500 mt-1">Opnemen...</p>
+                        <Square className="w-4 h-4 text-red-500 animate-pulse" />
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-foreground">Stop opname</p>
+                          <p className="text-xs text-red-500">Opnemen...</p>
+                        </div>
                       </>
                     ) : (
                       <>
-                        <Mic className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                        <p className="text-sm font-medium text-foreground">Neem op</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Spreek je instructies in
-                        </p>
+                        <Mic className="w-4 h-4 text-muted-foreground" />
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-foreground">Neem op</p>
+                          <p className="text-xs text-muted-foreground">Spreek je instructies in</p>
+                        </div>
                       </>
                     )}
                   </button>

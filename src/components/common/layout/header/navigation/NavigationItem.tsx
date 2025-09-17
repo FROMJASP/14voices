@@ -1,6 +1,7 @@
 'use client';
 
 import { TransitionLink as Link } from '@/components/common/navigation';
+import { useRouter } from 'next/navigation';
 import type { MenuItem } from './Navigation.types';
 
 interface NavigationItemProps {
@@ -9,6 +10,7 @@ interface NavigationItemProps {
 
 export function NavigationItem({ item }: NavigationItemProps) {
   const hasDropdown = item.hasDropdown;
+  const router = useRouter();
 
   // Clean, minimal button style matching the mockup exactly
   const getButtonStyle = () => {
@@ -50,6 +52,30 @@ export function NavigationItem({ item }: NavigationItemProps) {
     </>
   );
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Check if it's a hash link on the current page
+    if (item.url.startsWith('/#')) {
+      e.preventDefault();
+      const elementId = item.url.substring(2);
+      const element = document.getElementById(elementId);
+
+      if (element) {
+        // Calculate offset for fixed header
+        const headerOffset = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      } else {
+        // If element not found, navigate to homepage with hash
+        router.push(item.url);
+      }
+    }
+  };
+
   if (hasDropdown) {
     return (
       <div style={{ position: 'relative' }} className="group">
@@ -82,6 +108,7 @@ export function NavigationItem({ item }: NavigationItemProps) {
       style={getButtonStyle()}
       target={item.openInNewTab ? '_blank' : undefined}
       rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
+      onClick={handleClick}
     >
       <ButtonContent />
     </Link>

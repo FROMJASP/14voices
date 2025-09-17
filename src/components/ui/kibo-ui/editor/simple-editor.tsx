@@ -25,9 +25,11 @@ const SimpleEditorContent = ({
   onChange,
   className,
   editable = true,
+  placeholder: _placeholder,
 }: SimpleEditorProps) => {
   const { editor } = useCurrentEditor();
   const [isInitialized, setIsInitialized] = useState(false);
+  // Removed unused isEmpty state
 
   useEffect(() => {
     if (editor && content && !isInitialized && editor.isEmpty) {
@@ -59,6 +61,8 @@ const SimpleEditorContent = ({
     if (editor && onChange) {
       const updateHandler = () => {
         const html = editor.getHTML();
+        // Removed unused text and setIsEmpty call
+
         const sanitizedHtml = DOMPurify.sanitize(html, {
           ALLOWED_TAGS: ['p', 'br'],
           ALLOWED_ATTR: ['class'],
@@ -74,6 +78,8 @@ const SimpleEditorContent = ({
     }
     return undefined;
   }, [editor, onChange]);
+
+  // Removed empty check - no longer needed
 
   return (
     <div className={cn('simple-editor-container', !editable && 'editor-disabled', className)}>
@@ -118,6 +124,9 @@ export const SimpleEditor: React.FC<SimpleEditorProps> = ({
     Placeholder.configure({
       placeholder,
       emptyEditorClass: 'is-editor-empty',
+      showOnlyWhenEditable: true,
+      showOnlyCurrent: true,
+      // considerAnyAsEmpty: true, // Not a valid option
     }),
   ];
 
@@ -129,8 +138,12 @@ export const SimpleEditor: React.FC<SimpleEditorProps> = ({
       immediatelyRender={false}
       editorProps={{
         attributes: {
-          class: 'prose prose-sm max-w-none focus:outline-none',
+          class: 'max-w-none focus:outline-none text-sm',
           'data-placeholder': placeholder,
+        },
+        handleKeyDown: () => {
+          // Allow normal text editing behavior
+          return false;
         },
       }}
     >
@@ -139,6 +152,7 @@ export const SimpleEditor: React.FC<SimpleEditorProps> = ({
         onChange={onChange}
         className={className}
         editable={editable}
+        placeholder={placeholder}
       />
     </EditorProvider>
   );

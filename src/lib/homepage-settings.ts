@@ -67,30 +67,44 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
 
     const homePage = pages.docs[0] as Page | undefined;
 
-    if (!homePage || !homePage.hero) {
-      throw new Error('Homepage not found or hero not configured');
+    if (!homePage) {
+      throw new Error('Homepage not found');
     }
 
-    // Accept any hero type but warn if not homepage type
-    if (homePage.hero.type !== 'homepage') {
-      console.warn(
-        `Homepage hero type is "${homePage.hero.type}" instead of "homepage". Using fallback values for missing fields.`
-      );
+    // Find hero block in layout
+    const heroBlock = homePage.layout?.find(
+      (block) => block.blockType === 'hero-v1' || block.blockType === 'hero-v2'
+    );
+
+    if (!heroBlock) {
+      throw new Error('Hero block not found in homepage layout');
     }
 
     // Transform the page data to match HomepageSettings interface
     const settings: HomepageSettings = {
       hero: {
-        processSteps: homePage.hero.processSteps || [],
-        title: homePage.hero.title || '',
-        description: homePage.hero.description || '',
-        primaryButton: homePage.hero.primaryButton || null,
-        secondaryButton: homePage.hero.secondaryButton || null,
+        processSteps: (heroBlock.blockType === 'hero-v1' ? heroBlock.processSteps : []) || [],
+        title: typeof heroBlock.title === 'string' ? heroBlock.title : '',
+        description: typeof heroBlock.description === 'string' ? heroBlock.description : '',
+        primaryButton:
+          heroBlock.cta?.primaryLabel && heroBlock.cta?.primaryUrl
+            ? { text: heroBlock.cta.primaryLabel, url: heroBlock.cta.primaryUrl }
+            : null,
+        secondaryButton:
+          heroBlock.cta?.secondaryLabel && heroBlock.cta?.secondaryUrl
+            ? { text: heroBlock.cta.secondaryLabel, url: heroBlock.cta.secondaryUrl }
+            : null,
         heroImage:
-          typeof homePage.hero.heroImage === 'object' && homePage.hero.heroImage?.url
-            ? homePage.hero.heroImage.url
-            : null, // No default image
-        stats: homePage.hero.stats || [],
+          typeof heroBlock.image === 'object' && heroBlock.image?.url ? heroBlock.image.url : null, // No default image
+        stats:
+          heroBlock.blockType === 'hero-v1' && heroBlock.stats
+            ? heroBlock.stats.map((stat) => ({
+                value: stat.value,
+                label: stat.label,
+                link: stat.link || undefined,
+                hoverEffect: stat.hoverEffect || undefined,
+              }))
+            : [],
       },
     };
 

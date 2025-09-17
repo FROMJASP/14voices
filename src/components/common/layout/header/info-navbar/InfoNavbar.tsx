@@ -127,7 +127,7 @@ export function InfoNavbar({ data, className = '' }: InfoNavbarProps) {
                   href={link.url}
                   target={link.openInNewTab ? '_blank' : undefined}
                   rel={link.openInNewTab ? 'noopener noreferrer' : undefined}
-                  className="transition-colors duration-200 no-underline text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  className="hidden md:inline-block transition-colors duration-200 no-underline text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 >
                   {link.label}
                 </Link>

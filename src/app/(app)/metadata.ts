@@ -20,14 +20,12 @@ export async function generateMetadata(): Promise<Metadata> {
     const icons: Metadata['icons'] = {};
 
     // Dynamic favicon from CMS with cache busting
-    if (
-      siteSettings?.favicon &&
-      typeof siteSettings.favicon === 'object' &&
-      'url' in siteSettings.favicon
-    ) {
+    // TODO: Add favicon field to SiteSettings global
+    const faviconObj = (siteSettings as any)?.favicon;
+    if (faviconObj && typeof faviconObj === 'object' && 'url' in faviconObj) {
       // Add cache busting with timestamp
       const timestamp = Date.now();
-      const faviconUrl = siteSettings.favicon.url;
+      const faviconUrl = faviconObj.url;
 
       // For blob URLs, we can't add query params, so we'll use the URL as-is
       // The blob URL itself changes when a new file is uploaded
