@@ -161,7 +161,7 @@ export const seedExtraServices = async (payload: Payload) => {
   ];
 
   // Create all services first
-  const createdServices: Record<string, string> = {};
+  const createdServices: Record<string, number> = {};
 
   for (const service of extraServices) {
     try {
