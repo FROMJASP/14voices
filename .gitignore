@@ -48,4 +48,7 @@ next-env.d.ts
 
 # local file uploads (fallback storage)
 /public/uploads
+
+# development scripts with sensitive operations
+/src/dev-scripts
 !/public/uploads/.gitkeep

@@ -49,11 +49,19 @@ async function runSeed() {
     });
 
     if (existingUsers.docs.length === 0) {
+      // Require environment variables for production safety
+      if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+        throw new Error(
+          'ADMIN_EMAIL and ADMIN_PASSWORD must be set in environment variables. ' +
+            'This is required for security - no default credentials are allowed.'
+        );
+      }
+
       const adminUser = await payload.create({
         collection: 'users',
         data: {
-          email: process.env.ADMIN_EMAIL || 'admin@14voices.com',
-          password: process.env.ADMIN_PASSWORD || 'ChangeThisPassword123!',
+          email: process.env.ADMIN_EMAIL,
+          password: process.env.ADMIN_PASSWORD,
           name: 'Admin User',
           role: 'admin',
         },

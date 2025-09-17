@@ -195,7 +195,7 @@ export const seedProductions = async (payload: Payload) => {
     try {
       await payload.create({
         collection: 'productions',
-        data: production,
+        data: production as any, // Type assertion for seed data
       });
       console.log(`✅ Created production: ${production.name}`);
     } catch (error: any) {

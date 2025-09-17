@@ -15,25 +15,62 @@ export async function seedPages(payload: Payload) {
 
     const pages = [];
 
-    // Create Home page without layout reference
+    // Create Home page with new layout blocks
     const homePage = await payload.create({
       collection: 'pages',
       data: {
         title: 'Home',
         slug: 'home',
         status: 'published',
-        hero: {
-          type: 'gradient',
-          title: 'Professional Voice-Over Services',
-          subtitle: 'Bringing your scripts to life with the perfect voice',
-        },
-        sections: [],
+        layout: [
+          {
+            blockType: 'hero-v1',
+            title: {
+              root: {
+                type: 'root',
+                children: [
+                  {
+                    type: 'paragraph',
+                    children: [
+                      {
+                        type: 'text',
+                        text: 'Professional Voice-Over Services',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+            description: {
+              root: {
+                type: 'root',
+                children: [
+                  {
+                    type: 'paragraph',
+                    children: [
+                      {
+                        type: 'text',
+                        text: 'Bringing your scripts to life with the perfect voice',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+            processSteps: [],
+            stats: [],
+            cta: {
+              primaryLabel: 'Get Started',
+              primaryUrl: '/contact',
+            },
+          },
+        ],
         meta: {
           title: 'Home',
           description:
             'Professional voice-over services for commercials, narration, e-learning, and more.',
         },
-      },
+      } as any, // Type assertion to bypass strict typing during seed
     });
     pages.push(homePage);
     console.log('✅ Home page created');
@@ -45,18 +82,49 @@ export async function seedPages(payload: Payload) {
         title: 'About Us',
         slug: 'about',
         status: 'published',
-        hero: {
-          type: 'simple',
-          title: 'About 14voices',
-          subtitle: 'Your trusted partner in professional voice-over services',
-        },
-        sections: [],
+        layout: [
+          {
+            blockType: 'hero-v2',
+            title: {
+              root: {
+                type: 'root',
+                children: [
+                  {
+                    type: 'paragraph',
+                    children: [
+                      {
+                        type: 'text',
+                        text: 'About 14voices',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+            subtitle: {
+              root: {
+                type: 'root',
+                children: [
+                  {
+                    type: 'paragraph',
+                    children: [
+                      {
+                        type: 'text',
+                        text: 'Your trusted partner in professional voice-over services',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        ],
         meta: {
           title: 'About Us',
           description:
             'Learn about 14voices and our commitment to delivering exceptional voice-over services.',
         },
-      },
+      } as any,
     });
     pages.push(aboutPage);
     console.log('✅ About page created');
@@ -68,18 +136,49 @@ export async function seedPages(payload: Payload) {
         title: 'Contact',
         slug: 'contact',
         status: 'published',
-        hero: {
-          type: 'simple',
-          title: 'Get in Touch',
-          subtitle: "Let's discuss your voice-over project",
-        },
-        sections: [],
+        layout: [
+          {
+            blockType: 'hero-v2',
+            title: {
+              root: {
+                type: 'root',
+                children: [
+                  {
+                    type: 'paragraph',
+                    children: [
+                      {
+                        type: 'text',
+                        text: 'Get in Touch',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+            subtitle: {
+              root: {
+                type: 'root',
+                children: [
+                  {
+                    type: 'paragraph',
+                    children: [
+                      {
+                        type: 'text',
+                        text: "Let's discuss your voice-over project",
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        ],
         meta: {
           title: 'Contact Us',
           description:
             'Contact 14voices for professional voice-over services. Get a quote for your project today.',
         },
-      },
+      } as any,
     });
     pages.push(contactPage);
     console.log('✅ Contact page created');
@@ -91,16 +190,13 @@ export async function seedPages(payload: Payload) {
         title: 'Privacy Policy',
         slug: 'privacy-policy',
         status: 'published',
-        hero: {
-          type: 'none',
-        },
-        sections: [],
+        layout: [], // Empty layout for policy pages
         meta: {
           title: 'Privacy Policy',
           description:
             'Privacy policy for 14voices - How we collect, use, and protect your information.',
         },
-      },
+      } as any,
     });
     pages.push(privacyPage);
     console.log('✅ Privacy Policy page created');
@@ -112,15 +208,12 @@ export async function seedPages(payload: Payload) {
         title: 'Terms of Service',
         slug: 'terms-of-service',
         status: 'published',
-        hero: {
-          type: 'none',
-        },
-        sections: [],
+        layout: [], // Empty layout for policy pages
         meta: {
           title: 'Terms of Service',
           description: 'Terms of service for using 14voices voice-over services.',
         },
-      },
+      } as any,
     });
     pages.push(termsPage);
     console.log('✅ Terms of Service page created');
