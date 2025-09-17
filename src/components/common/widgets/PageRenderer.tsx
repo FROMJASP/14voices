@@ -56,13 +56,6 @@ export default function PageRenderer({
   const router = useRouter();
   const isInIframe = typeof window !== 'undefined' && window.parent !== window;
 
-  console.log('PageRenderer initialized with page:', {
-    slug: page?.slug,
-    hasLayout: Array.isArray((page as any)?.layout),
-    layoutLength: Array.isArray((page as any)?.layout) ? (page as any).layout.length : 0,
-    status: page?.status,
-  });
-
   // Temporarily disable live preview to fix re-render issue
   // const { data: liveData } = useLivePreview({
   //   initialData: page,
@@ -135,31 +128,29 @@ export default function PageRenderer({
 
         switch (block.blockType) {
           case 'hero-v1': {
-            // Hero variant 1 is critical, so not lazy loaded
-            const heroData = {
-              hero: {
-                layout: 'variant1',
-                titleRichText: block.title,
-                descriptionRichText: block.description,
-                processSteps: block.processSteps,
-                stats: block.stats,
-                heroImage: block.image,
-                primaryButton: block.cta?.primaryLabel
-                  ? {
-                      text: block.cta.primaryLabel,
-                      url: block.cta.primaryUrl || '#',
-                    }
-                  : null,
-                secondaryButton: block.cta?.secondaryLabel
-                  ? {
-                      text: block.cta.secondaryLabel,
-                      url: block.cta.secondaryUrl || '#',
-                    }
-                  : null,
-              },
+            // Create a mock page structure that transformHeroDataForHomepage expects
+            const mockPage = {
+              layout: [block], // Pass the block in the layout array
             };
-            const transformedData = transformHeroDataForHomepage(heroData as any);
+
+            const transformedData = transformHeroDataForHomepage(mockPage as any);
+
+            // Add the buttons from the CTA fields
             if (transformedData) {
+              // Override with proper button data from block.cta
+              transformedData.hero.primaryButton = block.cta?.primaryLabel
+                ? {
+                    text: block.cta.primaryLabel,
+                    url: block.cta.primaryUrl || '#',
+                  }
+                : null;
+              transformedData.hero.secondaryButton = block.cta?.secondaryLabel
+                ? {
+                    text: block.cta.secondaryLabel,
+                    url: block.cta.secondaryUrl || '#',
+                  }
+                : null;
+
               return (
                 <div key={blockKey}>
                   <HeroSection heroSettings={transformedData} />
@@ -291,17 +282,10 @@ export default function PageRenderer({
   if (pageMetadata.hasNewLayout) {
     const layoutBlocks = (currentPage as any).layout;
 
-    console.log('PageRenderer - Rendering page with layout blocks:', {
-      slug: currentPage.slug,
-      layoutLength: layoutBlocks?.length,
-      blocks: layoutBlocks?.map((b: any) => ({ type: b.blockType, id: b.id })),
-    });
-
     return (
       <div className="homepage-preview">
         {layoutBlocks.length > 0
           ? layoutBlocks.map((block: any, index: number) => {
-              console.log(`Rendering block ${index}:`, block.blockType, block);
               return renderBlock(block, index);
             })
           : null}
