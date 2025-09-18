@@ -110,20 +110,27 @@ button[aria-label*='Language'] {
 
 /* Fix sidebar scrolling issue */
 .nav__wrap {
-  height: 100vh !important;
+  max-height: 100vh !important;
+  height: auto !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
 }
 
 /* Payload 3 specific nav fix - remove flex spacer */
 .nav {
   position: relative !important;
+  height: auto !important;
+  min-height: auto !important;
 }
 
 /* Adjust first nav group to have appropriate spacing */
 .nav__scroll {
   padding-top: 4rem !important;
   margin-top: 0 !important;
+  height: auto !important;
+  min-height: auto !important;
 }
 
 .nav__scroll > :first-child {
@@ -154,4 +161,44 @@ button[aria-label*='Language'] {
 .nav > :first-child:not(#nav-logo-container) {
   margin-top: 0 !important;
   padding-top: 1rem !important;
+}
+
+/* Additional sidebar container fixes */
+.template__wrap {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+/* Ensure sidebar doesn't expand to match main content height */
+.template__nav,
+.nav__wrap,
+aside[class*='nav'] {
+  height: auto !important;
+  max-height: 100vh !important;
+  flex: 0 0 auto !important;
+}
+
+/* Ensure main content area can grow independently */
+.template__content {
+  flex: 1 1 auto !important;
+  min-height: 100vh !important;
+}
+
+/* Fix for Payload 3.x specific layout classes */
+.app__wrap,
+[class*='app__wrap'],
+[class*='template__wrap'] {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+}
+
+/* Prevent sidebar from stretching */
+.app__nav,
+[class*='app__nav'],
+[class*='template__nav'] {
+  height: auto !important;
+  max-height: 100vh !important;
+  flex: 0 0 auto !important;
+  align-self: flex-start !important;
 }

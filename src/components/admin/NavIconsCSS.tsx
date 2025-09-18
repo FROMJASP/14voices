@@ -157,6 +157,67 @@ const NavIconsCSS: React.FC = () => {
       }
     `;
 
+    // Fix sidebar height issue - prevent sidebar from expanding to match main content
+    css += `
+      /* Fix sidebar height and layout issues */
+      .nav__wrap {
+        max-height: 100vh !important;
+        height: auto !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        flex-grow: 0 !important;
+        flex-shrink: 0 !important;
+      }
+      
+      .nav {
+        position: relative !important;
+        height: auto !important;
+        min-height: auto !important;
+      }
+      
+      .nav__scroll {
+        height: auto !important;
+        min-height: auto !important;
+      }
+      
+      /* Ensure proper flexbox layout for admin panels */
+      .template__wrap,
+      .app__wrap,
+      [class*="template__wrap"],
+      [class*="app__wrap"] {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+      }
+      
+      /* Prevent sidebar from stretching to match content */
+      .template__nav,
+      .app__nav,
+      [class*="template__nav"],
+      [class*="app__nav"] {
+        height: auto !important;
+        max-height: 100vh !important;
+        flex: 0 0 auto !important;
+        align-self: flex-start !important;
+      }
+      
+      /* Ensure main content can grow independently */
+      .template__content,
+      .app__content,
+      [class*="template__content"],
+      [class*="app__content"] {
+        flex: 1 1 auto !important;
+        min-height: 100vh !important;
+      }
+      
+      /* Remove any flex spacers that Payload might inject */
+      .nav > div[style*="flex-grow"],
+      .nav > div[style*="flex: 1"],
+      .nav > :nth-child(2)[style*="flex-grow"] {
+        display: none !important;
+      }
+    `;
+
     // Add custom blocks drawer styling
     css += `
       /* Custom styling for blocks drawer to show image + text layout */
