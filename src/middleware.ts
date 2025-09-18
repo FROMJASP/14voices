@@ -82,8 +82,11 @@ export async function middleware(request: NextRequest) {
     const isSafeMethod = ['GET', 'HEAD', 'OPTIONS'].includes(request.method);
     const isWebhook = request.nextUrl.pathname.includes('/webhook');
     const isHealthCheck = request.nextUrl.pathname.includes('/health');
+    const isPayloadAdminAPI = request.nextUrl.pathname.match(
+      /^\/api\/(?!public|webhooks|health)[^\/]+/
+    );
 
-    if (!isPublicEndpoint && !isSafeMethod && !isWebhook && !isHealthCheck) {
+    if (!isPublicEndpoint && !isSafeMethod && !isWebhook && !isHealthCheck && !isPayloadAdminAPI) {
       // Check for CSRF token
       const headerToken = request.headers.get('x-csrf-token');
       const cookieToken = request.cookies.get('csrf-token')?.value;

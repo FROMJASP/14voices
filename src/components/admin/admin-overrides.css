@@ -141,3 +141,75 @@
 [data-theme='light'] [class*='button'] a[href*='productions/create']::before {
   filter: brightness(0) invert(1) !important;
 }
+
+/* Video thumbnail handling in admin panel */
+.thumbnail img[src*='.mp4'],
+.thumbnail img[src*='.mov'],
+.thumbnail img[src*='.webm'],
+.thumbnail img[src*='.avi'],
+.thumbnail img[src*='.wmv'] {
+  position: relative !important;
+  background: #f3f4f6 !important;
+  border: 2px dashed #d1d5db !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100px !important;
+}
+
+.thumbnail img[src*='.mp4']::before,
+.thumbnail img[src*='.mov']::before,
+.thumbnail img[src*='.webm']::before,
+.thumbnail img[src*='.avi']::before,
+.thumbnail img[src*='.wmv']::before {
+  content: '🎬 Video Preview' !important;
+  color: #6b7280 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  background: white !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Dark mode video thumbnail */
+[data-theme='dark'] .thumbnail img[src*='.mp4'],
+[data-theme='dark'] .thumbnail img[src*='.mov'],
+[data-theme='dark'] .thumbnail img[src*='.webm'],
+[data-theme='dark'] .thumbnail img[src*='.avi'],
+[data-theme='dark'] .thumbnail img[src*='.wmv'] {
+  background: var(--theme-elevation-100) !important;
+  border-color: var(--theme-elevation-200) !important;
+}
+
+[data-theme='dark'] .thumbnail img[src*='.mp4']::before,
+[data-theme='dark'] .thumbnail img[src*='.mov']::before,
+[data-theme='dark'] .thumbnail img[src*='.webm']::before,
+[data-theme='dark'] .thumbnail img[src*='.avi']::before,
+[data-theme='dark'] .thumbnail img[src*='.wmv']::before {
+  background: var(--theme-elevation-0) !important;
+  color: var(--theme-text-light) !important;
+}
+
+/* Video preview for upload field */
+.field-type.upload .file-field__thumbnail video {
+  max-width: 200px !important;
+  max-height: 150px !important;
+  border-radius: 8px !important;
+  background: #000 !important;
+}
+
+/* Video upload field styling */
+.upload-field video,
+.file-field video {
+  width: 100% !important;
+  max-width: 300px !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--theme-elevation-150) !important;
+}

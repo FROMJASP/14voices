@@ -2,6 +2,27 @@ import type { CollectionConfig } from 'payload';
 import { validateUploadedFile, getAllowedMimeTypes } from '@/lib/file-security';
 import { logStorageError } from '@/lib/storage/errors';
 
+// Video thumbnail generation hook
+const generateVideoThumbnailHook = async ({ data, req, operation }: any) => {
+  // Only process video files on create
+  if (operation === 'create' && req.file && req.file.mimetype?.startsWith('video/')) {
+    try {
+      // Set video thumbnail URL for admin preview
+      // This is a placeholder - in production you might want to generate actual thumbnails
+      data.videoThumbnail = data.url || `/api/media/file/${data.filename}`;
+
+      console.log('[Media] Video file detected, setting thumbnail URL:', {
+        filename: data.filename,
+        mimeType: req.file.mimetype,
+        thumbnailUrl: data.videoThumbnail,
+      });
+    } catch (error) {
+      console.error('[Media] Error setting video thumbnail:', error);
+    }
+  }
+  return data;
+};
+
 const Media: CollectionConfig = {
   slug: 'media',
   admin: {
@@ -9,6 +30,7 @@ const Media: CollectionConfig = {
       en: 'Storage',
       nl: 'Opslag',
     },
+    defaultColumns: ['thumbnail', 'filename', 'alt', 'mimeType', 'filesize'],
   },
   access: {
     read: () => true,
@@ -29,6 +51,16 @@ const Media: CollectionConfig = {
     },
   },
   fields: [
+    {
+      name: 'thumbnail',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: {
+          Field: './components/admin/MediaPreview#default',
+        },
+      },
+    },
     {
       name: 'alt',
       type: 'text',
@@ -76,6 +108,16 @@ const Media: CollectionConfig = {
           data?.scanStatus === 'suspicious' || data?.scanStatus === 'blocked',
       },
     },
+    {
+      name: 'videoThumbnail',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        condition: ({ data }) => data?.mimeType?.startsWith('video/'),
+        description: 'Video preview thumbnail URL',
+      },
+      label: 'Video Thumbnail',
+    },
   ],
   upload: {
     staticDir: 'media',
@@ -99,7 +141,13 @@ const Media: CollectionConfig = {
         position: 'centre',
       },
     ],
-    adminThumbnail: 'thumbnail',
+    adminThumbnail: ({ doc }) => {
+      // For videos, use the video file itself as thumbnail (admin will handle video preview)
+      if (doc?.mimeType?.startsWith('video/')) {
+        return doc.url || doc.filename;
+      }
+      return 'thumbnail';
+    },
     mimeTypes: [
       'image/jpeg',
       'image/png',
@@ -122,6 +170,7 @@ const Media: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
+      generateVideoThumbnailHook,
       async ({ req, data, operation }) => {
         // Add user reference
         if (req.user && operation === 'create') {
