@@ -1,214 +1,141 @@
-/* Import nav icons styles */
-@import './styles/nav-icons.css';
+/* Admin panel overrides for Payload CMS v3 */
 
-/* Hide the locale selector in the admin panel */
-.localizer {
-  display: none !important;
+/* Collections Dashboard Styling */
+.collections-dashboard {
+  padding: 2rem !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
 }
 
-/* Alternative selector if the above doesn't work */
-[class*='localizer'] {
-  display: none !important;
+.collections-dashboard__header {
+  margin-bottom: 2rem !important;
 }
 
-/* Hide locale dropdown button */
-button[aria-label*='Locale'],
-button[aria-label*='Language'] {
-  display: none !important;
+.collections-dashboard__collections {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 1.5rem !important;
 }
 
-/* Fix checkbox alignment in table rows */
-.collection-list__cell-checkbox {
+/* Entity Cards Styling */
+.entity-card {
+  background: var(--theme-bg, #ffffff) !important;
+  border: 1px solid var(--theme-border-color, #e4e4e7) !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  transition: all 0.3s ease !important;
+  height: 100% !important;
   display: flex !important;
-  align-items: center !important;
-  min-height: 56px !important;
+  flex-direction: column !important;
 }
 
-/* Ensure table cells have consistent height */
-.collection-list__cell {
-  min-height: 56px !important;
-  display: flex !important;
-  align-items: center !important;
+.entity-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--theme-primary-color, #3b82f6) !important;
 }
 
-/* Fix checkbox input alignment */
-.collection-list__cell input[type='checkbox'] {
+/* Override form field borders in dark mode */
+[data-theme='dark'] .field-type,
+[data-theme='dark'] .field-type__wrap {
+  border-color: var(--theme-elevation-150) !important;
+}
+
+[data-theme='dark'] .field-type:hover,
+[data-theme='dark'] .field-type:focus-within {
+  border-color: var(--theme-elevation-200) !important;
+}
+
+/* Collection list view enhancements */
+.collection-list__header {
+  background: var(--theme-bg, #ffffff) !important;
+  padding: 1rem 1.5rem !important;
+  border-bottom: 1px solid var(--theme-border-color, #e4e4e7) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+}
+
+/* Button styling consistency */
+.btn {
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+}
+
+.btn--style-primary {
+  background: var(--theme-primary-color, #3b82f6) !important;
+  color: white !important;
+}
+
+.btn--style-primary:hover {
+  background: var(--theme-primary-color-dark, #2563eb) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Basic sidebar scrollbar fix */
+.nav__wrap {
+  height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 0 !important;
+}
+
+/* Remove padding from nav scroll container */
+.nav__scroll {
+  padding-right: 0 !important;
+}
+
+/* Custom scrollbar styling */
+.nav__wrap::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.nav__wrap::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.nav__wrap::-webkit-scrollbar-thumb {
+  background: var(--theme-elevation-200) !important;
+  border-radius: 4px !important;
+}
+
+.nav__wrap::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-elevation-300) !important;
+}
+
+/* Style the logout button to appear in a bottom section */
+.nav a[href='/admin/logout'] {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  border-top: 1px solid var(--theme-elevation-100) !important;
+  background: var(--theme-bg) !important;
+  padding: 1rem !important;
   margin: 0 !important;
 }
 
-/* Make entire row clickable for voiceovers collection */
-.collection-list__list-item[data-collection='voiceovers'] {
-  cursor: pointer !important;
+/* Dark mode logout section */
+[data-theme='dark'] .nav a[href='/admin/logout'] {
+  background: var(--theme-elevation-0) !important;
+  border-top-color: var(--theme-elevation-150) !important;
 }
 
-.collection-list__list-item[data-collection='voiceovers']:hover {
-  background-color: rgba(59, 130, 246, 0.05) !important;
-}
-
-/* Dark mode support for row hover */
-@media (prefers-color-scheme: dark) {
-  .collection-list__list-item[data-collection='voiceovers']:hover {
-    background-color: rgba(59, 130, 246, 0.1) !important;
-  }
-}
-
-/* Admin cell hover effects */
-.admin-cell-name {
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  transition: text-decoration-color 0.2s;
-}
-
-.admin-cell-name:hover {
-  text-decoration-color: #3b82f6;
-}
-
-/* Animations for ShimmerButton */
-@keyframes shimmer-slide {
-  to {
-    transform: translate(calc(100cqw - 100%), 0);
-  }
-}
-
-@keyframes spin-around {
-  0% {
-    transform: translateZ(0) rotate(0);
-  }
-  15%,
-  35% {
-    transform: translateZ(0) rotate(90deg);
-  }
-  65%,
-  85% {
-    transform: translateZ(0) rotate(270deg);
-  }
-  100% {
-    transform: translateZ(0) rotate(360deg);
-  }
-}
-
-/* Support for container queries */
-@supports (container-type: size) {
-  .animate-shimmer-slide {
-    animation: shimmer-slide var(--speed) ease-in-out infinite;
-  }
-
-  .animate-spin-around {
-    animation: spin-around var(--speed) linear infinite;
-  }
-}
-
-/* Collapse page layout blocks by default */
-/* NOTE: Since we're using initCollapsed: true in the field config,
-   we don't need aggressive CSS. The blocks will start collapsed
-   and Payload's JavaScript will handle the expand/collapse functionality */
-
-/* Just ensure transitions are smooth */
-[data-field-name='layout'] .collapsible__content {
-  transition: height 0.2s ease-in-out;
-}
-
-/* Hide default Payload navigation when custom sidebar is active */
-.custom-admin-sidebar ~ .template__wrap .nav__wrap,
-.template__wrap:has(.custom-admin-sidebar) .nav__wrap {
-  display: none !important;
-}
-
-/* Ensure main template layout works with custom sidebar */
-.template__wrap {
-  display: flex !important;
-  flex-direction: row !important;
-  min-height: 100vh !important;
-}
-
-/* Adjust template nav area when custom sidebar is present */
-.template__wrap:has(.custom-admin-sidebar) .template__nav {
-  display: none !important;
-}
-
-/* Main content area adjustments for custom sidebar */
-.template__main {
-  flex: 1 !important;
-  min-height: 100vh !important;
-  background: var(--background) !important;
-  transition: margin-left 0.2s ease !important;
-}
-
-/* Custom sidebar container styles */
-.custom-admin-sidebar {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  height: 100vh !important;
-  width: 16rem !important;
-  z-index: 50 !important;
-  background: var(--sidebar) !important;
-  border-right: 1px solid var(--sidebar-border) !important;
-  overflow: hidden !important;
-}
-
-/* Responsive behavior for custom sidebar */
-@media (max-width: 768px) {
-  .custom-admin-sidebar {
-    transform: translateX(-100%) !important;
-    transition: transform 0.3s ease !important;
-  }
-
-  .custom-admin-sidebar[data-mobile-open='true'] {
-    transform: translateX(0) !important;
-  }
-
-  .template__main {
-    margin-left: 0 !important;
-  }
-}
-
-/* Fallback styles for when custom sidebar is not loaded */
-.nav__wrap {
-  max-height: 100vh !important;
-  height: auto !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  flex-grow: 0 !important;
-  flex-shrink: 0 !important;
-}
-
-/* Payload 3 specific nav fix - remove flex spacer */
+/* Add minimal padding to nav to account for logout button */
 .nav {
-  position: relative !important;
-  height: auto !important;
-  min-height: auto !important;
-}
-
-/* Hide the flex spacer that Payload inserts */
-.nav > :nth-child(2)[style*='flex-grow'] {
-  display: none !important;
-}
-
-/* Alternative selector for the spacer */
-.nav > div[style*='flex: 1 1 0%'] {
-  display: none !important;
-}
-
-/* Fix sidebar height to be visible */
-.nav__wrap {
-  height: 100vh !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  padding-bottom: 10px !important;
+  padding-right: 0 !important;
 }
 
 /* Fix productions collection create button icon visibility in light mode */
-/* Target the productions create button specifically */
 [data-theme='light'] a[href='/admin/collections/productions/create']::before {
   filter: brightness(0) invert(1) !important;
 }
 
-/* Also target when the link is inside a button (Payload's common structure) */
 [data-theme='light'] button a[href='/admin/collections/productions/create']::before {
   filter: brightness(0) invert(1) !important;
 }
 
-/* More comprehensive targeting for different Payload UI structures */
 [data-theme='light'] .pill a[href*='productions/create']::before,
 [data-theme='light'] [class*='pill'] a[href*='productions/create']::before,
 [data-theme='light'] [class*='button'] a[href*='productions/create']::before {
