@@ -11,7 +11,6 @@ import { UserAvatarCell as UserAvatarCell_06bfa2a3d294dfb0672ca1bc540605dd } fro
 import { UserRoleCell as UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d } from '../../../components/admin/cells/UserRoleCell'
 import { PhoneCell as PhoneCell_328db6a539f1a4d0a1739aed65064b39 } from '../../../components/admin/cells/PhoneCell'
 import { UserLastSeenCell as UserLastSeenCell_b5d142be42099c385752cb29940d2ee5 } from '../../../components/admin/cells/UserLastSeenCell'
-import { default as default_bd96a955d7c035e2ba69bfdf4f670b8f } from '../../../components/admin/MediaPreview'
 import { PageSlugCell as PageSlugCell_2b473417a40ab5652febac9d30aecbd0 } from '../../../components/admin/cells/PageSlugCell'
 import { PageTitleCell as PageTitleCell_672964606649d829c3d8d5ceb1579103 } from '../../../components/admin/cells/PageTitleCell'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -74,7 +73,6 @@ export const importMap = {
   "./components/admin/cells/UserRoleCell#UserRoleCell": UserRoleCell_bfb37b9adc5f4cb03732fb342b11d01d,
   "./components/admin/cells/PhoneCell#PhoneCell": PhoneCell_328db6a539f1a4d0a1739aed65064b39,
   "./components/admin/cells/UserLastSeenCell#UserLastSeenCell": UserLastSeenCell_b5d142be42099c385752cb29940d2ee5,
-  "./components/admin/MediaPreview#default": default_bd96a955d7c035e2ba69bfdf4f670b8f,
   "/components/admin/cells/PageSlugCell#PageSlugCell": PageSlugCell_2b473417a40ab5652febac9d30aecbd0,
   "/components/admin/cells/PageTitleCell#PageTitleCell": PageTitleCell_672964606649d829c3d8d5ceb1579103,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,

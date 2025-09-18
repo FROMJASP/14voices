@@ -30,7 +30,7 @@ const Media: CollectionConfig = {
       en: 'Storage',
       nl: 'Opslag',
     },
-    defaultColumns: ['thumbnail', 'filename', 'alt', 'mimeType', 'filesize'],
+    defaultColumns: ['filename', 'alt', 'mimeType', 'filesize'],
   },
   access: {
     read: () => true,
@@ -51,16 +51,6 @@ const Media: CollectionConfig = {
     },
   },
   fields: [
-    {
-      name: 'thumbnail',
-      type: 'ui',
-      admin: {
-        position: 'sidebar',
-        components: {
-          Field: './components/admin/MediaPreview#default',
-        },
-      },
-    },
     {
       name: 'alt',
       type: 'text',
