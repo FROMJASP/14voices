@@ -141,10 +141,10 @@ const Media: CollectionConfig = {
         position: 'centre',
       },
     ],
-    adminThumbnail: ({ doc }) => {
+    adminThumbnail: ({ doc }: { doc: any }) => {
       // For videos, use the video file itself as thumbnail (admin will handle video preview)
-      if (doc?.mimeType?.startsWith('video/')) {
-        return doc.url || doc.filename;
+      if (doc?.mimeType && typeof doc.mimeType === 'string' && doc.mimeType.startsWith('video/')) {
+        return (doc.url as string) || (doc.filename as string);
       }
       return 'thumbnail';
     },
