@@ -54,7 +54,7 @@ export function PriceCalculator({
         }
 
         // Fetch extra services
-        const servicesResponse = await fetch('/api/extra-services');
+        const servicesResponse = await fetch('/api/public/extra-services');
         const servicesData = await servicesResponse.json();
         setExtraServices(servicesData.docs || []);
       } catch (error) {
