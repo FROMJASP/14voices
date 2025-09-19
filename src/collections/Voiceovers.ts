@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 import type { TextFieldSingleValidation } from 'payload';
 import { getCollectionLabels } from '../i18n';
+import { slugifyVoiceoverName } from '../utilities/slugify';
 
 const labels = getCollectionLabels('voiceovers');
 
@@ -51,7 +52,7 @@ const Voiceovers: CollectionConfig = {
       validate: (async (value, { req, id }) => {
         if (!value) return 'Name is required';
 
-        const firstName = value.split(' ')[0].toLowerCase();
+        const slug = slugifyVoiceoverName(value);
 
         // Check for existing voiceovers with the same first name
         const existingVoiceovers = await req.payload.find({
@@ -64,14 +65,15 @@ const Voiceovers: CollectionConfig = {
           limit: 1000,
         });
 
-        const duplicateFirstNames = existingVoiceovers.docs.filter((vo) => {
-          const existingFirstName = (vo.name as string)?.split(' ')[0].toLowerCase();
-          return existingFirstName === firstName;
+        const duplicates = existingVoiceovers.docs.filter((vo) => {
+          const existingSlug = slugifyVoiceoverName(vo.name as string);
+          return existingSlug === slug;
         });
 
-        if (duplicateFirstNames.length > 0) {
-          const duplicateNames = duplicateFirstNames.map((vo) => vo.name).join(', ');
-          return `WARNING: Another voiceover with the same first name "${firstName}" already exists: ${duplicateNames}. This will cause URL conflicts! Please use a different first name or add a middle initial/nickname.`;
+        if (duplicates.length > 0) {
+          const duplicateNames = duplicates.map((vo) => vo.name).join(', ');
+          const firstName = value.split(' ')[0];
+          return `WARNING: Another voiceover with a similar name already exists: ${duplicateNames}. This will create the same URL slug "${slug}". Please use a different first name or add a middle initial/nickname.`;
         }
 
         return true;
@@ -94,12 +96,7 @@ const Voiceovers: CollectionConfig = {
         beforeValidate: [
           ({ value, data }) => {
             if (data?.name) {
-              // Extract first name only
-              const firstName = data.name.split(' ')[0];
-              return firstName
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '');
+              return slugifyVoiceoverName(data.name);
             }
             return value;
           },
