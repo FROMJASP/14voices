@@ -177,8 +177,11 @@ export async function middleware(request: NextRequest) {
 
   // Additional modern security headers
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
-  response.headers.set('Cross-Origin-Resource-Policy', 'same-origin');
-  response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+  // Allow cross-origin resources for images from S3 bucket
+  response.headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  // Note: Cross-Origin-Embedder-Policy: require-corp would also block external images
+  // so we're removing it to allow S3 bucket images to load
+  // response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
 
   // Monitor admin access attempts
   if (request.nextUrl.pathname.startsWith('/admin')) {

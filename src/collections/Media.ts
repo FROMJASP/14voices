@@ -31,6 +31,7 @@ const Media: CollectionConfig = {
       nl: 'Opslag',
     },
     defaultColumns: ['filename', 'alt', 'mimeType', 'filesize'],
+    listSearchableFields: ['filename', 'alt'],
   },
   access: {
     read: () => true,
@@ -108,6 +109,17 @@ const Media: CollectionConfig = {
       },
       label: 'Video Thumbnail',
     },
+    {
+      name: 'filesize',
+      type: 'number',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        components: {
+          Cell: './components/admin/cells/FileSizeCell#FileSizeCell',
+        },
+      },
+    },
   ],
   upload: {
     staticDir: 'media',
@@ -131,13 +143,7 @@ const Media: CollectionConfig = {
         position: 'centre',
       },
     ],
-    adminThumbnail: ({ doc }: { doc: any }) => {
-      // For videos, use the video file itself as thumbnail (admin will handle video preview)
-      if (doc?.mimeType && typeof doc.mimeType === 'string' && doc.mimeType.startsWith('video/')) {
-        return (doc.url as string) || (doc.filename as string);
-      }
-      return 'thumbnail';
-    },
+    adminThumbnail: 'thumbnail',
     mimeTypes: [
       'image/jpeg',
       'image/png',
@@ -155,8 +161,8 @@ const Media: CollectionConfig = {
     ],
     // Storage handled by hybrid adapter
     disableLocalStorage: process.env.NODE_ENV === 'production' && !!process.env.S3_ACCESS_KEY,
-    // Disable Payload's file handler since we serve files directly from S3
-    handlers: [],
+    // In development, use Payload's file handlers. In production, serve from S3
+    handlers: process.env.NODE_ENV === 'development' ? undefined : [],
   },
   hooks: {
     beforeChange: [
@@ -165,6 +171,13 @@ const Media: CollectionConfig = {
         // Add user reference
         if (req.user && operation === 'create') {
           data.uploadedBy = req.user.id;
+        }
+
+        // Ensure filesize is captured
+        if (operation === 'create' && req.file) {
+          if (req.file.size && !data.filesize) {
+            data.filesize = req.file.size;
+          }
         }
 
         // Only run security checks on file upload (create with file)
@@ -268,15 +281,59 @@ const Media: CollectionConfig = {
     ],
     afterRead: [
       async ({ doc }) => {
-        // Ensure URL is always populated correctly
-        // This prevents Payload from trying to use /api/media/file/
-        if (doc && !doc.url && doc.filename) {
-          // If we have S3_PUBLIC_URL, use it to construct the URL
-          const publicUrl = process.env.S3_PUBLIC_URL;
-          if (publicUrl) {
-            doc.url = `${publicUrl}/media/${doc.filename}`;
+        if (!doc) return doc;
+
+        // In development, don't override URLs - let Payload handle them locally
+        // In production, use S3 URLs
+        const isDevelopment = process.env.NODE_ENV === 'development';
+        const publicUrl = process.env.S3_PUBLIC_URL?.replace(/\/$/, '');
+
+        if (!isDevelopment && publicUrl && doc.filename) {
+          // Production: Always override the main URL to use S3
+          doc.url = `${publicUrl}/media/${doc.filename}`;
+
+          // Fix URLs for all sizes
+          if (doc.sizes) {
+            Object.keys(doc.sizes).forEach((sizeName) => {
+              const size = doc.sizes[sizeName];
+              if (size && size.filename) {
+                size.url = `${publicUrl}/media/${size.filename}`;
+              }
+            });
+          }
+
+          // Set thumbnailURL for production
+          if (doc.sizes?.thumbnail?.filename) {
+            doc.thumbnailURL = `${publicUrl}/media/${doc.sizes.thumbnail.filename}`;
+          } else if (doc.sizes?.card?.filename) {
+            doc.thumbnailURL = `${publicUrl}/media/${doc.sizes.card.filename}`;
+          } else {
+            doc.thumbnailURL = `${publicUrl}/media/${doc.filename}`;
           }
         }
+
+        // In development, ensure thumbnailURL is set from existing URLs
+        if (isDevelopment && !doc.thumbnailURL) {
+          if (doc.sizes?.thumbnail?.url) {
+            doc.thumbnailURL = doc.sizes.thumbnail.url;
+          } else if (doc.url) {
+            doc.thumbnailURL = doc.url;
+          }
+        }
+
+        // Add debugging for admin panel
+        if (isDevelopment) {
+          console.log('[Media afterRead] Processing:', {
+            id: doc.id,
+            filename: doc.filename,
+            url: doc.url,
+            thumbnailURL: doc.thumbnailURL,
+            isDevelopment,
+            publicUrl,
+            hasSizes: !!doc.sizes,
+          });
+        }
+
         return doc;
       },
     ],
@@ -292,6 +349,14 @@ const Media: CollectionConfig = {
             user: req.user.email,
             scanStatus: doc.scanStatus,
             storageUrl: doc.url,
+            thumbnailURL: doc.thumbnailURL,
+            sizes: doc.sizes
+              ? Object.keys(doc.sizes).map((key) => ({
+                  name: key,
+                  filename: doc.sizes[key]?.filename,
+                  url: doc.sizes[key]?.url,
+                }))
+              : 'No sizes generated',
           });
         }
         return doc;
