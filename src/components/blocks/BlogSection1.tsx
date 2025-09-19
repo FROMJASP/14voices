@@ -1,6 +1,7 @@
 'use client';
 
 import { Badge } from '@/components/ui/Badge';
+import { makeMediaUrlRelative } from '@/lib/media-utils';
 import {
   BadgeDollarSign,
   Bike,
@@ -213,7 +214,15 @@ export function BlogSection1({
   const getMediaUrl = (media: any) => {
     if (!media) return null;
     if (typeof media === 'string') return null;
-    return media.url || null;
+
+    let url: string | null = null;
+    if (media.url) {
+      url = makeMediaUrlRelative(media.url);
+    } else if (media.filename) {
+      url = makeMediaUrlRelative(`/media/${media.filename}`);
+    }
+
+    return url;
   };
 
   if (loading) {
