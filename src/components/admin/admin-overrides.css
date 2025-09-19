@@ -213,3 +213,74 @@
   border-radius: 8px !important;
   border: 1px solid var(--theme-elevation-150) !important;
 }
+
+/* Fix for media collection thumbnails showing as black squares */
+.collection-list__cell-thumbnail,
+.collection-list .cell-thumbnail {
+  background-color: var(--theme-elevation-50, #f3f4f6) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Ensure thumbnail images are properly displayed */
+.collection-list__cell-thumbnail img,
+.collection-list .cell-thumbnail img {
+  object-fit: cover !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+/* Handle broken or missing thumbnail images */
+.collection-list__cell-thumbnail img[src=''],
+.collection-list__cell-thumbnail img:not([src]),
+.collection-list__cell-thumbnail img[src*='/api/media/file/'],
+.collection-list .cell-thumbnail img[src=''],
+.collection-list .cell-thumbnail img:not([src]),
+.collection-list .cell-thumbnail img[src*='/api/media/file/'] {
+  visibility: hidden !important;
+}
+
+/* Add placeholder for broken images */
+.collection-list__cell-thumbnail::after,
+.collection-list .cell-thumbnail::after {
+  content: '🖼️';
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  font-size: 20px !important;
+  opacity: 0.5 !important;
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .collection-list__cell-thumbnail,
+[data-theme='dark'] .collection-list .cell-thumbnail {
+  background-color: var(--theme-elevation-100) !important;
+}
+
+/* Hide the placeholder when image loads successfully */
+.collection-list__cell-thumbnail:has(img[src]:not([src='']):not([src*='/api/media/file/'])):after,
+.collection-list .cell-thumbnail:has(img[src]:not([src='']):not([src*='/api/media/file/'])):after {
+  display: none !important;
+}
+
+/* Hide the default media icon in table cells */
+.collection-list td:has(a[href*='/media/']):before,
+.collection-list td a[href*='/media/']:before,
+table td:has(a[href*='/media/']):before,
+table td a[href*='/media/']:before,
+[class*='cell']:has(a[href*='/media/']):before,
+[class*='cell'] a[href*='/media/']:before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Also hide any icon specifically for media collection filename cells */
+.collection-list td[class*='filename']:before,
+.collection-list td[class*='filename'] a:before,
+.collection-list td:nth-child(2):before,
+.collection-list td:nth-child(2) a:before {
+  display: none !important;
+  content: none !important;
+}

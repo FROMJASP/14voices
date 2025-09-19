@@ -61,21 +61,8 @@ export const resolveAvatarURL: FieldHook = async ({ data, req, originalDoc }) =>
       if (media?.url) {
         return media.url;
       }
-      // If no URL but has filename, construct it
-      if (media?.filename) {
-        const publicUrl = process.env.S3_PUBLIC_URL;
-        const bucket = process.env.S3_BUCKET || 'fourteenvoices';
-        if (publicUrl) {
-          const url = publicUrl.includes(bucket)
-            ? `${publicUrl}/media/${media.filename}`
-            : `${publicUrl}/${bucket}/media/${media.filename}`;
-          console.log('Resolved avatar URL from filename:', url);
-          return url;
-        }
-        // Fallback to constructing from server URL
-        const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
-        return `${serverUrl}/api/media/file/${media.filename}`;
-      }
+      // If no URL, the storage adapter should have set it
+      console.warn('Avatar media found but no URL available:', media);
     } catch (error) {
       console.error('Error fetching avatar media:', error);
     }
@@ -108,19 +95,6 @@ export const addImageProperty: CollectionAfterReadHook = async ({ doc, req }) =>
           doc.image = media.url;
           // Also ensure avatarURL is updated
           doc.avatarURL = media.url;
-        } else if (media.filename) {
-          // Construct URL if not present
-          const publicUrl = process.env.S3_PUBLIC_URL;
-          const bucket = process.env.S3_BUCKET || 'fourteenvoices';
-          if (publicUrl) {
-            const url = publicUrl.includes(bucket)
-              ? `${publicUrl}/media/${media.filename}`
-              : `${publicUrl}/${bucket}/media/${media.filename}`;
-            doc.image = url;
-            doc.avatarURL = url;
-            // Update the media object with the URL
-            media.url = url;
-          }
         }
       }
     } catch (error) {

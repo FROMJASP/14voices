@@ -1,0 +1,50 @@
+/* Fix for media thumbnails showing as black squares */
+.collection-list__cell-thumbnail {
+  background-color: #f3f4f6 !important; /* Light gray instead of black */
+}
+
+/* Ensure images in thumbnails are visible */
+.collection-list__cell-thumbnail img {
+  object-fit: cover !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+/* Debug: Make broken images visible with a red border */
+.collection-list__cell-thumbnail img[src=''],
+.collection-list__cell-thumbnail img:not([src]),
+.collection-list__cell-thumbnail img[src*='/api/media/file/'] {
+  border: 2px solid red !important;
+}
+
+/* Ensure thumbnail container has proper dimensions */
+.collection-list__cell-thumbnail {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Add loading state for images */
+.collection-list__cell-thumbnail img {
+  background-color: #e5e7eb;
+  background-image: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+.collection-list__cell-thumbnail img[src] {
+  animation: none;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -81,14 +81,28 @@ export const minioStorage = (config: MinIOConfig): Plugin => {
         // Clean up publicUrl - remove trailing slash
         const cleanPublicUrl = publicUrl.replace(/\/$/, '');
 
+        // Debug logging
+        console.log('[MinIO generateFileURL]', {
+          filename,
+          prefix,
+          path,
+          publicUrl: cleanPublicUrl,
+          bucketName,
+          endpoint: formattedEndpoint,
+        });
+
         // For MinIO, use the publicUrl if provided, otherwise use the endpoint
         const baseUrl = cleanPublicUrl || formattedEndpoint;
 
         // If publicUrl already includes the bucket name, don't add it again
         if (cleanPublicUrl && cleanPublicUrl.includes(bucketName)) {
-          return `${baseUrl}/${path}`;
+          const finalUrl = `${baseUrl}/${path}`;
+          console.log('[MinIO] Generated URL (bucket in publicUrl):', finalUrl);
+          return finalUrl;
         }
-        return `${baseUrl}/${bucketName}/${path}`;
+        const finalUrl = `${baseUrl}/${bucketName}/${path}`;
+        console.log('[MinIO] Generated URL (bucket added):', finalUrl);
+        return finalUrl;
       },
     }),
   });

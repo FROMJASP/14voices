@@ -994,12 +994,6 @@ export const heroBlock: Field = {
 
                     if (media?.url) {
                       return media.url;
-                    } else if (media?.filename) {
-                      const publicUrl = process.env.S3_PUBLIC_URL;
-                      if (publicUrl) {
-                        return `${publicUrl}/media/${media.filename}`;
-                      }
-                      return `/media/${media.filename}`;
                     }
                   } catch (error) {
                     console.error('Error fetching hero image media:', error);
@@ -1011,12 +1005,6 @@ export const heroBlock: Field = {
 
                   if (heroImageObj.url) {
                     return heroImageObj.url;
-                  } else if (heroImageObj.filename) {
-                    const publicUrl = process.env.S3_PUBLIC_URL;
-                    if (publicUrl) {
-                      return `${publicUrl}/media/${heroImageObj.filename}`;
-                    }
-                    return `/media/${heroImageObj.filename}`;
                   }
                 }
 

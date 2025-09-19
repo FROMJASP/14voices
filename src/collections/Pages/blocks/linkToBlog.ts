@@ -325,12 +325,6 @@ export const linkToBlogBlock: Field = {
 
                     if (media?.url) {
                       return media.url;
-                    } else if (media?.filename) {
-                      const publicUrl = process.env.S3_PUBLIC_URL;
-                      if (publicUrl) {
-                        return `${publicUrl}/media/${media.filename}`;
-                      }
-                      return `/media/${media.filename}`;
                     }
                   } catch (error) {
                     console.error('Error fetching linkToBlog image media:', error);
@@ -342,12 +336,6 @@ export const linkToBlogBlock: Field = {
 
                   if (imageObj.url) {
                     return imageObj.url;
-                  } else if (imageObj.filename) {
-                    const publicUrl = process.env.S3_PUBLIC_URL;
-                    if (publicUrl) {
-                      return `${publicUrl}/media/${imageObj.filename}`;
-                    }
-                    return `/media/${imageObj.filename}`;
                   }
                 }
 

@@ -284,53 +284,39 @@ const Media: CollectionConfig = {
         if (!doc) return doc;
 
         // In development, don't override URLs - let Payload handle them locally
-        // In production, use S3 URLs
         const isDevelopment = process.env.NODE_ENV === 'development';
-        const publicUrl = process.env.S3_PUBLIC_URL?.replace(/\/$/, '');
 
-        if (!isDevelopment && publicUrl && doc.filename) {
-          // Production: Always override the main URL to use S3
-          doc.url = `${publicUrl}/media/${doc.filename}`;
-
-          // Fix URLs for all sizes
-          if (doc.sizes) {
-            Object.keys(doc.sizes).forEach((sizeName) => {
-              const size = doc.sizes[sizeName];
-              if (size && size.filename) {
-                size.url = `${publicUrl}/media/${size.filename}`;
-              }
-            });
-          }
-
-          // Set thumbnailURL for production
-          if (doc.sizes?.thumbnail?.filename) {
-            doc.thumbnailURL = `${publicUrl}/media/${doc.sizes.thumbnail.filename}`;
-          } else if (doc.sizes?.card?.filename) {
-            doc.thumbnailURL = `${publicUrl}/media/${doc.sizes.card.filename}`;
-          } else {
-            doc.thumbnailURL = `${publicUrl}/media/${doc.filename}`;
-          }
-        }
-
-        // In development, ensure thumbnailURL is set from existing URLs
-        if (isDevelopment && !doc.thumbnailURL) {
+        // Set thumbnailURL if not already set
+        if (!doc.thumbnailURL) {
           if (doc.sizes?.thumbnail?.url) {
             doc.thumbnailURL = doc.sizes.thumbnail.url;
+          } else if (doc.sizes?.card?.url) {
+            doc.thumbnailURL = doc.sizes.card.url;
           } else if (doc.url) {
             doc.thumbnailURL = doc.url;
           }
         }
 
-        // Add debugging for admin panel
-        if (isDevelopment) {
+        // Add debugging for troubleshooting
+        if (!isDevelopment || process.env.DEBUG_MEDIA) {
           console.log('[Media afterRead] Processing:', {
             id: doc.id,
             filename: doc.filename,
             url: doc.url,
             thumbnailURL: doc.thumbnailURL,
             isDevelopment,
-            publicUrl,
+            nodeEnv: process.env.NODE_ENV,
+            publicUrl: process.env.S3_PUBLIC_URL,
+            s3Endpoint: process.env.S3_ENDPOINT,
+            s3Bucket: process.env.S3_BUCKET,
             hasSizes: !!doc.sizes,
+            sizesUrls: doc.sizes
+              ? Object.entries(doc.sizes).map(([key, size]) => ({
+                  size: key,
+                  url: (size as any)?.url || null,
+                  filename: (size as any)?.filename || null,
+                }))
+              : [],
           });
         }
 
