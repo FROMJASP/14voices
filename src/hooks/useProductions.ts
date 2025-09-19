@@ -67,8 +67,8 @@ export function useProductions() {
 
         // Fetch productions
         const [productionsRes, servicesRes] = await Promise.all([
-          fetch('/api/productions'),
-          fetch('/api/extra-services'),
+          fetch('/api/public/productions'),
+          fetch('/api/public/extra-services'),
         ]);
 
         if (!productionsRes.ok || !servicesRes.ok) {

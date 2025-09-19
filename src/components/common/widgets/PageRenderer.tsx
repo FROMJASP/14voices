@@ -9,17 +9,40 @@ import type { PayloadVoiceover } from '@/types/voiceover';
 import { makeMediaUrlRelative } from '@/lib/media-utils';
 // import { useLivePreview } from '@payloadcms/live-preview-react';
 
-// Static imports for all components
+// Core components (always loaded)
 import { HeroSection } from '@/components/features/homepage/HeroSection';
 import { HeroVariant2 } from '@/components/features/homepage/HeroVariant2';
 import { VoiceoverSection } from '@/components/features/homepage/VoiceoverSection';
 import LinkToBlogSection from '@/components/features/homepage/LinkToBlogSection';
 import ContentSection from '@/components/features/content/ContentSection';
-import { BlogSection1 } from '@/components/blocks/BlogSection1';
-import { BlogPostHeader } from '@/components/blocks/BlogPostHeader';
-import { BlogContent } from '@/components/blocks/BlogContent';
-import { BlogPostBlock } from '@/components/blocks/BlogPostBlock';
-import { PriceCalculator } from '@/components/blocks/PriceCalculator';
+
+// Dynamic imports for blog components (code splitting)
+import dynamic from 'next/dynamic';
+
+const BlogSection1 = dynamic(() => import('@/components/blocks/BlogSection1').then(mod => ({ default: mod.BlogSection1 })), {
+  loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
+  ssr: true
+});
+
+const BlogPostHeader = dynamic(() => import('@/components/blocks/BlogPostHeader').then(mod => ({ default: mod.BlogPostHeader })), {
+  loading: () => <div className="animate-pulse h-48 bg-muted rounded-lg" />,
+  ssr: true
+});
+
+const BlogContent = dynamic(() => import('@/components/blocks/BlogContent').then(mod => ({ default: mod.BlogContent })), {
+  loading: () => <div className="animate-pulse h-64 bg-muted rounded-lg" />,
+  ssr: true
+});
+
+const BlogPostBlock = dynamic(() => import('@/components/blocks/BlogPostBlock').then(mod => ({ default: mod.BlogPostBlock })), {
+  loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
+  ssr: true
+});
+
+const PriceCalculator = dynamic(() => import('@/components/blocks/PriceCalculator').then(mod => ({ default: mod.PriceCalculator })), {
+  loading: () => <div className="animate-pulse h-64 bg-muted rounded-lg" />,
+  ssr: true
+});
 
 // Memoized helper function to extract plain text from rich text
 const extractPlainText = (richText: any): string => {

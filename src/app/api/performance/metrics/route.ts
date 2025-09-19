@@ -1,19 +1,51 @@
 import { NextResponse } from 'next/server';
-import { OptimizedVoiceoverQueries } from '@/lib/database-optimizations';
-import { APIPerformanceMonitor } from '@/lib/api-optimizations';
-import { getCacheStats } from '@/lib/data-fetching-server';
-import globalCache from '@/lib/cache';
+
+// Dynamic imports to prevent build-time issues
+const getDatabaseMetrics = async () => {
+  try {
+    const { OptimizedVoiceoverQueries } = await import('@/lib/database-optimizations');
+    return OptimizedVoiceoverQueries.getPerformanceMetrics();
+  } catch {
+    return { error: 'Database metrics unavailable' };
+  }
+};
+
+const getAPIMetrics = async () => {
+  try {
+    const { APIPerformanceMonitor } = await import('@/lib/api-optimizations');
+    return APIPerformanceMonitor.getMetrics();
+  } catch {
+    return { error: 'API metrics unavailable' };
+  }
+};
+
+const getCacheMetrics = async () => {
+  try {
+    const [{ getCacheStats }, globalCache] = await Promise.all([
+      import('@/lib/data-fetching-server'),
+      import('@/lib/cache')
+    ]);
+    return {
+      dataFetching: getCacheStats(),
+      global: globalCache.default.getStats(),
+    };
+  } catch {
+    return { error: 'Cache metrics unavailable' };
+  }
+};
+
+// Disable static optimization for this API route
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     const startTime = performance.now();
 
     // Gather performance metrics from different systems
-    const [dbMetrics, apiMetrics, cacheStats, globalCacheStats] = await Promise.all([
-      OptimizedVoiceoverQueries.getPerformanceMetrics(),
-      APIPerformanceMonitor.getMetrics(),
-      getCacheStats(),
-      globalCache.getStats(),
+    const [dbMetrics, apiMetrics, cacheMetrics] = await Promise.all([
+      getDatabaseMetrics(),
+      getAPIMetrics(),
+      getCacheMetrics(),
     ]);
 
     // System performance metrics
@@ -35,21 +67,23 @@ export async function GET() {
       },
       database: dbMetrics,
       api: apiMetrics,
-      cache: {
-        dataFetching: cacheStats,
-        global: globalCacheStats,
-      },
+      cache: cacheMetrics,
       responseTime: performance.now() - startTime,
     };
 
-    // Record this API call
-    APIPerformanceMonitor.recordMetric(
-      '/api/performance/metrics',
-      'GET',
-      performance.now() - startTime,
-      false,
-      200
-    );
+    // Record this API call (only if monitor is available)
+    try {
+      const { APIPerformanceMonitor } = await import('@/lib/api-optimizations');
+      APIPerformanceMonitor.recordMetric(
+        '/api/performance/metrics',
+        'GET',
+        performance.now() - startTime,
+        false,
+        200
+      );
+    } catch {
+      // Ignore if monitoring is unavailable
+    }
 
     return NextResponse.json(metrics, {
       headers: {

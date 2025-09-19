@@ -38,8 +38,8 @@ export function BlogPostBlock({
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareTitle = blogPost?.title || '';
 
-  // Function to render Lexical content
-  const renderLexicalContent = (node: any): React.ReactNode => {
+  // Memoized function to render Lexical content
+  const renderLexicalContent = useMemo(() => (node: any): React.ReactNode => {
     if (!node) return null;
 
     // Handle text nodes
@@ -133,7 +133,7 @@ export function BlogPostBlock({
       default:
         return <div className="mb-4">{children}</div>;
     }
-  };
+  }, [blogPost?.content]); // Memoize based on blog post content
 
   // Get the author's name
   const authorName = useMemo(() => {

@@ -56,16 +56,15 @@ export default async function BlogPostPage({
   params,
   searchParams,
 }: Props & { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
-  const { slug } = await params;
-  const headersList = await headers();
-  const isLivePreview = headersList.get('x-payload-live-preview') === 'true';
-  const payload = await getPayload({ config: configPromise });
-
-  // Check if this is a preview request
-  const resolvedSearchParams = searchParams ? await searchParams : {};
-  const isPreviewParam = resolvedSearchParams?.preview === 'true';
-
   try {
+    const { slug } = await params;
+    const headersList = await headers();
+    const isLivePreview = headersList.get('x-payload-live-preview') === 'true';
+    const payload = await getPayload({ config: configPromise });
+
+    // Check if this is a preview request
+    const resolvedSearchParams = searchParams ? await searchParams : {};
+    const isPreviewParam = resolvedSearchParams?.preview === 'true';
     let post: BlogPost | null = null;
     let isTemplatePreview = false;
 
@@ -209,14 +208,10 @@ export default async function BlogPostPage({
 }
 
 export async function generateStaticParams() {
-  // Temporarily disable static generation for blog posts
-  // to fix build timeout issues
-  return [];
-
-  /* Will re-enable after optimizing queries
-  const payload = await getPayload({ config: configPromise });
-
   try {
+    const payload = await getPayload({ config: configPromise });
+    
+    // Generate params for the most recent blog posts
     const { docs: posts } = await payload.find({
       collection: 'blog-posts',
       where: {
@@ -224,16 +219,22 @@ export async function generateStaticParams() {
           equals: 'published',
         },
       },
-      limit: 100,
+      limit: 50, // Generate static params for first 50 posts
+      sort: '-publishedDate',
+      select: {
+        slug: true,
+      },
     });
 
-    return posts
-      .filter((post) => post.slug)
-      .map((post) => ({
-        slug: post.slug!,
-      }));
-  } catch {
+    return posts.map((post) => ({
+      slug: post.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for blog posts:', error);
     return [];
   }
-  */
 }
+
+// Enable ISR for blog posts
+export const revalidate = 3600; // 1 hour
+export const dynamicParams = true; // Allow dynamic params for posts not in generateStaticParams

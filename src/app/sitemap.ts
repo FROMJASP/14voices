@@ -51,6 +51,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       limit: 200,
     });
 
+    // Get all published blog posts
+    const blogPosts = await payload.find({
+      collection: 'blog-posts',
+      where: {
+        status: {
+          equals: 'published',
+        },
+      },
+      limit: 200,
+    });
+
     // Generate page URLs
     const pageUrls: MetadataRoute.Sitemap = pages.docs
       .filter((page: any) => page.slug !== 'home')
@@ -69,7 +80,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-    return [...staticRoutes, ...pageUrls, ...voiceoverUrls];
+    // Generate blog post URLs
+    const blogPostUrls: MetadataRoute.Sitemap = blogPosts.docs.map((post: any) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.updatedAt || post.publishedDate || post.createdAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }));
+
+    return [...staticRoutes, ...pageUrls, ...voiceoverUrls, ...blogPostUrls];
   } catch (error) {
     console.error('Error generating sitemap:', error);
     return staticRoutes;

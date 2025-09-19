@@ -39,7 +39,7 @@ export function PriceCalculator({
     const fetchData = async () => {
       try {
         // Fetch productions
-        const productionsResponse = await fetch('/api/productions');
+        const productionsResponse = await fetch('/api/public/productions');
         const productionsData = await productionsResponse.json();
 
         if (showAllProductions) {

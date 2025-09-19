@@ -46,9 +46,10 @@ export async function generateStaticParams() {
   }));
 }
 
-// Disable static generation for self-hosted deployments
-// Even though we have static params, we still query the database for voiceovers
-export const dynamic = 'force-dynamic';
+// Use ISR for better performance while maintaining dynamic data
+export const revalidate = 1800; // 30 minutes
+export const dynamic = 'force-static';
+export const dynamicParams = false; // Only allow predefined production slugs
 
 export default async function OrderPage({ params }: { params: Promise<{ production: string }> }) {
   const { production } = await params;
