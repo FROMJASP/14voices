@@ -72,7 +72,6 @@ const Voiceovers: CollectionConfig = {
 
         if (duplicates.length > 0) {
           const duplicateNames = duplicates.map((vo) => vo.name).join(', ');
-          const firstName = value.split(' ')[0];
           return `WARNING: Another voiceover with a similar name already exists: ${duplicateNames}. This will create the same URL slug "${slug}". Please use a different first name or add a middle initial/nickname.`;
         }
 
