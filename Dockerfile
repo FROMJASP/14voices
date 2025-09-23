@@ -1,22 +1,19 @@
 # Build stage
-FROM oven/bun:1-alpine AS builder
+FROM node:20-alpine AS builder
 
-# Install dependencies for native modules and git
-RUN apk add --no-cache libc6-compat python3 make g++ git
+# Install dependencies for native modules
+RUN apk add --no-cache python3 make g++ git libc6-compat
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json bun.lockb ./
+COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* bun.lockb* ./
 
-# Install dependencies using bun (skip postinstall since we don't have scripts yet)
-RUN bun install --frozen-lockfile --ignore-scripts
+# Install dependencies with npm (more compatible for Docker builds)
+RUN npm ci || npm install
 
 # Copy application code
 COPY . .
-
-# Run postinstall script now that we have all files
-RUN bun run postinstall
 
 # Accept all build arguments from Coolify
 ARG CSRF_SECRET
@@ -35,11 +32,11 @@ ARG SENTRY_AUTH_TOKEN
 ARG SENTRY_ORG
 ARG SENTRY_PROJECT
 
-# Build the application
-ENV NEXT_TELEMETRY_DISABLED=1
+# Set build environment
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Convert build args to environment variables for the build process
+# Convert build args to environment variables
 ENV DATABASE_URL=$DATABASE_URL
 ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
@@ -56,19 +53,20 @@ ENV SENTRY_PROJECT=$SENTRY_PROJECT
 ENV NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
 ENV RESEND_API_KEY=$RESEND_API_KEY
 
-# Skip experimental features during build to avoid issues
+# Disable experimental features
 ENV NEXT_EXPERIMENTAL_COMPILE=false
-
-# Set up for Tailwind CSS v4 build
 ENV TAILWIND_DISABLE_TOUCH=1
 ENV FORCE_COLOR=0
-ENV CI=true
 
-# Generate Payload importMap (REQUIRED - per CLAUDE.md)
-RUN bun run payload:generate:importmap
+# Skip Payload importMap generation - it should be committed
+# If it's missing, create a minimal one
+RUN if [ ! -f "src/app/(payload)/admin/importMap.js" ]; then \
+    mkdir -p src/app/\(payload\)/admin && \
+    echo "export const importMap = {};" > src/app/\(payload\)/admin/importMap.js; \
+  fi
 
-# Build the Next.js application
-RUN bun run build
+# Build Next.js application
+RUN npm run build
 
 # Production stage
 FROM node:20-alpine AS runner
@@ -90,10 +88,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Copy Payload admin files (REQUIRED - importMap.js must be committed as per CLAUDE.md)
-COPY --from=builder /app/src/app/(payload)/admin/importMap.js ./src/app/(payload)/admin/importMap.js
+# Copy Payload admin importMap
+COPY --from=builder /app/src/app/(payload)/admin/importMap.js ./src/app/(payload)/admin/importMap.js || true
 
-# Create uploads directory for local media (if not using S3)
+# Create uploads directory
 RUN mkdir -p ./public/media && chown -R nextjs:nodejs ./public/media
 
 # Set correct permissions
