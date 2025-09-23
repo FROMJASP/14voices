@@ -39,6 +39,7 @@
   "exclude": [
     "node_modules",
     "src/migrations/**/*",
+    "src/scripts/**/*",
     ".next",
     "out",
     "build",
