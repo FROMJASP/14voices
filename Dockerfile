@@ -1,8 +1,8 @@
 # Build stage
 FROM oven/bun:1.1.38-alpine AS builder
 
-# Install dependencies for native modules
-RUN apk add --no-cache python3 make g++ git libc6-compat
+# Install dependencies for native modules and Node.js for build
+RUN apk add --no-cache python3 make g++ git libc6-compat nodejs npm
 
 WORKDIR /app
 
@@ -73,8 +73,12 @@ RUN if [ ! -f "src/app/(payload)/admin/importMap.js" ]; then \
     echo "export const importMap = {};" > src/app/\(payload\)/admin/importMap.js; \
   fi
 
-# Build Next.js application
-RUN bun run build
+# Create the missing Tailwind CSS v4 directory and file
+RUN mkdir -p .next/browser && \
+    echo "/* Tailwind CSS v4 placeholder */" > .next/browser/default-stylesheet.css
+
+# Build Next.js application using npm to avoid Bun source map issues
+RUN npm run build
 
 # Production stage
 FROM oven/bun:1.1.38-alpine AS runner
