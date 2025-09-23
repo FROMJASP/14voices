@@ -15,14 +15,41 @@ RUN bun install --frozen-lockfile --ignore-scripts
 # Copy application code
 COPY . .
 
+# Accept all build arguments from Coolify
+ARG CSRF_SECRET
+ARG DATABASE_URL
+ARG NEXT_PUBLIC_SENTRY_DSN
+ARG NEXT_PUBLIC_SERVER_URL
+ARG PAYLOAD_SECRET
+ARG RESEND_API_KEY
+ARG S3_ACCESS_KEY
+ARG S3_BUCKET
+ARG S3_ENDPOINT
+ARG S3_PUBLIC_URL
+ARG S3_REGION
+ARG S3_SECRET_KEY
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_ORG
+ARG SENTRY_PROJECT
+
 # Build the application
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-# Use fake database URL for build time (as per CLAUDE.md)
-ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake"
-# Add required environment variables for build
-ENV PAYLOAD_SECRET="temp-build-secret-only-for-build-time"
-ENV NEXT_PUBLIC_SERVER_URL="http://localhost:3000"
+
+# Convert build args to environment variables for the build process
+ENV DATABASE_URL=$DATABASE_URL
+ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
+ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+ENV CSRF_SECRET=$CSRF_SECRET
+ENV S3_ENDPOINT=$S3_ENDPOINT
+ENV S3_ACCESS_KEY=$S3_ACCESS_KEY
+ENV S3_SECRET_KEY=$S3_SECRET_KEY
+ENV S3_BUCKET=$S3_BUCKET
+ENV S3_REGION=$S3_REGION
+ENV S3_PUBLIC_URL=$S3_PUBLIC_URL
+
+# Skip experimental features during build to avoid issues
+ENV NEXT_EXPERIMENTAL_COMPILE=false
 
 # Skip Payload generation - files should already be committed as per CLAUDE.md
 # Just build the Next.js application
