@@ -4,23 +4,23 @@
 
 ### ⚠️ CRITICAL: Before Deployment
 
-1. **ALWAYS run** `bun run payload:generate:importmap` before pushing
+1. **ALWAYS run** `pnpm run payload:generate:importmap` before pushing
 2. **COMMIT** the generated `src/app/(payload)/admin/importMap.js` file
 3. **NEVER** change `.env.local` without permission
 
 ### Tech Stack
 
-**Next.js 15.5.3** | **Payload CMS 3.55.1** | **Neon DB** | **MinIO S3** | **Tailwind v3** | **Motion** | **Bun** | **Zustand**
+**Next.js 15.5.3** | **Payload CMS 3.55.1** | **Neon DB** | **MinIO S3** | **Tailwind v3** | **Motion** | **pnpm** | **Zustand**
 
 ### Essential Commands
 
 ```bash
-bun dev                              # Start development
-bun run build                        # Build for production
-bun payload generate:types           # Generate TypeScript types
-bun run payload:generate:importmap   # Generate importMap.js (REQUIRED!)
-bun run typecheck                    # TypeScript checking
-bun run lint                         # ESLint
+pnpm dev                              # Start development
+pnpm run build                        # Build for production
+pnpm payload generate:types           # Generate TypeScript types
+pnpm run payload:generate:importmap   # Generate importMap.js (REQUIRED!)
+pnpm run typecheck                    # TypeScript checking
+pnpm run lint                         # ESLint
 ```
 
 ### Project Structure
@@ -42,8 +42,6 @@ src/
 ├── middleware/    # Express middleware
 ├── migrations/    # Database migrations
 ├── providers/     # React providers
-├── scripts/       # Utility scripts
-├── seed/          # Database seeders
 ├── store/         # Legacy store files
 ├── stores/        # Zustand stores
 ├── test/          # Test utilities
@@ -62,8 +60,8 @@ src/
 ```bash
 rm -rf .next
 rm -rf node_modules
-bun install
-bun run payload:generate:importmap
+pnpm install
+pnpm run payload:generate:importmap
 git add src/app/(payload)/admin/importMap.js
 git commit -m "Update importMap"
 ```
@@ -165,3 +163,4 @@ Nonce-based CSP for enhanced security:
 - **Blog page**: Should start with empty layout (`layout: []`)
 - **Component imports**: Use exact casing (Badge.tsx not badge.tsx)
 - **Tailwind CSS**: Downgraded from v4 to v3 for production stability (fixes Docker build issues)
+- **Package Manager**: Migrated from Bun to pnpm for better compatibility and stability

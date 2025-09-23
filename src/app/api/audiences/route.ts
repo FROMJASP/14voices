@@ -1,3 +1,4 @@
+import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
@@ -10,6 +11,7 @@ import { audienceCreateSchema } from '@/lib/validation/schemas';
 
 // Force dynamic rendering to prevent build-time execution
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 // Validation schema for GET query parameters
 const audienceQuerySchema = z.object({

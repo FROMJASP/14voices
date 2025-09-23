@@ -14,18 +14,6 @@
     "payload:migrate": "payload migrate",
     "payload:migrate:status": "payload migrate:status",
     "payload:migrate:fresh": "payload migrate:fresh",
-    "db:fix-migrations": "tsx src/scripts/fixMigrationIssues.ts",
-    "db:check-status": "tsx src/scripts/checkMigrationStatus.ts",
-    "seed": "tsx src/seed/run-seed.ts",
-    "seed:productions": "tsx src/seed/run-seeders.ts",
-    "admin:reset": "bun src/scripts/reset-admin-access.ts",
-    "media:analyze": "tsx src/scripts/analyzeStorageContents.ts",
-    "media:recover": "tsx src/scripts/recoverMediaFromStorage.ts",
-    "media:recover-direct": "tsx src/scripts/recoverMediaDirect.ts",
-    "media:recover-manual": "tsx src/scripts/recoverMediaManual.ts",
-    "media:recover-raw": "tsx src/scripts/recoverMediaRaw.ts",
-    "media:recover-relationships": "tsx src/scripts/recoverMediaRelationships.ts",
-    "media:download": "tsx src/scripts/downloadMediaFromMinIO.ts",
     "postinstall": "node scripts/postinstall.js",
     "test": "vitest",
     "test:watch": "vitest watch",
@@ -36,8 +24,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
-    "validate": "bun run lint && bun run format:check && bun run typecheck && bun run test",
-    "ci:validate": "bun run lint && bun run format:check && bun run test && bun run test:e2e"
+    "validate": "pnpm run lint && pnpm run format:check && pnpm run typecheck && pnpm run test",
+    "ci:validate": "pnpm run lint && pnpm run format:check && pnpm run test && pnpm run test:e2e"
   },
   "dependencies": {
     "@innovixx/payload-color-picker-field": "^2.0.2",
@@ -104,7 +92,6 @@
     "glob": "^11.0.3",
     "immer": "^10.1.1",
     "ioredis": "^5.6.1",
-    "isomorphic-dompurify": "^2.26.0",
     "lowlight": "^3.3.0",
     "lru-cache": "^11.1.0",
     "lucide-react": "^0.542.0",
@@ -122,6 +109,7 @@
     "redis": "^5.5.6",
     "resend": "^4.6.0",
     "sanitize-html": "^2.17.0",
+    "server-only": "^0.0.1",
     "sharp": "^0.34.3",
     "standardized-audio-context": "^25.3.77",
     "tailwind-merge": "^3.3.1",
@@ -157,5 +145,5 @@
     "typescript": "^5",
     "vitest": "^3.2.4"
   },
-  "packageManager": "bun@1.1.38"
+  "packageManager": "pnpm@9.14.4"
 }

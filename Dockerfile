@@ -1,22 +1,25 @@
 # Build stage
-FROM oven/bun:1.1.38-alpine AS builder
+FROM node:20-alpine AS builder
 
 # Install dependencies for native modules
 RUN apk add --no-cache python3 make g++ git libc6-compat
 
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@9.14.4 --activate
+
 WORKDIR /app
 
 # Copy package files
-COPY package.json bun.lockb ./
+COPY package.json pnpm-lock.yaml ./
 
-# Copy only the postinstall script to prevent bun install from failing
+# Copy only the postinstall script to prevent pnpm install from failing
 COPY scripts/postinstall.js scripts/
 
 # Skip postinstall during dependency installation
 ENV SKIP_POSTINSTALL=true
 
-# Install dependencies using bun
-RUN bun install --frozen-lockfile
+# Install dependencies using pnpm
+RUN pnpm install --frozen-lockfile
 
 # Copy application code
 COPY . .
@@ -74,10 +77,10 @@ RUN if [ ! -f "src/app/(payload)/admin/importMap.js" ]; then \
 # No need for Tailwind CSS v4 workarounds anymore
 
 # Build Next.js application
-RUN bun run build
+RUN pnpm run build
 
 # Production stage
-FROM oven/bun:1.1.38-alpine AS runner
+FROM node:20-alpine AS runner
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
@@ -113,6 +116,6 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Use dumb-init to handle signals properly
-# Note: Using bun to run the standalone server
+# Note: Using node to run the standalone server
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["bun", "run", "server.js"]
+CMD ["node", "server.js"]

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtmlLib from 'sanitize-html';
 
 // Common schemas
 export const emailSchema = z.string().email().toLowerCase().trim();
@@ -221,9 +221,9 @@ export const searchSchema = z.object({
 
 // Sanitization helpers
 export const sanitizeHtml = (html: string): string => {
-  // Using DOMPurify for secure HTML sanitization
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: [
+  // Using sanitize-html for secure HTML sanitization (server-safe)
+  return sanitizeHtmlLib(html, {
+    allowedTags: [
       'b',
       'i',
       'em',
@@ -244,10 +244,11 @@ export const sanitizeHtml = (html: string): string => {
       'h5',
       'h6',
     ],
-    ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
-    ALLOW_DATA_ATTR: false,
-    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'style'],
-    FORBID_ATTR: ['onerror', 'onclick', 'onload', 'onmouseover'],
+    allowedAttributes: {
+      a: ['href', 'target', 'rel'],
+      '*': ['class'],
+    },
+    disallowedTagsMode: 'discard',
   });
 };
 
