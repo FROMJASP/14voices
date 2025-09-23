@@ -10,7 +10,7 @@
 
 ### Tech Stack
 
-**Next.js 15.5.3** | **Payload CMS 3.55.1** | **Neon DB** | **MinIO S3** | **Tailwind v4** | **Motion** | **Bun** | **Zustand**
+**Next.js 15.5.3** | **Payload CMS 3.55.1** | **Neon DB** | **MinIO S3** | **Tailwind v3** | **Motion** | **Bun** | **Zustand**
 
 ### Essential Commands
 
@@ -61,6 +61,8 @@ src/
 
 ```bash
 rm -rf .next
+rm -rf node_modules
+bun install
 bun run payload:generate:importmap
 git add src/app/(payload)/admin/importMap.js
 git commit -m "Update importMap"
@@ -162,3 +164,4 @@ Nonce-based CSP for enhanced security:
 - **Clear cache**: `rm -rf .next` if admin panel issues
 - **Blog page**: Should start with empty layout (`layout: []`)
 - **Component imports**: Use exact casing (Badge.tsx not badge.tsx)
+- **Tailwind CSS**: Downgraded from v4 to v3 for production stability (fixes Docker build issues)

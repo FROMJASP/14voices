@@ -1,8 +1,8 @@
 # Build stage
 FROM oven/bun:1.1.38-alpine AS builder
 
-# Install dependencies for native modules and Node.js for build
-RUN apk add --no-cache python3 make g++ git libc6-compat nodejs npm
+# Install dependencies for native modules
+RUN apk add --no-cache python3 make g++ git libc6-compat
 
 WORKDIR /app
 
@@ -21,8 +21,7 @@ RUN bun install --frozen-lockfile
 # Copy application code
 COPY . .
 
-# Install Linux-specific platform dependencies manually
-RUN bun add lightningcss-linux-x64-gnu@1.30.1 @tailwindcss/oxide-linux-x64-gnu@4.1.13
+# No need for v4 specific dependencies anymore with Tailwind v3
 
 # Accept all build arguments from Coolify
 ARG CSRF_SECRET
@@ -64,7 +63,6 @@ ENV RESEND_API_KEY=$RESEND_API_KEY
 
 # Disable experimental features
 ENV NEXT_EXPERIMENTAL_COMPILE=false
-ENV TAILWIND_DISABLE_TOUCH=1
 ENV FORCE_COLOR=0
 
 # Ensure importMap.js exists (should be committed as per CLAUDE.md)
@@ -73,12 +71,10 @@ RUN if [ ! -f "src/app/(payload)/admin/importMap.js" ]; then \
     echo "export const importMap = {};" > src/app/\(payload\)/admin/importMap.js; \
   fi
 
-# Create the missing Tailwind CSS v4 directory and file
-RUN mkdir -p .next/browser && \
-    echo "/* Tailwind CSS v4 placeholder */" > .next/browser/default-stylesheet.css
+# No need for Tailwind CSS v4 workarounds anymore
 
-# Build Next.js application using npm to avoid Bun source map issues
-RUN npm run build
+# Build Next.js application
+RUN bun run build
 
 # Production stage
 FROM oven/bun:1.1.38-alpine AS runner

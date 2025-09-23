@@ -1,16 +1,13 @@
 /* Tailwind CSS for Payload Admin Panel */
 /* Import Tailwind without base/preflight to avoid conflicts with Payload's styles */
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/utilities.css' layer(utilities);
+@tailwind components;
+@tailwind utilities;
 
 /* Import admin overrides */
 @import './admin-overrides.css';
 
-/* Configure dark mode to work with Payload's data-theme attribute */
-@custom-variant dark ([data-theme="dark"] &);
-
 /* Define CSS variables that integrate with both Payload and Tailwind */
-@layer theme {
+@layer base {
   :root {
     /* Icon filter for light mode */
     --icon-filter: none;
@@ -33,7 +30,7 @@
   }
 
   /* Dark mode specific icon styling */
-  .dark\:nav-icon {
+  [data-theme='dark'] .nav-icon {
     filter: invert(1);
   }
 
