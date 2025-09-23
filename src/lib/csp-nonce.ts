@@ -1,14 +1,6 @@
-import { randomBytes } from 'crypto';
-
-/**
- * Generate a CSP nonce for server-side rendering
- */
-export function generateNonce(): string {
-  return randomBytes(16).toString('base64');
-}
-
 /**
  * Generate nonce for edge runtime (middleware)
+ * This version uses Web Crypto API which is available in Edge Runtime
  */
 export function generateEdgeNonce(): string {
   const array = new Uint8Array(16);
