@@ -16,10 +16,13 @@ RUN bun install --frozen-lockfile --ignore-scripts
 COPY . .
 
 # Build the application
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 # Use fake database URL for build time (as per CLAUDE.md)
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake"
+# Add required environment variables for build
+ENV PAYLOAD_SECRET="temp-build-secret-only-for-build-time"
+ENV NEXT_PUBLIC_SERVER_URL="http://localhost:3000"
 
 # Skip Payload generation - files should already be committed as per CLAUDE.md
 # Just build the Next.js application
