@@ -9,6 +9,9 @@ WORKDIR /app
 # Copy package files
 COPY package.json bun.lockb ./
 
+# Copy only the postinstall script to prevent bun install from failing
+COPY scripts/postinstall.js scripts/
+
 # Skip postinstall during dependency installation
 ENV SKIP_POSTINSTALL=true
 
