@@ -6,7 +6,7 @@ import { ThemeScript } from './theme-script';
 import { ViewTransitionsProvider } from '@/components/common/transitions/ViewTransitionsProvider';
 import { headers } from 'next/headers';
 import { NonceProvider } from '@/components/common/NonceProvider';
-import './globals.css';
+import './global.css';
 
 const bricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage',

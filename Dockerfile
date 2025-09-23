@@ -9,8 +9,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json bun.lockb ./
 
-# Install dependencies using bun (skip postinstall since we're in Linux container)
-RUN bun install --frozen-lockfile --ignore-scripts
+# Install dependencies using bun and run postinstall for native binaries
+RUN bun install --frozen-lockfile
 
 # Copy application code
 COPY . .
@@ -59,9 +59,12 @@ ENV NEXT_EXPERIMENTAL_COMPILE=false
 # Set up for Tailwind CSS v4 build
 ENV TAILWIND_DISABLE_TOUCH=1
 ENV FORCE_COLOR=0
+ENV CI=true
 
-# Skip Payload generation - files should already be committed as per CLAUDE.md
-# Just build the Next.js application
+# Generate Payload importMap (REQUIRED - per CLAUDE.md)
+RUN bun run payload:generate:importmap
+
+# Build the Next.js application
 RUN bun run build
 
 # Production stage
