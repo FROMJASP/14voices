@@ -21,11 +21,8 @@ ENV NODE_ENV production
 # Use fake database URL for build time (as per CLAUDE.md)
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake"
 
-# Generate Payload types and importMap before building (CRITICAL as per CLAUDE.md)
-RUN bun run payload:generate:types || true
-RUN bun run payload:generate:importmap
-
-# Build Next.js application
+# Skip Payload generation - files should already be committed as per CLAUDE.md
+# Just build the Next.js application
 RUN bun run build
 
 # Production stage
@@ -36,8 +33,8 @@ RUN apk add --no-cache dumb-init
 
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
@@ -61,8 +58,8 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
