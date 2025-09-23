@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM oven/bun:1.1.38-alpine AS builder
 
 # Install dependencies for native modules
 RUN apk add --no-cache python3 make g++ git libc6-compat
@@ -7,13 +7,19 @@ RUN apk add --no-cache python3 make g++ git libc6-compat
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* bun.lockb* ./
+COPY package.json bun.lockb ./
 
-# Install dependencies with npm (more compatible for Docker builds)
-RUN npm ci || npm install
+# Skip postinstall during dependency installation
+ENV SKIP_POSTINSTALL=true
+
+# Install dependencies using bun
+RUN bun install --frozen-lockfile
 
 # Copy application code
 COPY . .
+
+# Install Linux-specific platform dependencies manually
+RUN bun add lightningcss-linux-x64-gnu@1.30.1 @tailwindcss/oxide-linux-x64-gnu@4.1.13
 
 # Accept all build arguments from Coolify
 ARG CSRF_SECRET
@@ -58,18 +64,17 @@ ENV NEXT_EXPERIMENTAL_COMPILE=false
 ENV TAILWIND_DISABLE_TOUCH=1
 ENV FORCE_COLOR=0
 
-# Skip Payload importMap generation - it should be committed
-# If it's missing, create a minimal one
+# Ensure importMap.js exists (should be committed as per CLAUDE.md)
 RUN if [ ! -f "src/app/(payload)/admin/importMap.js" ]; then \
     mkdir -p src/app/\(payload\)/admin && \
     echo "export const importMap = {};" > src/app/\(payload\)/admin/importMap.js; \
   fi
 
 # Build Next.js application
-RUN npm run build
+RUN bun run build
 
 # Production stage
-FROM node:20-alpine AS runner
+FROM oven/bun:1.1.38-alpine AS runner
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
@@ -105,5 +110,6 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Use dumb-init to handle signals properly
+# Note: Using bun to run the standalone server
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "server.js"]
+CMD ["bun", "run", "server.js"]

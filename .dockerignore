@@ -76,3 +76,26 @@ neon-export-*
 # Cache
 .cache
 *.cache
+
+# Bun
+bun-error.log
+.bun
+
+# Platform-specific binaries (we'll install the correct ones in Docker)
+**/lightningcss-win32-x64-msvc
+**/@tailwindcss/oxide-win32-x64-msvc
+**/lightningcss-darwin-*
+**/@tailwindcss/oxide-darwin-*
+
+# Additional development files
+playwright-report
+test-results
+.eslintcache
+.turbo
+.contentlayer
+.payload
+
+# Documentation
+README.md
+CLAUDE.md
+docs

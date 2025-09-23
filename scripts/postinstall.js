@@ -9,6 +9,12 @@ const fs = require('fs');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require('path');
 
+// Check if we should skip postinstall (for Docker builds)
+if (process.env.SKIP_POSTINSTALL === 'true') {
+  console.log('Skipping postinstall script (SKIP_POSTINSTALL=true)');
+  process.exit(0);
+}
+
 // Check if we're already in a postinstall execution to prevent infinite loops
 if (process.env.POSTINSTALL_RUNNING === 'true') {
   console.log('Postinstall already running, skipping to prevent infinite loop...');
