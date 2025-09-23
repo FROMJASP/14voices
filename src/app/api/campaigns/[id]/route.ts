@@ -4,6 +4,8 @@ import { getPayload } from '@/utilities/payload';
 import { z } from 'zod';
 import { idSchema, campaignUpdateSchema } from '@/lib/validation/schemas';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Parameter validation schema
 const paramsSchema = z.object({
   id: idSchema,

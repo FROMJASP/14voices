@@ -5,6 +5,8 @@ import configPromise from '@payload-config';
 import { formSubmitSchema } from '@/lib/validation/schemas';
 import { validateRequest, getClientId, checkRateLimit, securityHeaders } from '@/lib/api-security';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 async function POSTHandler(_req: NextRequest) {
   try {
     // Rate limiting

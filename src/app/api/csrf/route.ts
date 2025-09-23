@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addCSRFToken } from '@/lib/csrf';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 /**
  * GET /api/csrf
  * Returns a CSRF token for the client to use in subsequent requests

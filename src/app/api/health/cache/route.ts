@@ -1,6 +1,8 @@
 import globalCache from '@/lib/cache';
 import { createApiHandler } from '@/lib/api/handlers';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export const GET = createApiHandler(
   async () => {
     const stats = globalCache.getStats();

@@ -5,6 +5,8 @@ import { getServerSideUser } from '@/utilities/payload';
 import { z } from 'zod';
 import { EmailService, DateRange } from '@/domains/email';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Validation schema for query parameters
 const analyticsQuerySchema = z.object({
   range: z.enum(['24h', '7d', '30d', '90d']).optional().default('7d'),

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import configPromise from '@/payload.config';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const payload = await getPayload({ config: configPromise });

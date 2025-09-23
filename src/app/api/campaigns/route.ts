@@ -5,6 +5,8 @@ import type { Where } from 'payload';
 import { z } from 'zod';
 import { campaignCreateSchema } from '@/lib/validation/schemas';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Validation schema for GET query parameters
 const campaignQuerySchema = z.object({
   status: z.enum(['draft', 'sending', 'sent', 'scheduled', 'failed']).optional(),

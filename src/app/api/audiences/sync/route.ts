@@ -7,6 +7,8 @@ import type { SegmentRules } from '@/types';
 import type { Where } from 'payload';
 import { audienceSyncSchema } from '@/lib/validation/schemas';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 async function handler(req: NextRequest) {
   try {
     const payload = await getPayload();

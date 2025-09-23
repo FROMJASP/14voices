@@ -3,6 +3,8 @@ import configPromise from '@payload-config';
 import { createApiHandler } from '@/lib/api/handlers';
 import { createPerformanceMonitor } from '@/lib/db/performance-monitor';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export const GET = createApiHandler(
   async () => {
     const payload = await getPayload({ config: configPromise });

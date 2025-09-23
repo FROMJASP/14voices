@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { checkConnection, sql } from '@/lib/neon/client';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     // Check basic connection

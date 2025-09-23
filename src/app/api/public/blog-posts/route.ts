@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { applyCorsHeaders, handleCorsPreflightRequest } from '@/lib/cors';
 import { validateLimit, validateDepth, validateSort } from '@/lib/query-validation';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Don't cache the payload instance - it might be causing issues
 const getCachedPayload = async () => {
   return await getPayload({ config: configPromise });

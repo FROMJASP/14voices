@@ -4,6 +4,8 @@ import { getPayload, getServerSideUser } from '@/utilities/payload';
 import { contactImportSchema } from '@/lib/validation/schemas';
 import { validateRequest } from '@/lib/api-security';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 async function handler(req: NextRequest) {
   try {
     // Validate request

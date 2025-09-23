@@ -6,6 +6,8 @@ import type { EmailCampaign } from '@/payload-types';
 import { campaignSendSchema } from '@/lib/validation/schemas';
 import { sanitizeHtml } from '@/lib/validation/schemas';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 async function handler(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;

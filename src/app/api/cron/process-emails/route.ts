@@ -10,6 +10,8 @@ import {
 } from '@/lib/email/sequences';
 import { z } from 'zod';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Validation schema for query parameters
 const cronQuerySchema = z.object({
   action: z.enum(['process', 'retry', 'stats', 'cleanup']).optional().default('process'),

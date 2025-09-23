@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { clearCache } from '@/lib/data-fetching-server';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export async function POST() {
   try {
     // Clear all cached data

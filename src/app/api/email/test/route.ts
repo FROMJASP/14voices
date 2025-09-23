@@ -5,6 +5,8 @@ import { Resend } from 'resend';
 import { z } from 'zod';
 import { validateRequest } from '@/lib/api-security';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Email test validation schema
 const emailTestBodySchema = z.object({
   content: z.any(), // Rich text content

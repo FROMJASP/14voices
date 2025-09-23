@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   try {
     // Security check - only allow in production with proper secret

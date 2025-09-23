@@ -4,6 +4,8 @@ import configPromise from '@payload-config';
 import { createApiHandler, parsePaginationParams } from '@/lib/api/handlers';
 import { z } from 'zod';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Query parameter validation schema
 const testimonialsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).optional(),

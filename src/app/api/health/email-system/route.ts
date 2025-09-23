@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
+
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // import { headers } from 'next/headers'
 import { getPayload } from '@/utilities/payload';
 import { performEmailSystemHealthCheck } from '@/lib/email/monitoring';

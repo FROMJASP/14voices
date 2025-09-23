@@ -2,6 +2,8 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { createApiHandler } from '@/lib/api/handlers';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export const GET = createApiHandler(
   async () => {
     try {

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getCachedPayload } from '@/lib/payload-cached';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export async function GET() {
   const startTime = Date.now();
 

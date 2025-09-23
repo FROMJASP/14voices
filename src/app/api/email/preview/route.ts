@@ -3,6 +3,8 @@ import { withAuth } from '@/lib/auth-middleware';
 import { getPayload } from '@/utilities/payload';
 import { z } from 'zod';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 interface ContentNode {
   type: string;
   children?: Array<{ text?: string }>;

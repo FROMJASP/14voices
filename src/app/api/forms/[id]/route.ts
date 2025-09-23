@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { idSchema } from '@/lib/validation/schemas';
 import { withAuth } from '@/lib/auth-middleware';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Parameter validation schema
 const paramsSchema = z.object({
   id: idSchema,

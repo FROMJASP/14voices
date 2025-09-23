@@ -5,6 +5,8 @@ import { unstable_cache } from 'next/cache';
 import { applyCorsHeaders, handleCorsPreflightRequest } from '@/lib/cors';
 import { validateLimit, validateDepth } from '@/lib/query-validation';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Create cached payload instance getter
 const getCachedPayload = unstable_cache(
   async () => {

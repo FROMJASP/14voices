@@ -10,6 +10,8 @@ import { z } from 'zod';
 import { slugSchema } from '@/lib/validation/schemas';
 import { ValidationError } from '@/lib/errors';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Validation schema for query parameters
 const voiceoverQuerySchema = z.object({
   locale: z.string().length(2).optional().default('nl'),

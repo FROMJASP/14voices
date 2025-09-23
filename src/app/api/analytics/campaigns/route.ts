@@ -5,6 +5,8 @@ import type { EmailLog } from '@/payload-types';
 import { z } from 'zod';
 import { idSchema, dateSchema } from '@/lib/validation/schemas';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 // Validation schema for query parameters
 const analyticsQuerySchema = z.object({
   campaignId: idSchema.optional(),

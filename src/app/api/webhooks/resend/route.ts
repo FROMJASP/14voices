@@ -6,6 +6,8 @@ import type { Payload } from 'payload';
 import { webhookEventSchema } from '@/lib/validation/schemas';
 import { withPublicAuth } from '@/lib/auth-middleware';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET;
 
 if (!RESEND_WEBHOOK_SECRET) {

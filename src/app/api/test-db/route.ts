@@ -2,6 +2,8 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 import { NextResponse } from 'next/server';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     console.log('Test DB API: Starting...');

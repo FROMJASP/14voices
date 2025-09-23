@@ -3,6 +3,8 @@ import { getCachedPayload } from '@/lib/payload-cached';
 import { applyCorsHeaders, handleCorsPreflightRequest } from '@/lib/cors';
 import { validateLimit } from '@/lib/query-validation';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 const getCachedBlogSectionData = async (limit: number, includeCategories: boolean) => {
   const startTime = Date.now();
 

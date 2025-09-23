@@ -1,7 +1,8 @@
-/* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
-/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
 import config from '@payload-config';
 import { REST_GET, REST_DELETE, REST_PATCH, REST_POST, REST_PUT } from '@payloadcms/next/routes';
+
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
 
 export const GET = REST_GET(config);
 export const POST = REST_POST(config);
