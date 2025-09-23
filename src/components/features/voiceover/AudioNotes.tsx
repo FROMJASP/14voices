@@ -2,11 +2,17 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { ReactMediaRecorder } from 'react-media-recorder';
 import { Upload, Mic, Square, Play, Pause, X, FileAudio, AlertCircle } from 'lucide-react';
 // Label import removed - not used
 import { motion, AnimatePresence } from 'framer-motion';
 // Removed SimpleEditor import - using native textarea instead
+
+// Dynamic import for ReactMediaRecorder to avoid SSR issues
+import dynamic from 'next/dynamic';
+const ReactMediaRecorder = dynamic(
+  () => import('react-media-recorder').then((mod) => mod.ReactMediaRecorder),
+  { ssr: false }
+);
 
 interface AudioNotesProps {
   textValue: string;

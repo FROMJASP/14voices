@@ -1,21 +1,30 @@
-import type { Payload } from 'payload';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
 
-export async function seedPages(payload: Payload) {
+async function resetAndSeedPages() {
+  console.log('🔄 Resetting and seeding pages...\n');
+
+  const payload = await getPayload({ config: configPromise });
+
   try {
-    // Check if any pages exist
+    // Delete existing pages
+    console.log('🗑️  Deleting existing pages...');
     const existingPages = await payload.find({
       collection: 'pages',
-      limit: 1,
+      limit: 100,
     });
 
-    if (existingPages.docs.length > 0) {
-      console.log('ℹ️  Pages already exist, skipping seed');
-      return existingPages.docs;
+    for (const page of existingPages.docs) {
+      await payload.delete({
+        collection: 'pages',
+        id: page.id,
+      });
+      console.log(`  ✓ Deleted: ${page.title}`);
     }
 
-    const pages = [];
+    console.log('\n📄 Creating new pages...');
 
-    // Create Home page with new layout blocks
+    // Create Home page with proper blocks
     const homePage = await payload.create({
       collection: 'pages',
       data: {
@@ -104,18 +113,11 @@ export async function seedPages(payload: Payload) {
               rounded: true,
             },
             button: {
-              label: 'Bekijk portfolio',
+              label: 'Bekijk blog',
               url: '/blog',
               style: 'secondary',
               showIcon: true,
             },
-          },
-          {
-            blockType: 'price-calculator',
-            title: 'Bereken je voice-over prijs',
-            subtitle: 'Krijg direct een indicatie voor jouw project',
-            showVAT: true,
-            showDeliveryTime: true,
           },
         ],
         meta: {
@@ -123,10 +125,9 @@ export async function seedPages(payload: Payload) {
           description:
             'Professionele voice-over services voor commercials, bedrijfsfilms, e-learning en meer. Ontdek onze stemacteurs en krijg direct een offerte.',
         },
-      } as any, // Type assertion to bypass strict typing during seed
+      } as any,
     });
-    pages.push(homePage);
-    console.log('✅ Home page created');
+    console.log(`✅ Created: ${homePage.title} (${homePage.slug})`);
 
     // Create Blog page
     const blogPage = await payload.create({
@@ -208,12 +209,19 @@ export async function seedPages(payload: Payload) {
         },
       } as any,
     });
-    pages.push(blogPage);
-    console.log('✅ Blog page created');
+    console.log(`✅ Created: ${blogPage.title} (${blogPage.slug})`);
 
-    return pages;
+    console.log('\n✨ Pages reset and seeded successfully!');
+    console.log('\n🌐 You can now visit:');
+    console.log('   - Homepage: http://localhost:3000');
+    console.log('   - Blog: http://localhost:3000/blog');
+    console.log('   - Admin: http://localhost:3000/admin');
+
+    process.exit(0);
   } catch (error) {
-    console.error('❌ Error creating pages:', error);
-    throw error;
+    console.error('\n❌ Error:', error);
+    process.exit(1);
   }
 }
+
+resetAndSeedPages();

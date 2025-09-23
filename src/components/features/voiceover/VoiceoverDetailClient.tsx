@@ -10,10 +10,16 @@ import { useRouter } from 'next/navigation';
 import { VoiceoverPlayerCard } from './VoiceoverPlayerCard';
 import { SimpleScriptEditor } from './SimpleScriptEditor';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { AudioNotes } from './AudioNotes';
 import { useProductions } from '@/hooks/useProductions';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import dynamic from 'next/dynamic';
+
+// Dynamically import AudioNotes to avoid SSR issues with react-media-recorder
+const AudioNotes = dynamic(() => import('./AudioNotes').then((mod) => mod.AudioNotes), {
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-muted/30 rounded-lg h-32" />,
+});
 
 // Import the CSS for trapezoid shapes
 import './custom-card.css';

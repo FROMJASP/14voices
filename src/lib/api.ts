@@ -1,28 +1,57 @@
 import type { TransformedVoiceover as Voiceover, VoiceoverDemo } from '@/types/voiceover';
 import { getClientServerUrl } from './client-config';
+import { checkRateLimit } from './api-utils';
 
 // CRITICAL FIX: Use the improved client config for proper URL resolution
 const API_URL = getClientServerUrl();
 
 export type { Voiceover, VoiceoverDemo };
 
+// In-memory cache for voiceovers
+let voiceoverCache: { data: Voiceover[]; timestamp: number } | null = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 export async function getVoiceovers(): Promise<Voiceover[]> {
   try {
+    // Check if we have valid cache
+    if (voiceoverCache && Date.now() - voiceoverCache.timestamp < CACHE_DURATION) {
+      return voiceoverCache.data;
+    }
+
+    // Check client-side rate limit
+    if (!checkRateLimit('voiceovers', 5, 60000)) {
+      // Return cached data if available, otherwise empty array
+      return voiceoverCache?.data || [];
+    }
+
     const res = await fetch(`${API_URL}/api/public-voiceovers?depth=2`, {
-      next: { revalidate: 900 }, // 15 minutes
+      next: { revalidate: 3600 }, // 1 hour cache
       cache: 'force-cache', // Use cache when available
+      headers: {
+        'Cache-Control': 'max-age=3600', // Browser cache for 1 hour
+      },
     });
 
     if (!res.ok) {
       console.error('Failed to fetch voiceovers:', res.status);
-      return [];
+      // Return cached data on error if available
+      return voiceoverCache?.data || [];
     }
 
     const data = await res.json();
-    return data.docs || [];
+    const voiceovers = data.docs || [];
+
+    // Update cache
+    voiceoverCache = {
+      data: voiceovers,
+      timestamp: Date.now(),
+    };
+
+    return voiceovers;
   } catch (error) {
     console.error('Error fetching voiceovers:', error);
-    return [];
+    // Return cached data on error if available
+    return voiceoverCache?.data || [];
   }
 }
 

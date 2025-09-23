@@ -8,6 +8,9 @@ import type { SegmentRules } from '@/types';
 import { z } from 'zod';
 import { audienceCreateSchema } from '@/lib/validation/schemas';
 
+// Force dynamic rendering to prevent build-time execution
+export const dynamic = 'force-dynamic';
+
 // Validation schema for GET query parameters
 const audienceQuerySchema = z.object({
   active: z.enum(['true', 'false']).optional(),

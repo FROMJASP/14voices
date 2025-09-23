@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
 import { makeMediaUrlRelative } from '@/lib/media-utils';
-// import { useLivePreview } from '@payloadcms/live-preview-react';
+import { useLivePreview } from '@payloadcms/live-preview-react';
 
 // Core components (always loaded)
 import { HeroSection } from '@/components/features/homepage/HeroSection';
@@ -19,30 +19,47 @@ import ContentSection from '@/components/features/content/ContentSection';
 // Dynamic imports for blog components (code splitting)
 import dynamic from 'next/dynamic';
 
-const BlogSection1 = dynamic(() => import('@/components/blocks/BlogSection1').then(mod => ({ default: mod.BlogSection1 })), {
-  loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
-  ssr: true
-});
+const BlogSection1 = dynamic(
+  () => import('@/components/blocks/BlogSection1').then((mod) => ({ default: mod.BlogSection1 })),
+  {
+    loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
+    ssr: true,
+  }
+);
 
-const BlogPostHeader = dynamic(() => import('@/components/blocks/BlogPostHeader').then(mod => ({ default: mod.BlogPostHeader })), {
-  loading: () => <div className="animate-pulse h-48 bg-muted rounded-lg" />,
-  ssr: true
-});
+const BlogPostHeader = dynamic(
+  () =>
+    import('@/components/blocks/BlogPostHeader').then((mod) => ({ default: mod.BlogPostHeader })),
+  {
+    loading: () => <div className="animate-pulse h-48 bg-muted rounded-lg" />,
+    ssr: true,
+  }
+);
 
-const BlogContent = dynamic(() => import('@/components/blocks/BlogContent').then(mod => ({ default: mod.BlogContent })), {
-  loading: () => <div className="animate-pulse h-64 bg-muted rounded-lg" />,
-  ssr: true
-});
+const BlogContent = dynamic(
+  () => import('@/components/blocks/BlogContent').then((mod) => ({ default: mod.BlogContent })),
+  {
+    loading: () => <div className="animate-pulse h-64 bg-muted rounded-lg" />,
+    ssr: true,
+  }
+);
 
-const BlogPostBlock = dynamic(() => import('@/components/blocks/BlogPostBlock').then(mod => ({ default: mod.BlogPostBlock })), {
-  loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
-  ssr: true
-});
+const BlogPostBlock = dynamic(
+  () => import('@/components/blocks/BlogPostBlock').then((mod) => ({ default: mod.BlogPostBlock })),
+  {
+    loading: () => <div className="animate-pulse h-96 bg-muted rounded-lg" />,
+    ssr: true,
+  }
+);
 
-const PriceCalculator = dynamic(() => import('@/components/blocks/PriceCalculator').then(mod => ({ default: mod.PriceCalculator })), {
-  loading: () => <div className="animate-pulse h-64 bg-muted rounded-lg" />,
-  ssr: true
-});
+const PriceCalculator = dynamic(
+  () =>
+    import('@/components/blocks/PriceCalculator').then((mod) => ({ default: mod.PriceCalculator })),
+  {
+    loading: () => <div className="animate-pulse h-64 bg-muted rounded-lg" />,
+    ssr: true,
+  }
+);
 
 // Memoized helper function to extract plain text from rich text
 const extractPlainText = (richText: any): string => {
@@ -80,15 +97,38 @@ export default function PageRenderer({
   const router = useRouter();
   const isInIframe = typeof window !== 'undefined' && window.parent !== window;
 
-  // Temporarily disable live preview to fix re-render issue
-  // const { data: liveData } = useLivePreview({
-  //   initialData: page,
-  //   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
-  //   depth: 2,
-  // });
+  // Use live preview for real-time updates
+  const { data: liveData, isLoading } = useLivePreview({
+    initialData: page,
+    serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+    depth: 2,
+  });
 
-  // Use page directly for now
-  const currentPage = page as Page;
+  // Use live data only if in iframe and data is valid
+  // Important: Always prefer page data unless we're in iframe with valid live data
+  const currentPage = React.useMemo(() => {
+    if (isInIframe && liveData && liveData.id && !isLoading) {
+      return liveData;
+    }
+    return page;
+  }, [isInIframe, liveData, page, isLoading]);
+
+  // Debug logging only in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('PageRenderer state:', {
+        isInIframe,
+        isLoading,
+        hasLiveData: !!liveData,
+        liveDataId: liveData?.id,
+        hasPage: !!page,
+        pageId: page?.id,
+        currentPageSlug: currentPage?.slug,
+        hasLayout: Array.isArray((currentPage as any)?.layout),
+        layoutLength: (currentPage as any)?.layout?.length,
+      });
+    }
+  }, [isInIframe, liveData, page, currentPage, isLoading]);
 
   // Memoize page metadata
   const pageMetadata = useMemo(
@@ -117,6 +157,8 @@ export default function PageRenderer({
 
   // Memoize hero transformation
   const heroSettings = useMemo(() => {
+    if (!currentPage) return null;
+
     // Find hero block in layout
     const heroBlock = currentPage.layout?.find(
       (block) => block.blockType === 'hero-v1' || block.blockType === 'hero-v2'
@@ -129,7 +171,7 @@ export default function PageRenderer({
       return transformHeroDataForHomepage(currentPage);
     }
     return null;
-  }, [currentPage.layout, pageMetadata.isHomepage, pageMetadata.isBlog, currentPage]);
+  }, [currentPage?.layout, pageMetadata.isHomepage, pageMetadata.isBlog, currentPage]);
 
   // Memoize voiceover transformation
   const transformedVoiceovers = useMemo(() => {
@@ -145,10 +187,14 @@ export default function PageRenderer({
   const renderBlock = useMemo(
     () =>
       function BlockRenderer(block: any, index: number) {
-        // Skip disabled blocks
+        // Skip disabled blocks or blocks without a type
+        if (!block || !block.blockType) return null;
         if (block.blockType === 'content-v1' && block.enabled === false) return null;
 
-        const blockKey = `${block.blockType}-${index}`;
+        // Generate a unique key for the block
+        const blockKey = block.id
+          ? `${block.blockType}-${block.id}`
+          : `${block.blockType}-${index}`;
 
         switch (block.blockType) {
           case 'hero-v1': {
@@ -326,13 +372,28 @@ export default function PageRenderer({
     [transformedVoiceovers, brandColor, blogPost]
   );
 
+  // Safety check - ensure we have valid page data
+  if (!currentPage || !currentPage.id) {
+    console.warn('PageRenderer: Invalid page data', { currentPage, page });
+    return null;
+  }
+
   // For pages with new block layout
   if (pageMetadata.hasNewLayout) {
     const layoutBlocks = (currentPage as any).layout;
 
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Rendering new layout blocks:', layoutBlocks);
+    }
+
+    // Generate a key based on page data to force re-render on changes
+    const pageKey = currentPage?.id
+      ? `${currentPage.id}-${currentPage.updatedAt || Date.now()}`
+      : 'page';
+
     return (
-      <div className="homepage-preview">
-        {layoutBlocks.length > 0
+      <div className="homepage-preview" key={pageKey}>
+        {layoutBlocks && layoutBlocks.length > 0
           ? layoutBlocks.map((block: any, index: number) => {
               return renderBlock(block, index);
             })

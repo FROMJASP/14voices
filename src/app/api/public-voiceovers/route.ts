@@ -126,7 +126,7 @@ export const GET = createApiHandler(
       invalidatePatterns: ['voiceovers:*'],
     },
     rateLimit: {
-      requests: 120,
+      requests: 200, // Increased from 120
       window: 60,
     },
     transform: (data) => {
