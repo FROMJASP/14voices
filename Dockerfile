@@ -24,8 +24,6 @@ RUN pnpm install --frozen-lockfile
 # Copy application code
 COPY . .
 
-# No need for v4 specific dependencies anymore with Tailwind v3
-
 # Accept all build arguments from Coolify
 ARG CSRF_SECRET
 ARG DATABASE_URL
@@ -69,12 +67,11 @@ ENV NEXT_EXPERIMENTAL_COMPILE=false
 ENV FORCE_COLOR=0
 
 # Ensure importMap.js exists (should be committed as per CLAUDE.md)
+# But we'll create an empty one if missing as a fallback
 RUN if [ ! -f "src/app/(payload)/admin/importMap.js" ]; then \
     mkdir -p src/app/\(payload\)/admin && \
     echo "export const importMap = {};" > src/app/\(payload\)/admin/importMap.js; \
   fi
-
-# No need for Tailwind CSS v4 workarounds anymore
 
 # Build Next.js application
 RUN pnpm run build
@@ -82,31 +79,31 @@ RUN pnpm run build
 # Production stage
 FROM node:20-alpine AS runner
 
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
-
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-# Copy necessary files from builder
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+# Copy the standalone build from builder
+# The standalone folder contains a minimal Node.js server
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 
-# Copy Payload admin importMap
-COPY --from=builder /app/src/app/(payload)/admin/importMap.js ./src/app/(payload)/admin/importMap.js || true
+# Copy static files
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy public folder
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+# Copy Payload admin files if they exist in the standalone build
+# The standalone build should include necessary files, but we ensure the directory exists
+RUN mkdir -p ./src/app/\(payload\)/admin && chown -R nextjs:nodejs ./src
 
 # Create uploads directory
 RUN mkdir -p ./public/media && chown -R nextjs:nodejs ./public/media
-
-# Set correct permissions
-RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
@@ -115,7 +112,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Use dumb-init to handle signals properly
-# Note: Using node to run the standalone server
-ENTRYPOINT ["dumb-init", "--"]
+# Start the server
 CMD ["node", "server.js"]
