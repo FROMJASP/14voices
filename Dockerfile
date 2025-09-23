@@ -9,11 +9,14 @@ WORKDIR /app
 # Copy package files
 COPY package.json bun.lockb ./
 
-# Install dependencies using bun and run postinstall for native binaries
-RUN bun install --frozen-lockfile
+# Install dependencies using bun (skip postinstall since we don't have scripts yet)
+RUN bun install --frozen-lockfile --ignore-scripts
 
 # Copy application code
 COPY . .
+
+# Run postinstall script now that we have all files
+RUN bun run postinstall
 
 # Accept all build arguments from Coolify
 ARG CSRF_SECRET
