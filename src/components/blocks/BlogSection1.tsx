@@ -257,7 +257,7 @@ export function BlogSection1({
             paddingBottom: paddingMap[paddingBottom],
           }}
         >
-          <div className="max-w-[var(--breakpoint-xl)] mx-auto px-4 sm:px-6 xl:px-0">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {(title || description) && (
               <div className="mb-8">
                 {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
@@ -283,7 +283,7 @@ export function BlogSection1({
             paddingBottom: paddingMap[paddingBottom],
           }}
         >
-          <div className="max-w-[var(--breakpoint-xl)] mx-auto px-4 sm:px-6 xl:px-0">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {(title || description) && (
               <div className="mb-8">
                 {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
@@ -317,7 +317,7 @@ export function BlogSection1({
           paddingBottom: paddingMap[paddingBottom],
         }}
       >
-        <div className="max-w-[var(--breakpoint-xl)] mx-auto px-4 sm:px-6 xl:px-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {(title || description) && (
             <div className="mb-6 sm:mb-8">
               {title && (
@@ -329,8 +329,8 @@ export function BlogSection1({
             </div>
           )}
 
-          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
-            <div className="flex-1 w-full">
+          <div className="flex flex-col lg:flex-row items-start justify-center gap-8 lg:gap-12">
+            <div className="flex-1 w-full lg:max-w-3xl">
               <div className="space-y-8 md:space-y-12">
                 {posts.map((post) => {
                   const category =
@@ -389,7 +389,7 @@ export function BlogSection1({
             </div>
 
             {showCategories && categories.length > 0 && (
-              <aside className="w-full lg:sticky lg:top-8 lg:shrink-0 lg:w-80 xl:w-96">
+              <aside className="w-full lg:sticky lg:top-8 lg:shrink-0 lg:w-72 xl:w-80">
                 <h3 className="text-lg sm:text-xl font-semibold tracking-tight mb-4">Categories</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
                   {categories.map((category) => {
