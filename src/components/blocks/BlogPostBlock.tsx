@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import { Facebook, Linkedin } from 'lucide-react';
-import type { BlogPost, Media } from '@/payload-types';
+import type { BlogPost, Media, CustomAuthor } from '@/payload-types';
 // Removed unused import
 
 interface BlogPostBlockProps {
@@ -39,7 +39,8 @@ export function BlogPostBlock({
   const shareTitle = blogPost?.title || '';
 
   // Memoized function to render Lexical content
-  const renderLexicalContent = useMemo(() => (node: any): React.ReactNode => {
+  const renderLexicalContent = useMemo(() => {
+    const renderNode = (node: any): React.ReactNode => {
     if (!node) return null;
 
     // Handle text nodes
@@ -80,7 +81,7 @@ export function BlogPostBlock({
 
     // Handle element nodes
     const children = node.children?.map((child: any, index: number) => (
-      <React.Fragment key={index}>{renderLexicalContent(child)}</React.Fragment>
+      <React.Fragment key={index}>{renderNode(child)}</React.Fragment>
     ));
 
     switch (node.type) {
@@ -133,16 +134,45 @@ export function BlogPostBlock({
       default:
         return <div className="mb-4">{children}</div>;
     }
-  }, [blogPost?.content]); // Memoize based on blog post content
+  };
+    return renderNode;
+  }, []); // No dependencies needed since it's a pure function
 
-  // Get the author's name
-  const authorName = useMemo(() => {
-    if (!blogPost?.author) return '';
-    if (typeof blogPost.author === 'object' && 'name' in blogPost.author) {
-      return blogPost.author.name || blogPost.author.email || '';
+  // Get author info (either regular user or custom author)
+  const authorInfo = useMemo(() => {
+    if (!blogPost) return null;
+
+    // Check if it's a custom author
+    if (blogPost.authorType === 'custom' && blogPost.customAuthor) {
+      const customAuthor = typeof blogPost.customAuthor === 'object'
+        ? blogPost.customAuthor as CustomAuthor
+        : null;
+
+      if (customAuthor) {
+        return {
+          type: 'custom',
+          name: customAuthor.name,
+          displayPrefix: customAuthor.displayPrefix || 'Via',
+          url: customAuthor.url,
+          style: {
+            color: customAuthor.style?.color || '#28ade6',
+            fontWeight: customAuthor.style?.fontWeight || 'medium',
+            underline: customAuthor.style?.underline !== false,
+          },
+        };
+      }
     }
-    return '';
-  }, [blogPost?.author]);
+
+    // Regular user author
+    if (blogPost.author && typeof blogPost.author === 'object' && 'name' in blogPost.author) {
+      return {
+        type: 'user',
+        name: blogPost.author.name || blogPost.author.email || '',
+      };
+    }
+
+    return null;
+  }, [blogPost?.author, blogPost?.customAuthor, blogPost?.authorType]);
 
   // Get the banner image URL
   const bannerImageUrl = useMemo(() => {
@@ -240,10 +270,31 @@ export function BlogPostBlock({
             {formattedDate && (
               <time dateTime={blogPost.publishedDate || undefined}>{formattedDate}</time>
             )}
-            {showAuthor && authorName && (
+            {showAuthor && authorInfo && (
               <>
                 <span>—</span>
-                <span>Geschreven door {authorName}</span>
+                {authorInfo.type === 'custom' ? (
+                  <span>
+                    {authorInfo.displayPrefix}{' '}
+                    <a
+                      href={authorInfo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: authorInfo.style?.color,
+                        fontWeight: authorInfo.style?.fontWeight === 'medium' ? 500 :
+                                   authorInfo.style?.fontWeight === 'semibold' ? 600 :
+                                   authorInfo.style?.fontWeight === 'bold' ? 700 : 400,
+                        textDecoration: authorInfo.style?.underline ? 'underline' : 'none',
+                      }}
+                      className="hover:opacity-80 transition-opacity"
+                    >
+                      {authorInfo.name}
+                    </a>
+                  </span>
+                ) : (
+                  <span>Geschreven door {authorInfo.name}</span>
+                )}
               </>
             )}
           </div>
@@ -297,7 +348,7 @@ export function BlogPostBlock({
       <div className="w-full mx-auto md:w-3/4 lg:w-1/2">
         {blogPost.content && (
           <div itemProp="articleBody" className="text-foreground">
-            {renderLexicalContent(blogPost.content.root)}
+            {renderLexicalContent()(blogPost.content.root)}
           </div>
         )}
       </div>

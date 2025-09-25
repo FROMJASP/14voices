@@ -375,20 +375,73 @@ const BlogPosts: CollectionConfig = {
           },
           fields: [
             {
+              name: 'authorType',
+              type: 'select',
+              required: true,
+              defaultValue: 'user',
+              label: {
+                en: 'Author Type',
+                nl: 'Auteur Type',
+              },
+              options: [
+                { label: { en: 'User', nl: 'Gebruiker' }, value: 'user' },
+                { label: { en: 'Custom Author', nl: 'Aangepaste Auteur' }, value: 'custom' },
+              ],
+              admin: {
+                description: {
+                  en: 'Select whether to use a regular user or custom author',
+                  nl: 'Selecteer of je een gewone gebruiker of aangepaste auteur wilt gebruiken',
+                },
+              },
+            },
+            {
               name: 'author',
               type: 'relationship',
               relationTo: 'users',
-              required: true,
+              required: false,
               defaultValue: ({ user }) => user?.id,
               label: {
                 en: 'Author',
                 nl: 'Auteur',
               },
               admin: {
+                condition: (data: any) => data?.authorType === 'user',
                 description: {
                   en: 'The author of this post',
                   nl: 'De auteur van dit bericht',
                 },
+              },
+              validate: (value: any, { data }: any) => {
+                if (data?.authorType === 'user' && !value) {
+                  return 'Author is required when using User author type';
+                }
+                return true;
+              },
+            },
+            {
+              name: 'customAuthor',
+              type: 'relationship',
+              relationTo: 'custom-authors',
+              required: false,
+              label: {
+                en: 'Custom Author',
+                nl: 'Aangepaste Auteur',
+              },
+              admin: {
+                condition: (data: any) => data?.authorType === 'custom',
+                description: {
+                  en: 'Select a custom author for this post',
+                  nl: 'Selecteer een aangepaste auteur voor dit bericht',
+                },
+              },
+              filterOptions: () => ({
+                active: { equals: true },
+              }),
+              validate: (value: any, { data }: any) => {
+                if (data?.authorType === 'custom' && !value) {
+                  return 'Custom author is required when using Custom author type';
+                }
+                return true;
               },
             },
             {

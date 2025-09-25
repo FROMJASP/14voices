@@ -26,6 +26,7 @@ import EmailAudiences from './collections/EmailAudiences';
 import EmailContacts from './collections/EmailContacts';
 import BlogPosts from './collections/BlogPosts';
 import Categories from './collections/Categories';
+import CustomAuthors from './collections/CustomAuthors';
 import Pages from './collections/Pages';
 import Forms from './collections/Forms';
 import FormSubmissions from './collections/FormSubmissions';
@@ -118,6 +119,7 @@ export default buildConfig({
     Pages,
     BlogPosts,
     Categories,
+    CustomAuthors,
     Testimonials,
     FAQ,
     // Documents group
