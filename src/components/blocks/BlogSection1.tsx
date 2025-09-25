@@ -257,7 +257,7 @@ export function BlogSection1({
             paddingBottom: paddingMap[paddingBottom],
           }}
         >
-          <div className="max-w-[var(--breakpoint-xl)] mx-auto px-6 xl:px-0">
+          <div className="max-w-[var(--breakpoint-xl)] mx-auto px-4 sm:px-6 xl:px-0">
             {(title || description) && (
               <div className="mb-8">
                 {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
@@ -283,7 +283,7 @@ export function BlogSection1({
             paddingBottom: paddingMap[paddingBottom],
           }}
         >
-          <div className="max-w-[var(--breakpoint-xl)] mx-auto px-6 xl:px-0">
+          <div className="max-w-[var(--breakpoint-xl)] mx-auto px-4 sm:px-6 xl:px-0">
             {(title || description) && (
               <div className="mb-8">
                 {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
@@ -317,17 +317,21 @@ export function BlogSection1({
           paddingBottom: paddingMap[paddingBottom],
         }}
       >
-        <div className="max-w-[var(--breakpoint-xl)] mx-auto px-6 xl:px-0">
+        <div className="max-w-[var(--breakpoint-xl)] mx-auto px-4 sm:px-6 xl:px-0">
           {(title || description) && (
-            <div className="mb-8">
-              {title && <h2 className="text-3xl font-bold tracking-tight mb-2">{title}</h2>}
-              {description && <p className="text-muted-foreground">{description}</p>}
+            <div className="mb-6 sm:mb-8">
+              {title && (
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">{title}</h2>
+              )}
+              {description && (
+                <p className="text-sm sm:text-base text-muted-foreground">{description}</p>
+              )}
             </div>
           )}
 
-          <div className="flex flex-col lg:flex-row items-start gap-12">
-            <div className="flex-1">
-              <div className="space-y-12">
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
+            <div className="flex-1 w-full">
+              <div className="space-y-8 md:space-y-12">
                 {posts.map((post) => {
                   const category =
                     typeof (post as any).category === 'object' ? (post as any).category : null;
@@ -335,42 +339,44 @@ export function BlogSection1({
 
                   return (
                     <Link key={post.id} href={`/blog/${post.slug}`}>
-                      <div className="flex flex-col sm:flex-row sm:items-center overflow-hidden rounded-md py-0 hover:bg-muted/30 transition-colors cursor-pointer">
+                      <div className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 p-3 sm:p-4 -m-3 sm:-m-4 rounded-lg hover:bg-muted/30 transition-colors cursor-pointer">
                         {imageUrl && (
                           <div
-                            className="shrink-0 aspect-video grow sm:w-56 sm:aspect-square bg-muted rounded-lg bg-cover bg-center"
+                            className="shrink-0 w-full sm:w-48 md:w-56 aspect-video sm:aspect-square bg-muted rounded-lg bg-cover bg-center"
                             style={{ backgroundImage: `url(${imageUrl})` }}
                           />
                         )}
                         {!imageUrl && (
-                          <div className="shrink-0 aspect-video grow sm:w-56 sm:aspect-square bg-muted rounded-lg" />
+                          <div className="shrink-0 w-full sm:w-48 md:w-56 aspect-video sm:aspect-square bg-muted rounded-lg" />
                         )}
-                        <div className="px-0 sm:px-6 py-0 flex flex-col">
+                        <div className="flex-1 min-w-0 py-2 sm:py-0">
                           {category && (
-                            <div className="flex items-center gap-6">
-                              <Badge className="bg-primary/10 text-primary hover:bg-primary/15 shadow-none">
+                            <div className="flex items-center gap-4 mb-3">
+                              <Badge className="bg-primary/10 text-primary hover:bg-primary/15 shadow-none text-xs">
                                 {category.name}
                               </Badge>
                             </div>
                           )}
 
-                          <h3 className="mt-4 text-2xl font-semibold tracking-tight">
+                          <h3 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight line-clamp-2 group-hover:text-primary transition-colors">
                             {post.title}
                           </h3>
                           {post.excerpt && (
-                            <p className="mt-2 text-muted-foreground line-clamp-3 text-ellipsis">
+                            <p className="mt-2 text-sm sm:text-base text-muted-foreground line-clamp-2 sm:line-clamp-3">
                               {post.excerpt}
                             </p>
                           )}
-                          <div className="mt-4 flex items-center gap-6 text-muted-foreground text-sm font-medium">
+                          <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 text-muted-foreground text-xs sm:text-sm font-medium">
                             {post.readingTime && (
-                              <div className="flex items-center gap-2">
-                                <ClockIcon className="h-4 w-4" /> {post.readingTime} min read
+                              <div className="flex items-center gap-1.5">
+                                <ClockIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                <span>{post.readingTime} min read</span>
                               </div>
                             )}
                             {post.publishedDate && (
-                              <div className="flex items-center gap-2">
-                                <Calendar className="h-4 w-4" /> {formatDate(post.publishedDate)}
+                              <div className="flex items-center gap-1.5">
+                                <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                <span>{formatDate(post.publishedDate)}</span>
                               </div>
                             )}
                           </div>
@@ -383,22 +389,24 @@ export function BlogSection1({
             </div>
 
             {showCategories && categories.length > 0 && (
-              <aside className="sticky top-8 shrink-0 lg:max-w-sm w-full">
-                <h3 className="text-xl font-semibold tracking-tight">Categories</h3>
-                <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
+              <aside className="w-full lg:sticky lg:top-8 lg:shrink-0 lg:w-80 xl:w-96">
+                <h3 className="text-lg sm:text-xl font-semibold tracking-tight mb-4">Categories</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
                   {categories.map((category) => {
                     const Icon = iconMap[category.icon] || Cpu;
                     return (
                       <Link
                         key={category.id}
                         href={`/blog?category=${category.slug}`}
-                        className="flex items-center justify-between gap-2 bg-muted p-3 rounded-md bg-opacity-15 dark:bg-opacity-25 hover:bg-opacity-25 dark:hover:bg-opacity-35 transition-colors"
+                        className="flex items-center justify-between gap-2 bg-muted/40 hover:bg-muted/60 p-3 rounded-lg transition-all duration-200 group"
                       >
-                        <div className="flex items-center gap-3">
-                          <Icon className="h-5 w-5" />
-                          <span className="font-medium">{category.name}</span>
+                        <div className="flex items-center gap-3 min-w-0">
+                          <Icon className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+                          <span className="font-medium text-sm sm:text-base truncate">
+                            {category.name}
+                          </span>
                         </div>
-                        <Badge className="px-1.5 rounded-full bg-foreground/7 text-foreground">
+                        <Badge className="shrink-0 px-1.5 sm:px-2 text-xs rounded-full bg-foreground/10 text-foreground">
                           {category.postsCount || 0}
                         </Badge>
                       </Link>

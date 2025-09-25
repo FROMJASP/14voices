@@ -72,7 +72,7 @@ const CustomAuthors: CollectionConfig = {
           nl: 'De URL die wordt geopend bij het klikken op de auteurnaam',
         },
       },
-      validate: (value: string) => {
+      validate: (value: string | undefined | null) => {
         if (!value) return true;
         try {
           new URL(value);

@@ -76,6 +76,7 @@ export interface Config {
     pages: Page;
     'blog-posts': BlogPost;
     categories: Category;
+    'custom-authors': CustomAuthor;
     testimonials: Testimonial;
     faq: Faq;
     bookings: Booking;
@@ -107,6 +108,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'custom-authors': CustomAuthorsSelect<false> | CustomAuthorsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
@@ -1063,6 +1065,14 @@ export interface BlogPost {
    */
   author: number | User;
   /**
+   * Type of author for this post
+   */
+  authorType?: 'user' | 'custom' | null;
+  /**
+   * Custom author if authorType is 'custom'
+   */
+  customAuthor?: (number | null) | CustomAuthor;
+  /**
    * Select a category for this post
    */
   category?: (number | null) | Category;
@@ -1170,6 +1180,24 @@ export interface Category {
    * Number of blog posts in this category
    */
   postsCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-authors".
+ */
+export interface CustomAuthor {
+  id: number;
+  name: string;
+  displayPrefix: string;
+  url?: string | null;
+  style?: {
+    color?: string | null;
+    fontWeight?: string | null;
+    underline?: boolean | null;
+  };
+  active: boolean;
   updatedAt: string;
   createdAt: string;
 }
@@ -2981,6 +3009,18 @@ export interface CategoriesSelect<T extends boolean = true> {
   icon?: T;
   description?: T;
   postsCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-authors_select".
+ */
+export interface CustomAuthorsSelect<T extends boolean = true> {
+  name?: T;
+  displayPrefix?: T;
+  url?: T;
+  active?: T;
   updatedAt?: T;
   createdAt?: T;
 }
