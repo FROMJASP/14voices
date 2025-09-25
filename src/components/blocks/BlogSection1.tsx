@@ -93,11 +93,11 @@ export function BlogSection1({
       const timeoutId = setTimeout(() => {
         if (!isCancelled) {
           setLoading(false);
-          setError('Request timed out. Please refresh the page.');
+          // Don't set error on timeout, just show empty state
           setPosts([]);
           setCategories([]);
         }
-      }, 20000); // 20 second timeout to account for initial payload instance
+      }, 30000); // 30 second timeout for production environments
 
       try {
         // Check if we're in preview/iframe mode
@@ -119,9 +119,9 @@ export function BlogSection1({
             'Content-Type': 'application/json',
           },
           // Use cache in production for better performance
-          cache: inIframe ? 'no-store' : 'force-cache',
+          cache: inIframe ? 'no-store' : 'default',
           // Add timeout for the fetch itself
-          signal: AbortSignal.timeout(18000), // 18 second timeout
+          signal: AbortSignal.timeout(28000), // 28 second timeout
         });
 
         if (isCancelled) return;
@@ -129,14 +129,16 @@ export function BlogSection1({
         if (!response.ok) {
           console.error('Blog section response not ok:', response.status);
           const errorData = await response.json().catch(() => ({}));
-          console.error('Error response:', errorData);
 
           // Check if we got partial data even with an error
           if (errorData.data) {
             setPosts(errorData.data.posts || []);
             setCategories(errorData.data.categories || []);
+            // Don't throw error if we have data
+            return;
           }
 
+          // Only throw if we have no data at all
           throw new Error(errorData.message || `Failed to fetch blog data: ${response.status}`);
         }
 
@@ -169,18 +171,21 @@ export function BlogSection1({
         setCategories([]);
 
         // Provide more specific error messages
-        if (error instanceof Error) {
-          if (error.name === 'AbortError') {
-            setError('The request timed out. The blog posts API might be experiencing issues.');
-          } else if (error.message.includes('fetch')) {
-            setError(
-              'Unable to connect to the blog posts API. Please check if the server is running.'
-            );
+        // In production, don't show errors to users, just show empty state
+        if (process.env.NODE_ENV === 'development') {
+          if (error instanceof Error) {
+            if (error.name === 'AbortError') {
+              setError('The request timed out. The blog posts API might be experiencing issues.');
+            } else if (error.message.includes('fetch')) {
+              setError(
+                'Unable to connect to the blog posts API. Please check if the server is running.'
+              );
+            } else {
+              setError(`Error loading blog posts: ${error.message}`);
+            }
           } else {
-            setError(`Error loading blog posts: ${error.message}`);
+            setError('Unable to load blog posts. Please try again later.');
           }
-        } else {
-          setError('Unable to load blog posts. Please try again later.');
         }
 
         // Error has been set above

@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import { VoiceoverDetailClient } from '@/components/features/voiceover/VoiceoverDetailClient';
-import { fetchOptimized } from '@/lib/data-fetching-server';
 import { transformVoiceoverData } from '@/lib/voiceover-utils';
 import type { PayloadVoiceover } from '@/types/voiceover';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
 
 // Enable Incremental Static Regeneration (ISR) for better performance
 // Pages are cached and revalidated every 60 seconds
@@ -17,14 +18,19 @@ export async function generateStaticParams() {
   }
 
   try {
-    const result = await fetchOptimized({
-      collection: 'voiceovers',
+    const payload = await getPayload({ config: configPromise });
+    const result = await payload.find({
+      collection: 'voiceovers' as any,
       where: {
         status: {
           equals: 'active',
         },
       },
       limit: 100,
+      depth: 0,
+      select: {
+        slug: true,
+      },
     });
 
     if (!result.docs) return [];
@@ -46,8 +52,9 @@ interface VoiceoverPageProps {
 
 async function fetchVoiceoverBySlug(slug: string) {
   try {
-    const result = await fetchOptimized({
-      collection: 'voiceovers',
+    const payload = await getPayload({ config: configPromise });
+    const result = await payload.find({
+      collection: 'voiceovers' as any,
       where: {
         slug: {
           equals: slug,
@@ -69,6 +76,14 @@ async function fetchVoiceoverBySlug(slug: string) {
     return voiceover;
   } catch (error) {
     console.error('Error fetching voiceover:', error);
+    // Log more details in production
+    if (process.env.NODE_ENV === 'production') {
+      console.error('Voiceover fetch error details:', {
+        slug,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+    }
     return null;
   }
 }

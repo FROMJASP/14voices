@@ -56,11 +56,18 @@ export default async function BlogPostPage({
   params,
   searchParams,
 }: Props & { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  let payload;
+  try {
+    payload = await getPayload({ config: configPromise });
+  } catch (error) {
+    console.error('Error initializing payload:', error);
+    notFound();
+  }
+
   try {
     const { slug } = await params;
     const headersList = await headers();
     const isLivePreview = headersList.get('x-payload-live-preview') === 'true';
-    const payload = await getPayload({ config: configPromise });
 
     // Check if this is a preview request
     const resolvedSearchParams = searchParams ? await searchParams : {};
@@ -203,14 +210,28 @@ export default async function BlogPostPage({
     return <PageRenderer page={pageWithBlogData} blogPost={post} />;
   } catch (error) {
     console.error('Error loading blog post:', error);
+    // Log more details in production
+    if (process.env.NODE_ENV === 'production') {
+      const { slug } = await params;
+      console.error('Blog post fetch error details:', {
+        slug,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+    }
     notFound();
   }
 }
 
 export async function generateStaticParams() {
+  // Skip during build with fake database
+  if (process.env.DATABASE_URL?.includes('fake:fake@fake')) {
+    return [];
+  }
+
   try {
     const payload = await getPayload({ config: configPromise });
-    
+
     // Generate params for the most recent blog posts
     const { docs: posts } = await payload.find({
       collection: 'blog-posts',
@@ -236,5 +257,6 @@ export async function generateStaticParams() {
 }
 
 // Enable ISR for blog posts
-export const revalidate = 3600; // 1 hour
+export const revalidate = 60; // 1 minute for better production updates
 export const dynamicParams = true; // Allow dynamic params for posts not in generateStaticParams
+export const maxDuration = 30; // 30 seconds timeout for production

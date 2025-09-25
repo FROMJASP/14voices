@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCachedPayload } from '@/lib/payload-cached';
+import { getPayload } from 'payload';
+import configPromise from '@payload-config';
 import { applyCorsHeaders, handleCorsPreflightRequest } from '@/lib/cors';
 import { validateLimit } from '@/lib/query-validation';
 
 // Force dynamic rendering to prevent build-time execution
 export const dynamic = 'force-dynamic';
+// Increase timeout for production
+export const maxDuration = 30; // 30 seconds timeout
 const getCachedBlogSectionData = async (limit: number, includeCategories: boolean) => {
   const startTime = Date.now();
 
   try {
-    // Use cached payload instance
-    const payload = await getCachedPayload();
+    // Get payload instance
+    const payload = await getPayload({ config: configPromise });
     console.log(`[Blog Section] Got payload instance in ${Date.now() - startTime}ms`);
 
     // Fetch posts
@@ -121,9 +124,9 @@ export async function GET(request: NextRequest) {
 
     console.log('[Blog Section API] Fetching data with:', { limit, includeCategories });
 
-    // Increase timeout to 15 seconds to account for initial payload instance creation
+    // Increase timeout to 25 seconds for production environments
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout')), 15000); // 15 second timeout
+      setTimeout(() => reject(new Error('Request timeout')), 25000); // 25 second timeout
     });
 
     // Fetch data with timeout
@@ -131,15 +134,22 @@ export async function GET(request: NextRequest) {
 
     const data = await Promise.race([dataPromise, timeoutPromise]).catch((error) => {
       if (error.message === 'Request timeout') {
-        console.error('[Blog Section API] Request timed out after 15 seconds');
-        // Return empty data on timeout
+        console.error('[Blog Section API] Request timed out after 25 seconds');
+        // Return empty data on timeout but don't throw
         return {
           posts: [],
           categories: [],
           totalPosts: 0,
         };
       }
-      throw error;
+      // Log the actual error for debugging
+      console.error('[Blog Section API] Data fetch error:', error);
+      // Return empty data on any error to prevent 500
+      return {
+        posts: [],
+        categories: [],
+        totalPosts: 0,
+      };
     });
 
     console.log(`[Blog Section API] Data fetched in ${Date.now() - startTime}ms`);
