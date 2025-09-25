@@ -296,7 +296,7 @@ export function AnimatedPlayer({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className={`absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-sm flex flex-col rounded-[1rem] overflow-hidden ${
+      className={`absolute inset-0 bg-background/80 dark:bg-black/80 backdrop-blur-sm flex flex-col rounded-[1rem] overflow-hidden ${
         gridSize === 'small' ? 'p-2.5' : 'p-4 sm:p-2.5 md:p-3 lg:p-4'
       }`}
       onClick={(e) => e.preventDefault()}
@@ -308,7 +308,7 @@ export function AnimatedPlayer({
         }`}
       >
         <h3
-          className={`font-semibold text-foreground ${
+          className={`font-semibold text-white ${
             gridSize === 'small'
               ? 'text-sm mt-5 lg:text-base'
               : 'text-lg mt-8 sm:text-base sm:mt-6 [@media(min-width:768px)_and_(max-width:1023px)]:text-xl [@media(min-width:768px)_and_(max-width:1023px)]:mt-7 lg:text-lg lg:mt-6'
@@ -318,13 +318,13 @@ export function AnimatedPlayer({
         </h3>
         <button
           onClick={onClose}
-          className={`rounded-full bg-foreground/10 flex items-center justify-center transition-colors hover:bg-foreground/20 ${
+          className={`rounded-full bg-white/20 flex items-center justify-center transition-colors hover:bg-white/30 ${
             gridSize === 'small' ? 'w-6 h-6' : 'w-8 h-8 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8'
           }`}
           aria-label="Close player"
         >
           <X
-            className={`text-foreground ${
+            className={`text-white ${
               gridSize === 'small'
                 ? 'w-3 h-3'
                 : 'w-4 h-4 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4'
@@ -385,7 +385,7 @@ export function AnimatedPlayer({
             <button
               onClick={() => handleDemoChange('prev')}
               disabled={currentDemoIndex === 0}
-              className={`rounded-full bg-foreground/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-foreground/20 ${
+              className={`rounded-full bg-white/20 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/30 ${
                 gridSize === 'small'
                   ? 'w-6 h-6 lg:w-7 lg:h-7'
                   : 'w-10 h-10 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-9 lg:h-9'
@@ -393,7 +393,7 @@ export function AnimatedPlayer({
               aria-label="Previous demo"
             >
               <ChevronLeft
-                className={`text-foreground ${
+                className={`text-white ${
                   gridSize === 'small'
                     ? 'w-3 h-3'
                     : 'w-5 h-5 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-[18px] lg:h-[18px]'
@@ -406,7 +406,7 @@ export function AnimatedPlayer({
           <button
             onClick={handlePlayPause}
             disabled={isLoading}
-            className={`rounded-full bg-foreground flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50 ${
+            className={`rounded-full bg-white flex items-center justify-center transition-transform hover:scale-105 disabled:opacity-50 ${
               gridSize === 'small'
                 ? 'w-8 h-8 lg:w-10 lg:h-10'
                 : 'w-14 h-14 sm:w-9 sm:h-9 md:w-11 md:h-11 lg:w-12 lg:h-12'
@@ -423,7 +423,7 @@ export function AnimatedPlayer({
               />
             ) : isPlaying ? (
               <Pause
-                className={`text-background ${
+                className={`text-black ${
                   gridSize === 'small'
                     ? 'w-3 h-3'
                     : 'w-6 h-6 sm:w-3.5 sm:h-3.5 md:w-[18px] md:h-[18px] lg:w-5 lg:h-5'
@@ -431,7 +431,7 @@ export function AnimatedPlayer({
               />
             ) : (
               <Play
-                className={`text-background ml-0.5 ${
+                className={`text-black ml-0.5 ${
                   gridSize === 'small'
                     ? 'w-3 h-3'
                     : 'w-6 h-6 sm:w-3.5 sm:h-3.5 md:w-[18px] md:h-[18px] lg:w-5 lg:h-5'
@@ -445,7 +445,7 @@ export function AnimatedPlayer({
             <button
               onClick={() => handleDemoChange('next')}
               disabled={currentDemoIndex === voiceover.demos.length - 1}
-              className={`rounded-full bg-foreground/10 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-foreground/20 ${
+              className={`rounded-full bg-white/20 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/30 ${
                 gridSize === 'small'
                   ? 'w-6 h-6 lg:w-7 lg:h-7'
                   : 'w-10 h-10 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-9 lg:h-9'
@@ -453,7 +453,7 @@ export function AnimatedPlayer({
               aria-label="Next demo"
             >
               <ChevronRight
-                className={`text-foreground ${
+                className={`text-white ${
                   gridSize === 'small'
                     ? 'w-3 h-3'
                     : 'w-5 h-5 sm:w-3 sm:h-3 md:w-4 md:h-4 lg:w-[18px] lg:h-[18px]'
@@ -472,7 +472,7 @@ export function AnimatedPlayer({
           }
         >
           <div
-            className="relative h-1 bg-foreground/20 rounded-full cursor-pointer"
+            className="relative h-1.5 bg-white/30 dark:bg-white/20 rounded-full cursor-pointer"
             onClick={handleProgressClick}
             role="progressbar"
             aria-valuenow={progress}
@@ -480,7 +480,7 @@ export function AnimatedPlayer({
             aria-valuemax={100}
           >
             <motion.div
-              className="absolute inset-y-0 left-0 bg-foreground rounded-full"
+              className="absolute inset-y-0 left-0 bg-white rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.1 }}
@@ -490,7 +490,7 @@ export function AnimatedPlayer({
 
         {/* Time, volume and download */}
         <div
-          className={`flex items-center justify-between text-foreground/80 ${
+          className={`flex items-center justify-between text-white/90 ${
             gridSize === 'small'
               ? 'text-[10px] px-2'
               : 'text-sm sm:text-xs [@media(min-width:768px)_and_(max-width:1023px)]:text-sm lg:text-xs px-4 sm:px-2.5 md:px-3 lg:px-3.5'
@@ -505,24 +505,24 @@ export function AnimatedPlayer({
               <button
                 onClick={handleMuteToggle}
                 onMouseEnter={() => setShowVolumeSlider(true)}
-                className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
+                className="p-1.5 rounded-full transition-colors hover:bg-white/20"
                 aria-label={isMuted ? 'Unmute' : 'Mute'}
               >
                 {isMuted || volume === 0 ? (
                   <VolumeX
-                    className={
+                    className={`text-white ${
                       gridSize === 'small'
                         ? 'w-2.5 h-2.5'
                         : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
-                    }
+                    }`}
                   />
                 ) : (
                   <Volume2
-                    className={
+                    className={`text-white ${
                       gridSize === 'small'
                         ? 'w-2.5 h-2.5'
                         : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
-                    }
+                    }`}
                   />
                 )}
               </button>
@@ -534,7 +534,7 @@ export function AnimatedPlayer({
                 transition={{ duration: 0.2 }}
                 onMouseEnter={() => setShowVolumeSlider(true)}
                 onMouseLeave={() => setShowVolumeSlider(false)}
-                className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-background border border-border rounded-lg shadow-lg overflow-hidden ${
+                className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-black/90 backdrop-blur-sm border border-white/20 rounded-lg shadow-xl overflow-hidden z-50 ${
                   showVolumeSlider ? 'pointer-events-auto' : 'pointer-events-none'
                 }`}
               >
@@ -543,7 +543,7 @@ export function AnimatedPlayer({
                     value={[isMuted ? 0 : volume * 100]}
                     onValueChange={handleVolumeSliderChange}
                     orientation="vertical"
-                    className="h-20"
+                    className="h-20 [&_[data-slot='slider-track']]:bg-white/20 [&_[data-slot='slider-range']]:bg-white [&_[data-slot='slider-thumb']]:bg-white [&_[data-slot='slider-thumb']]:border-white/30"
                     aria-label="Volume control"
                     min={0}
                     max={100}
@@ -559,15 +559,15 @@ export function AnimatedPlayer({
                 onClick={handleDownload}
                 onMouseEnter={() => setShowDownloadTooltip(true)}
                 onMouseLeave={() => setShowDownloadTooltip(false)}
-                className="p-1.5 rounded-full transition-colors hover:bg-foreground/10"
+                className="p-1.5 rounded-full transition-colors hover:bg-white/20"
                 aria-label="Download audio"
               >
                 <Download
-                  className={
+                  className={`text-white ${
                     gridSize === 'small'
                       ? 'w-2.5 h-2.5'
                       : 'w-3.5 h-3.5 sm:w-3 sm:h-3 [@media(min-width:768px)_and_(max-width:1023px)]:w-4 [@media(min-width:768px)_and_(max-width:1023px)]:h-4 lg:w-3.5 lg:h-3.5'
-                  }
+                  }`}
                 />
               </button>
 
@@ -579,7 +579,7 @@ export function AnimatedPlayer({
                   scale: showDownloadTooltip ? 1 : 0.9,
                 }}
                 transition={{ duration: 0.15 }}
-                className={`absolute bottom-full left-0 mb-2 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-full whitespace-nowrap shadow-lg ${
+                className={`absolute bottom-full left-0 mb-2 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-full whitespace-nowrap shadow-lg z-50 ${
                   showDownloadTooltip ? 'pointer-events-none' : 'pointer-events-none opacity-0'
                 }`}
                 style={{
